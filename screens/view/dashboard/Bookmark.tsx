@@ -503,7 +503,12 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   };
 
   return (
-    <BackgroundWrapper>
+   <ImageBackground
+             source={IMAGE_URLS.BACK_ICON}
+             style={{ flex: 1,width: '100%',
+           height: '100%', }}
+             resizeMode="cover"
+           >
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -775,7 +780,8 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       </View>
       <ShortCustomToastContainer/>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+   
+     </ImageBackground>
   );
 };
 

@@ -39,6 +39,7 @@ import i18n from '../../../localization/i18n';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -358,7 +359,13 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const isEmpty = featureList.length === 0;
 
   return (
-    <BackgroundWrapper>
+     <ImageBackground
+                      source={IMAGE_URLS.BACK_ICON}
+                      style={{ flex: 1,width: '100%',
+                    height: '100%', }}
+                      resizeMode="cover"
+                    >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -646,7 +653,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
         </View>
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

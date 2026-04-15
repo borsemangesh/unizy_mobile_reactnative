@@ -115,7 +115,13 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
   };
 
   return (
-    <BackgroundWrapper>
+    // <BackgroundWrapper>
+    <ImageBackground
+              source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+            height: '100%', }}
+              resizeMode="cover"
+            >
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -284,7 +290,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
           </View>
         )}
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+    </ImageBackground>
   );
 };
 

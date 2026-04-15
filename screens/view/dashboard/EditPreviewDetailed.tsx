@@ -41,6 +41,7 @@ import dayjs from 'dayjs';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type EditPreviewDetailedProps = {
   navigation: any;
@@ -763,7 +764,14 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           : `£${commissionPrice}`;
 
   return (
-    <BackgroundWrapper>
+   
+    // <BackgroundWrapper>
+    <ImageBackground
+              source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+            height: '100%', }}
+              resizeMode="cover"
+            >
       <View style={styles.fullScreenContainer}>
 
 
@@ -1347,7 +1355,8 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+
+  </ImageBackground>
   );
 };
 

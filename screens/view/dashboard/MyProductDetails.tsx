@@ -22,6 +22,7 @@ import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type MyProductDetailsProps = {
   navigation: any;
@@ -144,7 +145,13 @@ const renderImage = () => {
     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
 
     return (
-      <BackgroundWrapper>
+      <ImageBackground
+                            source={IMAGE_URLS.BACK_ICON}
+                            style={{ flex: 1,width: '100%',
+                          height: '100%', }}
+                            resizeMode="cover"
+                          >
+      {/* <BackgroundWrapper> */}
         <View
           style={{
             alignItems: 'center',
@@ -192,7 +199,8 @@ const renderImage = () => {
             </View>
           )}
         </View>
-      </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
     );
   }
 

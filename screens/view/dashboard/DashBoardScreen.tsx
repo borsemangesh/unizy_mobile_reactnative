@@ -1103,7 +1103,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const { t } = useTranslation();
 
   return (
-    <BackgroundWrapper>
+    // <BackgroundWrapper>
+    <ImageBackground
+          source={IMAGE_URLS.BACK_ICON}
+          style={{ flex: 1,width: '100%',
+        height: '100%', }}
+          resizeMode="cover"
+        >
       <View style={styles.fullScreenContainer}>
         {activeTab === 'Home' && (
           <View
@@ -1410,7 +1416,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       </View>
        <ShortCustomToastContainer />
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+    </ImageBackground>
+    // </BackgroundWrapper>
   );
 };
 //

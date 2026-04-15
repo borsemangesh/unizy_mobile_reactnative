@@ -300,7 +300,13 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     return `${day}${suffix} ${monthShort} ${year}`;
   };
   return (
-    <BackgroundWrapper>
+    <ImageBackground
+                     source={IMAGE_URLS.BACK_ICON}
+                      style={{ flex: 1,width: '100%',
+                      height: '100%', }}
+                      resizeMode="cover"
+                >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar translucent
           backgroundColor="transparent"
@@ -993,7 +999,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
         </Modal>
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

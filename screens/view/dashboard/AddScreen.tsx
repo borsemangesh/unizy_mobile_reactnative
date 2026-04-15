@@ -1695,7 +1695,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
 
   return (
-    <BackgroundWrapper>
+    // <BackgroundWrapper>
+    <ImageBackground
+              source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+            height: '100%', }}
+              resizeMode="cover"
+            >
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2412,7 +2418,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       )}
 
       <NewCustomToastContainer /> 
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

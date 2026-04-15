@@ -215,6 +215,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
       const token = await AsyncStorage.getItem('userToken');
+      console.log("BODY_SEARCH:", JSON.stringify(body));
+      console.log("URL_SEARCH:", url);
+      console.log("token:",token);
       if (!token) return;
 
       const response = await fetch(url, {

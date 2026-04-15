@@ -56,6 +56,7 @@ import React from 'react';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -545,7 +546,13 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
           setViewerState(prev => ({ ...prev, index: i }))
         }
       />
-      <BackgroundWrapper>
+      <ImageBackground
+                            source={IMAGE_URLS.BACK_ICON}
+                            style={{ flex: 1,width: '100%',
+                          height: '100%', }}
+                            resizeMode="cover"
+                          >
+      {/* <BackgroundWrapper> */}
         <View style={styles.fullScreenContainer}>
           <StatusBar
             translucent
@@ -950,7 +957,8 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
         )}
         <ShortCustomToastContainer />
         <NewCustomToastContainer />
-      </BackgroundWrapper>
+        {/* </BackgroundWrapper> */}
+        </ImageBackground>
     </>
   );
 };

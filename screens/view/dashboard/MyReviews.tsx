@@ -41,6 +41,7 @@ import i18n from '../../../localization/i18n';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type CreatedBy = {
   id: number;
@@ -326,7 +327,13 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   };
 
   return (
-    <BackgroundWrapper>
+    <ImageBackground
+              source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+              height: '100%', }}
+              resizeMode="cover"
+          >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -586,7 +593,8 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

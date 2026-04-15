@@ -35,6 +35,7 @@ import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type ReportProductProps = {
   navigation: any
@@ -122,7 +123,13 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
 
   const inputCursorColor = "#FFFFFF";
   return (
-    <BackgroundWrapper>
+     <ImageBackground
+                            source={IMAGE_URLS.BACK_ICON}
+                            style={{ flex: 1,width: '100%',
+                          height: '100%', }}
+                            resizeMode="cover"
+                          >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -296,7 +303,8 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
       )}
 
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

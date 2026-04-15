@@ -38,6 +38,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -278,7 +279,13 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   if (isFeatured) {
     return (
-      <BackgroundWrapper>
+      // <BackgroundWrapper>
+      <ImageBackground
+              source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+            height: '100%', }}
+              resizeMode="cover"
+            >
         <View style={styles.fullScreenContainer}>
           <StatusBar
             translucent
@@ -582,11 +589,18 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           </View>
         </View>
         <NewCustomToastContainer />
-      </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
     );
   }
   return (
-    <BackgroundWrapper>
+   <ImageBackground
+                 source={IMAGE_URLS.BACK_ICON}
+                 style={{ flex: 1,width: '100%',
+               height: '100%', }}
+                 resizeMode="cover"
+               >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -890,7 +904,8 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
         </View>
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+    {/* </BackgroundWrapper> */}
+     </ImageBackground>
   );
 
 };

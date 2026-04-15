@@ -36,6 +36,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type CreatedBy = {
   id: number;
@@ -297,7 +298,13 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
 };
 
   return (
-    <BackgroundWrapper>
+      <ImageBackground
+          source={IMAGE_URLS.BACK_ICON}
+          style={{ flex: 1,width: '100%',
+          height: '100%', }}
+          resizeMode="cover"
+      >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -531,7 +538,8 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
 
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

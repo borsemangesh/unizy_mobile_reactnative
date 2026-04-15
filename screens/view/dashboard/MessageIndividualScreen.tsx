@@ -41,6 +41,7 @@ import { NewCustomToastContainer,showToast } from '../../utils/component/NewCust
 import { updateBadgeFromFCM } from '../../utils/badgeHelper';
 import { getBadgeCount } from '../../utils/BadgeManager';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const back = require('../../../assets/images/back.png');
@@ -1565,7 +1566,13 @@ const MessagesIndividualScreen = ({
     [checkUser, currentUserId, lastMessageIndex, otherLastReadIndex],
   );
   return (
-    <BackgroundWrapper>
+    // <BackgroundWrapper>
+    <ImageBackground
+                  source={IMAGE_URLS.BACK_ICON}
+                  style={{ flex: 1,width: '100%',
+                height: '100%', }}
+                  resizeMode="cover"
+                >
       <View style={{ flex: 1 }}>
         {initialLoading && (
           <Loader
@@ -2139,7 +2146,8 @@ const MessagesIndividualScreen = ({
         </KeyboardAvoidingView>
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

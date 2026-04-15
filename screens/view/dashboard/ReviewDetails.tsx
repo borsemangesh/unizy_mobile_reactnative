@@ -41,6 +41,7 @@ import i18n from '../../../localization/i18n';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -307,7 +308,13 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   };
 
   return (
-    <BackgroundWrapper>
+         <ImageBackground
+                                source={IMAGE_URLS.BACK_ICON}
+                                style={{ flex: 1,width: '100%',
+                              height: '100%', }}
+                                resizeMode="cover"
+                              >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -623,7 +630,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
         )}
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

@@ -34,6 +34,7 @@ import { useTranslation } from 'react-i18next';
 import { useAnimatedStyle, interpolate, useSharedValue, interpolateColor } from 'react-native-reanimated';
 import Loader from '../../utils/component/Loader';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -146,7 +147,13 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   };
 
   return (
-    <BackgroundWrapper>
+        <ImageBackground
+                               source={IMAGE_URLS.BACK_ICON}
+                               style={{ flex: 1,width: '100%',
+                             height: '100%', }}
+                               resizeMode="cover"
+                             >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
@@ -301,7 +308,8 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

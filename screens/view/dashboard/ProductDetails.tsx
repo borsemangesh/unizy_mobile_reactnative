@@ -47,6 +47,7 @@ import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -552,7 +553,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const isEmpty = featurelist.length === 0;
 
   return (
-    <BackgroundWrapper>
+    <ImageBackground
+                        source={IMAGE_URLS.BACK_ICON}
+                        style={{ flex: 1,width: '100%',
+                      height: '100%', }}
+                        resizeMode="cover"
+                      >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -814,7 +821,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       )}
       <ShortCustomToastContainer/>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 

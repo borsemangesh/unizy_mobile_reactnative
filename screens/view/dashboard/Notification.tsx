@@ -39,6 +39,7 @@ import i18n from '../../../localization/i18n';
 
 import notifee from '@notifee/react-native';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 type NotificationProps = {
   navigation: any;
 };
@@ -367,7 +368,13 @@ const Notification = ({ navigation }: NotificationProps) => {
   };
 
   return (
-    <BackgroundWrapper>
+   <ImageBackground
+                 source={IMAGE_URLS.BACK_ICON}
+                 style={{ flex: 1,width: '100%',
+                 height: '100%', }}
+                 resizeMode="cover"
+             >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         {initialLoading && notificationList.length === 0 && (
           <Loader
@@ -544,7 +551,8 @@ const Notification = ({ navigation }: NotificationProps) => {
         />
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+    {/* </BackgroundWrapper> */}
+     </ImageBackground>
   );
 };
 

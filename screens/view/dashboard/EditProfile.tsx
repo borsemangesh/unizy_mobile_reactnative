@@ -65,6 +65,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type EditProfileProps = {
   navigation: any;
@@ -1226,7 +1227,14 @@ const getCityFromPostalCode = async (postalCode: string) => {
 
 
   return (
-    <BackgroundWrapper>
+   
+    // <BackgroundWrapper>
+    <ImageBackground
+                  source={IMAGE_URLS.BACK_ICON}
+                  style={{ flex: 1,width: '100%',
+                height: '100%', }}
+                  resizeMode="cover"
+                >
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2230,7 +2238,8 @@ const getCityFromPostalCode = async (postalCode: string) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+    {/* // </BackgroundWrapper > */}
+       </ImageBackground>
   );
 };
 

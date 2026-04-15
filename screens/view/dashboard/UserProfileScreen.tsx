@@ -12,6 +12,7 @@ import { Constant } from '../../utils/Constant';
 import { resetTwilioClient } from '../emoji/twilioService';
 import { clearTwilioCache } from './MessageIndividualScreen';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 
 const profileImage = require('../../../assets/images/user.jpg');
@@ -171,7 +172,13 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   return true;
 });
   return (
-    <BackgroundWrapper>
+      <ImageBackground
+             source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+              height: '100%', }}
+              resizeMode="cover"
+        >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
@@ -351,7 +358,8 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         </TouchableWithoutFeedback>
       </Modal>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 
 };

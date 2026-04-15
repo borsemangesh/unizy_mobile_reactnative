@@ -27,6 +27,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type BuyerInfoProps = {
   navigation: any;
@@ -195,7 +196,13 @@ const BuyerInfo = ({ navigation }: BuyerInfoProps) => {
     </View>
   );
   return (
-    <BackgroundWrapper>
+    <ImageBackground
+              source={IMAGE_URLS.BACK_ICON}
+              style={{ flex: 1,width: '100%',
+            height: '100%', }}
+              resizeMode="cover"
+            >
+    {/* // <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -324,7 +331,8 @@ const BuyerInfo = ({ navigation }: BuyerInfoProps) => {
         </View>
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+        {/* </BackgroundWrapper> */}
+        </ImageBackground>
   );
 };
 

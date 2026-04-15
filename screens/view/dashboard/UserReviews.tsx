@@ -40,6 +40,7 @@ import i18n from '../../../localization/i18n';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type CreatedBy = {
   id: number;
@@ -395,7 +396,13 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
 
 
   return (
-    <BackgroundWrapper>
+          <ImageBackground
+                 source={IMAGE_URLS.BACK_ICON}
+                  style={{ flex: 1,width: '100%',
+                  height: '100%', }}
+                  resizeMode="cover"
+            >
+    {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         {initialLoading && featureList.length === 0 && (
           <Loader
@@ -685,7 +692,8 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
 
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* </BackgroundWrapper> */}
+      </ImageBackground>
   );
 
 };

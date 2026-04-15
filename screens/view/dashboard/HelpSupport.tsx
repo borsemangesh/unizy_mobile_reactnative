@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { WebView } from 'react-native-webview';
 import Loader from '../../utils/component/Loader';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type HelpSupportProps = {
   navigation: any;
@@ -30,7 +31,13 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   return (
-    <BackgroundWrapper>
+<ImageBackground
+          source={IMAGE_URLS.BACK_ICON}
+          style={{ flex: 1,width: '100%',
+        height: '100%', }}
+          resizeMode="cover"
+        >
+    {/* // <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -75,7 +82,8 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
         )}
       </View>
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+      {/* // </BackgroundWrapper> */}
+      </ImageBackground>
   );
 };
 
