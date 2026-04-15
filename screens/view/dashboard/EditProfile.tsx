@@ -1683,9 +1683,11 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
-                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' }]}
+                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' ,height:54}]}
                   placeholder={t('university')}
                   placeholderTextColor="#ccc"
+                  multiline={true}
+                  numberOfLines={2}
 
                 />
               </View>
@@ -2381,7 +2383,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   inputGroup: {
-    height: 64,
+    height: 70,
   },
   label: {
     color: '#fff',
