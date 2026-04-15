@@ -792,5 +792,6 @@
    "price_must_be_at_least":"Please enter a price of at least 0.50.",
    "valid_city": "Enter valid postal code.",
    "min":"Min",
-   "max": "Max"
+   "max": "Max",
+   "university": "University"
 }
