@@ -65,6 +65,9 @@ const FilterAndroid = ({
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
 
+  const [distanceLow, setDistanceLow] = useState(0);
+  const [distanceHigh, setDistanceHigh] = useState(200);
+
   const fetchFilters = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -245,15 +248,32 @@ const FilterAndroid = ({
       return { ...prev, [fieldId]: updated };
     });
   };
+  // const handleClearFilters = () => {
+  //   setDropdownSelections({});
+  //   setPriceRange(defaultPriceRange);
+  //   setSliderLow(defaultPriceRange.min);
+  //   setSliderHigh(defaultPriceRange.max);
+  //   setDateSelections({});
+  //   setPostcode('');
+  //   setOtherInputs({});
+  // };
   const handleClearFilters = () => {
-    setDropdownSelections({});
-    setPriceRange(defaultPriceRange);
-    setSliderLow(defaultPriceRange.min);
-    setSliderHigh(defaultPriceRange.max);
-    setDateSelections({});
-    setPostcode('');
-    setOtherInputs({});
-  };
+  // ✅ Dropdowns
+  setDropdownSelections({});
+
+  // ✅ Price Reset
+  setPriceRange(defaultPriceRange);
+  setSliderLow(defaultPriceRange.min);
+  setSliderHigh(defaultPriceRange.max);
+
+  setDistanceLow(0);
+  setDistanceHigh(200); 
+  setIsKm(true);
+  setPostcode('');
+  setOtherInputs({});
+  setDateSelections({});
+
+};
 
   const handleClose = () => {
     if (initialFilters?.filters?.length > 0) {
@@ -626,70 +646,85 @@ const FilterAndroid = ({
       console.log('currentFilter', currentFilter);
       return (
         <View style={{ paddingTop: 10 }}>
-           <View style={styles.container}>
-            <View style={{flex: 1,flexDirection:'row',justifyContent:'space-between',alignContent:'center'}}>
-            {/* 🔁 KM / Miles Toggle */}
-             <Text style={{ color: 'white', marginBottom: 10 }}>
-            Distance
-              </Text>
+          <View style={styles.container}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+              }}
+            >
+              {/* 🔁 KM / Miles Toggle */}
+              <Text style={{ color: 'white', marginBottom: 10 }}>Distance</Text>
               <View>
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[styles.toggleBtn, isKm && styles.active]}
-          onPress={() => setIsKm(true)}
-        >
-          <Text style={[styles.toggleText,{ color: isKm ? "#FFF" : "#000"}]}>KM</Text>
-        </TouchableOpacity>
+                <View style={styles.toggleContainer}>
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, isKm && styles.active]}
+                    onPress={() => setIsKm(true)}
+                  >
+                    <Text
+                      style={[
+                        styles.toggleText,
+                        { color: isKm ? '#FFF' : '#000' },
+                      ]}
+                    >
+                      KM
+                    </Text>
+                  </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.toggleBtn, !isKm && styles.active]}
-          onPress={() => setIsKm(false)}
-        >
-          <Text style={[styles.toggleText,{ color: isKm ? "#000" : "#fff"}]}>Miles</Text>
-        </TouchableOpacity>
-              </View>
-              <Text style={styles.rangeText}>
-        {convertValue(sliderLow)} - {convertValue(sliderHigh)} {isKm ? "km" : "mi"}
-                </Text>
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, !isKm && styles.active]}
+                    onPress={() => setIsKm(false)}
+                  >
+                    <Text
+                      style={[
+                        styles.toggleText,
+                        { color: isKm ? '#000' : '#fff' },
+                      ]}
+                    >
+                      Miles
+                    </Text>
+                  </TouchableOpacity>
                 </View>
+                <Text style={styles.rangeText}>
+                  {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
+                  {isKm ? 'km' : 'mi'}
+                </Text>
               </View>
-
-      
-      
+            </View>
 
             {/* 🎚 Multi Slider */}
-     
-      <MultiSlider
-        values={[sliderLow, sliderHigh]}
-         sliderLength={SCREEN_WIDTH/2 - 10}
-        min={currentFilter?.minvalue ?? 0}
-        max={currentFilter?.maxvalue ?? 200}
-        step={1}
-        onValuesChange={(values) => {
-          const [low, high] = values;
-          setSliderLow(low);
-          setSliderHigh(high);
-        }}
 
-       selectedStyle={{
+            <MultiSlider
+              sliderLength={SCREEN_WIDTH / 2 - 10}
+              min={currentFilter?.minvalue ?? 0}
+              max={currentFilter?.maxvalue ?? 200}
+              step={1}
+              values={[distanceLow, distanceHigh]}
+              onValuesChange={values => {
+                const [low, high] = values;
+                setDistanceLow(low);
+                setDistanceHigh(high);
+              }}
+              selectedStyle={{
                 backgroundColor: '#fff',
               }}
               unselectedStyle={{
                 backgroundColor: '#888',
               }}
-        trackStyle={{
+              trackStyle={{
                 height: 4,
                 borderRadius: 2,
               }}
               markerStyle={{
-                					
-					height: 22,
-          borderRadius: 11,
+                height: 22,
+                borderRadius: 11,
                 backgroundColor: '#fff',
               }}
-              />
-    </View>
-      
+            />
+          </View>
+
           {/* <TextInput
             style={[
               styles.login_container,
@@ -781,17 +816,32 @@ const FilterAndroid = ({
               ],
             };
           }
-        } else if (
+        }
+        // else if (
+        //   f.field_type?.toLowerCase() === 'text' &&
+        //   f.field_name?.toLowerCase().includes('postcode')
+        // ) {
+        //   if (postcode) {
+        //     return {
+        //       id: f.id,
+        //       field_name: f.field_name,
+        //       field_type: f.field_type,
+        //       alias_name: f.alias_name,
+        //       options: [postcode],
+        //     };
+        //   }
+        // }
+        else if (
           f.field_type?.toLowerCase() === 'text' &&
           f.field_name?.toLowerCase().includes('postcode')
         ) {
-          if (postcode) {
+          if (postcode || distanceLow !== null || distanceHigh !== null) {
             return {
               id: f.id,
               field_name: f.field_name,
               field_type: f.field_type,
               alias_name: f.alias_name,
-              options: [postcode],
+              options: [distanceLow, distanceHigh, isKm ? 'km' : 'mi'],
             };
           }
         }
