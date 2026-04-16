@@ -1703,13 +1703,13 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   selectionColor="#F5F5F5"
                   cursorColor="#F5F5F5"
                   allowFontScaling={false}
-                  value={userMeta.university_name || ''}
+                  value={userMeta.university_name|| ''}
                   editable={false}
                   selectTextOnFocus={false}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
-                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' ,height:54}]}
+                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' ,height: 'auto' }]}
                   placeholder={t('university')}
                   placeholderTextColor="#ccc"
                   multiline={true}
@@ -2407,6 +2407,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
+    // backgroundColor: 'red',
+    height: Dimensions.get('window').height * 0.69,
     gap: 12,
   },
   inputGroup: {
