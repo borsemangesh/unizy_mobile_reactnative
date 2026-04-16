@@ -615,6 +615,48 @@ const handlePreview = async (latestFormValues: any) => {
             return;
         }
       }
+
+      
+      
+            // ✅ POSTCODE VALIDATION
+      if (field.param.alias_name?.toLowerCase() === 'postcode') {
+        const postcodeValue = formValues[field.param.id]?.value;
+      
+        const cityField = fields.find(
+          (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
+        );
+      
+        const selectedCityId = cityField
+          ? formValues[cityField.param.id]?.value
+          : null;
+      
+        if (!postcodeValue || !selectedCityId) {
+          showToast('Enter valid postal code', 'error');
+          return;
+        }
+      
+        // 🔥 Call API again to verify
+        const location = await getCityFromPostalCode(postcodeValue);
+      
+        if (!location || !location.city) {
+          showToast('Enter valid postal code', 'error');
+          return;
+        }
+      
+        const cityOptions = cityField?.param?.options || [];
+      
+        const matchedOption = cityOptions.find((opt: any) => {
+          const option = opt.option_name?.toLowerCase() || '';
+          const input = location.city.toLowerCase();
+          return option.includes(input) || input.includes(option);
+        });
+      
+        // ❌ No match OR mismatch
+        if (!matchedOption || matchedOption.id !== selectedCityId) {
+          showToast('Postal code does not match selected city', 'error');
+          return;
+        }
+      }
     }
 
     // 2️⃣ Price validation (add this here)
@@ -861,6 +903,28 @@ const handlePreview = async (latestFormValues: any) => {
   const [showThumnail, setShowThumnail] = useState(false);
   const [uri, setUri] = useState('');
 
+
+  
+  
+  
+  
+    const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  
+  const isValidPostalCode = (code: string) => {
+    const cleaned = code.replace(/\s/g, '');
+  
+    // UK format
+    const ukRegex = /^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/i;
+  
+    // India format
+    const indiaRegex = /^[1-9][0-9]{5}$/;
+  
+    return ukRegex.test(cleaned) || indiaRegex.test(cleaned);
+  };
+  
+  
+  
+
   const renderImageItem = ({ item, drag, isActive }: any) => {
     return (
       <View style={styles.imagelistcard}>
@@ -997,39 +1061,83 @@ const handlePreview = async (latestFormValues: any) => {
 
     return `${day}${suffix} ${monthShort} ${year}`;
   };
-  const getCityFromPostalCode = async (postalCode: string) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-        {
-          headers: {
-            "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-            "Accept-Language": "en-US",
-          },
-        }
-      );
+  
+  // const getCityFromPostalCode = async (postalCode: string) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+  //       {
+  //         headers: {
+  //           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+  //           "Accept-Language": "en-US",
+  //         },
+  //       }
+  //     );
 
-      const data = await response.json();
-      console.log("location data:", data);
+  //     const data = await response.json();
+  //     console.log("location data:", data);
 
-      if (!data || data.length === 0) return null;
+  //     if (!data || data.length === 0) return null;
 
-      const address = data[0].address;
+  //     const address = data[0].address;
 
-      return (
-        address.city ||            // US, some countries
-        address.town ||            // smaller towns
-        address.village ||         // villages
-        address.county ||          // India, UK (like Pune City)
-        address.state_district ||  // fallback
-        null
-      );
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  };
+  //     return (
+  //       address.city ||            // US, some countries
+  //       address.town ||            // smaller towns
+  //       address.village ||         // villages
+  //       address.county ||          // India, UK (like Pune City)
+  //       address.state_district ||  // fallback
+  //       null
+  //     );
+  //   } catch (error) {
+  //     console.error(error);
+  //     return null;
+  //   }
+  // };
 
+    const getCityFromPostalCode = async (postalCode: string) => {
+  try {
+    postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
+    postalCode = postalCode.slice(0, -3) + ' ' + postalCode.slice(-3)
+    console.log("postalCode:", postalCode);
+    console.log("URL: ", `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`);
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+      {
+        headers: {
+          "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+          "Accept-Language": "en-US",
+        },
+      }
+    );
+
+    const data = await response.json();
+    console.log("location data:", data);
+
+    if (!data || data.length === 0) return null;
+
+    const result = data[0];
+    const address = result.address;
+
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.county ||
+      address.state_district ||
+      null;
+
+    return {
+      city,
+      lat: parseFloat(result.lat),   // ✅ FIX
+      lon: parseFloat(result.lon),   // ✅ FIX
+    };
+
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
   const renderField = (field: any) => {
     const param = field?.param;
     if (!param) return null;
@@ -1091,25 +1199,81 @@ const handlePreview = async (latestFormValues: any) => {
             rnKeyboardType = 'default';
         }
 
-        let typingTimeout: NodeJS.Timeout;
+     
 
 
+        // const handlePostalCodeChange = (text: string) => {
+
+        //   const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Only allow alphanumeric characters
+
+        //   if (filteredText.length > 7) return; // Limit the length of the postcode (adjust if necessary)
+        //   // Always update the postcode field value first
+        //   handleValueChange(param.id, alias_name, text);
+
+        //   const cityField = fields?.find(
+        //     (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
+        //   );
+
+        //   if (!cityField) return;
+
+        //   // If postcode is cleared, remove auto-selected city
+        //   const stripped = text.replace(/\s/g, '');
+        //   if (stripped.length === 0) {
+        //     setFormValues((prev: any) => ({
+        //       ...prev,
+        //       [cityField.param.id]: {
+        //         ...prev[cityField.param.id],
+        //         value: null,
+        //       },
+        //     }));
+        //     return;
+        //   }
+
+        //   if (isPostcodeField) {
+        //     if (typingTimeout) clearTimeout(typingTimeout);
+
+        //     if (stripped.length < 5) return; // too short to be a valid postcode
+
+        //     typingTimeout = setTimeout(async () => {
+        //       const cityName = await getCityFromPostalCode(text);
+
+        //       if (cityName) {
+        //         const cityOptions = cityField.param?.options || [];
+        //         const matchedOption = cityOptions.find(
+        //           (opt: any) =>
+        //             opt.option_name?.toLowerCase() === cityName?.toLowerCase()
+        //         );
+
+        //         if (matchedOption) {
+        //           // ✅ City found — auto-select silently
+        //           setFormValues((prev: any) => ({
+        //             ...prev,
+        //             [cityField.param.id]: {
+        //               ...prev[cityField.param.id],
+        //               value: matchedOption.id,
+        //             },
+        //           }));
+        //         }
+        //       }
+        //     }, 1000);
+        //   }
+        // };
         const handlePostalCodeChange = (text: string) => {
-
-          const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Only allow alphanumeric characters
-
-          if (filteredText.length > 7) return; // Limit the length of the postcode (adjust if necessary)
-          // Always update the postcode field value first
-          handleValueChange(param.id, alias_name, text);
-
+          const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        
+          if (filteredText.length > 7) return;
+        
+          handleValueChange(param.id, alias_name, filteredText);
+        
           const cityField = fields?.find(
             (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
           );
-
+        
           if (!cityField) return;
-
-          // If postcode is cleared, remove auto-selected city
-          const stripped = text.replace(/\s/g, '');
+        
+          const stripped = filteredText.replace(/\s/g, '');
+        
+          // Reset city if empty
           if (stripped.length === 0) {
             setFormValues((prev: any) => ({
               ...prev,
@@ -1120,36 +1284,70 @@ const handlePreview = async (latestFormValues: any) => {
             }));
             return;
           }
-
-          if (isPostcodeField) {
-            if (typingTimeout) clearTimeout(typingTimeout);
-
-            if (stripped.length < 5) return; // too short to be a valid postcode
-
-            typingTimeout = setTimeout(async () => {
-              const cityName = await getCityFromPostalCode(text);
-
-              if (cityName) {
-                const cityOptions = cityField.param?.options || [];
-                const matchedOption = cityOptions.find(
-                  (opt: any) =>
-                    opt.option_name?.toLowerCase() === cityName?.toLowerCase()
-                );
-
-                if (matchedOption) {
-                  // ✅ City found — auto-select silently
-                  setFormValues((prev: any) => ({
-                    ...prev,
-                    [cityField.param.id]: {
-                      ...prev[cityField.param.id],
-                      value: matchedOption.id,
-                    },
-                  }));
-                }
-              }
-            }, 1000);
+        
+          // ❌ Invalid format
+          if (!isValidPostalCode(filteredText)) {
+            return; // don’t spam toast while typing
           }
+        
+          if (stripped.length < 5) return;
+        
+          if (typingTimeout.current) {
+            clearTimeout(typingTimeout.current);
+          }
+        
+        typingTimeout.current = setTimeout(async () => {
+          const cityName = await getCityFromPostalCode(filteredText);
+        
+          const cityOptions = cityField.param?.options || [];
+        
+          // ❌ NO CITY FROM API
+          if (!cityName) {
+            showToast('Enter valid postal code', 'error');
+        
+            setFormValues((prev: any) => ({
+              ...prev,
+              [cityField.param.id]: {
+                ...prev[cityField.param.id],
+                value: null,
+              },
+            }));
+        
+            return;
+          }
+        
+          const matchedOption = cityOptions.find((opt: any) => {
+            const option = opt.option_name?.toLowerCase() || '';
+            const input = cityName.city?.toLowerCase() || '';
+            return option.includes(input) || input.includes(option);
+          });
+        
+          // ❌ CITY NOT MATCHED WITH DROPDOWN
+          if (!matchedOption) {
+            showToast('Enter valid postal code', 'error');
+        
+            setFormValues((prev: any) => ({
+              ...prev,
+              [cityField.param.id]: {
+                ...prev[cityField.param.id],
+                value: null,
+              },
+            }));
+        
+            return;
+          }
+        
+          // ✅ SUCCESS
+          setFormValues((prev: any) => ({
+            ...prev,
+            [cityField.param.id]: {
+              ...prev[cityField.param.id],
+              value: matchedOption.id,
+            },
+          }));
+        }, 800);
         };
+        
         return (
           <View key={field.id} style={styles.productTextView}>
             {renderLabel(field_name, field.mandatory)}
