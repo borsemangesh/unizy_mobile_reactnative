@@ -537,14 +537,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
     }
   };
 
+  const onEndReachedCalledDuringMomentum = useRef(false);
   const handleEndReached = useCallback(() => {
-
     if (isLoading || !hasMore) return;
-
+  
     if (appliedFilter) {
       loadMoreFilteredResults();
-    }
-    else if (search.trim().length > 0) {
+    } else {
       displayListOfProduct(page, search);
     }
   }, [isLoading, hasMore, appliedFilter, search, page]);
@@ -787,6 +786,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
+          // onEndReached={() => {
+          //   if (!onEndReachedCalledDuringMomentum.current) {
+          //     handleEndReached();
+          //     onEndReachedCalledDuringMomentum.current = true;
+          //   }
+          // }}
+          // onMomentumScrollBegin={() => {
+          //   onEndReachedCalledDuringMomentum.current = false;
+          // }}
         />
 
 
