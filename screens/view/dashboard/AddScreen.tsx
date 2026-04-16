@@ -795,7 +795,7 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
     : null;
 
   if (!postcodeValue || !selectedCityId) {
-    showToast(t('valid_postal_code'), 'error');
+    showToast(t('valid_city'), 'error');
     return;
   }
 
@@ -803,7 +803,7 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
   const location = await getCityFromPostalCode(postcodeValue);
 
   if (!location || !location.city) {
-    showToast(t('valid_postal_code'), 'error');
+    showToast(t('valid_city'), 'error');
     return;
   }
 
