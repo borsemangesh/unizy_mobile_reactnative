@@ -462,6 +462,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
       errors.push(t('postal_code_req'));
     }
+    if (!userMeta.city || userMeta.city.trim() === '') {
+        errors.push(t('valid_city'));
+      }
     return errors;
   };
 
@@ -510,6 +513,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       else if (photo === null && originalPhoto !== null) {
         await handleDeleteImage();
       }
+     
+            
 
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
 
@@ -1064,7 +1069,16 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const ClickPostalCode = async (postalCode: any) => {
   const location = await getCityFromPostalCode(postalCode);
 
-  if (!location) return;
+
+      if (!location){
+      setUserMeta(prev => ({
+        ...prev,
+        city:   '',
+        latitude: 0,
+        longitude: 0,
+      }));
+      return;
+    } 
 
   setUserMeta(prev => ({
     ...prev,
@@ -1073,6 +1087,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     longitude: location.lon,
   }));
 };
+
 const getCityFromPostalCode = async (postalCode: string) => {
   try {
     postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
@@ -1675,7 +1690,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
                   style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' }]}
-                  placeholder={t('city')}
+                  // placeholder={t('city')}
                   placeholderTextColor="#ccc"
 
                 />
