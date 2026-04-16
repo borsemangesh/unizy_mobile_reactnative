@@ -795,7 +795,7 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
     : null;
 
   if (!postcodeValue || !selectedCityId) {
-    showToast('Enter valid postal code', 'error');
+    showToast(t('valid_postal_code'), 'error');
     return;
   }
 
@@ -803,7 +803,7 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
   const location = await getCityFromPostalCode(postcodeValue);
 
   if (!location || !location.city) {
-    showToast('Enter valid postal code', 'error');
+    showToast(t('valid_postal_code'), 'error');
     return;
   }
 
@@ -1354,7 +1354,7 @@ typingTimeout.current = setTimeout(async () => {
 
   // ❌ NO CITY FROM API
   if (!cityName) {
-    showToast('Enter valid postal code', 'error');
+    showToast(t('valid_city'), 'error');
 
     setFormValues((prev: any) => ({
       ...prev,
@@ -1375,7 +1375,7 @@ typingTimeout.current = setTimeout(async () => {
 
   // ❌ CITY NOT MATCHED WITH DROPDOWN
   if (!matchedOption) {
-    showToast('Enter valid postal code', 'error');
+    showToast(t('valid_city'), 'error');
 
     setFormValues((prev: any) => ({
       ...prev,

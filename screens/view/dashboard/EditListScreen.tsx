@@ -631,7 +631,7 @@ const handlePreview = async (latestFormValues: any) => {
           : null;
       
         if (!postcodeValue || !selectedCityId) {
-          showToast('Enter valid postal code', 'error');
+          showToast(t('valid_city'), 'error');
           return;
         }
       
@@ -639,7 +639,7 @@ const handlePreview = async (latestFormValues: any) => {
         const location = await getCityFromPostalCode(postcodeValue);
       
         if (!location || !location.city) {
-          showToast('Enter valid postal code', 'error');
+          showToast(t('valid_city'), 'error');
           return;
         }
       
@@ -1303,7 +1303,7 @@ const handlePreview = async (latestFormValues: any) => {
         
           // ❌ NO CITY FROM API
           if (!cityName) {
-            showToast('Enter valid postal code', 'error');
+            showToast(t('valid_city'), 'error');
         
             setFormValues((prev: any) => ({
               ...prev,
@@ -1324,7 +1324,7 @@ const handlePreview = async (latestFormValues: any) => {
         
           // ❌ CITY NOT MATCHED WITH DROPDOWN
           if (!matchedOption) {
-            showToast('Enter valid postal code', 'error');
+            showToast(t('valid_city'), 'error');
         
             setFormValues((prev: any) => ({
               ...prev,
