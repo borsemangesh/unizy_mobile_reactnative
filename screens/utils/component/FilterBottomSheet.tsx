@@ -66,10 +66,8 @@ const FilterBottomSheet = ({
   const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
 
   const [distanceLow, setDistanceLow] = useState(0);
-  const [distanceHigh, setDistanceHigh] = useState(200);
+  const [distanceHigh, setDistanceHigh] = useState(1000);
 
-  
-  
   const [isPriceChanged, setIsPriceChanged] = useState(false);
   const [isDistanceChanged, setIsDistanceChanged] = useState(false);
 
@@ -265,23 +263,23 @@ const FilterBottomSheet = ({
   // };
 
   const handleClearFilters = () => {
-  setDropdownSelections({});
+    setDropdownSelections({});
 
-  setPriceRange(defaultPriceRange);
-  setSliderLow(defaultPriceRange.min);
-  setSliderHigh(defaultPriceRange.max);
+    setPriceRange(defaultPriceRange);
+    setSliderLow(defaultPriceRange.min);
+    setSliderHigh(defaultPriceRange.max);
 
-  setDistanceLow(0);
-  setDistanceHigh(200);
+    setDistanceLow(0);
+    setDistanceHigh(1000);
 
-  setIsPriceChanged(false);     // ✅ IMPORTANT
-  setIsDistanceChanged(false);  // ✅ IMPORTANT
+    setIsPriceChanged(false); // ✅ IMPORTANT
+    setIsDistanceChanged(false); // ✅ IMPORTANT
 
-  setIsKm(true);
-  setPostcode('');
-  setOtherInputs({});
-  setDateSelections({});
-};
+    setIsKm(true);
+    setPostcode('');
+    setOtherInputs({});
+    setDateSelections({});
+  };
 
   const modelClose = () => {
     onClose();
@@ -337,9 +335,11 @@ const FilterBottomSheet = ({
   const [isKm, setIsKm] = useState(true);
 
   // Convert values dynamically
-  const convertValue = (value:any) => {
+  const convertValue = (value: any) => {
     return isKm ? value : (value * 0.621371).toFixed(1);
   };
+  const kmToMiles = (km: number) => km * 0.621371;
+  const milesToKm = (mi: number) => mi / 0.621371;
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -510,85 +510,93 @@ const FilterBottomSheet = ({
                             /> 
                             */}
             <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between',alignItems: 'stretch'}}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'stretch',
+              }}
             >
-              
-                {/* MIN INPUT */}
-                <View style={{flexDirection: 'column',flex: 1,paddingRight: 10}}>
+              {/* MIN INPUT */}
+              <View
+                style={{ flexDirection: 'column', flex: 1, paddingRight: 10 }}
+              >
                 <Text
                   allowFontScaling={false}
-                  style={[styles.distanceText,{  paddingBottom: 6
-                    ,paddingStart: 10}]}
+                  style={[
+                    styles.distanceText,
+                    { paddingBottom: 6, paddingStart: 10 },
+                  ]}
                 >
                   {t('min')}
                 </Text>
-              <TextInput
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  {width: '100%' }
-               
-                ]}
-                keyboardType="numeric"
-                placeholder="Min"
-                placeholderTextColor="#aaa"
-                selectionColor={'#FFFFFF'}
-                cursorColor={'#FFFFFF'}
-                value={String(sliderLow)}
-                onChangeText={text => {
-                  let value = parseInt(text) || 0;
+                <TextInput
+                  style={[
+                    styles.login_container,
+                    styles.personalEmailID_TextInput,
+                    { width: '100%' },
+                  ]}
+                  keyboardType="numeric"
+                  placeholder="Min"
+                  placeholderTextColor="#aaa"
+                  selectionColor={'#FFFFFF'}
+                  cursorColor={'#FFFFFF'}
+                  value={String(sliderLow)}
+                  onChangeText={text => {
+                    let value = parseInt(text) || 0;
 
-                  if (value > sliderHigh) return;
+                    if (value > sliderHigh) return;
 
-                  setSliderLow(value);
-                  setPriceRange({ min: value, max: sliderHigh });
-                  setIsPriceChanged(true);
-                }}
-              />
+                    setSliderLow(value);
+                    setPriceRange({ min: value, max: sliderHigh });
+                    setIsPriceChanged(true);
+                  }}
+                />
               </View>
-              <View style={{flexDirection: 'column' ,flex: 1,}}>
-              <Text
+              <View style={{ flexDirection: 'column', flex: 1 }}>
+                <Text
                   allowFontScaling={false}
-                  style={[styles.distanceText,{  paddingBottom: 6
-                    ,paddingStart: 10}]}
+                  style={[
+                    styles.distanceText,
+                    { paddingBottom: 6, paddingStart: 10 },
+                  ]}
                 >
                   {t('max')}
                 </Text>
-              {/* MAX INPUT */}
-              <TextInput
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  {width: '100%' }
-                ]}
-                keyboardType="numeric"
-                placeholder="Max"
-                selectionColor={'#FFFFFF'}
-                cursorColor={'#FFFFFF'}
-                placeholderTextColor="#aaa"
-                value={String(sliderHigh)}
-                onChangeText={text => {
-                  let value = parseInt(text);
+                {/* MAX INPUT */}
+                <TextInput
+                  style={[
+                    styles.login_container,
+                    styles.personalEmailID_TextInput,
+                    { width: '100%' },
+                  ]}
+                  keyboardType="numeric"
+                  placeholder="Max"
+                  selectionColor={'#FFFFFF'}
+                  cursorColor={'#FFFFFF'}
+                  placeholderTextColor="#aaa"
+                  value={String(sliderHigh)}
+                  onChangeText={text => {
+                    let value = parseInt(text);
 
-                  if (isNaN(value)) {
-                    setSliderHigh(0);
-                    return;
-                  }
+                    if (isNaN(value)) {
+                      setSliderHigh(0);
+                      return;
+                    }
 
-                  // Clamp within allowed range
-                  const minLimit = sliderLow;
-                  const maxLimit = currentFilter?.maxvalue ?? 100;
+                    // Clamp within allowed range
+                    const minLimit = sliderLow;
+                    const maxLimit = currentFilter?.maxvalue ?? 100;
 
-                  let finalValue = Math.min(
-                    Math.max(value, minLimit),
-                    maxLimit,
-                  );
+                    let finalValue = Math.min(
+                      Math.max(value, minLimit),
+                      maxLimit,
+                    );
 
-                  setSliderHigh(finalValue);
-                  setPriceRange({ min: sliderLow, max: finalValue });
-                  setIsPriceChanged(true);
-                }}
-              />
+                    setSliderHigh(finalValue);
+                    setPriceRange({ min: sliderLow, max: finalValue });
+                    setIsPriceChanged(true);
+                  }}
+                />
               </View>
             </View>
           </View>
@@ -644,63 +652,65 @@ const FilterBottomSheet = ({
       currentFilter.field_type?.toLowerCase() === 'text' &&
       currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
-     console.log('currentFilter', currentFilter);
-          return (
-            <View style={{ paddingTop: 10 }}>
-              <View style={styles.container}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignContent: 'center',
-                  }}
-                >
-                  {/* 🔁 KM / Miles Toggle */}
-                  <Text style={{ color: 'white', marginBottom: 10 }}>Distance</Text>
-                  <View>
-                    <View style={styles.toggleContainer}>
-                      <TouchableOpacity
-                        style={[styles.toggleBtn, isKm && styles.active]}
-                        onPress={() => setIsKm(true)}
-                      >
-                        <Text
-                          style={[
-                            styles.toggleText,
-                            { color: isKm ? '#FFF' : '#000' },
-                          ]}
-                        >
-                          KM
-                        </Text>
-                      </TouchableOpacity>
-    
-                      <TouchableOpacity
-                        style={[styles.toggleBtn, !isKm && styles.active]}
-                        onPress={() => setIsKm(false)}
-                      >
-                        <Text
-                          style={[
-                            styles.toggleText,
-                            { color: isKm ? '#000' : '#fff' },
-                          ]}
-                        >
-                          Miles
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={styles.rangeText}>
-                      {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
-                      {isKm ? 'km' : 'mi'}
+      console.log('currentFilter', currentFilter);
+      return (
+        <View style={{ paddingTop: 10 }}>
+          <View style={styles.container}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+              }}
+            >
+              {/* 🔁 KM / Miles Toggle */}
+              <Text style={{ color: 'white', marginBottom: 10 }}>Distance</Text>
+              <View>
+                <View style={styles.toggleContainer}>
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, isKm && styles.active]}
+                    onPress={() => setIsKm(true)}
+                  >
+                    <Text
+                      style={[
+                        styles.toggleText,
+                        { color: isKm ? '#FFF' : '#000' },
+                      ]}
+                    >
+                      KM
                     </Text>
-                  </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, !isKm && styles.active]}
+                    onPress={() => setIsKm(false)}
+                  >
+                    <Text
+                      style={[
+                        styles.toggleText,
+                        { color: isKm ? '#000' : '#fff' },
+                      ]}
+                    >
+                      Miles
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-    
-                {/* 🎚 Multi Slider */}
-    
-                <MultiSlider
+                <Text style={styles.rangeText}>
+                  {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
+                  {isKm ? 'km' : 'mi'} */}
+                  0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
+                  {isKm ? 'km' : 'mi'}
+                </Text>
+              </View>
+            </View>
+
+            {/* 🎚 Multi Slider */}
+
+            {/* <MultiSlider
                   sliderLength={SCREEN_WIDTH / 2 - 10}
                   min={currentFilter?.minvalue ?? 0}
-                  max={currentFilter?.maxvalue ?? 200}
+                  max={currentFilter?.maxvalue ?? 1000}
                   step={1}
                   values={[distanceLow, distanceHigh]}
                   onValuesChange={values => {
@@ -724,10 +734,40 @@ const FilterBottomSheet = ({
                     borderRadius: 11,
                     backgroundColor: '#fff',
                   }}
-                />
-              </View>
-    
-              {/* <TextInput
+                /> */}
+            <MultiSlider
+              sliderLength={SCREEN_WIDTH / 2 - 10}
+              min={0}
+              max={isKm ? 1000 : kmToMiles(1000)} // ✅ dynamic max
+              step={1}
+              values={[
+                0,
+                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ convert for UI
+              ]}
+              onValuesChange={values => {
+                const [, high] = values;
+
+                // ✅ Always store in KM internally
+                const valueInKm = isKm ? high : milesToKm(high);
+
+                setDistanceLow(0);
+                setDistanceHigh(Math.round(valueInKm));
+                setIsDistanceChanged(true);
+              }}
+              allowOverlap={false}
+              snapped
+              selectedStyle={{ backgroundColor: '#fff' }}
+              unselectedStyle={{ backgroundColor: '#888' }}
+              trackStyle={{ height: 4, borderRadius: 2 }}
+              markerStyle={{
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: '#fff',
+              }}
+            />
+          </View>
+
+          {/* <TextInput
                 style={[
                   styles.login_container,
                   styles.personalEmailID_TextInput,
@@ -745,9 +785,9 @@ const FilterBottomSheet = ({
                   setPostcode(filteredText);
                 }}
               /> */}
-            </View>
-          );
-      
+        </View>
+      );
+
       // return (
       //   <View style={{ paddingTop: 10 }}>
       //     <Text style={{ color: 'white', marginBottom: 10 }}>
@@ -862,18 +902,20 @@ const FilterBottomSheet = ({
         //     };
         //   }
         // }
-
-         else if (
+        else if (
           f.field_type?.toLowerCase() === 'text' &&
-          f.field_name?.toLowerCase().includes('postcode') && isDistanceChanged
+          f.field_name?.toLowerCase().includes('postcode') &&
+          isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
+            const min = isKm ? distanceLow : kmToMiles(distanceLow);
+            const max = isKm ? distanceHigh : kmToMiles(distanceHigh);
             return {
               id: f.id,
               field_name: f.field_name,
               field_type: f.field_type,
               alias_name: f.alias_name,
-              options: [distanceLow, distanceHigh, isKm ? 'km' : 'mi'],
+              options: [Math.round(min), Math.round(max), isKm ? 'km' : 'mi'],
             };
           }
         }
@@ -1146,17 +1188,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     fontWeight: '600',
-    fontStyle: 'normal', 
+    fontStyle: 'normal',
   },
   container: {
     padding: 16,
   },
 
   toggleContainer: {
-    flexDirection: "row",
-    alignSelf: "center",
+    flexDirection: 'row',
+    alignSelf: 'center',
     marginBottom: 10,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     borderRadius: 20,
   },
 
@@ -1167,7 +1209,7 @@ const styles = StyleSheet.create({
   },
 
   active: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
 
   toggleText: {
@@ -1179,7 +1221,7 @@ const styles = StyleSheet.create({
   },
 
   rangeText: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 10,
 
     color: 'rgba(255, 255, 255, 0.53)',
@@ -1842,18 +1884,18 @@ export default FilterBottomSheet;
 //             {/* <MultiSlider
 //                         values={[sliderLow, sliderHigh]}
 //                         sliderLength={SCREEN_WIDTH/2 - 10}
-           
+
 //                         min={currentFilter?.minvalue ?? 0}
 //                         max={currentFilter?.maxvalue ?? 100}
 //                         step={1}
-                        
+
 //                         onValuesChange={(values) => {
 //                           const [low, high] = values;
 //                           setSliderLow(low);
 //                           setSliderHigh(high);
 //                           setPriceRange({ min: low, max: high })
 //                         }}
-           
+
 //                         selectedStyle={{
 //                           backgroundColor: '#fff',
 //                         }}
@@ -1873,7 +1915,7 @@ export default FilterBottomSheet;
 //                           borderRadius: 10,
 //                           backgroundColor: '#fff',
 //                         }}
-//                             /> 
+//                             />
 //                             */}
 //             <View
 //               style={{ flexDirection: 'row',flex: 2, justifyContent: 'space-between' }}
@@ -1912,7 +1954,7 @@ export default FilterBottomSheet;
 //                 }}
 //               />
 //               </View>
-              
+
 //               <View style={{flex: 1,width: '100%'}}>
 //               <Text
 //                   allowFontScaling={false}

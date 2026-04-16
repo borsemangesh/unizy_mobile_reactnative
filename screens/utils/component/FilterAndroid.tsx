@@ -66,12 +66,10 @@ const FilterAndroid = ({
   const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
 
   const [distanceLow, setDistanceLow] = useState(0);
-  const [distanceHigh, setDistanceHigh] = useState(200);
+  const [distanceHigh, setDistanceHigh] = useState(1000);
 
-
-
-const [isPriceChanged, setIsPriceChanged] = useState(false);
-const [isDistanceChanged, setIsDistanceChanged] = useState(false);
+  const [isPriceChanged, setIsPriceChanged] = useState(false);
+  const [isDistanceChanged, setIsDistanceChanged] = useState(false);
 
   const fetchFilters = async () => {
     try {
@@ -263,23 +261,23 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
   //   setOtherInputs({});
   // };
   const handleClearFilters = () => {
-  setDropdownSelections({});
+    setDropdownSelections({});
 
-  setPriceRange(defaultPriceRange);
-  setSliderLow(defaultPriceRange.min);
-  setSliderHigh(defaultPriceRange.max);
+    setPriceRange(defaultPriceRange);
+    setSliderLow(defaultPriceRange.min);
+    setSliderHigh(defaultPriceRange.max);
 
-  setDistanceLow(0);
-  setDistanceHigh(200);
+    setDistanceLow(0);
+    setDistanceHigh(1000);
 
-  setIsPriceChanged(false);     // ✅ IMPORTANT
-  setIsDistanceChanged(false);  // ✅ IMPORTANT
+    setIsPriceChanged(false); // ✅ IMPORTANT
+    setIsDistanceChanged(false); // ✅ IMPORTANT
 
-  setIsKm(true);
-  setPostcode('');
-  setOtherInputs({});
-  setDateSelections({});
-};
+    setIsKm(true);
+    setPostcode('');
+    setOtherInputs({});
+    setDateSelections({});
+  };
 
   const handleClose = () => {
     if (initialFilters?.filters?.length > 0) {
@@ -324,23 +322,19 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
 
   const [dateSelections, setDateSelections] = useState<
     Record<number, { startDate?: Date; endDate?: Date }>
-    >({});
-  
-  
-  
-  
-  
-  
-  
+  >({});
+
   //   const [sliderLow, setSliderLow] = useState(0);
   // const [sliderHigh, setSliderHigh] = useState(50);
   const [isKm, setIsKm] = useState(true);
 
   // Convert values dynamically
-  const convertValue = (value:any) => {
+  const convertValue = (value: any) => {
     return isKm ? value : (value * 0.621371).toFixed(1);
   };
 
+  const kmToMiles = (km: number) => km * 0.621371;
+  const milesToKm = (mi: number) => mi / 0.621371;
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -512,90 +506,94 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
                   /> 
                   */}
             <View
-              style={{ flexDirection: 'row',flex: 2, justifyContent: 'space-between' }}
+              style={{
+                flexDirection: 'row',
+                flex: 2,
+                justifyContent: 'space-between',
+              }}
             >
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 {/* MIN INPUT */}
                 <Text
                   allowFontScaling={false}
                   style={{
-                    color: 'rgba(255, 255, 255, 0.73)'
-                    ,paddingBottom: 6
-                    ,paddingStart: 10
+                    color: 'rgba(255, 255, 255, 0.73)',
+                    paddingBottom: 6,
+                    paddingStart: 10,
                   }}
                 >
                   {t('min')}
                 </Text>
-              <TextInput
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  {width: '94%'}
-                ]}
-                keyboardType="numeric"
-                placeholder="Min"
-                placeholderTextColor="#aaa"
-                selectionColor={'#FFFFFF'}
-                cursorColor={'#FFFFFF'}
-                value={String(sliderLow)}
-                onChangeText={text => {
-                  let value = parseInt(text) || 0;
+                <TextInput
+                  style={[
+                    styles.login_container,
+                    styles.personalEmailID_TextInput,
+                    { width: '94%' },
+                  ]}
+                  keyboardType="numeric"
+                  placeholder="Min"
+                  placeholderTextColor="#aaa"
+                  selectionColor={'#FFFFFF'}
+                  cursorColor={'#FFFFFF'}
+                  value={String(sliderLow)}
+                  onChangeText={text => {
+                    let value = parseInt(text) || 0;
 
-                  if (value > sliderHigh) return;
+                    if (value > sliderHigh) return;
 
-                  setSliderLow(value);
-                  setPriceRange({ min: value, max: sliderHigh });
-                  setIsPriceChanged(true);
-                }}
-              />
+                    setSliderLow(value);
+                    setPriceRange({ min: value, max: sliderHigh });
+                    setIsPriceChanged(true);
+                  }}
+                />
               </View>
-              
-              <View style={{flex: 1,width: '100%'}}>
-              <Text
+
+              <View style={{ flex: 1, width: '100%' }}>
+                <Text
                   allowFontScaling={false}
                   style={{
-                    color: 'rgba(255, 255, 255, 0.73)'
-                    ,paddingBottom: 6
-                    ,paddingStart: 10
+                    color: 'rgba(255, 255, 255, 0.73)',
+                    paddingBottom: 6,
+                    paddingStart: 10,
                   }}
                 >
                   {t('max')}
                 </Text>
-              {/* MAX INPUT */}
-              <TextInput
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  {width: '98%'}
-                ]}
-                keyboardType="numeric"
-                placeholder="Max"
-                selectionColor={'#FFFFFF'}
-                cursorColor={'#FFFFFF'}
-                placeholderTextColor="#aaa"
-                value={String(sliderHigh)}
-                onChangeText={text => {
-                  let value = parseInt(text);
+                {/* MAX INPUT */}
+                <TextInput
+                  style={[
+                    styles.login_container,
+                    styles.personalEmailID_TextInput,
+                    { width: '98%' },
+                  ]}
+                  keyboardType="numeric"
+                  placeholder="Max"
+                  selectionColor={'#FFFFFF'}
+                  cursorColor={'#FFFFFF'}
+                  placeholderTextColor="#aaa"
+                  value={String(sliderHigh)}
+                  onChangeText={text => {
+                    let value = parseInt(text);
 
-                  if (isNaN(value)) {
-                    setSliderHigh(0);
-                    return;
-                  }
+                    if (isNaN(value)) {
+                      setSliderHigh(0);
+                      return;
+                    }
 
-                  // Clamp within allowed range
-                  const minLimit = sliderLow;
-                  const maxLimit = currentFilter?.maxvalue ?? 100;
+                    // Clamp within allowed range
+                    const minLimit = sliderLow;
+                    const maxLimit = currentFilter?.maxvalue ?? 100;
 
-                  let finalValue = Math.min(
-                    Math.max(value, minLimit),
-                    maxLimit,
-                  );
+                    let finalValue = Math.min(
+                      Math.max(value, minLimit),
+                      maxLimit,
+                    );
 
-                  setSliderHigh(finalValue);
-                  setPriceRange({ min: sliderLow, max: finalValue });
-                  setIsPriceChanged(true);
-                }}
-              />
+                    setSliderHigh(finalValue);
+                    setPriceRange({ min: sliderLow, max: finalValue });
+                    setIsPriceChanged(true);
+                  }}
+                />
               </View>
             </View>
           </View>
@@ -696,7 +694,9 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.rangeText}>
-                  {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
+                  {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
+                  {isKm ? 'km' : 'mi'} */}
+                  0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
                   {isKm ? 'km' : 'mi'}
                 </Text>
               </View>
@@ -733,33 +733,35 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
               }}
             /> */}
             <MultiSlider
-  sliderLength={SCREEN_WIDTH / 2 - 10}
-  min={0}
-  max={200}
-  step={1}
+              sliderLength={SCREEN_WIDTH / 2 - 10}
+              min={0}
+              max={isKm ? 1000 : kmToMiles(1000)} // ✅ dynamic max
+              step={1}
+              values={[
+                0,
+                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ convert for UI
+              ]}
+              onValuesChange={values => {
+                const [, high] = values;
 
-  values={[0, distanceHigh]} // 👈 FIXED MIN
+                // ✅ Always store in KM internally
+                const valueInKm = isKm ? high : milesToKm(high);
 
-  onValuesChange={(values) => {
-    const [, high] = values;
-
-    setDistanceLow(0);       // 👈 ALWAYS 0
-    setDistanceHigh(high);   // 👈 ONLY CHANGE MAX
-    setIsDistanceChanged(true);
-  }}
-
-  allowOverlap={false}
-  snapped
-
-  selectedStyle={{ backgroundColor: '#fff' }}
-  unselectedStyle={{ backgroundColor: '#888' }}
-  trackStyle={{ height: 4, borderRadius: 2 }}
-  markerStyle={{
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#fff',
-  }}
-/>
+                setDistanceLow(0);
+                setDistanceHigh(Math.round(valueInKm));
+                setIsDistanceChanged(true);
+              }}
+              allowOverlap={false}
+              snapped
+              selectedStyle={{ backgroundColor: '#fff' }}
+              unselectedStyle={{ backgroundColor: '#888' }}
+              trackStyle={{ height: 4, borderRadius: 2 }}
+              markerStyle={{
+                height: 22,
+                borderRadius: 11,
+                backgroundColor: '#fff',
+              }}
+            />
           </View>
 
           {/* <TextInput
@@ -870,15 +872,18 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
         // }
         else if (
           f.field_type?.toLowerCase() === 'text' &&
-          f.field_name?.toLowerCase().includes('postcode') && isDistanceChanged
+          f.field_name?.toLowerCase().includes('postcode') &&
+          isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
+            const min = isKm ? distanceLow : kmToMiles(distanceLow);
+            const max = isKm ? distanceHigh : kmToMiles(distanceHigh);
             return {
               id: f.id,
               field_name: f.field_name,
               field_type: f.field_type,
               alias_name: f.alias_name,
-              options: [distanceLow, distanceHigh, isKm ? 'km' : 'mi'],
+              options: [Math.round(min), Math.round(max), isKm ? 'km' : 'mi'],
             };
           }
         }
@@ -1106,16 +1111,15 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
 };
 
 const styles = StyleSheet.create({
-
   container: {
     padding: 16,
   },
 
   toggleContainer: {
-    flexDirection: "row",
-    alignSelf: "center",
+    flexDirection: 'row',
+    alignSelf: 'center',
     marginBottom: 10,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     borderRadius: 20,
   },
 
@@ -1126,20 +1130,19 @@ const styles = StyleSheet.create({
   },
 
   active: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
 
   toggleText: {
-   
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
   rangeText: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 10,
     fontSize: 16,
-    fontWeight: "bold",
-    color:'#fff'
+    fontWeight: 'bold',
+    color: '#fff',
   },
   login_container: {
     width: '45%',
