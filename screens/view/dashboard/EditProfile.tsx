@@ -2408,7 +2408,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
     // backgroundColor: 'red',
-    height: Dimensions.get('window').height * 0.69,
+    height: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.69 : Dimensions.get('window').height * 0.69 ,
     gap: 12,
   },
   inputGroup: {
