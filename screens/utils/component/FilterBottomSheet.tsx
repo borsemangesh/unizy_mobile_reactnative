@@ -597,7 +597,7 @@ const FilterBottomSheet = ({
       const selected = dateSelections[currentFilter.id] || {};
 
       return (
-        <View style={{ paddingTop: 10 }}>
+        <View style={{ paddingTop: 10,zIndex: 999, }}>
           {/* START DATE */}
           <TouchableOpacity
             style={[
