@@ -1244,14 +1244,39 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             try {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-              if (categoryid === Number(4) && accomodation_amount >0) {
-                return `${t('update')} for £${accomodation_amount.toFixed(2)}`;
+              if (categoryid === Number(4) && accomodation_amount > 0) {
+                if (isFeatured) {
+                  return `${t('update')} for £${accomodation_amount.toFixed(2)}`;
+                } else { 
+                  return t('update');
+                }
+                
               }
               return t('update');
             } catch (e) {
 
               return 'Update';
             }
+            //    try {
+            //   const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+            //   const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+            //   if (categoryid === Number(4)  ) {
+            //     if (isFeatured && accomodation_amount > 0) {
+            //          return `${t('Update')} for £${(accomodation_amount + maxCap1).toFixed(2)}`;;
+            //     } else { 
+            //       if(!isFeatured  && accomodation_amount > 0) {
+            //         return `${t('Update')} for £${accomodation_amount.toFixed(2)}`;
+            //       }
+            //     }
+                
+
+            //   }
+              
+            //   return t('Update');
+            // } catch (e) {
+            //   // console.log('Error parsing storedForm:', e);
+            //   return 'Update';
+            // }
           })()} />
 
         <Modal
