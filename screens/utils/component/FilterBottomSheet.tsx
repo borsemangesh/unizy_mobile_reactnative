@@ -252,16 +252,6 @@ const FilterBottomSheet = ({
     });
   };
 
-  // const handleClearFilters = () => {
-  //   setDropdownSelections({});
-  //   setPriceRange(defaultPriceRange);
-  //   setSliderLow(defaultPriceRange.min);
-  //   setSliderHigh(defaultPriceRange.max);
-  //   setDateSelections({});
-  //   setPostcode('');
-  //   setOtherInputs({});
-  // };
-
   const handleClearFilters = () => {
     setDropdownSelections({});
 
@@ -279,6 +269,7 @@ const FilterBottomSheet = ({
     setPostcode('');
     setOtherInputs({});
     setDateSelections({});
+    setShowDatePicker(false);
   };
 
   const modelClose = () => {
@@ -1165,8 +1156,8 @@ const FilterBottomSheet = ({
                     minimumDate={
                       activeDateField.type === 'end'
                         ? dateSelections[activeDateField.param.id]?.startDate ??
-                          new Date()
-                        : new Date()
+                          undefined
+                        : undefined
                     }
                     onChange={(event, selectedDate) => {
                       if (selectedDate) setTempDate(selectedDate);
