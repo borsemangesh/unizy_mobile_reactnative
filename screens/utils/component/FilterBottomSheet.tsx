@@ -337,7 +337,7 @@ const FilterBottomSheet = ({
 
     if (currentFilter.field_type === 'dropdown') {
       return (
-        <ScrollView style={{ flexGrow: 0, paddingTop: 10 }}>
+        <ScrollView style={{ flexGrow: 0, paddingTop: 10 ,zIndex:1000}}>
           {currentFilter.options.map((opt: any) => {
             const isMultiple = currentFilter.ismultilple;
             const selectedValues = dropdownSelections[currentFilter.id] || [];
