@@ -1115,8 +1115,15 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
               if (categoryid === Number(4) && accomodation_amount > 0) {
-                return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
+                if (isFeatured) {
+                     return `${t('list')} for £${(accomodation_amount + commissionAmount1).toFixed(2)}`;;
+                } else { 
+                   return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
+                }
+                
+
               }
+              
               return t('list');
             } catch (e) {
               // console.log('Error parsing storedForm:', e);
