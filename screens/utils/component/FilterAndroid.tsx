@@ -1104,36 +1104,37 @@ const FilterAndroid = ({
             //   }}
             // />
             <DateTimePicker
-  value={tempDate}
-  mode="date"
-  display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
-  themeVariant="light"
-  minimumDate={
-    activeDateField.type === 'end'
-      ? dateSelections[activeDateField.param.id]?.startDate || undefined
-      : undefined // ✅ No restriction for start date
-  }
-  onChange={(event, selectedDate) => {
-    if (event.type === 'set' && selectedDate) {
-      const fieldId = activeDateField.param.id;
+              value={tempDate}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
+              themeVariant="light"
+              minimumDate={
+                activeDateField.type === 'end'
+                  ? dateSelections[activeDateField.param.id]?.startDate ||
+                    undefined
+                  : undefined // ✅ No restriction for start date
+              }
+              onChange={(event, selectedDate) => {
+                if (event.type === 'set' && selectedDate) {
+                  const fieldId = activeDateField.param.id;
 
-      setDateSelections(prev => {
-        const existing = prev[fieldId] || {};
+                  setDateSelections(prev => {
+                    const existing = prev[fieldId] || {};
 
-        return {
-          ...prev,
-          [fieldId]: {
-            ...existing,
-            [activeDateField.type === 'start'
-              ? 'startDate'
-              : 'endDate']: selectedDate,
-          },
-        };
-      });
-    }
-    setShowDatePicker(false);
-  }}
-/>
+                    return {
+                      ...prev,
+                      [fieldId]: {
+                        ...existing,
+                        [activeDateField.type === 'start'
+                          ? 'startDate'
+                          : 'endDate']: selectedDate,
+                      },
+                    };
+                  });
+                }
+                setShowDatePicker(false);
+              }}
+            />
           )}
         </View>
       </Modal>
