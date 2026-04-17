@@ -1885,7 +1885,7 @@ typingTimeout.current = setTimeout(async () => {
             </View>
 
             {/* Only for NON-4 products */}
-            {productId !== 4 && (
+            {/* {productId !== 4 && ( */}
               <View style={styles.textbg}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
@@ -1909,7 +1909,7 @@ typingTimeout.current = setTimeout(async () => {
                   </Text>
                 </View>
               </View>
-            )}
+           {/* )}  */}
           </View>
         );
 
@@ -2270,7 +2270,7 @@ typingTimeout.current = setTimeout(async () => {
                   <View>{renderField(featuredField)}</View>
                 )}
 
-                {productId === 4 && (
+                 {productId === 4 && (
                       <View style={[styles.textbg, { marginTop: 12 }]}>
                         <Image
                           source={IMAGE_URLS.INFO_ICON}
@@ -2289,8 +2289,33 @@ typingTimeout.current = setTimeout(async () => {
                             {t('acc_message')}
                           </Text>
                         </View>
-                      </View>
-                )}
+                    </View>
+              //       <View  style={styles.featurecard}>
+              // <View style={styles.textbg}>
+              //   <Image
+              //     source={require('../../../assets/images/info_icon.png')}
+              //     style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              //   />
+              //   <View style={{ flex: 1 }}>
+              //     <Text allowFontScaling={false} style={styles.importantText1}>
+              //       {t('important')}
+              //     </Text>
+
+              //     <Text allowFontScaling={false} style={styles.importantText}>
+              //       {t('featured_listing_note_1')}{' '}
+              //       <Text style={styles.importantText1}>
+              //         {Math.trunc(featureFee)}%
+              //       </Text>{' '}
+              //       {t('featured_listing_fee_percentage')} ({t('capped')}{' '}
+              //       <Text style={styles.importantText1}>
+              //         £{Math.trunc(maxFeatureCap)}
+              //       </Text>
+              //       ) {t('featured_listing_fee_cap')}
+              //     </Text>
+              //   </View>
+              //         </View>
+              //         </View>
+                )} 
 
 
 
