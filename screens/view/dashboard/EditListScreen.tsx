@@ -1752,7 +1752,7 @@ const handlePreview = async (latestFormValues: any) => {
               />
             </View>
 
-            {productId !== 4 && (
+            {/* {productId !== 4 && ( */}
               <View style={styles.textbg}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
@@ -1776,7 +1776,7 @@ const handlePreview = async (latestFormValues: any) => {
                   </Text>
                 </View>
               </View>
-            )}
+            {/* )} */}
           </View>
         );
       }
