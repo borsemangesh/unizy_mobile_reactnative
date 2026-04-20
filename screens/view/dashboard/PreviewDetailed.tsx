@@ -665,6 +665,22 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
 
 
+  const price = parseFloat(String(getValueByAlias(storedForm, 'price'))) || 0;
+
+const accommodationAmount = parseFloat(userMeta?.category?.accommodation_amount ?? '0'); // 12
+const featurePercent = parseFloat(userMeta?.category?.feature_fee ?? '0'); // 12%
+
+// Step 1: Calculate % fee
+const percentFee = price * (featurePercent / 100);
+
+// Step 2: Apply cap
+const applicableFee = Math.min(percentFee, maxCap1);
+
+// Step 3: Final price
+const finalPrice = accommodationAmount + applicableFee;
+
+
+
 
   return (
     <ImageBackground
@@ -1108,6 +1124,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
 
+
         <Button
           onPress={handleListPress}
           title={(() => {
@@ -1115,10 +1132,10 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
               if (categoryid === Number(4)  ) {
-                if (isFeatured && accomodation_amount > 0) {
-                     return `${t('list')} for £${(accomodation_amount + maxCap1).toFixed(2)}`;;
+                if (isFeatured && finalPrice> 0 ) {
+                     return `${t('list')} for £${(finalPrice).toFixed(2)}`;;
                 } else { 
-                  if(!isFeatured  && accomodation_amount > 0) {
+                  if(!isFeatured && accomodation_amount> 0) {
                     return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
                   }
                 }
@@ -1687,3 +1704,1692 @@ const styles = StyleSheet.create({
 });
 
 export default PreviewDetailed;
+// import {
+//   View,
+//   Text,
+//   ImageBackground,
+//   Platform,
+//   Image,
+//   TouchableOpacity,
+//   StyleSheet,
+//   ScrollView,
+//   Animated,
+//   Modal,
+//   Dimensions,
+//   FlatList,
+//   SafeAreaView,
+//   StatusBar,
+// } from 'react-native';
+// import { Key, useEffect, useRef, useState } from 'react';
+// import { BlurView } from '@react-native-community/blur';
+// import { MAIN_URL } from '../../utils/APIConstant';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import { CommonActions } from '@react-navigation/native';
+// import Button from '../../utils/component/Button';
+// import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+// import Loader from '../../utils/component/Loader';
+
+// import AnimatedReanimated, {
+//   useSharedValue,
+//   useAnimatedScrollHandler,
+//   useAnimatedStyle,
+//   interpolate,
+//   interpolateColor,
+//   useDerivedValue,
+// } from 'react-native-reanimated';
+// import LinearGradient from 'react-native-linear-gradient';
+// import MaskedView from '@react-native-masked-view/masked-view';
+// import { Constant } from '../../utils/Constant';
+// import { Ellipse } from 'react-native-svg';
+// import { useTranslation } from 'react-i18next';
+// import i18n from '../../../localization/i18n';
+// import dayjs from 'dayjs';
+
+// import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+// import COMMONSTYLE from '../../utils/CommonStyle';
+// import { IMAGE_URLS } from '../../utils/Style';
+
+
+// type previewDetailsProps = {
+//   navigation: any;
+// };
+
+// const { width } = Dimensions.get('window');
+
+// const profileImg = require('../../../assets/images/user.jpg');
+
+// const itemOptions = [
+//   { id: 1, option_name: 'New' },
+//   { id: 2, option_name: 'Like new' },
+//   { id: 3, option_name: 'Used' },
+// ];
+
+
+// const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
+//   const [showPopup, setShowPopup] = useState(false);
+//   const closePopup = () => setShowPopup(false);
+//   const scrollY1 = new Animated.Value(0);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const [storedForm, setStoredForm] = useState<any | null>(null);
+//   const screenWidth = Dimensions.get('window').width;
+//   const [activeIndex, setActiveIndex] = useState(0);
+//   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+//   const insets = useSafeAreaInsets();
+//   const [categoryid, setcategoryid] = useState(0);
+//   const { height } = Dimensions.get('window');
+//   let isSubmitting = false;
+//   const [fields, setFields] = useState<any[]>([]);
+//   const today = new Date();
+
+//   const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
+//     .toString()
+//     .padStart(2, '0')}-${today.getFullYear()}`;
+
+//   interface Category {
+//     id: number;
+//     name: string;
+//     description: string | null;
+//     isactive: boolean;
+//     logo: string | null;
+//     commission: string | null;
+//     max_cappund: string | null;
+//     feature_fee: string | null
+//     max_feature_cap: | null,
+//     accommodation_amount: | null
+//   }
+
+//   interface UserMeta {
+//     firstname: string | null;
+//     lastname: string | null;
+//     profile: string | null;
+//     student_email: string | null;
+//     university_name: string | null
+//     category?: Category | null;
+//     city?: string | null;
+
+//   }
+
+//   const flatListRef = useRef(null);
+
+//   useEffect(() => {
+//     const fetchStoredData = async () => {
+//       try {
+//         const storedData = await AsyncStorage.getItem('formData');
+//         if (storedData) {
+//           const parsedData = JSON.parse(storedData);
+
+//           setStoredForm(parsedData);
+//         } else {
+  
+//         }
+//       } catch (error) {
+ 
+//       }
+//     };
+
+//     fetchStoredData();
+//   }, []);
+
+//   useEffect(() => {
+//     const loadUserMeta = async () => {
+//       try {
+//         const metaStr = await AsyncStorage.getItem('userMeta');
+//         if (metaStr) {
+//           const meta: UserMeta = JSON.parse(metaStr);
+//           setUserMeta(meta);
+//         }
+//       } catch (error) {
+
+//       }
+//     };
+
+//     loadUserMeta();
+//   }, []);
+
+
+//   const { t } = useTranslation();
+
+
+//   type FormEntry = {
+//     value: any;
+//     alias_name: string | null;
+//   };
+
+//   const getValueByAlias = (
+//     formData: Record<string, FormEntry> | null,
+//     alias: string
+//   ): any => {
+//     if (!formData) return null;
+
+//     const entry = Object.values(formData).find(
+//       (item) => item.alias_name === alias
+//     ) as FormEntry | undefined;
+
+//     return entry ? entry.value : null;
+//   };
+
+//   const titleValue = getValueByAlias(storedForm, 'title') || t('no_des');
+//   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
+//   const descriptionvalue = getValueByAlias(storedForm, 'description') || t('no_des')
+//   const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
+
+
+//   const screenHeight = Dimensions.get('window').height;
+//   const [slideUp1] = useState(new Animated.Value(0));
+
+//   const scrollY = useSharedValue(0);
+
+//   const scrollHandler = useAnimatedScrollHandler({
+//     onScroll: event => {
+//       'worklet';
+//       scrollY.value = event.contentOffset.y;
+//     },
+//   });
+
+//   const animatedBlurStyle = useAnimatedStyle(() => {
+//     'worklet';
+//     const opacity = interpolate(scrollY.value, [0, 90], [0, 1], 'clamp');
+//     return { opacity };
+//   });
+
+//   const animatedButtonStyle = useAnimatedStyle(() => {
+//     'worklet';
+//     const borderColor = interpolateColor(
+//       scrollY.value,
+//       [0, 300],
+//       ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+//     );
+//     const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+//     return {
+//       borderColor,
+//       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+//     };
+//   });
+
+//   const animatedIconStyle = useAnimatedStyle(() => {
+//     'worklet';
+//     const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+//     const tintColor = interpolateColor(
+//       scrollY.value,
+//       [0, 150],
+//       ['#FFFFFF', '#002050'],
+//     );
+//     return {
+//       opacity,
+//       tintColor,
+//     };
+//   });
+
+//   const blurAmount = useDerivedValue(() =>
+//     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+//   );
+
+
+//   const onScroll = (event: {
+//     nativeEvent: { contentOffset: { x: number } };
+//   }) => {
+//     const slideSize = screenWidth;
+//     const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+//     setActiveIndex(index);
+//   };
+
+//   useEffect(() => {
+//     const fetchFields = async () => {
+//       try {
+//         const token = await AsyncStorage.getItem('userToken');
+//         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+     
+//         const productId1 = await AsyncStorage.getItem('selectedProductId');
+//         setcategoryid(Number(productId1))
+
+
+
+//         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
+
+//         const response = await fetch(url, {
+//           method: 'GET',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer ${token}`,
+//             languagecode: language_code
+//           },
+//         });
+
+        
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const json = await response.json();
+//         console.log("category/listparams/user/", url)
+//         console.log("category/listparams/user/ :", json)
+
+//         if (json?.metadata) {
+//           setUserMeta({
+//             firstname: json.metadata.firstname ?? null,
+//             lastname: json.metadata.lastname ?? null,
+//             profile: json.metadata.profile ?? null,
+//             student_email: json.metadata.student_email ?? null,
+//             university_name: json.metadata.university_name ?? null,
+//             category: json.metadata.category ?? null,
+//             city: json.metadata.city ?? null, // 
+
+//           });
+
+//           await AsyncStorage.setItem(
+//             'userMeta',
+//             JSON.stringify({
+//               firstname: json.metadata.firstname ?? null,
+//               lastname: json.metadata.lastname ?? null,
+//               profile: json.metadata.profile ?? null,
+//               student_email: json.metadata.student_email ?? null,
+//               university_name: json.metadata.university_name ?? null,
+//               category: json.metadata.category ?? null,
+//               city: json.metadata.city ?? null, // 
+//             }),
+//           );
+//         }
+
+//         if (json?.data) {
+//           const sellerFields = json.data.filter(
+//             (item: any) => item.seller === true,
+//           );
+//           setFields(sellerFields);
+//         }
+//       } catch (err) {
+//         // console.log('Error fetching fields', err);
+//       } finally {
+//         //setLoading(false);
+//       }
+//     };
+
+//     fetchFields();
+//   }, []);
+
+
+//   type ImageField = {
+//     id?: string;
+//     uri: string;
+//     name: string;
+//     type?: string;
+//   };
+
+
+//  const handleListPress = async () => {
+//   if (isSubmitting) return;
+
+//   isSubmitting = true;
+
+//   try {
+//     const form =
+//       typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+
+//     const isFeatured =
+//       form?.['13']?.value === true || form?.['13']?.value === 'true';
+
+//     if (categoryid === 4 && accomodation_amount > 0) {
+//       navigation.navigate('PaymentScreen', {
+//         amount: accomodation_amount,
+//         feature_id: 1,
+//         nav: 'add',
+
+//         onSuccess: async () => {
+//           try {
+//             await listProduct();
+//           } finally {
+//             isSubmitting = false; // ✅ reset AFTER payment success
+//           }
+//         },
+
+//         onCancel: () => {
+//           isSubmitting = false; // ✅ reset if user cancels payment
+//         },
+//       });
+//     } else {
+//       await listProduct();
+//       isSubmitting = false; // ✅ reset after direct listing
+//     }
+//   } catch (e) {
+//     console.log('Error:', e);
+//     isSubmitting = false;
+//   }
+// };
+
+
+//   // const handleListPress = async () => {
+//   //   if (isSubmitting) {
+
+//   //     return;
+//   //   }
+//   //   isSubmitting = true;
+
+
+//   //   try {
+//   //     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+//   //     const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+//   //     await listProduct();
+//   //   } catch (e) {
+
+//   //   }
+//   //   finally {
+//   //     setTimeout(() => {
+//   //       isSubmitting = false;
+//   //     }, 2000);
+//   //   }
+//   // };
+
+//   const listProduct = async () => {
+
+
+//     if (isLoading) return;
+
+//     setIsLoading(true);
+//     try {
+//       const paymentintent_id = await AsyncStorage.getItem("paymentintent_id");
+//       const storedData = await AsyncStorage.getItem('formData');
+
+//       if (!storedData) {
+
+//         showToast(t(Constant.DATA_NOT_SAVE), 'error');
+//         return;
+//       }
+
+//       const formData: Record<
+//         string,
+//         { value: any; alias_name: string | null }
+//       > = JSON.parse(storedData);
+
+
+//       const token = await AsyncStorage.getItem('userToken');
+//       const productId1 = await AsyncStorage.getItem('selectedProductId');
+
+//       if (!token) {
+
+//         return;
+//       }
+
+//       const imageFields = Object.entries(formData)
+//         .filter(([key, obj]) => {
+//           const v = obj.value;
+//           return (
+//             Array.isArray(v) &&
+//             v.length > 0 &&
+//             v.every((item: any) => item?.uri)
+//           );
+//         })
+//         .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
+//           string,
+//           ImageField[]
+//         ][];
+
+//       const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
+//         const v = obj.value;
+//         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+//       });
+
+ 
+
+//       // const dataArray = nonImageFields.map(([key, obj]: any) => {
+//       //     const payload: any = {
+//       //       id: Number(key),
+//       //       param_value: obj.value,
+//       //     };
+
+//       //     // 👇 include othertext only if present
+//       //     if (obj.otherText && String(obj.otherText).trim() !== '') {
+//       //       payload.other_text = obj.otherText;
+//       //     }
+
+//       //     return payload;
+//       //   });
+
+//       const dataArray = nonImageFields.map(([key, obj]: any) => {
+//         const value = obj.value;
+
+//         // ✅ DATE FIELD HANDLING
+//         if (
+//           value &&
+//           typeof value === 'object' &&
+//           !Array.isArray(value) &&
+//           value.startDate &&
+//           value.endDate
+//         ) {
+//           return {
+//             id: Number(key),
+//             param_value: null,
+//             startDate: value.startDate,
+//             endDate: value.endDate,
+//           };
+//         }
+
+//         // ✅ NORMAL FIELD
+//         const payload: any = {
+//           id: Number(key),
+//           param_value: value,
+//         };
+
+//         // 👇 include other_text only if present
+//         if (obj.otherText && String(obj.otherText).trim() !== '') {
+//           payload.other_text = obj.otherText;
+//         }
+
+//         return payload;
+//       });
+
+
+
+
+//       const createPayload = {
+//         category_id: productId1,
+//         data: dataArray,
+//         //paymentintent_id: paymentData.transactionId, 
+//         paymentintent_id: paymentintent_id,
+//         savecard: true,
+//         //status: paymentData.status, 
+//         featureamount: diff1
+//       };
+
+//       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
+      
+
+
+//       const createRes = await fetch(
+//         `${MAIN_URL.baseUrl}category/featurelistv2/create`,
+//         {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: JSON.stringify(createPayload),
+//         },
+//       );
+
+
+//       const createJson = await createRes.json();
+//       console.log(":category/featurelistv2/create`",`${MAIN_URL.baseUrl}category/featurelistv2/create`)
+//       console.log(":category/featurelistv2/create: `",createJson)
+//       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
+//       const isSuccess = createRes.status === 200 || createRes.status === 201;
+//       console.log("isSuccess: ",isSuccess, apiMessage);
+
+//       showToast(t(apiMessage), isSuccess ? "success" : "error");
+
+//       if (!(createRes.status === 200 || createRes.status === 201)) {
+//         navigation.reset({
+//           index: 0,
+//           routes: [
+//             {
+//               name: 'Dashboard',
+//               params: {
+//                 AddScreenBackactiveTab: 'Add',
+//                 isNavigate: false,
+//               },
+//             },
+//           ],
+//         });
+//         return;
+//       }
+//       const feature_id = createJson?.data?.id;
+//       if (!feature_id) {
+//         showToast(t(Constant.SOMTHING_WENT_WRONG), 'error')
+//         return;
+//       }
+//       for (const [param_id, images] of imageFields) {
+//         for (const image of images) {
+//           const data = new FormData();
+//           data.append('files', {
+//             uri: image.uri,
+//             type: image.type || 'image/jpeg',
+//             name: image.name,
+//           });
+//           data.append('feature_id', feature_id);
+//           data.append('param_id', param_id);
+
+//           const uploadRes = await fetch(
+//             `${MAIN_URL.baseUrl}category/featurelist/image-upload`,
+//             {
+//               method: 'POST',
+//               headers: { Authorization: `Bearer ${token}` },
+//               body: data,
+//             }
+//           );
+
+//           const uploadJson = await uploadRes.json();
+
+
+//           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
+//           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
+//           showToast(t(apiMessage), isSuccess ? "success" : "error");
+//           if (!isSuccess) return;
+//         }
+//       }
+//       //showToast(t(Constant.DATA_UPLOAD), 'success');
+//       //setShowPopup(true);
+
+//         setTimeout(() => {
+//         if (userMeta?.category?.id === 4) {
+//           //  navigation.reset({
+//           //       index: 0,
+//           //       routes: [
+//           //         {
+//           //           name: 'Dashboard',
+//           //           params: {
+//           //             AddScreenBackactiveTab: 'Add',
+//           //             isNavigate: false,
+//           //           },
+//           //         },
+//           //       ],
+//           //     })
+//           navigation.navigate('SellerInfo');
+//         } else {
+//           navigation.navigate('SellerInfo');
+//         }
+//       }, 300);
+//     }
+//     catch (error) {
+//       console.log('❌ Error in handleListPress:', error);
+//     }
+//     finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+
+
+
+//   const getCurrentDate = (t?: any) => {
+//     const today = new Date();
+
+//     const day = today.getDate();
+//     const year = today.getFullYear();
+//     const lang = i18n.language; // current selected language
+
+//     // Month translation
+//     const monthIndex = today.getMonth(); // 0–11
+//     const monthKeys = [
+//       "jan", "feb", "mar", "apr", "may", "jun",
+//       "jul", "aug", "sep", "oct", "nov", "dec"
+//     ];
+
+//     const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+//     // Suffix only for English
+//     let suffix = "";
+//     if (lang === "en") {
+//       if (day % 10 === 1 && day !== 11) suffix = "st";
+//       else if (day % 10 === 2 && day !== 12) suffix = "nd";
+//       else if (day % 10 === 3 && day !== 13) suffix = "rd";
+//       else suffix = "th";
+//     }
+
+//     return `${day}${suffix} ${month} ${year}`;
+//   };
+
+//   const getInitials = (firstName = '', lastName = '') => {
+//     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+//     const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+//     return (f + l) || '?';
+//   };
+
+
+//   const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
+
+//   const raw = getValueByAlias(storedForm, 'price') ?? '0';
+//   const priceValue = parseFloat(String(raw)) || 0;
+
+//   const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
+//   const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
+
+//   const commissionAmount = priceValue * (commissionPercent / 100);
+//   const calculatedPrice = priceValue + commissionAmount;
+//   const maxAllowedPrice = priceValue + maxCap;
+//   const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+//   const priceText =
+//   userMeta?.category?.id === 2
+//     ? `£${commissionPrice}/${t('hr')}`
+//     : userMeta?.category?.id === 4
+//     ? `£${commissionPrice}/${t('week')}`
+//     : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}` 
+//     : `£${commissionPrice}`;
+
+//   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+//   const priceValue1 = parseFloat(String(raw1)) || 0;
+
+//   const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
+//   const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
+
+//   const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+//   const calculatedPrice1 = priceValue1 + commissionAmount1;
+//   const maxAllowedPrice1 = priceValue1 + maxCap1;
+//   const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
+//   const diff1 = commissionPrice1 - priceValue1
+
+
+
+
+
+//   return (
+//     <ImageBackground
+//                      source={IMAGE_URLS.BACK_ICON}
+//                      style={{ flex: 1,width: '100%',
+//                      height: '100%', }}
+//                      resizeMode="cover"
+//                  >
+//     {/* <BackgroundWrapper> */}
+//       <View style={styles.fullScreenContainer}>
+
+//         <StatusBar
+//           translucent
+//           backgroundColor="transparent"
+//           barStyle="light-content"
+//         />
+//         <AnimatedReanimated.View
+//           style={[styles.headerWrapper, animatedBlurStyle]}
+//           pointerEvents="none"
+//         >
+//           <MaskedView
+//             style={StyleSheet.absoluteFill}
+//             maskElement={
+//               <LinearGradient
+//                 colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+//                 locations={[0, 0.8]}
+//                 start={{ x: 0, y: 0 }}
+//                 end={{ x: 0, y: 1 }}
+//                 style={StyleSheet.absoluteFill}
+//               />
+//             }
+//           >
+//             <BlurView
+//               style={StyleSheet.absoluteFill}
+//               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+//               blurAmount={Platform.OS === 'ios' ? 45 : 45}
+//               // overlayColor="rgba(255,255,255,0.05)"
+//               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+//             />
+//             <LinearGradient
+//               colors={[
+//                 'rgba(255, 255, 255, 0.45)',
+//                 'rgba(255, 255, 255, 0.02)',
+//                 'rgba(255, 255, 255, 0.02)',
+//               ]}
+//               style={StyleSheet.absoluteFill}
+//               start={{ x: 0, y: 0 }}
+//               end={{ x: 0, y: 1 }}
+//             />
+//           </MaskedView>
+//         </AnimatedReanimated.View>
+
+//         <View style={styles.headerContent} pointerEvents="box-none">
+//           <TouchableOpacity
+//             //onPress={() => navigation.replace('PreviewThumbnail')}
+//             onPress={() => { navigation.goBack(); }}
+//             style={styles.backButtonContainer}
+//             activeOpacity={0.7}
+//           >
+//             <AnimatedReanimated.View
+//               style={[styles.blurButtonWrapper, animatedButtonStyle]}
+//             >
+//               <AnimatedReanimated.View
+//                 style={[
+//                   StyleSheet.absoluteFill,
+//                   useAnimatedStyle(() => ({
+//                     opacity: interpolate(
+//                       scrollY.value,
+//                       [0, 30],
+//                       [1, 0],
+//                       'clamp',
+//                     ),
+//                     backgroundColor: 'rgba(255,255,255,0.1)',
+//                     borderRadius: 40,
+//                   })),
+//                 ]}
+//               />
+
+//               <AnimatedReanimated.View
+//                 style={[
+//                   StyleSheet.absoluteFill,
+//                   useAnimatedStyle(() => ({
+//                     opacity: interpolate(
+//                       scrollY.value,
+//                       [0, 50],
+//                       [0, 1],
+//                       'clamp',
+//                     ),
+//                   })),
+//                 ]}
+//               >
+//                 <BlurView
+//                   style={StyleSheet.absoluteFill}
+//                   blurType="light"
+//                   blurAmount={10}
+//                   reducedTransparencyFallbackColor="transparent"
+//                 />
+//               </AnimatedReanimated.View>
+//               <AnimatedReanimated.Image
+//                 source={require('../../../assets/images/back.png')}
+//                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
+//               />
+//             </AnimatedReanimated.View>
+//           </TouchableOpacity>
+
+//           <Text allowFontScaling={false} style={styles.unizyText}>
+//             {t('preview_details')}
+//           </Text>
+//         </View>
+
+//         <AnimatedReanimated.ScrollView
+//           scrollEventThrottle={16}
+//           onScroll={scrollHandler}
+//           contentContainerStyle={[
+//             styles.scrollContainer,
+//             { paddingBottom: height * 0.1 },
+//           ]}>
+
+//           <View style={{ marginTop: (Platform.OS === 'ios' ? 10 : 12) }}>
+
+//             {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5) ? (
+//               <ImageBackground
+//                 source={require('../../../assets/images/featurebg.png')}
+//                 style={{
+//                   alignItems: 'center',
+//                   justifyContent: 'center',
+//                   height: 270,
+//                   width: '100%',
+//                 }}
+//               >
+//                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+//                   {userMeta?.profile ? (
+//                     <Image
+//                       source={{ uri: userMeta?.profile }}
+//                       style={{
+//                         width: 180,
+//                         height: 180,
+//                         borderRadius: 90,
+//                       }}
+//                       resizeMode="cover"
+//                     />
+//                   ) : (
+//                     <View
+//                       style={{
+//                         width: 180,
+//                         height: 180,
+//                         borderRadius: 90,
+//                         backgroundColor: '#8390D4',
+//                         alignItems: 'center',
+//                         justifyContent: 'center',
+//                       }}
+//                     >
+//                       <Text
+//                         allowFontScaling={false}
+//                         style={{
+//                           fontSize: 70,
+//                           color: '#FFF',
+//                           fontWeight: '600',
+//                           textAlign: 'center',
+//                           fontFamily: 'Urbanist-SemiBold',
+//                         }}
+//                       >
+//                         {`${userMeta?.firstname?.[0] ?? ''}${userMeta?.lastname?.[0] ?? ''
+//                           }`.toUpperCase() || 'NA'}
+//                       </Text>
+//                     </View>
+//                   )}
+//                 </View>
+//               </ImageBackground>
+//             ) : storedForm?.[6]?.value?.length > 1 ? (
+
+//               <View>
+//                 <FlatList
+//                   ref={flatListRef}
+//                   data={storedForm[6].value}
+//                   horizontal
+//                   pagingEnabled
+//                   showsHorizontalScrollIndicator={false}
+//                   keyExtractor={(item, index) => index.toString()}
+//                   onScroll={onScroll}
+//                   scrollEventThrottle={16}
+//                   renderItem={({ item }) => (
+//                     <Image
+//                       source={{ uri: item.uri }}
+//                       style={{ width: screenWidth, height: 270 }}
+//                       resizeMode="cover"
+//                     />
+//                   )}
+//                 />
+//                 <View style={styles.stepIndicatorContainer}>
+//                   {storedForm[6].value.map((_: any, index: number) => {
+//                     const isActive = index === activeIndex;
+//                     return (
+//                       <View
+//                         key={index}
+//                         style={
+//                           isActive
+//                             ? styles.activeStepCircle
+//                             : styles.inactiveStepCircle
+//                         }
+//                       />
+//                     );
+//                   })}
+//                 </View>
+//               </View>
+//             ) : (
+
+//               <Image
+//                 source={
+//                   storedForm?.[6]?.value?.[0]?.uri
+//                     ? { uri: storedForm[6].value[0].uri }
+//                     : require('../../../assets/images/drone.png')
+//                 }
+//                 style={{ width: '100%', height: 270 }}
+//                 resizeMode="cover"
+//               />
+//             )}
+//           </View>
+
+//           <View style={{ flex: 1, padding: 16 }}>
+//             <View style={styles.card1}>
+//               <View style={{}}>
+//                 <Text allowFontScaling={false} style={styles.QuaddText}>
+//                   {titleValue}
+//                 </Text>
+
+//                 <Text allowFontScaling={false} style={styles.priceText}>
+//                   {priceText}
+//                 </Text>
+
+//                 {(categoryid === 2 || categoryid === 5) && (
+//                   <View style={styles.datePosted1}>
+//                     <Image
+//                       source={require('../../../assets/images/duration_info.png')}
+//                       style={{ height: 16, width: 16 }}
+//                     />
+//                     <Text allowFontScaling={false} style={styles.datetext1}>
+//                       {t('service_duration')}:{' '}
+//                       <Text style={styles.durationValue}>{duration_value} {t('hours')}</Text>
+//                     </Text>
+//                   </View>
+//                 )}
+
+//               </View>
+//               <View
+//                 style={{
+//                   display: 'flex',
+//                   flexDirection: 'column',
+//                   alignItems: 'flex-start',
+//                   gap: 2,
+//                   alignSelf: 'stretch',
+//                 }}
+//               >
+//                 <Text allowFontScaling={false} style={styles.productDesHeding}>
+//                   {t('des')}    
+//                 </Text>
+
+//                 <Text allowFontScaling={false} style={styles.productDesc}>
+//                   {descriptionvalue}
+//                 </Text>
+
+//                 <View style={styles.datePosted}>
+//                   <Image
+//                     source={require('../../../assets/images/calendar_icon1.png')}
+//                     style={{ height: 16, width: 16 }}
+//                   />
+//                   <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {getCurrentDate(t)}</Text>
+//                 </View>
+//               </View>
+//             </View>
+
+//             <View style={styles.card}>
+//               <View style={styles.gap12}>
+//                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+//                   {(() => {
+//                     switch (userMeta?.category?.id) {
+//                       case 2:
+//                         return t('tutoring_service_details');
+//                       case 3:
+//                         return t('dish_details');
+//                       case 4:
+//                         return t('rental_details');
+//                       case 5:
+//                         return t('housekeeping_details');
+//                       default:
+//                         return t('product_details');
+//                     }
+//                   })()}
+//                 </Text>
+//                 <View style={{ gap: 12 }}>
+//                   {fields.map(field => {
+//                     const fieldId = field.param.id;
+
+//                     const skipAliases = ['title', 'description', 'price'];
+//                     if (
+//                       skipAliases.includes(field.param.alias_name ?? '') ||
+//                       ['Image', 'boolean'].includes(field.param.field_type)
+//                     )
+//                       return null;
+
+//                     const storedValue = storedForm?.[fieldId]?.value;
+//                     if (storedValue == null) return null;
+
+//                     let displayValues: string[] = [];
+
+//                     if (field.param.field_type === 'dropdown') {
+//                     const otherText = storedForm?.[fieldId]?.otherText;
+
+//                     if (Array.isArray(storedValue)) {
+//                       displayValues = storedValue
+//                         .map((id: number) => {
+//                           const option = field.param.options.find((opt: any) => opt.id === id);
+//                           if (!option) return null;
+
+//                           if (option.is_other && otherText) {
+//                             return `${option.option_name} (${otherText})`;
+//                           }
+
+//                           return option.option_name;
+//                         })
+//                         .filter(Boolean) as string[];
+//                     } else {
+//                       const option = field.param.options.find((opt: any) => opt.id === storedValue);
+//                       if (option) {
+//                         if (option.is_other && otherText) {
+//                           displayValues = [`${option.option_name} (${otherText})`];
+//                         } else {
+//                           displayValues = [option.option_name];
+//                         }
+//                       }
+//                     }
+//                   }
+
+//                   else if (field.param.field_type === 'date') {
+//                     const startDate = storedValue?.startDate;
+//                     const endDate = storedValue?.endDate;
+
+//                     if (startDate && endDate) {
+//                       displayValues = [
+//                         `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(endDate).format(
+//                           'DD-MM-YYYY'
+//                         )}`,
+//                       ];
+//                     } else {
+//                       displayValues = [];
+//                     }
+//                   }
+
+//                     else if (Array.isArray(storedValue)) {
+//                       displayValues = storedValue.map(String);
+//                     } else {
+//                       displayValues = [String(storedValue)];
+//                     }
+
+//                     return (
+//                       <View key={fieldId} style={{}}>
+//                         <Text allowFontScaling={false} style={styles.detailLabel1}>
+//                           {field.param.field_name}
+//                         </Text>
+
+//                         {field.param.field_type === 'dropdown' ? (
+//                           <View style={styles.categoryContainer}>
+//                             {displayValues.map((val, idx) => (
+//                               <View key={idx} style={styles.categoryTag}>
+//                                 <Text allowFontScaling={false} style={styles.catagoryText}>
+//                                   {val}
+//                                 </Text>
+//                               </View>
+//                             ))}
+//                           </View>
+//                         ) : (
+//                           <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+//                             {displayValues.join(', ')}
+//                           </Text>
+//                         )}
+//                       </View>
+//                     );
+//                   })}
+//                 </View>
+
+//               </View>
+//             </View>
+
+//             <View style={styles.card}>
+//               <View style={{ gap: 12 }}>
+//                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>{t('seller_details')}</Text>
+
+//                 <View style={{ flexDirection: 'row', marginBottom: 4 }}>
+
+//                   {userMeta?.profile ? (
+//                     <Image
+//                       source={{ uri: userMeta.profile }}
+//                       style={styles.avatar}
+//                     />
+//                   ) : (
+//                     <View style={COMMONSTYLE.initialsCircle}>
+//                       <Text allowFontScaling={false} style={styles.initialsText}>
+//                         {getInitials(
+//                           userMeta?.firstname ?? 'Alan',
+//                           userMeta?.lastname ?? 'Walker'
+//                         )}
+//                       </Text>
+//                     </View>
+//                   )}
+
+//                   <View style={{ width: '80%' }}>
+//                     <Text allowFontScaling={false} style={styles.userName}>
+//                       {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
+//                     </Text>
+//                     <Text allowFontScaling={false} style={styles.univeritytext}>
+//                       {userMeta?.university_name || 'University of Warwick,'}
+//                     </Text>
+//                     <Text allowFontScaling={false} style={[styles.univeritytext,]}>
+//                       {userMeta?.city || ''}
+//                     </Text>
+//                   </View>
+//                 </View>
+
+
+//                 <View style={{ flexDirection: 'row' }}>
+//                   <View style={styles.bottombutton}>
+//                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, }}>
+//                       <Image
+//                         source={require('../../../assets/images/staricon.png')}
+//                         style={{ height: 16, width: 16 }}
+//                       />
+
+//                       <Text allowFontScaling={false} style={styles.chattext}>4.5</Text>
+//                     </View>
+//                   </View>
+//                   <View style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}>
+//                     <Image
+//                       source={require('../../../assets/images/message_chat.png')}
+//                       style={{ height: 16, width: 16, marginRight: 4 }}
+//                     />
+//                     <Text allowFontScaling={false} style={styles.chattext}>{t('chat_with_seller')}</Text>
+//                   </View>
+//                 </View>
+//               </View>
+//             </View>
+//           </View>
+//         </AnimatedReanimated.ScrollView>
+
+//         <Button
+//           onPress={handleListPress}
+//           title={(() => {
+//                try {
+//               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+//               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+//               if (categoryid === Number(4)  ) {
+//                 if (isFeatured && accomodation_amount > 0) {
+//                      return `${t('list')} for £${(accomodation_amount + maxCap1).toFixed(2)}`;;
+//                 } else { 
+//                   if(!isFeatured  && accomodation_amount > 0) {
+//                     return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
+//                   }
+//                 }
+                
+
+//               }
+              
+//               return t('list');
+//             } catch (e) {
+//               // console.log('Error parsing storedForm:', e);
+//               return 'List';
+//             }
+//             // try {
+//             //   const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+//             //   const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+//             //   if (categoryid === Number(4) && accomodation_amount > 0) {
+//             //     if (isFeatured) {
+//             //          return `${t('list')} for £${(accomodation_amount + commissionAmount1).toFixed(2)}`;;
+//             //     } else { 
+//             //        return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
+//             //     }
+                
+
+//             //   }
+              
+//             //   return t('list');
+//             // } catch (e) {
+//             //   // console.log('Error parsing storedForm:', e);
+//             //   return 'List';
+//             // }
+//           })()}
+//         />
+
+//         <Modal
+//           visible={showPopup}
+//           transparent
+//           animationType="fade"
+//           onRequestClose={closePopup}
+//         >
+//           <View style={styles.overlay}>
+//             <BlurView
+//               style={{
+//                 flex: 1,
+//                 alignContent: 'center',
+//                 justifyContent: 'center',
+//                 width: '100%',
+//                 alignItems: 'center',
+//               }}
+//               blurType="dark"
+//               blurAmount={1000}
+//               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+//             >
+//               <View
+//                 style={[
+//                   StyleSheet.absoluteFill,
+//                   { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+//                 ]}
+//               />
+
+//               <View style={styles.popupContainer}>
+//                 <Image
+//                   source={require('../../../assets/images/success_icon.png')}
+//                   style={styles.logo}
+//                   resizeMode="contain"
+//                 />
+//                 <Text
+//                   allowFontScaling={false}
+//                   style={{
+//                     color: 'rgba(255, 255, 255, 0.80)',
+//                     fontFamily: 'Urbanist-SemiBold',
+//                     fontSize: 20,
+//                     fontWeight: '600',
+//                     fontStyle: 'normal',
+//                     letterSpacing: -0.4,
+//                     lineHeight: 28,
+//                   }}
+//                 >
+//                   {t('product_listed_success')}!
+//                 </Text>
+//                 <Text
+//                   allowFontScaling={false}
+//                   style={{
+//                     color: 'rgba(255, 255, 255, 0.48)',
+//                     fontFamily: 'Urbanist-Regular',
+//                     fontSize: 14,
+//                     fontWeight: '400',
+//                     fontStyle: 'normal',
+//                     letterSpacing: -0.28,
+//                     lineHeight: 19.6,
+//                     textAlign: 'center'
+//                   }}
+//                 >
+//                   {t('product_listed_message')}
+//                 </Text>
+
+//                 <TouchableOpacity
+//                   style={styles.loginButton}
+//                   onPress={async () => {
+//                     try {
+//                       await AsyncStorage.removeItem('formData');
+//                       await AsyncStorage.removeItem('selectedProductId');
+
+
+//                       navigation.dispatch(
+//                         CommonActions.reset({
+//                           index: 0,
+//                           routes: [
+//                             {
+//                               name: 'Dashboard',
+//                               params: {
+//                                 AddScreenBackactiveTab: 'Home',
+//                                 isNavigate: false,
+//                               },
+//                             },
+//                           ],
+//                         })
+//                       );
+
+//                       setShowPopup(false);
+//                     } catch (err) {
+//                       // console.log('❌ Error clearing formData:', err);
+//                     }
+//                   }}
+//                 >
+//                   <Text allowFontScaling={false} style={styles.loginText}>
+//                     {t('return_choose_category')}
+//                   </Text>
+//                 </TouchableOpacity>
+//               </View>
+//             </BlurView>
+//           </View>
+//         </Modal>
+//       </View>
+//       {isLoading && (
+//         <View style={styles.loaderOverlay}>
+//           <Loader />
+//         </View>
+//       )}
+//       <NewCustomToastContainer />
+//       {/* </BackgroundWrapper> */}
+//       </ImageBackground>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+
+//   loaderOverlay: {
+//   position: 'absolute',
+//   top: 0,
+//   left: 0,
+//   right: 0,
+//   bottom: 0,
+//   backgroundColor: 'rgba(0,0,0,0.4)',
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   zIndex: 9999,
+// },
+//   datetext1: {
+//     color: '#9CD6FF',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 12,
+//     fontWeight: '500',
+//     lineHeight: 16,
+//     letterSpacing: -0.24,
+//     paddingLeft: 4
+//   },
+//   durationValue: {
+//     color: '#FFF',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 12,
+//     fontWeight: '600',
+//     lineHeight: 16,
+//     letterSpacing: -0.24,
+//     paddingLeft: 4
+//   },
+
+//   datePosted1: {
+//     flexDirection: 'row',
+//     height: 'auto',
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
+//     borderRadius: 8,
+//     paddingLeft: 8,
+//     paddingRight: 8,
+//     paddingTop: 6,
+//     paddingBottom: 6,
+//     marginTop: 8,
+//     width: 'auto',
+//     alignSelf: 'flex-start',
+//   },
+//   headerWrapper: {
+//     position: 'absolute',
+//     top: 0,
+//     width: Platform.OS === 'ios' ? '100%' : '100%',
+//     height: Platform.OS === 'ios' ? 180 : 180,
+//     zIndex: 10,
+//     overflow: 'hidden',
+//     alignSelf: 'center',
+//     pointerEvents: 'none',
+//   },
+//   headerContent: {
+//     position: 'absolute',
+//     top: Platform.OS === 'ios' ? '8.5%' : 60,
+//     width: Platform.OS === 'ios' ? '100%' : '100%',
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     paddingHorizontal: 16,
+//     zIndex: 11,
+//     alignSelf: 'center',
+//     pointerEvents: 'box-none',
+//     marginTop: (Platform.OS === 'ios' ? 0 : 0),
+//     marginLeft: 1
+//   },
+//   backButtonContainer: {
+//     position: 'absolute',
+//     left: 16,
+//     zIndex: 11,
+//   },
+//   // blurButtonWrapper: {
+//   //   width: 48,
+//   //   height: 48,
+//   //   borderRadius: 40,
+//   //   overflow: 'hidden',
+//   //   justifyContent: 'center',
+//   //   alignItems: 'center',
+//   //   borderWidth: 0.4,
+//   //   borderColor: '#ffffff2c',
+//   //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
+//   // },
+
+
+//    blurButtonWrapper: {
+//     width: 48,
+//     height: 48,
+//     borderRadius: 40,
+//     overflow: 'hidden',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     // borderWidth: 0.4,
+//     // borderColor: '#ffffff2c',
+//     // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+//     borderWidth: 0.3,
+//     borderColor: '#ffffff11',
+
+//     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+//     borderBlockStartColor: '#ffffff2e',
+//     borderBlockColor: '#ffffff2e',
+
+//     borderTopColor: '#ffffff2e',
+//     borderBottomColor: '#ffffff2e',
+//     borderLeftColor: '#ffffff2e',
+//     borderRightColor: '#ffffff2e',
+//     boxSizing: 'border-box',
+//   },
+
+//   chattext: {
+//     color: 'rgba(255, 255, 255, 0.48)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 14,
+//     fontWeight: '600',
+//     fontStyle: 'normal',
+//     letterSpacing: -0.28,
+//   },
+//   chatcard: {
+//     borderRadius: 10,
+//     backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+//     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+//     display: 'flex',
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     gap: 4,
+//     flex: 1,
+//     paddingHorizontal: 16,
+//     paddingVertical: 12,
+//     height: 'auto'
+//   },
+
+//   bottombutton: {
+//     borderRadius: 10,
+//     backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+//     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+//     display: 'flex',
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     gap: 4,
+//     padding: 16,
+//     paddingHorizontal: 16,
+//     paddingVertical: 12,
+//   },
+
+//   initialsText: {
+//     color: '#fff',
+//     fontSize: 18,
+//     fontWeight: 600,
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-SemiBold',
+//   },
+
+//   catagoryText: {
+//     color: '#9CD6FF',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 12,
+//     fontWeight: '500',
+//     lineHeight: 16,
+//     letterSpacing: -0.24,
+//   },
+
+//   categoryTag: {
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+//     color: 'rgba(255, 255, 255, 0.48)',
+//     borderRadius: 4,
+//     marginRight: 8,
+//     paddingLeft: 6,
+//     paddingRight: 6,
+//     paddingTop: 2,
+//     paddingBottom: 2,
+//     marginTop: 6
+//   },
+
+//   productDesHeding: {
+//     color: 'rgba(255, 255, 255, 0.72)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 16,
+//     fontWeight: '600',
+//     fontStyle: 'normal',
+//     lineHeight: 22,
+//   },
+//   productDesc: {
+//     color: 'rgba(255, 255, 255, 0.64)',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 14,
+//     fontWeight: '500',
+//     lineHeight: 18,
+//   },
+
+//   detailLabel1: {
+//     color: 'rgba(255, 255, 255, 0.72)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 16,
+//     fontWeight: '600',
+//     fontStyle: 'normal',
+//     lineHeight: 22,
+//   },
+
+//   unizyText: {
+//     color: '#FFFFFF',
+//     fontSize: 20,
+//     flex: 1,
+//     textAlign: 'center',
+//     fontWeight: '600',
+//     fontFamily: 'Urbanist-SemiBold',
+//   },
+//   stepIndicatorContainer: {
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     marginTop: 12,
+//     gap: 6,
+//   },
+ 
+//   activeStepCircle: {
+//     width: 12,
+//     height: 12,
+//     borderRadius: 40,
+//     backgroundColor: '#FFFFFF',
+//     borderColor: '#ffffff4e',
+//     borderWidth: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 1 },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.33,
+//     elevation: 2,
+//   },
+//   inactiveStepCircle: {
+//     width: 12,
+//     height: 12,
+//     borderRadius: 40,
+//     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+//     borderColor: '#ffffff4e',
+//     borderWidth: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 1 },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.33,
+//     elevation: 2,
+//   },
+
+//   fullScreenContainer: {
+//     flex: 1,
+//   },
+
+//   loginText: {
+//     color: '#002050',
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 17,
+//     fontWeight: 500,
+//     letterSpacing: 1,
+//     // width: '100%',
+//   },
+
+//   loginButton: {
+//     display: 'flex',
+//     width: '100%',
+//     height: 54,
+//     maxHeight: 54,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     gap: 4,
+//     borderRadius: 100,
+//     paddingTop: 6,
+//     paddingBottom: 6,
+//     backgroundColor: 'rgba(255, 255, 255, 0.56)',
+//     marginTop: 16,
+//     borderWidth: 0.5,
+//     borderColor: '#ffffff2c',
+//   },
+ 
+//   logo: {
+//     width: 64,
+//     height: 64,
+//     marginBottom: 20,
+//   },
+
+//   popupContainer: {
+//     width: width * 0.85,
+//     padding: 20,
+//     borderRadius: 24,
+//     borderWidth: 1,
+//     borderColor: 'rgba(255, 255, 255, 0.1)',
+//     alignItems: 'center',
+//     overflow: 'hidden',
+//     backgroundColor: 'rgba(255,255,255,0.15)',
+//   },
+//   overlay: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//   },
+
+//   scrollContainer: {
+//     paddingBottom: 80,
+//     paddingTop: Platform.OS === 'ios' ? 120 : 100,
+//   },
+
+//   datePosted: {
+//     flexDirection: 'row',
+//     height: 'auto',
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
+//     borderRadius: 8,
+//     paddingLeft: 8,
+//     paddingRight: 8,
+//     paddingTop: 6,
+//     paddingBottom: 6,
+//     marginTop: 12,
+//     alignItems: 'center',
+//     gap: 3,
+//   },
+
+//   datetext: {
+//     color: '#9CD6FF',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 12,
+//     fontWeight: '500',
+//     lineHeight: 16,
+//     letterSpacing: -0.24,
+//   },
+ 
+//   univeritytext: {
+//     color: 'rgba(255, 255, 255, 0.88)',
+//     fontFamily: 'Urbanist-Regular',
+//     fontSize: 12,
+//     fontWeight: '500',
+//   },
+//   userName: {
+//     position: 'relative',
+//     color: 'rgba(255, 255, 255, 0.88)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 16,
+//     fontWeight: '600',
+//     lineHeight: 24,
+//     letterSpacing: -0.32,
+//   },
+//   avatar: {
+//     width: 50,
+//     height: 50,
+//     borderRadius: 25,
+//     marginRight: 12,
+//     resizeMode: 'cover'
+//   },
+//   gap12: {
+//     gap: 12,
+//   },
+  
+//   new: {
+//     color: 'rgba(255, 255, 255, 0.64)',
+//     fontFamily: 'Urbanist-Regular',
+//     fontSize: 14,
+//     fontWeight: '500',
+//     fontStyle: 'normal',
+//     lineHeight: 20,
+//   },
+ 
+//   categoryContainer: {
+//     flexDirection: 'row',
+//     flexWrap: 'wrap',
+//   },
+
+//   productDeatilsHeading: {
+//     color: 'rgba(255, 255, 255, 0.88)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 18,
+//     fontWeight: '600',
+//     fontStyle: 'normal',
+//     lineHeight: 22,
+//     letterSpacing: -0.36,
+//   },
+//   QuaddText: {
+//     color: 'rgba(255, 255, 255, 0.88)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 20,
+//     fontWeight: '600',
+//     letterSpacing: -0.4,
+//     lineHeight: 24,
+//   },
+//   priceText: {
+//     color: '#fff',
+//     fontFamily: 'Urbanist-Bold',
+//     fontSize: 20,
+//     fontWeight: 700,
+//     letterSpacing: -0.1,
+//     paddingTop: 8
+//   },
+//   card: {
+//     flexDirection: 'column',
+//     marginBottom: 6,
+//     padding: 16,
+//     borderRadius: 24,
+//     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+//     gap: 12,
+//     marginTop: 6
+//   },
+//   card1: {
+//     flexDirection: 'column',
+//     marginBottom: 6,
+//     padding: 16,
+//     borderRadius: 24,
+//     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+//     gap: 10,
+//     marginTop: 6
+//   },
+// });
+
+// export default PreviewDetailed;
