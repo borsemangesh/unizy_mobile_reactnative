@@ -662,7 +662,17 @@ const FilterAndroid = ({
               }}
             >
               {/* 🔁 KM / Miles Toggle */}
-              <Text style={{ color: 'white', marginBottom: 10 }}>Distance</Text>
+              <Text
+                style={[
+                  {
+                    color: 'white',
+                    marginBottom: 10,
+                    fontFamily: 'Ubuntu-Medium',
+                  },
+                ]}
+              >
+                Distance
+              </Text>
               <View>
                 <View style={styles.toggleContainer}>
                   <TouchableOpacity
@@ -735,19 +745,17 @@ const FilterAndroid = ({
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
               min={0}
-              max={isKm ? 1000 : kmToMiles(1000)} // ✅ dynamic max
+              max={isKm ? 1000 : kmToMiles(1000)}
               step={1}
               values={[
-                0,
-                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ convert for UI
+                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ only ONE value
               ]}
               onValuesChange={values => {
-                const [, high] = values;
+                const [value] = values;
 
-                // ✅ Always store in KM internally
-                const valueInKm = isKm ? high : milesToKm(high);
+                // Always store in KM internally
+                const valueInKm = isKm ? value : milesToKm(value);
 
-                setDistanceLow(0);
                 setDistanceHigh(Math.round(valueInKm));
                 setIsDistanceChanged(true);
               }}
