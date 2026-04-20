@@ -698,50 +698,20 @@ const FilterBottomSheet = ({
 
             {/* 🎚 Multi Slider */}
 
-            {/* <MultiSlider
-                  sliderLength={SCREEN_WIDTH / 2 - 10}
-                  min={currentFilter?.minvalue ?? 0}
-                  max={currentFilter?.maxvalue ?? 1000}
-                  step={1}
-                  values={[distanceLow, distanceHigh]}
-                  onValuesChange={values => {
-                    const [low, high] = values;
-                    setDistanceLow(low);
-                    setDistanceHigh(high);
-                    setIsDistanceChanged(true);
-                  }}
-                  selectedStyle={{
-                    backgroundColor: '#fff',
-                  }}
-                  unselectedStyle={{
-                    backgroundColor: '#888',
-                  }}
-                  trackStyle={{
-                    height: 4,
-                    borderRadius: 2,
-                  }}
-                  markerStyle={{
-                    height: 22,
-                    borderRadius: 11,
-                    backgroundColor: '#fff',
-                  }}
-                /> */}
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
               min={0}
-              max={isKm ? 1000 : kmToMiles(1000)} // ✅ dynamic max
+              max={isKm ? 1000 : kmToMiles(1000)}
               step={1}
               values={[
-                0,
-                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ convert for UI
+                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ only ONE value
               ]}
               onValuesChange={values => {
-                const [, high] = values;
+                const [value] = values;
 
-                // ✅ Always store in KM internally
-                const valueInKm = isKm ? high : milesToKm(high);
+                // Always store in KM internally
+                const valueInKm = isKm ? value : milesToKm(value);
 
-                setDistanceLow(0);
                 setDistanceHigh(Math.round(valueInKm));
                 setIsDistanceChanged(true);
               }}
