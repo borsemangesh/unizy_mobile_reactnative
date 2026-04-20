@@ -395,16 +395,7 @@ const FilterAndroid = ({
                     </View>
                   ) : (
                     <View
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: 10,
-                        borderWidth: 1.5,
-                        borderColor: '#fff',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginRight: 10,
-                      }}
+                      style={styles.radioOuterCircle}
                     >
                       {isSelectedRadio && (
                         <View
@@ -469,42 +460,6 @@ const FilterAndroid = ({
           </Text> */}
 
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
-            {/* <MultiSlider
-              values={[sliderLow, sliderHigh]}
-              sliderLength={SCREEN_WIDTH/2 - 10}
- 
-              min={currentFilter?.minvalue ?? 0}
-              max={currentFilter?.maxvalue ?? 100}
-              step={1}
-              
-              onValuesChange={(values) => {
-                const [low, high] = values;
-                setSliderLow(low);
-                setSliderHigh(high);
-                setPriceRange({ min: low, max: high })
-              }}
- 
-              selectedStyle={{
-                backgroundColor: '#fff',
-              }}
-              unselectedStyle={{
-                backgroundColor: '#888',
-              }}
-              containerStyle={{
-                height: 'auto',
-              }}
-              trackStyle={{
-                height: 4,
-                borderRadius: 2,
-              }}
-              markerStyle={{
-                height: 20,
-                width: 20,
-                borderRadius: 10,
-                backgroundColor: '#fff',
-              }}
-                  /> 
-                  */}
             <View
               style={{
                 flexDirection: 'row',
@@ -714,41 +669,13 @@ const FilterAndroid = ({
 
             {/* 🎚 Multi Slider */}
 
-            {/* <MultiSlider
-              sliderLength={SCREEN_WIDTH / 2 - 10}
-              min={currentFilter?.minvalue ?? 0}
-              max={currentFilter?.maxvalue ?? 200}
-              step={1}
-              values={[distanceLow, distanceHigh]}
-              onValuesChange={values => {
-                const [low, high] = values;
-                setDistanceLow(low);
-                setDistanceHigh(high);
-                setIsDistanceChanged(true);
-              }}
-              selectedStyle={{
-                backgroundColor: '#fff',
-              }}
-              unselectedStyle={{
-                backgroundColor: '#888',
-              }}
-              trackStyle={{
-                height: 4,
-                borderRadius: 2,
-              }}
-              markerStyle={{
-                height: 22,
-                borderRadius: 11,
-                backgroundColor: '#fff',
-              }}
-            /> */}
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
               min={0}
               max={isKm ? 1000 : kmToMiles(1000)}
               step={1}
               values={[
-                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ only ONE value
+                isKm ? distanceHigh : kmToMiles(distanceHigh),
               ]}
               onValuesChange={values => {
                 const [value] = values;
@@ -1151,6 +1078,16 @@ const FilterAndroid = ({
 };
 
 const styles = StyleSheet.create({
+  radioOuterCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
   container: {
     padding: 16,
   },
