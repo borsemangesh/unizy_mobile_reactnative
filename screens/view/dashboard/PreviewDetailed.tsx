@@ -325,7 +325,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
     if (categoryid === 4 && accomodation_amount > 0) {
       navigation.navigate('PaymentScreen', {
-        amount: accomodation_amount,
+        amount: isFeatured ? finalPrice: accomodation_amount,
         feature_id: 1,
         nav: 'add',
 
@@ -677,7 +677,8 @@ const percentFee = price * (featurePercent / 100);
 const applicableFee = Math.min(percentFee, maxCap1);
 
 // Step 3: Final price
-const finalPrice = accommodationAmount + applicableFee;
+  // const finalPrice = accommodationAmount + applicableFee;
+  const finalPrice = accommodationAmount + featurePercent;
 
 
 
