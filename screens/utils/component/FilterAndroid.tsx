@@ -600,7 +600,8 @@ const FilterAndroid = ({
           </TouchableOpacity>
         </View>
       );
-    } else if (
+    }
+    else if (
       currentFilter.field_type?.toLowerCase() === 'text' &&
       currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
@@ -661,7 +662,12 @@ const FilterAndroid = ({
                 <Text style={styles.rangeText}>
                   {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'} */}
-                  0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
+                  {/* 0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
+                  {isKm ? 'km' : 'mi'} */}
+                  0 -{' '}
+                  {isKm
+                    ? distanceHigh.toFixed(0)
+                    : kmToMiles(distanceHigh).toFixed(1)}{' '}
                   {isKm ? 'km' : 'mi'}
                 </Text>
               </View>
@@ -671,19 +677,21 @@ const FilterAndroid = ({
 
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
-              min={0}
+              min={1}
               max={isKm ? 1000 : kmToMiles(1000)}
-              step={1}
-              values={[
-                isKm ? distanceHigh : kmToMiles(distanceHigh),
-              ]}
+              step={0.1}
+              // values={[
+              //   isKm ? distanceHigh : kmToMiles(distanceHigh),
+              // ]}
+              values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
               onValuesChange={values => {
                 const [value] = values;
 
                 // Always store in KM internally
                 const valueInKm = isKm ? value : milesToKm(value);
 
-                setDistanceHigh(Math.round(valueInKm));
+                // setDistanceHigh(Math.round(valueInKm));
+                setDistanceHigh(valueInKm);
                 setIsDistanceChanged(true);
               }}
               allowOverlap={false}
@@ -695,7 +703,7 @@ const FilterAndroid = ({
                 height: 22,
                 borderRadius: 12,
                 backgroundColor: '#fff',
-                width: 10
+                width: 10,
               }}
             />
           </View>
@@ -1090,7 +1098,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   container: {
-    padding: 16,
+    paddingTop: 16,
   },
 
   toggleContainer: {
