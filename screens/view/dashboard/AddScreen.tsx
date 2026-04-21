@@ -1593,7 +1593,7 @@ typingTimeout.current = setTimeout(async () => {
 
               <Image
                 source={require('../../../assets/images/right.png')}
-                style={styles.dropdownIcon}
+                style={[styles.dropdownIcon, {paddingLeft: field?.info_icon ? 70 : 0}]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -1659,6 +1659,24 @@ typingTimeout.current = setTimeout(async () => {
                   </View>
                 ))}
             </View>
+             {field?.info_icon && (
+                <TouchableOpacity
+                  style={[styles.iconWrapper, { top: 8 }]}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setPopupData({
+                      title: field_name,
+                      message: field?.info_text || '',
+                    });
+                    setshowpopup(true);
+                  }}
+                >
+                  <Image
+                    source={require('../../../assets/images/info_icon.png')}
+                    style={styles.infoIcon}
+                  />
+                </TouchableOpacity>
+              )}
           </View>
         );
 

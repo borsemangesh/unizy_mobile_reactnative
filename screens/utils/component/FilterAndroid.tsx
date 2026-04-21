@@ -693,8 +693,9 @@ const FilterAndroid = ({
               trackStyle={{ height: 4, borderRadius: 2 }}
               markerStyle={{
                 height: 22,
-                borderRadius: 11,
+                borderRadius: 12,
                 backgroundColor: '#fff',
+                width: 10
               }}
             />
           </View>
