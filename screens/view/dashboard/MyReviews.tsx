@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -14,7 +13,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
-
+  Pressable,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -32,6 +31,7 @@ import Animated, {
   interpolate,
   interpolateColor,
   useDerivedValue,
+  withSpring,
 } from 'react-native-reanimated';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
@@ -42,6 +42,8 @@ import i18n from '../../../localization/i18n';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 import { IMAGE_URLS } from '../../utils/Style';
+import ReviewDetailCard from '../../utils/ReviewDetailCard';
+import StarRating from '../../utils/StarRating';
 
 type CreatedBy = {
   id: number;
@@ -60,7 +62,6 @@ type CreatedBy = {
   updated_at: string;
   role_id: number;
 };
-
 
 type Feature = {
   id: number;
@@ -86,14 +87,21 @@ type Feature = {
   };
 };
 type university = {
-  id: number,
-  name: string
-}
+  id: number;
+  name: string;
+};
 
 type MyReviewsProps = {
   navigation: any;
 };
-
+type User = {
+  id: string;
+  name: string;
+  university: string;
+  rating: number;
+  profileImg: any;
+  comment: string;
+};
 
 const MyReviews = ({ navigation }: MyReviewsProps) => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
@@ -102,13 +110,29 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const pagesize = 10;
   const [featureList, setFeatureList] = useState<any[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
   const { t } = useTranslation();
   const { height } = Dimensions.get('window');
   const isEmpty = featurelist.length === 0;
+  const [activeTab, setActiveTab] = useState<'My Reviews' | 'Reviews'>(
+    'My Reviews',
+  );
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  const tabs = ['My Reviews', 'Reviews'];
+  const screenWidth = Dimensions.get('window').width;
+  const tabWidth = (screenWidth * 0.9) / tabs.length;
+
+  // const [selectedTab, setSelectedTab] = useState<'Bank' | 'Cards'>('Bank');
+  const bubbleTranslateX = useSharedValue(0);
 
   type Category = {
     id: number | null;
@@ -172,7 +196,6 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
     name: t('all'),
   });
 
-
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
@@ -190,12 +213,100 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   }, [t]);
 
   useEffect(() => {
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1);
-  }, [selectedCategory]);
+    if (activeTab === 'Reviews') {
+      fetchReviews();
+    } else {
+      setPage(1);
+      displayListOfProduct(selectedCategory?.id ?? null, 1);
+    }
 
+    // displayListOfProduct(selectedCategory?.id ?? null, 1);
+  }, [selectedCategory, activeTab]);
 
-  const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+  const fetchReviews = async () => {
+    try {
+      setLoading(true);
+      setInitialLoading(true);
+      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem('userToken');
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
+
+      if (!token) return;
+      //const url1 = `${MAIN_URL.baseUrl}category/users/10/reviews`;
+      let url1 = '';
+
+      // if (selectedCategory?.id === null) {
+      //   url1 = `${MAIN_URL.baseUrl}category/users/reviews`;
+      // } else {
+      //   url1 = `${MAIN_URL.baseUrl}category/users/reviews/${selectedCategory.id}`;
+      // }
+      if (selectedCategory?.id === null) {
+        url1 = `${MAIN_URL.baseUrl}category/users/reviews`;
+      } else {
+        url1 = `${MAIN_URL.baseUrl}category/users/reviews/${selectedCategory.id}`;
+      }
+      if (userId) url1 += `?seller_id=${userId}`;
+      console.log(url1);
+
+      const response = await fetch(url1, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          languagecode: language_code,
+        },
+      });
+
+      const result = await response.json();
+      console.log('Fetch reviews response status:', url1, result);
+      setTotalReviews(result?.data?.totalReviews ?? 0);
+      setAverageRating(Number((result?.data?.averageRating ?? 0).toFixed(1)));
+      const reviews = result?.data?.reviews ?? [];
+
+      const formattedUsers: User[] = reviews.map((item: any) => ({
+        id: item.id.toString(),
+        name: item.reviewer_name,
+        university: item?.university_name ?? 'Unknown University',
+        rating: item.rating,
+        userprofile: item?.reviewer_image,
+        productimage: item?.feature_image,
+        comment: item.comment,
+        date: item.created_at,
+        featureTitle: item.feature_title,
+        categoryName: item.category_name,
+        category_id: item.category_id,
+        price: item.price,
+      }));
+
+      setUsers(formattedUsers);
+
+      setLoading(false);
+      setInitialLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setInitialLoading(false);
+    } finally {
+      setLoading(false);
+      setInitialLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const index = tabs.indexOf(activeTab);
+    bubbleTranslateX.value = withSpring(index * tabWidth, {
+      damping: 150,
+      stiffness: 320,
+    });
+  }, [activeTab]);
+  const bubbleAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: bubbleTranslateX.value }],
+    };
+  });
+
+  const displayListOfProduct = async (
+    categoryId: number | null,
+    pageNum: number,
+  ) => {
     try {
       if (pageNum === 1) {
         setIsLoading(true);
@@ -206,11 +317,9 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
         url += `&category_id=${categoryId}`;
       }
 
-
-
-
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       if (!token) return;
 
       const response = await fetch(url, {
@@ -218,7 +327,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
       });
 
@@ -228,59 +337,71 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
       if (jsonResponse.statusCode === 200) {
         setIsLoading(false);
         setFeatureList(reviews);
-      } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+      } else if (
+        jsonResponse.statusCode === 401 ||
+        jsonResponse.statusCode === 403
+      ) {
         setIsLoading(false);
         navigation.reset({
           index: 0,
           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
         });
-      }
-
-      else {
+      } else {
         setIsLoading(false);
       }
     } catch (err) {
       setIsLoading(false);
-
     }
   };
 
   const filteredFeatures: Feature[] = featurelist.filter(item =>
-    (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
+    (item.featurelist?.title ?? '')
+      .toLowerCase()
+      .includes(search.toLowerCase()),
   );
 
-
-
   const formatDate = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
+    if (!dateString) return '';
 
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; // detect current language
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language; // detect current language
 
-  // ---------- Suffix only for English ----------
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    // ---------- Suffix only for English ----------
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
+    }
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    // ---------- Month translation ----------
+    const monthIndex = date.getMonth(); // 0–11
+    const monthKeys = [
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
+    ];
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
+
+  const [users, setUsers] = useState<User[]>([]);
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {
     const isLastOddItem =
@@ -288,13 +409,13 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
       index === filteredFeatures.length - 1;
 
     const feature = item?.feature;
-    const displayDate = formatDate(item?.created_at,t);
+    const displayDate = formatDate(item?.created_at, t);
 
     const productImage = feature?.thumbnail
       ? { uri: feature.thumbnail }
       : require('../../../assets/images/drone.png');
 
-    const displayPrice = feature.price
+    const displayPrice = feature.price;
     const displayTitle = feature?.title ?? 'Title';
     const rating = item?.rating?.toString() ?? '0';
     const comment = item?.comment ?? '';
@@ -305,10 +426,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 
     return (
       <View
-        style={[
-          styles.itemContainer,
-          isLastOddItem && { marginRight: 'auto' },
-        ]}
+        style={[styles.itemContainer, isLastOddItem && { marginRight: 'auto' }]}
       >
         <MyReviewCard
           infoTitle={displayTitle}
@@ -320,7 +438,28 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           date={displayDate}
           createdby={createdby}
           profileshowinview={profileshowinview}
+        />
+      </View>
+    );
+  };
 
+  const renderItem_Reviews = ({ item }: any) => {
+    const displayDate = formatDate(item.date, t);
+    const displayTitle = item.featureTitle ?? 'Title';
+
+    return (
+      <View style={styles.itemContainer}>
+        <ReviewDetailCard
+          infoTitle={displayTitle}
+          inforTitlePrice={`£${item.price ?? ''}`}
+          rating={item.rating?.toString() ?? '0'}
+          reviewText={item.comment ?? ''}
+          shareid={item.id}
+          date={displayDate}
+          reviewer_name={item.name}
+          category_id={item.category_id}
+          reviewer_image={item.userprofile}
+          feature_image={item.productimage}
         />
       </View>
     );
@@ -328,12 +467,11 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 
   return (
     <ImageBackground
-              source={IMAGE_URLS.BACK_ICON}
-              style={{ flex: 1,width: '100%',
-              height: '100%', }}
-              resizeMode="cover"
-          >
-    {/* <BackgroundWrapper> */}
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -379,7 +517,12 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 
         <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Profile', isNavigate: false })}
+            onPress={() =>
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Profile',
+                isNavigate: false,
+              })
+            }
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -430,18 +573,19 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
             </Animated.View>
           </TouchableOpacity>
 
-          <Text  numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
-           {t('my_reviews')} 
+          <Text
+            numberOfLines={2}
+            allowFontScaling={false}
+            style={styles.unizyText}
+          >
+            {t('my_reviews')}
           </Text>
-         
+
           <TouchableOpacity
             style={[styles.backButtonContainer]}
             // activeOpacity={0}
           >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -454,7 +598,8 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -469,140 +614,500 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })),
+                  { display: 'none' },
                 ]}
-              >
-                
-              </Animated.View>
+              ></Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
+                style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
-
         </View>
 
-        <Animated.FlatList
-          data={featureList}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => {
-            'worklet';
-            return index.toString();
-          }}
-          ListHeaderComponent={
-            <View
-            style={styles.categoryTabsContainer}
-            pointerEvents="box-none"
-           
-          >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.categoryTabsScrollContent}
-                nestedScrollEnabled={true}
+        {activeTab === 'My Reviews' ? (
+          <Animated.FlatList
+            data={featureList}
+            renderItem={
+              activeTab === 'My Reviews' ? renderItem : renderItem_Reviews
+            }
+            keyExtractor={(item, index) => {
+              'worklet';
+              return index.toString();
+            }}
+            ListHeaderComponent={
+              <View
+                style={styles.categoryTabsContainer}
+                pointerEvents="box-none"
               >
-                {categories.map((cat, index) => {
-                  const isSelected = selectedCategory.name === cat.name;
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => setSelectedCategory(cat)}
-                      activeOpacity={0.7}
-                    >
+                <View style={styles.bottomTabContainer}>
+                  <View style={{ height: 38 }}>
+                    <Animated.View
+                      style={[
+                        styles.bubble,
+                        {
+                          width: tabWidth - 2,
+                        },
+                        bubbleAnimatedStyle,
+                      ]}
+                    />
+                  </View>
 
-                      <SquircleView
-                        style={isSelected ? styles.tabcard : styles.tabcard1}
-                        squircleParams={{
-                          cornerSmoothing: 1,
-                          cornerRadius: 10,
-                          fillColor: isSelected
-                            ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                            : 'rgba(255, 255, 255, 0.06)',
+                  {tabs.map(tab => (
+                    <TouchableOpacity
+                      key={tab}
+                      style={[styles.tabItem, { width: tabWidth }]}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setSelectedCategory({ id: null, name: t('all') });
+                        setActiveTab(tab as any);
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Urbanist-SemiBold',
+                          color: activeTab === tab ? '#FFFFFF' : '#89C7FF',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {t(tab)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.categoryTabsScrollContent}
+                  nestedScrollEnabled={true}
+                >
+                  {categories.map((cat, index) => {
+                    const isSelected = selectedCategory.name === cat.name;
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setSelectedCategory(cat)}
+                        activeOpacity={0.7}
+                      >
+                        <SquircleView
+                          style={isSelected ? styles.tabcard : styles.tabcard1}
+                          squircleParams={{
+                            cornerSmoothing: 1,
+                            cornerRadius: 10,
+                            fillColor: isSelected
+                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                              : 'rgba(255, 255, 255, 0.06)',
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={
+                              isSelected ? styles.tabtext : styles.othertext
+                            }
+                          >
+                            {cat.name}
+                          </Text>
+                          {/* </View> */}
+                        </SquircleView>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            }
+            contentContainerStyle={[
+              styles.listContainer,
+              {
+                paddingTop: Platform.OS === 'ios' ? 0 : 0,
+                paddingBottom: isEmpty
+                  ? 10
+                  : Platform.select({
+                      ios: height * 0.01, // ⬅ apply padding when list has data
+                      android: height * 0.04,
+                    }),
+                flexGrow: 1,
+              },
+            ]}
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            onEndReachedThreshold={0.5}
+            onEndReached={() => {
+              const nextPage = page + 1;
+              setPage(nextPage);
+              displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+            }}
+            ListFooterComponent={
+              isLoadingMore ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#fff"
+                  style={{ marginVertical: 12 }}
+                />
+              ) : null
+            }
+            ListEmptyComponent={
+              isLoading ? (
+                <View style={styles.loaderWrapper}>
+                  <Loader containerStyle={styles.loaderContainer} />
+                </View>
+              ) : (
+                <View style={[styles.emptyWrapper]}>
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')}
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      {t('no_reviews_found')}
+                    </Text>
+                  </View>
+                </View>
+              )
+            }
+          />
+        ) : (
+          <Animated.FlatList
+            data={users}
+            renderItem={renderItem_Reviews}
+            keyExtractor={item => item.id.toString()}
+            onScroll={scrollHandler}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            contentContainerStyle={[
+              styles.listContainer,
+              {
+                paddingTop: Platform.OS === 'ios' ? 0 : 0,
+                paddingBottom: isEmpty
+                  ? 10
+                  : Platform.select({
+                      ios: height * 0.01,
+                      android: height * 0.04,
+                    }),
+                flexGrow: 1,
+              },
+            ]}
+            ListHeaderComponent={
+              <>
+                <View
+                  style={[
+                    styles.categoryTabsContainer,
+                    {
+                      marginHorizontal: -30,
+                      paddingHorizontal: 30,
+                      overflow: 'visible',
+                    },
+                  ]}
+                  pointerEvents="box-none"
+                >
+                  <View style={styles.bottomTabContainer}>
+                    <View style={{ height: 38 }}>
+                      <Animated.View
+                        style={[
+                          styles.bubble,
+                          {
+                            width: tabWidth - 2,
+                          },
+                          bubbleAnimatedStyle,
+                        ]}
+                      />
+                    </View>
+
+                    {tabs.map(tab => (
+                      <TouchableOpacity
+                        key={tab}
+                        style={[styles.tabItem, { width: tabWidth }]}
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          setSelectedCategory({ id: null, name: t('all') });
+                          setActiveTab(tab as any);
                         }}
                       >
                         <Text
-                          allowFontScaling={false}
-                          style={
-                            isSelected ? styles.tabtext : styles.othertext
-                          }
+                          style={{
+                            fontSize: 14,
+                            fontFamily: 'Urbanist-SemiBold',
+                            color: activeTab === tab ? '#FFFFFF' : '#89C7FF',
+                            textAlign: 'center',
+                          }}
                         >
-                          {cat.name}
+                          {t(tab)}
                         </Text>
-                        {/* </View> */}
-                      </SquircleView>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          }
-          contentContainerStyle={[
-            styles.listContainer,
-            {
-              paddingTop: (Platform.OS === 'ios'? 120 : 100),
-              paddingBottom: isEmpty
-                ? 10                      
-                : Platform.select({
-                  ios: height * 0.01,   // ⬅ apply padding when list has data
-                  android: height * 0.04,
-                }),
-              flexGrow: 1,
-            },
-          ]}
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
-          onEndReachedThreshold={0.5}
-          onEndReached={() => {
-            const nextPage = page + 1;
-            setPage(nextPage);
-            displayListOfProduct(selectedCategory?.id ?? null, nextPage);
-          }}
-          ListFooterComponent={
-            isLoadingMore ? (
-              <ActivityIndicator
-                size="small"
-                color="#fff"
-                style={{ marginVertical: 12 }}
-              />
-            ) : null
-          }
-          ListEmptyComponent={
-            isLoading ? (
-              <View style={styles.loaderWrapper}>
-                <Loader containerStyle={styles.loaderContainer} />
-              </View>
-            ) : (
-              <View style={[styles.emptyWrapper]}>
-                <View style={styles.emptyContainer}>
-                  <Image
-                    source={require('../../../assets/images/noproduct.png')}
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.emptyText}>
-                   {t('no_reviews_found')}
-                  </Text>
-                </View>
-              </View>
-            )
-          }
-        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoryTabsScrollContent}
+                  >
+                    {categories.map((cat, index) => {
+                      const isSelected = selectedCategory.name === cat.name;
+                      return (
+                        <Pressable
+                          key={index}
+                          onPress={() => setSelectedCategory(cat)}
+                        >
+                          <SquircleView
+                            style={
+                              isSelected ? styles.tabcard : styles.tabcard1
+                            }
+                            squircleParams={{
+                              cornerSmoothing: 1,
+                              cornerRadius: 10,
+                              fillColor: isSelected
+                                ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                                : 'rgba(255, 255, 255, 0.06)',
+                            }}
+                          >
+                            <Text
+                              allowFontScaling={false}
+                              style={
+                                isSelected ? styles.tabtext : styles.othertext
+                              }
+                            >
+                              {cat.name}
+                            </Text>
+                          </SquircleView>
+                        </Pressable>
+                      );
+                    })}
+                  </ScrollView>
 
+                  <View
+                    style={{
+                      paddingHorizontal: 16,
+                      marginBottom: 12,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        fontSize: 60,
+                        fontWeight: '700',
+                        color: '#fff',
+                        marginBottom: 4,
+                      }}
+                    >
+                      {averageRating}
+                    </Text>
+
+                    <StarRating rating={averageRating} starSize={24} />
+
+                    <Text allowFontScaling={false} style={styles.reviewcount}>
+                      {totalReviews} {t('reviews')}
+                    </Text>
+                  </View>
+
+                  <View style={styles.innercontainer}>
+                    <Text allowFontScaling={false} style={styles.mainlabel}>
+                      {t('reviews')}
+                    </Text>
+
+                    <View
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                      <Image
+                        source={require('../../../assets/images/staricon.png')}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          marginRight: 4,
+                          tintColor: 'rgba(140, 225, 255, 0.9)',
+                        }}
+                      />
+                      <Text allowFontScaling={false} style={styles.subrating}>
+                        {averageRating} ({totalReviews})
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </>
+            }
+            //    ListHeaderComponent={
+            //   <View
+            //     style={styles.categoryTabsContainer}
+            //     pointerEvents="box-none"
+            //   >
+            //     <ScrollView
+            //       horizontal
+            //       showsHorizontalScrollIndicator={false}
+            //       contentContainerStyle={styles.categoryTabsScrollContent}
+            //       nestedScrollEnabled={true}
+            //     >
+            //       {categories.map((cat, index) => {
+            //         const isSelected = selectedCategory.name === cat.name;
+            //         return (
+            //           <TouchableOpacity
+            //             key={index}
+            //             onPress={() => setSelectedCategory(cat)}
+            //             activeOpacity={0.7}
+            //           >
+            //             <SquircleView
+            //               style={isSelected ? styles.tabcard : styles.tabcard1}
+            //               squircleParams={{
+            //                 cornerSmoothing: 1,
+            //                 cornerRadius: 10,
+            //                 fillColor: isSelected
+            //                   ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+            //                   : 'rgba(255, 255, 255, 0.06)',
+            //               }}
+            //             >
+            //               <Text
+            //                 allowFontScaling={false}
+            //                 style={
+            //                   isSelected ? styles.tabtext : styles.othertext
+            //                 }
+            //               >
+            //                 {cat.name}
+            //               </Text>
+            //               {/* </View> */}
+            //             </SquircleView>
+            //           </TouchableOpacity>
+            //         );
+            //       })}
+            //     </ScrollView>
+            //   </View>
+            // }
+            ListEmptyComponent={
+              (loading || initialLoading) && users.length === 0 ? (
+                <View
+                  style={[
+                    styles.emptyWrapper,
+                    { justifyContent: 'center', flex: 1 },
+                  ]}
+                >
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
+              ) : !loading && users.length === 0 ? (
+                <View
+                  style={[
+                    styles.emptyWrapper,
+                    {
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flex: 1,
+                    },
+                  ]}
+                >
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')}
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      {t('no_reviews_found')}
+                    </Text>
+                  </View>
+                </View>
+              ) : null
+            }
+          />
+        )}
       </View>
       <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 
 export default MyReviews;
 
 const styles = StyleSheet.create({
-  blurButtonWrapper_none: {
+  mainlabel: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+  },
 
+  innercontainer: {
+    paddingHorizontal: 24,
+    marginBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  reviewcount: {
+    paddingHorizontal: 16,
+    marginTop: 12,
+    alignItems: 'center',
+    color: '#FFFFFFE0',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+    fontSize: 16,
+  },
+  subrating: {
+    color: 'rgba(140, 225, 255, 0.9)',
+    fontSize: 14,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '600',
+  },
+
+  bottomTabContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 42,
+    marginBottom: Platform.OS === 'ios' ? 15 : 15,
+    borderRadius: 50,
+    alignSelf: 'center',
+    borderWidth: 0.4,
+    borderColor: 'transparent',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23), -0.90px -0.80px 1px 0px rgba(255, 255, 255, 0.19)inset, 0.90px 0.80px 0.90px 0px rgba(255, 255, 255, 0.19)inset',
+    backgroundColor: 'rgba(40, 55, 149, 0.12)',
+    borderEndEndRadius: 50,
+    borderStartEndRadius: 50,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomStartRadius: 50,
+    boxSizing: 'border-box',
+    zIndex: 100,
+    marginTop: 120,
+  },
+  bubble: {
+    height: 38,
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: '#ffffff2e',
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    marginLeft: 2,
+  },
+
+  tabItem: {
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  blurButtonWrapper_none: {
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -612,7 +1117,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: 'transparent',
   },
-  
+
   backButtonContainer: {
     zIndex: 11,
   },
@@ -628,16 +1133,17 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
 
-
-  categoryTabsContainer: { 
-
-    marginHorizontal: -30, 
-    paddingHorizontal: 30, 
+  categoryTabsContainer: {
+    marginHorizontal: -30,
+    paddingHorizontal: 30,
     overflow: 'visible',
   },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'
-  ,paddingHorizontal: 16,padding: 8},
-
+  categoryTabsScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    padding: 8,
+  },
 
   tabcard: {
     minHeight: 38,
@@ -650,18 +1156,16 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
     boxSizing: 'border-box',
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    ///boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
-
   },
-  
-  
+
   tabcard1: {
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -673,13 +1177,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-   // boxSizing: 'border-box',
+    // boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
     //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
- 
+
   loaderWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -698,10 +1202,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 16,
-    paddingTop: 10
-    
+    paddingTop: 10,
   },
-
 
   emptyContainer: {
     flex: 1,
@@ -727,7 +1229,7 @@ const styles = StyleSheet.create({
   //   fontWeight: 600
   // },
 
-   emptyImage: {
+  emptyImage: {
     width: 64,
     height: 64,
     marginBottom: 0,
@@ -737,21 +1239,20 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600
+    fontWeight: 600,
   },
 
   tabtext: {
     color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14
-
+    fontSize: 14,
   },
   othertext: {
     color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14
+    fontSize: 14,
   },
 
   fullScreenContainer: {
@@ -765,13 +1266,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  
+
   listContainer: {
     width: '100%',
   },
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
   },
 });

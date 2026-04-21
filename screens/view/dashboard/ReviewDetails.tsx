@@ -67,7 +67,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const { height } = Dimensions.get('window');
 
   const seller_id = route.params?.seller_id || 64;
-
+  console.log('Received seller_id:', seller_id);
   const scrollY = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -308,13 +308,12 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   };
 
   return (
-         <ImageBackground
-                                source={IMAGE_URLS.BACK_ICON}
-                                style={{ flex: 1,width: '100%',
-                              height: '100%', }}
-                                resizeMode="cover"
-                              >
-    {/* <BackgroundWrapper> */}
+    <ImageBackground
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -440,9 +439,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none,]}
-            >
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -454,7 +451,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                       'clamp',
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40, display: 'none',
+                    borderRadius: 40,
+                    display: 'none',
                   })),
                 ]}
               />
@@ -468,7 +466,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
               >
                 <BlurView
@@ -481,7 +480,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24, display: 'none' },]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -497,35 +496,33 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: (Platform.OS === 'ios' ? 120 : 100),
+              paddingTop: Platform.OS === 'ios' ? 120 : 100,
               paddingBottom: isEmpty
                 ? 10
                 : Platform.select({
-                  ios: height * 0.01,
-                  android: height * 0.04,
-                }),
+                    ios: height * 0.01,
+                    android: height * 0.04,
+                  }),
               flexGrow: 1,
             },
           ]}
           ListHeaderComponent={
             <>
-               <View
-              style={[
-                styles.categoryTabsContainer,
-                {
-                  marginHorizontal: -30, 
-                  paddingHorizontal: 30, 
-                  overflow: 'visible',
-                },
-              ]}
-              pointerEvents="box-none"
-             
-            >
+              <View
+                style={[
+                  styles.categoryTabsContainer,
+                  {
+                    marginHorizontal: -30,
+                    paddingHorizontal: 30,
+                    overflow: 'visible',
+                  },
+                ]}
+                pointerEvents="box-none"
+              >
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.categoryTabsScrollContent}
-
                 >
                   {categories.map((cat, index) => {
                     const isSelected = selectedCategory.name === cat.name;
@@ -597,11 +594,28 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           }
           ListEmptyComponent={
             (loading || initialLoading) && users.length === 0 ? (
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
-                <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+              <View
+                style={[
+                  styles.emptyWrapper,
+                  { justifyContent: 'center', flex: 1 },
+                ]}
+              >
+                <Loader
+                  containerStyle={{
+                    width: 50,
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
               </View>
             ) : !loading && users.length === 0 ? (
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1, }]}>
+              <View
+                style={[
+                  styles.emptyWrapper,
+                  { justifyContent: 'center', alignItems: 'center', flex: 1 },
+                ]}
+              >
                 <View style={styles.emptyContainer}>
                   <Image
                     source={require('../../../assets/images/noproduct.png')}
@@ -631,7 +645,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       </View>
       <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 
