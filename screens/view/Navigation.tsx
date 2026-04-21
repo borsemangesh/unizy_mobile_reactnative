@@ -47,6 +47,7 @@ import BuyerInfo from './dashboard/BuyerInfo';
 import OnboardingScreen from './onboarding/OnboardingScreen';
 import MyRatings from './dashboard/MyRatings';
 import MyListingDetails from './dashboard/MyListingDetails';
+import SellerInfoHomeSearch from './dashboard/SellerInfo_HomeSearch';
 
 const Stack = createNativeStackNavigator();
 
@@ -393,6 +394,15 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
+        <Stack.Screen
+          name="SellerInfoHomeSearch"
+          component={SellerInfoHomeSearch}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+        
 
         <Stack.Screen
           name="BuyerInfo"

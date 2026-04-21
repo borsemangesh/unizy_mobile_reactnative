@@ -793,5 +793,14 @@
    "valid_city": "Enter valid postal code.",
    "min":"Min",
    "max": "Max",
-   "university": "University"
+   "university": "University",
+   "home_sell_title1": "Get Notified When  Someone SHows Interest.",
+   "home_sell_info1": "You’ll recive a notification when a buyer contacts you about your listing.",
+   "home_sell_title2": "Manage Your Listings in My Listings.",
+   "home_sell_info2": "Go to My Listings to view your accommodations details or edit your listing anytime.",
+   "home_sell_title3": "Arrange the Visit or Discussion.",
+   "home_sell_info3": "Use in-app chat to confirm the meeting point, time, or service details about this property.",
+   "home_sell_title4": "Finalize Agreement Outside the App.",
+   "home_sell_info4": "Once you and the buyer agree on terms, complete the rental or sale process directly with them.",
+   "home_sell_note": "The app does not handle payments for home listings. All transactions are managed directly between buyers and sellers."
 }

@@ -578,7 +578,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           //         },
           //       ],
           //     })
-          navigation.navigate('SellerInfo');
+          navigation.navigate('SellerInfoHomeSearch');
         } else {
           navigation.navigate('SellerInfo');
         }
