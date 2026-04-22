@@ -553,12 +553,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
   return (
     <ImageBackground
-                        source={IMAGE_URLS.BACK_ICON}
-                        style={{ flex: 1,width: '100%',
-                      height: '100%', }}
-                        resizeMode="cover"
-                      >
-    {/* <BackgroundWrapper> */}
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -604,7 +603,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
         <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })}
+            onPress={() =>
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Home',
+                isNavigate: false,
+              })
+            }
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -654,17 +658,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
               />
             </Animated.View>
           </TouchableOpacity>
-          <View style={{width: 280}}>
-            <Text allowFontScaling={false} numberOfLines={2} style={styles.unizyText}>{`${category_name}`}</Text>
+          <View style={{ width: 280 }}>
+            <Text
+              allowFontScaling={false}
+              numberOfLines={2}
+              style={styles.unizyText}
+            >{`${category_name}`}</Text>
           </View>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
             // activeOpacity={0}
           >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -677,7 +682,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -692,21 +698,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })),
+                  { display: 'none' },
                 ]}
-              >
-                
-              </Animated.View>
+              ></Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
+                style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
         </View>
-
 
         <Animated.FlatList
           data={featurelist}
@@ -718,15 +722,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.5}
           ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 ,marginTop:Platform.OS=='ios'? 0:4}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 8,
+                paddingHorizontal: 8,
+                marginTop: Platform.OS == 'ios' ? 0 : 4,
+              }}
+            >
               <Pressable
                 style={styles.search_container}
                 onPress={() => inputRef.current?.focus()}
               >
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
-                  selectionColor='#F5F5F5'
-                  cursorColor='#F5F5F5'
+                  selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
                   ref={inputRef}
                   allowFontScaling={false}
                   style={styles.searchBar}
@@ -758,11 +769,33 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           }
           ListEmptyComponent={
             (isLoading || initialLoading) && featurelist.length === 0 ? (
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
-                <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+              <View
+                style={[
+                  styles.emptyWrapper,
+                  { justifyContent: 'center', flex: 1 },
+                ]}
+              >
+                <Loader
+                  containerStyle={{
+                    width: 50,
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
               </View>
             ) : !isLoading && featurelist.length === 0 ? (
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1,paddingHorizontal: 10 }]}>
+              <View
+                style={[
+                  styles.emptyWrapper,
+                  {
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flex: 1,
+                    paddingHorizontal: 10,
+                  },
+                ]}
+              >
                 <View style={styles.emptyContainer}>
                   <Image
                     source={require('../../../assets/images/noproduct.png')}
@@ -796,8 +829,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           //   onEndReachedCalledDuringMomentum.current = false;
           // }}
         />
-
-
       </View>
 
       {Platform.OS === 'ios' ? (
@@ -806,7 +837,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           visible={isFilterVisible}
           initialFilters={appliedFilter}
           onClose={() => {
-  
             setFilterVisible(false);
           }}
           onApply={filterBody => handleFilterApply(filterBody)}
@@ -819,7 +849,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           visible={isFilterVisible}
           initialFilters={appliedFilter}
           onClose={() => {
-
             setFilterVisible(false);
           }}
           onApply={filterBody => handleFilterApply(filterBody)}
@@ -827,10 +856,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           to={0}
         />
       )}
-      <ShortCustomToastContainer/>
+      <ShortCustomToastContainer />
       <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 

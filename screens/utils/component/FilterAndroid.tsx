@@ -681,7 +681,7 @@ const FilterAndroid = ({
               sliderLength={SCREEN_WIDTH / 2 - 10}
               min={1}
               max={isKm ? 1000 : kmToMiles(1000)}
-              step={0.1}
+              step={1}
               // values={[
               //   isKm ? distanceHigh : kmToMiles(distanceHigh),
               // ]}
@@ -702,12 +702,94 @@ const FilterAndroid = ({
               unselectedStyle={{ backgroundColor: '#888' }}
               trackStyle={{ height: 4, borderRadius: 2 }}
               markerStyle={{
-                height: 22,
+                height: 20,
                 borderRadius: 12,
                 backgroundColor: '#fff',
-                width: 10,
+                width: 4,
               }}
             />
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setDistanceHigh(prev => {
+                    let currentValue = isKm ? prev : kmToMiles(prev);
+
+                    let newValue = currentValue - 1;
+
+                    if (newValue < 1) return prev;
+
+                    // ✅ FIX: normalize to 1 decimal
+                    newValue = parseFloat(newValue.toFixed(1));
+
+                    return isKm ? newValue : milesToKm(newValue);
+                  });
+
+                  setIsDistanceChanged(true);
+                }}
+              >
+                <Image
+                  source={
+                    true
+                      ? require('../../../assets/images/blur_minus_512.png')
+                      : require('../../../assets/images/icon1.png')
+                  }
+                  style={{ width: 30, height: 30 }}
+                />
+              </TouchableOpacity>
+
+              <Text
+                allowFontScaling={false}
+                style={{
+                  color: '#FFF',
+                  fontSize: 14,
+                  textAlign: 'center',
+                  fontFamily: 'Urbanist-SemiBold',
+                  fontWeight: 600,
+                }}
+              >
+                {isKm
+                  ? distanceHigh.toFixed(0)
+                  : kmToMiles(distanceHigh).toFixed(1)}{' '}
+                
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setDistanceHigh(prev => {
+                    let currentValue = isKm ? prev : kmToMiles(prev);
+
+                    let newValue = currentValue + 1;
+
+                    const max = isKm ? 1000 : kmToMiles(1000);
+                    if (newValue > max) return prev;
+
+                    // ✅ FIX: normalize to 1 decimal
+                    newValue = parseFloat(newValue.toFixed(1));
+
+                    return isKm ? newValue : milesToKm(newValue);
+                  });
+
+                  setIsDistanceChanged(true);
+                }}
+              >
+                <Image
+                  source={
+                    true //count === maxUnits
+                      ? require('../../../assets/images/blur_plus_512.png')
+                      : require('../../../assets/images/icon2.png')
+                  }
+                  style={{ width: 30, height: 30 }}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* <TextInput
