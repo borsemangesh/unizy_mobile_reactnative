@@ -85,6 +85,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
   const [isLoading, setIsLoading] = useState(false);
+  const [apiIsFeatured, setApiIsFeatured] = useState(false);
 
   // Format as DD-MM-YYYY
   const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(
@@ -129,6 +130,16 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
       scrollY.value = event.contentOffset.y;
     },
   });
+
+  useEffect(() => {
+  const loadFeatureStatus = async () => {
+    const val = await AsyncStorage.getItem('isfeatured');
+    if (val !== null) {
+      setApiIsFeatured(JSON.parse(val));
+    }
+  };
+  loadFeatureStatus();
+}, []);
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
@@ -349,177 +360,6 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     name: string;
     type?: string;
   };
-
-
-  // const handleListPress = async () => {
-  //   console.log('🔵 handleListPress called');
-  //   try {
-  //     console.log('Step 1: Fetching formData from AsyncStorage...');
-  //     const storedData = await AsyncStorage.getItem('formData1');
-  //     console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
-
-  //     if (!storedData) {
-  //       console.log('⚠️ No form data found in storage');
-  //       return;
-  //     }
-
-  //     const formData: Record<
-  //       string,
-  //       { value: any; alias_name: string | null }
-  //     > = JSON.parse(storedData);
-  //     console.log('✅ Parsed formData:', formData);
-
-  //     console.log('Step 2: Fetching userToken...');
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const productId1 = await AsyncStorage.getItem('selectedProductId');
-  //     const shareid = await AsyncStorage.getItem('shareid');
-
-  //     if (!token) {
-  //       console.log('⚠️ Token not found. Cannot upload.');
-  //       return;
-  //     }
-
-  //     console.log('Step 3: Splitting formData...');
-
-  //     const imageFields = Object.entries(formData)
-  //       .filter(([key, obj]) => {
-  //         const v = obj.value;
-  //         return (
-  //           Array.isArray(v) &&
-  //           v.length > 0 &&
-  //           v.every((item: any) => item?.uri)
-  //         );
-  //       })
-  //       .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-  //         string,
-  //         ImageField[],
-  //       ][];
-
-  //     const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-  //       const v = obj.value;
-  //       return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-  //     });
-
-  //     console.log('✅ Non-image fields:', nonImageFields);
-  //     console.log('✅ Image fields:', imageFields);
-
-  //     // --- Build data array safely ---
-  //     const dataArray = nonImageFields
-  //       .filter(([key, obj]) => !isNaN(Number(key)))
-  //       .map(([key, obj]) => {
-  //         const val = obj.value;
-  //         return {
-  //           id: Number(key),
-  //           param_value: val !== undefined && val !== null && val !== '' ? val : null,
-  //         };
-  //       })
-  //       .filter(item => item.param_value !== null);
-
-  //     console.log('✅ Data array for create API:', dataArray);
-
-  //     const createPayload = {
-  //       category_id: productId1, // dynamic or static
-  //       data: dataArray,
-  //     };
-  //     console.log(
-  //       'API',
-  //       `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-  //     );
-  //     const createRes = await fetch(
-  //       `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-  //       {
-  //         method: 'PATCH',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify(createPayload),
-  //       },
-  //     );
-
-  //     const createJson = await createRes.json();
-  //     console.log('✅ Create API response:', createJson);
-
-  //     const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
-  //     const isSuccess = createRes.status === 200 || createRes.status === 201;
-
-  //     showToast(t(apiMessage), isSuccess ? "success" : "error");
-
-  //     if (!(createRes.status === 200 || createRes.status === 201)) {
-  //       navigation.reset({
-  //         index: 0,
-  //         routes: [{ name: 'MyListing', },],
-  //       });
-  //       return;
-  //     }
-
-  //     const feature_id = createJson?.data?.id;
-  //     if (!feature_id) {
-  //       return
-  //     }
-
-  //     const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-  //     const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
-
-
-  //     for (const [param_id, images] of imageFields) {
-  //       if (!Array.isArray(images)) {
-  //         continue;
-  //       }
-
-  //       for (const image of images) {
-  //         if (!image || !image.uri) {
-  //           continue;
-  //         }
-
-  //         if (deletedImageIds.includes(image.id)) {
-  //           continue;
-  //         }
-  //         const data = new FormData();
-  //         data.append('files', {
-  //           uri: image.uri,
-  //           type: image.type || 'image/jpeg',
-  //           name: image.name,
-  //         } as any);
-  //         data.append('feature_id', feature_id);
-  //         data.append('param_id', param_id);
-  //         data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
-
-  //         console.log('✅ FormData prepared for upload', JSON.stringify(data));
-
-  //         const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-
-  //         const uploadRes = await fetch(uploadUrl, {
-  //           method: 'POST',
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //           body: data,
-  //         });
-  //         const uploadJson = await uploadRes.json();
-
-  //         try {
-  //           console.log("✅ Upload API Parsed JSON:", uploadJson);
-  //           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
-  //           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-  //           showToast(t(apiMessage), isSuccess ? "success" : "error");
-  //           if (!isSuccess) return;
-  //         } catch (err) {
-  //           console.error('❌ Failed to parse upload response as JSON', err);
-  //         }
-  //       }
-  //     }
-
-
-  //     console.log('✅ All uploads done. Showing toast.');
-  //     showToast(t(Constant.DATA_UPLOAD), 'success');
-  //     setShowPopup(true);
-  //   } catch (error) {
-  //     console.log('❌ Error in handleListPress:', error);
-  //     showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
-  //   }
-  // };
-
 
   const handleListPress = async () => {
     setIsLoading(true)
@@ -762,6 +602,16 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         ? `£${commissionPrice}/${t('week')}`
         : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}`
           : `£${commissionPrice}`;
+  
+
+  
+  const form =
+    typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+
+  // 🔥 FIX: use alias_name instead of hardcoded '13'
+  const isToggleOn =
+    Object.values(form || {}).find((f: any) => f.alias_name === 'isfeatured')
+      ?.value === true;
 
   return (
    
@@ -1237,8 +1087,45 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             </View>
           </View>
         </AnimatedReanimated.ScrollView>
-
         <Button
+  onPress={handleListPress}
+  title={(() => {
+    try {
+      const form =
+        typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+
+      // ✅ FIX: get toggle using alias_name
+      const isToggleOn = Object.values(form || {}).find(
+        (f: any) => f.alias_name === 'isfeatured'
+      )?.value === true;
+
+      // ✅ get API featured status
+      const apiIsFeaturedValue = apiIsFeatured; // from useState
+
+      if (categoryid === 4 && accomodation_amount > 0) {
+
+        // ✅ CASE 1: Already featured → only update
+        if (apiIsFeaturedValue) {
+          return t('update');
+        }
+
+        // ✅ CASE 2: Toggle ON → show amount
+        if (!apiIsFeaturedValue && isToggleOn) {
+          return `${t('update')} for £${commissionPercent1.toFixed(2)}`;
+        }
+
+        // ✅ CASE 3: Toggle OFF → only update
+        return t('update');
+      }
+
+      return t('update');
+    } catch (e) {
+      return 'Update';
+    }
+  })()}
+/>
+
+        {/* <Button
           onPress={handleListPress}
           title={(() => {
             try {
@@ -1277,7 +1164,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             //   // console.log('Error parsing storedForm:', e);
             //   return 'Update';
             // }
-          })()} />
+          })()} /> */}
 
         <Modal
           visible={showPopup}
