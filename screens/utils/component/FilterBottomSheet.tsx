@@ -331,6 +331,8 @@ const FilterBottomSheet = ({
   };
   const kmToMiles = (km: number) => km * 0.621371;
   const milesToKm = (mi: number) => mi / 0.621371;
+
+  const currentFilter = filters.find(f => f.field_name === selectedTab);
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -900,7 +902,7 @@ const FilterBottomSheet = ({
     onClose();
   };
 
-  const currentFilter = filters.find(f => f.field_name === selectedTab);
+  
 
   const [search = '', setSearch] = useState('');
   return (

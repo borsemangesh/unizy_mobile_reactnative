@@ -323,9 +323,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     const isFeatured =
       form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-    if (categoryid === 4 && accomodation_amount > 0) {
+    if (categoryid === 4 ) {
       navigation.navigate('PaymentScreen', {
-        amount: isFeatured ? finalPrice: accomodation_amount,
+        amount: isFeatured ? maxCap1: accomodation_amount,
         feature_id: 1,
         nav: 'add',
 
@@ -1133,8 +1133,8 @@ const applicableFee = Math.min(percentFee, maxCap1);
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
               if (categoryid === Number(4)  ) {
-                if (isFeatured && finalPrice> 0 ) {
-                     return `${t('list')} for £${(finalPrice).toFixed(2)}`;;
+                if (isFeatured && maxCap1> 0 ) {
+                     return `${t('list')} for £${(maxCap1).toFixed(2)}`;;
                 } else { 
                   if(!isFeatured && accomodation_amount> 0) {
                     return `${t('list')} for £${accomodation_amount.toFixed(2)}`;

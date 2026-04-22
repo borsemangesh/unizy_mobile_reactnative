@@ -1145,7 +1145,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
              
               const apiIsFeaturedValue = apiIsFeatured;
 
-              if (categoryid === 4 && accomodation_amount > 0) {
+              if (categoryid === 4 && maxCap1 > 0) {
                 
                 if (apiIsFeaturedValue) {
                   return t('update');
@@ -1153,7 +1153,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
                
                 if (!apiIsFeaturedValue && isToggleOn) {
-                  return `${t('update')} for £${commissionPercent1.toFixed(2)}`;
+                  return `${t('update')} for £${maxCap1.toFixed(2)}`;
                 }
                 return t('update');
               }
