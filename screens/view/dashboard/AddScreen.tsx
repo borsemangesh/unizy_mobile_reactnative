@@ -2305,7 +2305,7 @@ typingTimeout.current = setTimeout(async () => {
                           <Text allowFontScaling={false} style={styles.importantText}>
                             {t('fixed_commission')}{' '}
                             <Text style={styles.importantText1}>
-                              £{Math.trunc(accommodation_amount)}
+                              £{maxFeatureCap}
                             </Text>{' '}
                             {t('acc_message')}
                           </Text>
