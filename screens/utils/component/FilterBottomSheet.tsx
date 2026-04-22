@@ -649,14 +649,14 @@ const FilterBottomSheet = ({
           <View style={styles.container}>
             <View
               style={{
-                flex: 1,
+              
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignContent: 'center',
+               
               }}
             >
               {/* 🔁 KM / Miles Toggle */}
-              <Text style={{ color: 'white', marginBottom: 10 }}>Distance</Text>
+              <Text style={{ color: 'white', marginBottom: 10,paddingRight: 10 }}>Distance</Text>
               <View>
                 <View style={styles.toggleContainer}>
                   <TouchableOpacity
@@ -722,8 +722,9 @@ const FilterBottomSheet = ({
               trackStyle={{ height: 4, borderRadius: 2 }}
               markerStyle={{
                 height: 22,
-                borderRadius: 11,
+                borderRadius: 12,
                 backgroundColor: '#fff',
+                width: 10
               }}
             />
           </View>
@@ -1152,7 +1153,8 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
   },
   container: {
-    padding: 16,
+    // padding: 16,
+    paddingTop: 16,
   },
 
   toggleContainer: {
