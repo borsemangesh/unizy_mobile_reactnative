@@ -119,15 +119,15 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   const { t } = useTranslation();
   const { height } = Dimensions.get('window');
   const isEmpty = featurelist.length === 0;
-  const [activeTab, setActiveTab] = useState<'My Reviews' | 'Reviews'>(
-    'My Reviews',
+  const [activeTab, setActiveTab] = useState<'Given Reviews' | 'Received Reviews'>(
+    'Given Reviews',
   );
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const tabs = ['My Reviews', 'Reviews'];
+  const tabs = ['Given Reviews', 'Received Reviews'];
   const screenWidth = Dimensions.get('window').width;
   const tabWidth = (screenWidth * 0.9) / tabs.length;
 
@@ -213,7 +213,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   }, [t]);
 
   useEffect(() => {
-    if (activeTab === 'Reviews') {
+    if (activeTab === 'Received Reviews') {
       fetchReviews();
     } else {
       setPage(1);
@@ -578,7 +578,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
             allowFontScaling={false}
             style={styles.unizyText}
           >
-            {t('my_reviews')}
+            {t('reviews')}
           </Text>
 
           <TouchableOpacity
@@ -628,11 +628,11 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           </TouchableOpacity>
         </View>
 
-        {activeTab === 'My Reviews' ? (
+        {activeTab === 'Given Reviews' ? (
           <Animated.FlatList
             data={featureList}
             renderItem={
-              activeTab === 'My Reviews' ? renderItem : renderItem_Reviews
+              activeTab === 'Given Reviews' ? renderItem : renderItem_Reviews
             }
             keyExtractor={(item, index) => {
               'worklet';

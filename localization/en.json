@@ -804,5 +804,8 @@
    "home_sell_info4": "Once you and the buyer agree on terms, complete the rental or sale process directly with them.",
    "home_sell_note": "The app does not handle payments for home listings. All transactions are managed directly between buyers and sellers.",
    "note": "Note: ",
-   "desclmer": "The quoted price shown is final and already includes platform service charges as well as transaction fees. Buyers will not be asked to pay any additional hidden costs beyond this amount."
+   "desclmer": "The quoted price shown is final and already includes platform service charges as well as transaction fees. Buyers will not be asked to pay any additional hidden costs beyond this amount.",
+   "featured_listing_note_homesearch": "A feature commission of",
+   "featured_listing_note_homesearch1": "will be charged. This fee is charged upfront together with the accommodation listing fee.",
+    "reviews": "Reviews"
 }

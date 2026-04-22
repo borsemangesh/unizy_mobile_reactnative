@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -1903,8 +1906,32 @@ typingTimeout.current = setTimeout(async () => {
             </View>
 
             {/* Only for NON-4 products */}
-            {/* {productId !== 4 && ( */}
+            {productId === 4 ? (
               <View style={styles.textbg}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {t('important')}
+                  </Text>
+
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('featured_listing_note_homesearch')}{' '}
+                    {/* <Text style={styles.importantText1}>
+                      {Math.trunc(featureFee)}%
+                    </Text>{' '} */}
+                    
+                    <Text style={styles.importantText1}>
+                      £{maxFeatureCap}
+                    </Text>
+                    {' '} {t('featured_listing_note_homesearch1')}
+                  </Text>
+                </View>
+              </View>
+            ) : (
+            <View style={styles.textbg}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
                   style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -1921,13 +1948,14 @@ typingTimeout.current = setTimeout(async () => {
                     </Text>{' '}
                     {t('featured_listing_fee_percentage')} ({t('capped')}{' '}
                     <Text style={styles.importantText1}>
-                      £{Math.trunc(maxFeatureCap)}
+                      £{maxFeatureCap}
                     </Text>
                     ) {t('featured_listing_fee_cap')}
                   </Text>
                 </View>
               </View>
-           {/* )}  */}
+            
+            )} 
           </View>
         );
 
@@ -2302,7 +2330,7 @@ typingTimeout.current = setTimeout(async () => {
                           <Text allowFontScaling={false} style={styles.importantText}>
                             {t('fixed_commission')}{' '}
                             <Text style={styles.importantText1}>
-                              £{Math.trunc(accommodation_amount)}
+                              £{accommodation_amount}
                             </Text>{' '}
                             {t('acc_message')}
                           </Text>

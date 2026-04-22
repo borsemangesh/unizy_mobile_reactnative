@@ -30,7 +30,7 @@ import { IMAGE_URLS } from '../../utils/Style';
 const cardData = [
   { id: '1', titleKey: 'payment_methods', image: IMAGE_URLS.PAYMENT_ICON },
   { id: '2', titleKey: 'my_orders', image: IMAGE_URLS.CART_ICON },
-  { id: '3', titleKey: 'my_reviews', image: IMAGE_URLS.OK_ICON },
+  { id: '3', titleKey: 'reviews', image: IMAGE_URLS.OK_ICON },
   { id: '4', titleKey: 'notifications', image: IMAGE_URLS.NOTIFY_ICON},
   { id: '5', titleKey: 'change_password', image: IMAGE_URLS.CHANGEPASSWORD_ICON },
   { id: '6', titleKey: 'delete_account', image: IMAGE_URLS.DELETENEW_ICON },
@@ -259,7 +259,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           else if (item.titleKey === 'my_orders') {
               navigateToScreen('MyOrders');
           }
-          else if (item.titleKey === 'my_reviews') {
+          else if (item.titleKey === 'reviews') {
             navigateToScreen('MyReviews');
           }
           else if (item.titleKey === 'help_support') {
