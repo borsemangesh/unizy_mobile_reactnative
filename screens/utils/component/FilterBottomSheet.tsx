@@ -900,6 +900,8 @@ const FilterBottomSheet = ({
     onClose();
   };
 
+  const currentFilter = filters.find(f => f.field_name === selectedTab);
+
   const [search = '', setSearch] = useState('');
   return (
     <View
@@ -1047,7 +1049,20 @@ const FilterBottomSheet = ({
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
                     {selectedTab}
                   </Text>
-
+                  {currentFilter?.id === 44 && currentFilter?.description ? (
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: 'rgba(255,255,255,0.7)',
+                        fontFamily: 'Urbanist-medium',
+                        fontSize: 10,
+                        fontWeight: '400',
+                        fontStyle: 'normal',
+                      }}
+                    >
+                      ({currentFilter.description} )
+                    </Text>
+                  ) : null}
                   {renderRightContent()}
                 </ScrollView>
               </View>
