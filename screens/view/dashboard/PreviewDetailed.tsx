@@ -323,9 +323,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     const isFeatured =
       form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-    if (categoryid === 4 ) {
+    if (categoryid === 4 && accomodation_amount > 0) {
       navigation.navigate('PaymentScreen', {
-        amount: isFeatured ? maxCap1: accomodation_amount,
+        amount: isFeatured ? finalPrice: accomodation_amount,
         feature_id: 1,
         nav: 'add',
 
@@ -678,7 +678,7 @@ const applicableFee = Math.min(percentFee, maxCap1);
 
 // Step 3: Final price
   // const finalPrice = accommodationAmount + applicableFee;
-  const finalPrice = accommodationAmount + featurePercent;
+  const finalPrice = accommodationAmount + maxCap1;
 
 
 
@@ -1134,7 +1134,7 @@ const applicableFee = Math.min(percentFee, maxCap1);
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
               if (categoryid === Number(4)  ) {
                 if (isFeatured && maxCap1> 0 ) {
-                     return `${t('list')} for £${(maxCap1).toFixed(2)}`;;
+                     return `${t('list')} for £${(finalPrice).toFixed(2)}`;;
                 } else { 
                   if(!isFeatured && accomodation_amount> 0) {
                     return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
