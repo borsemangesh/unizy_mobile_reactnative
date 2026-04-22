@@ -1149,6 +1149,26 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </View>
                   </TouchableOpacity>
                 )}
+
+                {detail?.category?.id !== 4 && (
+                  <View style={styles.textbg}>
+                    <Image
+                      source={require('../../../assets/images/info_icon.png')}
+                      style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        {t('note')}
+                      </Text>
+                              
+                      <Text allowFontScaling={false} style={styles.importantText}>
+                        {t('desclmer')}{' '}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+                      
+      
               </View>
             </View>
           </AnimatedReanimated.ScrollView>
@@ -1540,6 +1560,41 @@ const ImageViewerModal = React.memo(
 );
 
 const styles = StyleSheet.create({
+
+  textbg: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    padding: 6,
+    borderWidth: 0.5,
+    borderEndEndRadius: 12,
+    borderStartEndRadius: 12,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomStartRadius: 12,
+    borderBlockStartColor: '#ffffff31',
+    borderBlockColor: '#ffffff31',
+    borderTopColor: '#ffffff31',
+    borderBottomColor: '#ffffff31',
+    borderLeftColor: '#ffffff31',
+    borderRightColor: '#ffffff31',
+  },
+  importantText: {
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_12,
+    color: '#FFFFFFCC',
+    marginBottom: 6,
+  },
+  importantText1: {
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_12,
+    ...COMMONSTYLE.FONTWEIGHT_500,
+    color: '#FFFFFF',
+  },
+
   fullLoader: {
     position: 'absolute',
     top: 0,
@@ -1922,15 +1977,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.36,
   },
 
-  productDeatilsHeading1: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 18,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-    letterSpacing: -0.36,
-  },
   QuaddText: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
