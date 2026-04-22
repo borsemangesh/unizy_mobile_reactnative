@@ -802,5 +802,7 @@
    "home_sell_info3": "Use in-app chat to confirm the meeting point, time, or service details about this property.",
    "home_sell_title4": "Finalize Agreement Outside the App.",
    "home_sell_info4": "Once you and the buyer agree on terms, complete the rental or sale process directly with them.",
-   "home_sell_note": "The app does not handle payments for home listings. All transactions are managed directly between buyers and sellers."
+   "home_sell_note": "The app does not handle payments for home listings. All transactions are managed directly between buyers and sellers.",
+   "note": "Note: ",
+   "desclmer": "The quoted price shown is final and already includes platform service charges as well as transaction fees. Buyers will not be asked to pay any additional hidden costs beyond this amount."
 }

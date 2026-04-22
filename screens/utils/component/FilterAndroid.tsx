@@ -332,6 +332,7 @@ const FilterAndroid = ({
   const convertValue = (value: any) => {
     return isKm ? value : (value * 0.621371).toFixed(1);
   };
+  const [addInformation, setAddInformation] = useState('');
 
   const kmToMiles = (km: number) => km * 0.621371;
   const milesToKm = (mi: number) => mi / 0.621371;
@@ -355,9 +356,11 @@ const FilterAndroid = ({
             const isOtherOption =
               opt.option_name?.toLowerCase() === 'other' ||
               opt.name?.toLowerCase() === 'other';
-
+         
             return (
               <View key={opt.id}>
+               
+               
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
@@ -394,9 +397,7 @@ const FilterAndroid = ({
                       )}
                     </View>
                   ) : (
-                    <View
-                      style={styles.radioOuterCircle}
-                    >
+                    <View style={styles.radioOuterCircle}>
                       {isSelectedRadio && (
                         <View
                           style={{
@@ -409,6 +410,8 @@ const FilterAndroid = ({
                       )}
                     </View>
                   )}
+
+                 
 
                   <Text
                     allowFontScaling={false}
@@ -600,8 +603,7 @@ const FilterAndroid = ({
           </TouchableOpacity>
         </View>
       );
-    }
-    else if (
+    } else if (
       currentFilter.field_type?.toLowerCase() === 'text' &&
       currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
@@ -849,6 +851,8 @@ const FilterAndroid = ({
     onClose();
   };
 
+  const currentFilter = filters.find(f => f.field_name === selectedTab);
+
   return (
     <View
       style={[
@@ -989,6 +993,21 @@ const FilterAndroid = ({
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
                     {selectedTab}
                   </Text>
+                  {currentFilter?.id === 44 && currentFilter?.description ? (
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: 'rgba(255,255,255,0.7)',
+    fontFamily: 'Urbanist-medium',
+    fontSize: 10,
+    fontWeight: '400',
+    fontStyle: 'normal',
+                       
+                      }}
+                    >
+                     ({currentFilter.description}) 
+                    </Text>
+                  ) : null}
                   {renderRightContent()}
                 </ScrollView>
               </View>
