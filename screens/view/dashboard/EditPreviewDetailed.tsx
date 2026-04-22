@@ -21,7 +21,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
-import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -68,7 +71,6 @@ interface FormField {
   alias_name: string | null;
 }
 
-
 const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -80,7 +82,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   const insets = useSafeAreaInsets(); // Safe area insets
-  const [newdate, setnewdate] = useState('')
+  const [newdate, setnewdate] = useState('');
   const [categoryid, setcategoryid] = useState(0);
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
@@ -104,7 +106,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     max_cappund: string | null;
     feature_fee: string | null;
     max_feature_cap: null;
-    accommodation_amount: | null
+    accommodation_amount: null;
   }
 
   interface UserMeta {
@@ -132,14 +134,14 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   });
 
   useEffect(() => {
-  const loadFeatureStatus = async () => {
-    const val = await AsyncStorage.getItem('isfeatured');
-    if (val !== null) {
-      setApiIsFeatured(JSON.parse(val));
-    }
-  };
-  loadFeatureStatus();
-}, []);
+    const loadFeatureStatus = async () => {
+      const val = await AsyncStorage.getItem('isfeatured');
+      if (val !== null) {
+        setApiIsFeatured(JSON.parse(val));
+      }
+    };
+    loadFeatureStatus();
+  }, []);
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
@@ -194,11 +196,8 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
           setStoredForm(parsedData);
         } else {
-
         }
-      } catch (error) {
-
-      }
+      } catch (error) {}
     };
 
     fetchStoredData();
@@ -212,9 +211,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           const meta: UserMeta = JSON.parse(metaStr);
           setUserMeta(meta);
         }
-      } catch (error) {
-
-      }
+      } catch (error) {}
     };
 
     loadUserMeta();
@@ -243,26 +240,36 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   };
 
   const formatDateWithDash = (dateString?: string, t?: any) => {
-    if (!dateString) return "";
+    if (!dateString) return '';
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    if (isNaN(date.getTime())) return '';
 
     const day = date.getDate();
     const year = date.getFullYear();
     const lang = i18n.language;
 
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
 
     const monthIndex = date.getMonth(); // 0–11
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -274,9 +281,10 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
   const descriptionvalue =
     getValueByAlias(storedForm, 'description') || t('no_des');
-  const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
-  const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
-
+  const duration_value = getValueByAlias(storedForm, 'service_duration') || '1';
+  const accomodation_amount = parseFloat(
+    userMeta?.category?.accommodation_amount ?? '0',
+  );
 
   const onScroll = (event: {
     nativeEvent: { contentOffset: { x: number } };
@@ -289,11 +297,11 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   useEffect(() => {
     const fetchFields = async () => {
       try {
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        const language_code =
+          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
         const token = await AsyncStorage.getItem('userToken');
         const productId1 = await AsyncStorage.getItem('selectedProductId');
-        setcategoryid(Number(productId1))
-
+        setcategoryid(Number(productId1));
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
 
@@ -302,7 +310,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code,
           },
         });
 
@@ -332,7 +340,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
               student_email: json.metadata.student_email ?? null,
               university_name: json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
-              city: json.metadata.city ?? null, // 
+              city: json.metadata.city ?? null, //
             }),
           );
         }
@@ -344,7 +352,6 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           setFields(sellerFields);
         }
       } catch (err) {
-
       } finally {
         //setLoading(false);
       }
@@ -362,11 +369,10 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   };
 
   const handleListPress = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-
-      const storedData = await AsyncStorage.getItem("formData1");
-      console.log(storedData)
+      const storedData = await AsyncStorage.getItem('formData1');
+      console.log(storedData);
       if (!storedData) {
         // console.log("⚠️ No form data found");
         return;
@@ -374,17 +380,19 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
       const formData: Record<string, FormField> = JSON.parse(storedData);
 
-
-      const token = await AsyncStorage.getItem("userToken");
-      const productId = await AsyncStorage.getItem("selectedProductId");
-      const shareid = await AsyncStorage.getItem("shareid");
+      const token = await AsyncStorage.getItem('userToken');
+      const productId = await AsyncStorage.getItem('selectedProductId');
+      const shareid = await AsyncStorage.getItem('shareid');
 
       if (!token) {
         return;
       }
 
       const imageFields: [string, ImageField[]][] = [];
-      const nonImageFields: [string, { value: any; alias_name: string | null }][] = [];
+      const nonImageFields: [
+        string,
+        { value: any; alias_name: string | null },
+      ][] = [];
 
       Object.entries(formData).forEach(([key, obj]) => {
         const v = obj.value;
@@ -435,61 +443,64 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         data: dataArray,
       };
 
-      console.log("Payload: ",createPayload);
+      console.log('Payload: ', createPayload);
 
-
-      const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const createRes = await fetch(
+        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(createPayload),
         },
-        body: JSON.stringify(createPayload),
-      });
+      );
 
       const createJson = await createRes.json();
 
-
       if (![200, 201].includes(createRes.status)) {
-        showToast(t(createJson?.message || "Error"), "error");
-        navigation.reset({ index: 0, routes: [{ name: "MyListing" }] });
+        showToast(t(createJson?.message || 'Error'), 'error');
+        navigation.reset({ index: 0, routes: [{ name: 'MyListing' }] });
         return;
       }
 
-      showToast(t(createJson?.message || "Success"), "success");
+      showToast(t(createJson?.message || 'Success'), 'success');
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
         return;
       }
 
-
       let deletedIds: string[] = [];
       const storedDeletedIds = await AsyncStorage.getItem('deletedImageIds');
-      console.log('Stored deleted image IDs from AsyncStorage:', storedDeletedIds);
+      console.log(
+        'Stored deleted image IDs from AsyncStorage:',
+        storedDeletedIds,
+      );
 
       if (storedDeletedIds) {
         deletedIds = JSON.parse(storedDeletedIds);
       }
 
-
       const isLocalImage = (uri: string) =>
         uri.startsWith('file://') || uri.startsWith('content://');
 
-
       for (const [param_id, images] of imageFields) {
-        const newImages = images.filter(img => img?.uri && isLocalImage(img.uri));
+        const newImages = images.filter(
+          img => img?.uri && isLocalImage(img.uri),
+        );
 
         //need to maintain the sequence  of images and send to server with same sequence
-        const seqimage = images.map((e,index)=>{
+        const seqimage = images.map((e, index) => {
           return {
             // uri: e.uri,
-            type: e.type || "image/jpeg",
+            type: e.type || 'image/jpeg',
             name: e.name || `image_${Date.now()}.jpg`,
-            seqno:  index+1
-          }
-        })
-        console.log('seqimage',seqimage)
+            seqno: index + 1,
+          };
+        });
+        console.log('seqimage', seqimage);
 
         // if (newImages.length === 0 && deletedIds.length === 0) continue;
 
@@ -520,16 +531,16 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
             body: form,
-          }
+          },
         );
-        console.log("IMAGE_RESPONSE: ", uploadRes);
+        console.log('IMAGE_RESPONSE: ', uploadRes);
 
         const uploadJson = await uploadRes.json();
         const isSuccess = uploadRes.ok;
 
         showToast(
           t(uploadJson?.message || 'Image upload failed'),
-          isSuccess ? 'success' : 'error'
+          isSuccess ? 'success' : 'error',
         );
 
         if (!isSuccess) return;
@@ -539,20 +550,14 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
       setShowPopup(true);
 
-      await AsyncStorage.removeItem("formData1");
-      await AsyncStorage.removeItem("deletedImagesId");
-
+      await AsyncStorage.removeItem('formData1');
+      await AsyncStorage.removeItem('deletedImagesId');
     } catch (err) {
-
-      showToast(t(Constant.SOMTHING_WENT_WRONG), "error");
-    }
-    finally {
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    } finally {
       setIsLoading(false);
     }
   };
-
-
-
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -599,12 +604,11 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     userMeta?.category?.id === 2
       ? `£${commissionPrice}/${t('hr')}`
       : userMeta?.category?.id === 4
-        ? `£${commissionPrice}/${t('week')}`
-        : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}`
-          : `£${commissionPrice}`;
-  
+      ? `£${commissionPrice}/${t('week')}`
+      : userMeta?.category?.id === 5
+      ? `£${commissionPrice}/${t('session')}`
+      : `£${commissionPrice}`;
 
-  
   const form =
     typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
 
@@ -614,17 +618,13 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
       ?.value === true;
 
   return (
-   
     // <BackgroundWrapper>
     <ImageBackground
-              source={IMAGE_URLS.BACK_ICON}
-              style={{ flex: 1,width: '100%',
-            height: '100%', }}
-              resizeMode="cover"
-            >
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
       <View style={styles.fullScreenContainer}>
-
-
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -670,7 +670,9 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             //onPress={() => navigation.replace('EditPreviewThumbnail')}
-            onPress={() => { navigation.goBack(); }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -732,11 +734,10 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           contentContainerStyle={[
             styles.scrollContainer,
             { paddingBottom: height * 0.1 },
-          ]}>
-
-          <View style={{ marginTop: (Platform.OS === 'ios' ? 9 : 12) }}>
-
-            {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5) ? (
+          ]}
+        >
+          <View style={{ marginTop: Platform.OS === 'ios' ? 9 : 12 }}>
+            {userMeta?.category?.id === 2 || userMeta?.category?.id === 5 ? (
               <ImageBackground
                 source={require('../../../assets/images/featurebg.png')}
                 style={{
@@ -746,7 +747,9 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                   width: '100%',
                 }}
               >
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <View
+                  style={{ alignItems: 'center', justifyContent: 'center' }}
+                >
                   {userMeta?.profile ? (
                     <Image
                       source={{ uri: userMeta?.profile }}
@@ -778,15 +781,15 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                           fontFamily: 'Urbanist-SemiBold',
                         }}
                       >
-                        {`${userMeta?.firstname?.[0] ?? ''}${userMeta?.lastname?.[0] ?? ''
-                          }`.toUpperCase() || 'NA'}
+                        {`${userMeta?.firstname?.[0] ?? ''}${
+                          userMeta?.lastname?.[0] ?? ''
+                        }`.toUpperCase() || 'NA'}
                       </Text>
                     </View>
                   )}
                 </View>
               </ImageBackground>
             ) : storedForm?.[6]?.value?.length > 1 ? (
-
               <View>
                 <FlatList
                   ref={flatListRef}
@@ -837,7 +840,6 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           </View>
 
           <View style={{ flex: 1, padding: 16 }}>
-
             <View style={styles.card1}>
               <View style={{ gap: 8 }}>
                 <Text allowFontScaling={false} style={styles.QuaddText}>
@@ -856,11 +858,12 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     />
                     <Text allowFontScaling={false} style={styles.datetext1}>
                       {t('service_duration')}:{' '}
-                      <Text style={styles.durationValue}>{duration_value} {t('hours')}</Text>
+                      <Text style={styles.durationValue}>
+                        {duration_value} {t('hours')}
+                      </Text>
                     </Text>
                   </View>
                 )}
-
               </View>
               <View
                 style={{
@@ -883,7 +886,9 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {formatDateWithDash(newdate, t)}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>
+                    {t('date_posted')}: {formatDateWithDash(newdate, t)}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -896,7 +901,10 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
                 </Text> */}
 
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
                   {(() => {
                     switch (userMeta?.category?.id) {
                       case 2:
@@ -929,7 +937,6 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
                     let displayValues: string[] = [];
 
-
                     if (field.param.field_type === 'dropdown') {
                       const storedField = storedForm?.[fieldId];
                       const storedValue = storedField?.value;
@@ -948,12 +955,12 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                       //         : opt.option_name;
                       //     })
                       //     .filter(Boolean) as string[];
-                      // } 
+                      // }
                       if (Array.isArray(storedValue)) {
                         displayValues = storedValue
                           .map((id: number) => {
                             const opt = field.param.options.find(
-                              (o: any) => Number(o.id) === Number(id)
+                              (o: any) => Number(o.id) === Number(id),
                             );
                             if (!opt) return null;
 
@@ -965,11 +972,9 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                             return opt.option_name;
                           })
                           .filter(Boolean) as string[];
-                      }
-
-                      else {
+                      } else {
                         const opt = field.param.options.find(
-                          (o: any) => Number(o.id) === Number(storedValue)
+                          (o: any) => Number(o.id) === Number(storedValue),
                         );
                         if (opt) {
                           displayValues = [
@@ -979,24 +984,20 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                           ];
                         }
                       }
-                    }
-                    else if (field.param.field_type === 'date') {
+                    } else if (field.param.field_type === 'date') {
                       const startDate = storedValue?.startDate;
                       const endDate = storedValue?.endDate;
 
                       if (startDate && endDate) {
                         displayValues = [
-                          `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(endDate).format(
-                            'DD-MM-YYYY'
-                          )}`,
+                          `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(
+                            endDate,
+                          ).format('DD-MM-YYYY')}`,
                         ];
                       } else {
                         displayValues = [];
                       }
-                    }
-
-
-                    else if (Array.isArray(storedValue)) {
+                    } else if (Array.isArray(storedValue)) {
                       displayValues = storedValue.map(String);
                     } else {
                       displayValues = [String(storedValue)];
@@ -1004,7 +1005,10 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
                     return (
                       <View key={fieldId} style={{}}>
-                        <Text allowFontScaling={false} style={styles.detailLabel1}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.detailLabel1}
+                        >
                           {field.param.field_name}
                         </Text>
 
@@ -1012,14 +1016,20 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                           <View style={styles.categoryContainer}>
                             {displayValues.map((val, idx) => (
                               <View key={idx} style={styles.categoryTag}>
-                                <Text allowFontScaling={false} style={styles.catagoryText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={styles.catagoryText}
+                                >
                                   {val}
                                 </Text>
                               </View>
                             ))}
                           </View>
                         ) : (
-                          <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+                          <Text
+                            allowFontScaling={false}
+                            style={[styles.new, { marginTop: 0 }]}
+                          >
                             {displayValues.join(', ')}
                           </Text>
                         )}
@@ -1032,7 +1042,12 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>{t('seller_details')}</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
+                  {t('seller_details')}
+                </Text>
                 <View style={{ flexDirection: 'row', marginBottom: 4 }}>
                   {userMeta?.profile ? (
                     <Image
@@ -1041,10 +1056,13 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     />
                   ) : (
                     <View style={COMMONSTYLE.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker'
+                          userMeta?.lastname ?? 'Walker',
                         )}
                       </Text>
                     </View>
@@ -1052,35 +1070,58 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
                   <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
-                      {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
+                      {`${userMeta?.firstname ?? ''} ${
+                        userMeta?.lastname ?? ''
+                      }`.trim()}
                     </Text>
                     <Text allowFontScaling={false} style={styles.univeritytext}>
                       {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-                    <Text allowFontScaling={false} style={[styles.univeritytext,]}>
+                    <Text
+                      allowFontScaling={false}
+                      style={[styles.univeritytext]}
+                    >
                       {userMeta?.city || ''}
                     </Text>
                   </View>
                 </View>
 
-
                 <View style={{ flexDirection: 'row' }}>
                   <View style={styles.bottombutton}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
                       <Image
                         source={require('../../../assets/images/staricon.png')}
                         style={{ height: 16, width: 16 }}
                       />
 
-                      <Text allowFontScaling={false} style={styles.chattext}>4.5</Text>
+                      <Text allowFontScaling={false} style={styles.chattext}>
+                        4.5
+                      </Text>
                     </View>
                   </View>
-                  <View style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}>
+                  <View
+                    style={[
+                      styles.chatcard,
+                      {
+                        marginLeft: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      },
+                    ]}
+                  >
                     <Image
                       source={require('../../../assets/images/message_chat.png')}
                       style={{ height: 16, width: 16, marginRight: 4 }}
                     />
-                    <Text allowFontScaling={false} style={styles.chattext}>{t('chat_with_seller')}</Text>
+                    <Text allowFontScaling={false} style={styles.chattext}>
+                      {t('chat_with_seller')}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -1088,42 +1129,41 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
         <Button
-  onPress={handleListPress}
-  title={(() => {
-    try {
-      const form =
-        typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+          onPress={handleListPress}
+          title={(() => {
+            try {
+              const form =
+                typeof storedForm === 'string'
+                  ? JSON.parse(storedForm)
+                  : storedForm;
+         const isToggleOn =
+           (
+             Object.values(form || {}).find(
+               (f: any) => f?.alias_name === 'isfeatured',
+             ) as any
+           )?.value === true;
+             
+              const apiIsFeaturedValue = apiIsFeatured;
 
-      // ✅ FIX: get toggle using alias_name
-      const isToggleOn = Object.values(form || {}).find(
-        (f: any) => f.alias_name === 'isfeatured'
-      )?.value === true;
+              if (categoryid === 4 && accomodation_amount > 0) {
+                
+                if (apiIsFeaturedValue) {
+                  return t('update');
+                }
 
-      // ✅ get API featured status
-      const apiIsFeaturedValue = apiIsFeatured; // from useState
+               
+                if (!apiIsFeaturedValue && isToggleOn) {
+                  return `${t('update')} for £${commissionPercent1.toFixed(2)}`;
+                }
+                return t('update');
+              }
 
-      if (categoryid === 4 && accomodation_amount > 0) {
-
-        // ✅ CASE 1: Already featured → only update
-        if (apiIsFeaturedValue) {
-          return t('update');
-        }
-
-        // ✅ CASE 2: Toggle ON → show amount
-        if (!apiIsFeaturedValue && isToggleOn) {
-          return `${t('update')} for £${commissionPercent1.toFixed(2)}`;
-        }
-
-        // ✅ CASE 3: Toggle OFF → only update
-        return t('update');
-      }
-
-      return t('update');
-    } catch (e) {
-      return 'Update';
-    }
-  })()}
-/>
+              return t('update');
+            } catch (e) {
+              return 'Update';
+            }
+          })()}
+        />
 
         {/* <Button
           onPress={handleListPress}
@@ -1234,22 +1274,19 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     try {
                       await AsyncStorage.removeItem('formData1');
                       await AsyncStorage.removeItem('selectedProductId');
-                      await AsyncStorage.removeItem('isfeatured')
-
+                      await AsyncStorage.removeItem('isfeatured');
 
                       navigation.reset({
                         index: 0,
                         routes: [
                           {
                             name: 'MyListing',
-                            params: { animation: 'none' }
-                          }
+                            params: { animation: 'none' },
+                          },
                         ],
                       });
                       setShowPopup(false);
-                    } catch (err) {
-
-                    }
+                    } catch (err) {}
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
@@ -1267,13 +1304,11 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         </View>
       )}
       <NewCustomToastContainer />
-
-  </ImageBackground>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-
   loaderOverlay: {
     position: 'absolute',
     top: 0,
@@ -1293,7 +1328,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 16,
     letterSpacing: -0.24,
-    paddingLeft: 4
+    paddingLeft: 4,
   },
   durationValue: {
     color: '#FFF',
@@ -1302,7 +1337,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 16,
     letterSpacing: -0.24,
-    paddingLeft: 4
+    paddingLeft: 4,
   },
 
   datePosted1: {
@@ -1319,7 +1354,6 @@ const styles = StyleSheet.create({
     width: 'auto',
     alignSelf: 'flex-start',
   },
-
 
   headerWrapper: {
     position: 'absolute',
@@ -1342,8 +1376,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    marginTop: Platform.OS === 'ios' ? 0 : 0,
+    marginLeft: 1,
   },
   backButtonContainer: {
     position: 'absolute',
@@ -1377,7 +1411,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -1391,8 +1426,6 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
 
-
-
   chattext: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1403,7 +1436,8 @@ const styles = StyleSheet.create({
   },
   chatcard: {
     borderRadius: 10,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     display: 'flex',
     flexDirection: 'row',
@@ -1413,12 +1447,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    height: 'auto'
+    height: 'auto',
   },
 
   bottombutton: {
     borderRadius: 10,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     display: 'flex',
     flexDirection: 'row',
@@ -1429,8 +1464,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-
-
 
   initialsText: {
     color: '#fff',
@@ -1459,7 +1492,7 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     paddingTop: 2,
     paddingBottom: 2,
-    marginTop: 6
+    marginTop: 6,
   },
 
   productDesHeding: {
@@ -1541,8 +1574,8 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     flexWrap: 'wrap',
     alignSelf: 'center',
-    maxWidth: '96%',  // ensures wrapping into 2 lines
-    width: '100%'
+    maxWidth: '96%', // ensures wrapping into 2 lines
+    width: '100%',
   },
 
   loginButton: {
@@ -1561,7 +1594,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-  
+
   logo: {
     width: 64,
     height: 64,
@@ -1586,13 +1619,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-  
   scrollContainer: {
     //paddingHorizontal: 20,
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
-
 
   datePosted: {
     flexDirection: 'row',
@@ -1642,7 +1673,7 @@ const styles = StyleSheet.create({
   gap12: {
     gap: 12,
   },
-  
+
   new: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-Regular',
@@ -1651,7 +1682,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 20,
   },
-  
+
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1697,7 +1728,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 10,
-    marginTop: 6
+    marginTop: 6,
   },
 
   card: {
@@ -1707,7 +1738,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop: 6
+    marginTop: 6,
   },
 });
 
