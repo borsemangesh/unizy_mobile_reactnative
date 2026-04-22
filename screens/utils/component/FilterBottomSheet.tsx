@@ -949,7 +949,7 @@ const FilterBottomSheet = ({
         // }
         else if (
           f.field_type?.toLowerCase() === 'text' &&
-          f.field_name?.toLowerCase().includes('postcode') &&
+          f.alias_name?.toLowerCase().includes('postcode') &&
           isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
