@@ -1659,12 +1659,17 @@ typingTimeout.current = setTimeout(async () => {
                         />
                       </View>
                     </TouchableOpacity>
+                    
+             
                   </View>
                 ))}
-            </View>
-             {field?.info_icon && (
+              {field?.info_icon && (
                 <TouchableOpacity
-                  style={[styles.iconWrapper, { top: 8 }]}
+                  style={[styles.iconWrapper, {
+                    right: 12,
+  top: -45,        // ✅ anchor from top
+  height: 40, 
+                  } ]}
                   activeOpacity={0.7}
                   onPress={() => {
                     setPopupData({
@@ -1680,6 +1685,7 @@ typingTimeout.current = setTimeout(async () => {
                   />
                 </TouchableOpacity>
               )}
+            </View>
           </View>
         );
 

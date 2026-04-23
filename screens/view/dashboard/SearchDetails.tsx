@@ -795,10 +795,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   detail?.category?.id === 4
                     ? Platform.OS === 'ios'
                       ? 20
-                      : height * 0.01
+                      : height * 0.04
                     : Platform.OS === 'ios'
                       ? 75
-                      : height * 0.07,
+                      : height * 0.08,
               },
             ]}
           >

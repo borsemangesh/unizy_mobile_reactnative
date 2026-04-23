@@ -1412,7 +1412,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             </Text>
                                   
             <Text allowFontScaling={false} style={styles.importantText}>
-              {t('desclmer')}{' '}
+              {t('complete_orderotp_note')}{' '}
             </Text>
           </View>
         </View>
