@@ -73,7 +73,7 @@ interface TransactionSection {
 
 
 export default function TransactionHistoryScreen(
-  navigation: TransactionPropos,
+ { navigation, onSalesTabChange }: any
 
 ) {
 
@@ -127,6 +127,12 @@ export default function TransactionHistoryScreen(
       setActiveTab('Sales');   // Switch to Sales tab automatically
     }
   }, [issales]);
+
+  useEffect(() => {
+  if (onSalesTabChange) {
+    onSalesTabChange(activeTab === 'Sales');
+  }
+}, [selectedTab]);
 
   useEffect(() => {
     if (activeTab === 'Purchases') {
@@ -616,7 +622,7 @@ export default function TransactionHistoryScreen(
       <ScrollView
         style={{
           width: '100%',
-          marginBottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.28,
+          marginBottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.34,
         }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}

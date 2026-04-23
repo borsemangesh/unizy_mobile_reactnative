@@ -152,7 +152,7 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
       id: '1',
       title: 'home_sell_title1',
       subtitle: 'home_sell_info1',
-      icon: require('../../../assets/images/list1.png'),
+      icon: require('../../../assets/images/notification_homesearch.png'),
     },
     {
       id: '2',
@@ -164,13 +164,13 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
       id: '3',
       title: 'home_sell_title3',
       subtitle: 'home_sell_info3',
-      icon: require('../../../assets/images/list3.png'),
+      icon: require('../../../assets/images/char_buyer.png'),
     },
     {
       id: '4',
       title: 'home_sell_title4',
       subtitle: 'home_sell_info4',
-      icon: require('../../../assets/images/list4.png'),
+      icon: require('../../../assets/images/group.png'),
     },
   ];
 
@@ -267,7 +267,7 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
                 allowFontScaling={false}
                 style={styles.unizyText1}
               >
-                {t('sell_subheader')}
+                {t('sellerhederhomesearch')}
               </Text>
               </View>
             </View>

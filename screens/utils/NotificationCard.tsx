@@ -87,19 +87,36 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 
     else if (templateName === 'NewReviewedAdd') {
       if (Platform.OS === 'ios') {
-        navigation.navigate('ReviewDetails', {
+        navigation.navigate('MyReviews', {
           catagory_id: categoryid,
           id: typeid,
           purchase: false,
           seller_id: user_id ?? 1,
+          activeTab: 'Received Reviews',
         });
+        // navigation.navigate('ReviewDetails', {
+        //   catagory_id: categoryid,
+        //   id: typeid,
+        //   purchase: false,
+        //   seller_id: user_id ?? 1,
+        // });
+       
+        
       } else {
-        navigation.navigate('ReviewDetails', {
+        navigation.navigate('MyReviews', {
           catagory_id: categoryid,
           id: typeid,
           purchase: false,
           seller_id: user_id ?? 1,
+          activeTab: 'Received Reviews',
         });
+        
+        // navigation.navigate('ReviewDetails', {
+        //   catagory_id: categoryid,
+        //   id: typeid,
+        //   purchase: false,
+        //   seller_id: user_id ?? 1,
+        // });
       }
     }
 

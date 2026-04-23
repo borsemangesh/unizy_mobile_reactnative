@@ -54,6 +54,7 @@ import Loader from '../../utils/component/Loader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 
 type Product = {
@@ -114,11 +115,17 @@ const ProductItem: React.FC<ProductItemProps> = ({
 type TransactionScreenProps = {
   navigation: any;
   route: any;
+  onSalesTabChange?: (isSales: boolean) => void;
 };
 
-const SearchScreenContent = ({ navigation }: TransactionScreenProps) => (
+const SearchScreenContent = ({ navigation, onSalesTabChange }: TransactionScreenProps) => (
   <View style={{ flex: 1 }}>
-    <TransactionHistoryScreen navigation={navigation} route={undefined}/>
+    {/* <TransactionHistoryScreen navigation={navigation} route={undefined} /> */}
+    <TransactionHistoryScreen
+      navigation={navigation}
+      route={undefined}
+      onSalesTabChange={onSalesTabChange}
+    />
   </View>
 );
 type AddScreenContentProps = {
@@ -407,6 +414,7 @@ type RootStackParamList = {
   }
 };
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
+  const background = require('../../../assets/images/placeholder_history.png');
 
 const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
@@ -433,6 +441,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
   const scrollViewRef = useRef<ScrollView>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+
+  const [isSalesActive, setIsSalesActive] = useState(false);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
@@ -1047,8 +1058,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             )}
           </>
         );
-      case 'Search':
-        return <SearchScreenContent navigation={navigation} route={""}/>;
+      case 'Search': return <SearchScreenContent navigation={navigation} route={""}  onSalesTabChange={(isSales: boolean) => {
+    setIsSalesActive(isSales);
+  }}/>
       case 'Add':
         return <AddScreenContent navigation={navigation} products={products} onSetActiveTab={setActiveTab} />;
       case 'Bookmark':
@@ -1076,6 +1088,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     setIsNav(false);
      navigation.replace('MyListing', { animation: 'none' });
     //  navigation.replace('OnboardingScreen', { animation: 'none' });
+    //  navigation.replace('SellerInfoHomeSearch', { animation: 'none' });
    
   };
 
@@ -1105,11 +1118,10 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-          source={IMAGE_URLS.BACK_ICON}
-          style={{ flex: 1,width: '100%',
-        height: '100%', }}
-          resizeMode="cover"
-        >
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
       <View style={styles.fullScreenContainer}>
         {activeTab === 'Home' && (
           <View
@@ -1134,7 +1146,10 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 }}
               >
                 <View style={styles.MylistingsBackground}>
-                  <Image source={IMAGE_URLS.MY_LISTING_ICON} style={styles.iconSmall} />
+                  <Image
+                    source={IMAGE_URLS.MY_LISTING_ICON}
+                    style={styles.iconSmall}
+                  />
                 </View>
               </TouchableOpacity>
 
@@ -1144,7 +1159,10 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
               <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
-                  <Image source={IMAGE_URLS.FAVOURTE_ICON} style={styles.iconSmall} />
+                  <Image
+                    source={IMAGE_URLS.FAVOURTE_ICON}
+                    style={styles.iconSmall}
+                  />
                 </View>
               </TouchableOpacity>
             </Animated.View>
@@ -1155,10 +1173,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 { transform: [{ translateY: searchBartranslateY }] },
               ]}
             >
-              <Image source={IMAGE_URLS.SEARCH_ICON} style={styles.searchIcon} />
+              <Image
+                source={IMAGE_URLS.SEARCH_ICON}
+                style={styles.searchIcon}
+              />
               <TextInput
-              selectionColor='#fff'
-                  cursorColor='#fff'
+                selectionColor="#fff"
+                cursorColor="#fff"
                 style={styles.searchBar}
                 placeholder={t('search')}
                 placeholderTextColor="#ccc"
@@ -1285,7 +1306,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 showsVerticalScrollIndicator={false}
               >
                 {activeTab === 'Search' ? (
-                  <SearchScreenContent navigation={navigation} route={""} />
+                  <SearchScreenContent
+                    navigation={navigation}
+                    route={''}
+                    onSalesTabChange={(isSales: boolean) => {
+                      setIsSalesActive(isSales);
+                    }}
+                  />
                 ) : activeTab === 'Profile' ? (
                   <ProfileScreenContent navigation={navigation} />
                 ) : activeTab === 'Bookmark' ? (
@@ -1296,16 +1323,101 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           ) : (
             // <ScrollView
             //   style={{ flex: 1}}
-            //   contentContainerStyle={{ paddingBottom: 20 }} 
+            //   contentContainerStyle={{ paddingBottom: 20 }}
             //   showsVerticalScrollIndicator={false}
-             
+
             // >
-            <>
-              {renderActiveTabContent()}
-              </>
-            // </ScrollView> 
+            <>{renderActiveTabContent()}</>
+            // </ScrollView>
           )}
         </KeyboardAvoidingView>
+        {activeTab === 'Search' && isSalesActive && (
+          
+          <View style={styles.textbg}>
+           {Platform.OS === 'ios' ? (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { borderRadius: 25, backgroundColor: 'transparent' },
+              ]}
+            >
+              <BlurView
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    borderRadius: 25,
+                    backgroundColor: 'transparent',
+                    overflow: 'hidden',
+                  },
+                ]}
+                blurType="light"
+                blurAmount={1.3}
+                reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
+                overlayColor="rgba(15, 21 ,131,0.8)"
+              >
+                <View
+                  style={{
+                    opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                    backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 25,
+                  }}
+                ></View>
+              </BlurView>
+            </View>
+          ) : (
+            <>
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { borderRadius: 25, backgroundColor: 'transparent' },
+                ]}
+              >
+                <BlurView
+                  style={[
+                    StyleSheet.absoluteFill,
+                    {
+                      borderRadius: 25,
+                      backgroundColor: 'transparent',
+                      overflow: 'hidden',
+                    },
+                  ]}
+                  blurType="light"
+                  blurAmount={1.3}
+                  reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.05)"
+                  overlayColor="rgba(15, 21, 131, 0.05)"
+                >
+                  <View
+                    style={{
+                      // opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                      // backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 25,
+                    }}
+                  ></View>
+                </BlurView>
+              </View>
+            </>
+          )}
+ 
+          <Image
+            source={require('../../../assets/images/info_icon.png')}
+            style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+          />
+          <View style={{ flex: 1 }}>
+            <Text allowFontScaling={false} style={styles.importantText1}>
+              {t('note')}
+            </Text>
+                                  
+            <Text allowFontScaling={false} style={styles.importantText}>
+              {t('desclmer')}{' '}
+            </Text>
+          </View>
+        </View>
+        )}
+
 
         <Animated.View
           style={[
@@ -1414,7 +1526,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           ))}
         </Animated.View>
       </View>
-       <ShortCustomToastContainer />
+      <ShortCustomToastContainer />
       <NewCustomToastContainer />
     </ImageBackground>
     // </BackgroundWrapper>
@@ -1424,8 +1536,50 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
+
+    textbg: {
+    flexDirection: 'row',
+      alignItems: 'flex-start',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(25, 51, 95, 0.94) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    padding: 6,
+    borderWidth: 0.5,
+    borderEndEndRadius: 12,
+    borderStartEndRadius: 12,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomStartRadius: 12,
+    borderBlockStartColor: '#ffffff31',
+    borderBlockColor: '#ffffff31',
+    borderTopColor: '#ffffff31',
+    borderBottomColor: '#ffffff31',
+    borderLeftColor: '#ffffff31',
+    borderRightColor: '#ffffff31',
+    
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.1,
+  left: 16,
+  right: 16,
+  borderRadius: 10,
+  zIndex: 999,
   
-  
+  },
+  importantText: {
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_12,
+    color: '#FFFFFFCC',
+    marginBottom: 6,
+  },
+  importantText1: {
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_12,
+    ...COMMONSTYLE.FONTWEIGHT_500,
+    color: '#FFFFFF',
+  },
   stepCircle: {
     width: 12,
     height: 12,

@@ -44,6 +44,7 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 import { IMAGE_URLS } from '../../utils/Style';
 import ReviewDetailCard from '../../utils/ReviewDetailCard';
 import StarRating from '../../utils/StarRating';
+import { useRoute,RouteProp  } from '@react-navigation/native';
 
 type CreatedBy = {
   id: number;
@@ -61,6 +62,9 @@ type CreatedBy = {
   created_at: string;
   updated_at: string;
   role_id: number;
+};
+type MyReviewsRouteParams = {
+  activeTab?: 'Given Reviews' | 'Received Reviews';
 };
 
 type Feature = {
@@ -104,6 +108,7 @@ type User = {
 };
 
 const MyReviews = ({ navigation }: MyReviewsProps) => {
+
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -119,8 +124,10 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   const { t } = useTranslation();
   const { height } = Dimensions.get('window');
   const isEmpty = featurelist.length === 0;
+    const route = useRoute<RouteProp<{ params: MyReviewsRouteParams }, 'params'>>();
+const initialTab = route?.params?.activeTab ?? 'Given Reviews';
   const [activeTab, setActiveTab] = useState<'Given Reviews' | 'Received Reviews'>(
-    'Given Reviews',
+    initialTab
   );
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
@@ -139,6 +146,11 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
     name: string;
   };
 
+  useEffect(() => {
+  if (route?.params?.activeTab) {
+    setActiveTab(route.params.activeTab);
+  }
+}, [route?.params?.activeTab]);
   const scrollY = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
