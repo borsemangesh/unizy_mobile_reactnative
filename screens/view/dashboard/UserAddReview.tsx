@@ -41,7 +41,7 @@ type UserAddReviewProps = {
 };
 
 type RootStackParamList = {
-  AddReview: { category_id: number, feature_id: number };
+  AddReview: { category_id: number, feature_id: number,transactionId: string };
 };
 
 type UserAddReviewRouteProp = RouteProp<RootStackParamList, 'AddReview'>;
@@ -51,6 +51,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   const route = useRoute<UserAddReviewRouteProp>();
   const { feature_id } = route.params;
   const { category_id } = route.params;
+  const { transactionId } = route.params;
   const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -112,6 +113,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         rating: rating,
         comment: username,
         feature_id: feature_id,
+        transaction_id: transactionId
       };
 
 
@@ -129,6 +131,8 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
       });
 
       const result = await response.json();
+      console.log("Jbody",url1, JSON.stringify(createPayload));
+      console.log(result);
 
       if (result.statusCode === 200) {
 
@@ -139,7 +143,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         showToast(t(result.message) || 'Failed to submit review');
       }
     } catch (error) {
-      // console.error('Review error:', error);
+      console.error('Review error:', error);
 
     } finally {
       setIsLoading(false);

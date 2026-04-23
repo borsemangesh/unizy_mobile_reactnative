@@ -440,7 +440,8 @@ const formatDate = (dateString?: string, t?: any) => {
           isreviewadded={item?.featurelist?.isReviewGiven}
           onCancel={cancelbody => cancelOreder(cancelbody)}
           cardId={item?.id}
-          orederStatus={item?.order_status }
+          orederStatus={item?.order_status}
+          transaction_id={item?.transaction_id}
         />
       </View>
     );

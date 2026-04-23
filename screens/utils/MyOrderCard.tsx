@@ -42,7 +42,8 @@ type MyOrderCardProps = {
     isreviewadded: boolean
     onCancel: (filters: any) => void; 
     cardId: number;
-    orederStatus: string;
+  orederStatus: string;
+  transaction_id: string;
 };
 
 const MyOrderCard: React.FC<MyOrderCardProps> = ({
@@ -59,7 +60,8 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
     isreviewadded,
     onCancel,
     cardId,
-    orederStatus
+  orederStatus,
+    transaction_id
 
 }) => {
 
@@ -113,7 +115,7 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
   };
 
   const handleWriteReview = () => {
-    navigation.navigate('UserAddReview', { category_id: category_id, feature_id: shareid });
+    navigation.navigate('UserAddReview', { category_id: category_id, feature_id: shareid, transactionId: transaction_id });
     };
 
     const handleCancelOrder = () => {
