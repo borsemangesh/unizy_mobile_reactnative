@@ -31,7 +31,7 @@ import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
-import { useAnimatedStyle, interpolate, useSharedValue, interpolateColor } from 'react-native-reanimated';
+import { useAnimatedStyle, interpolate, useSharedValue, interpolateColor, KeyboardState } from 'react-native-reanimated';
 import Loader from '../../utils/component/Loader';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import { IMAGE_URLS } from '../../utils/Style';
@@ -89,6 +89,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   });
 
   const handleSubmit = async () => {
+    Keyboard.dismiss();
     if (rating === 0) {
       showToast(t(Constant.ENTER_RATING), 'error');
       return;
@@ -151,19 +152,20 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   };
 
   return (
-        <ImageBackground
-                               source={IMAGE_URLS.BACK_ICON}
-                               style={{ flex: 1,width: '100%',
-                             height: '100%', }}
-                               resizeMode="cover"
-                             >
-    {/* <BackgroundWrapper> */}
+    <ImageBackground
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => {
-              navigation.goBack();
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -172,40 +174,67 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
               </View>
             </TouchableOpacity>
             <View style={{ width: 300 }}>
-              <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
+              <Text
+                numberOfLines={2}
+                allowFontScaling={false}
+                style={styles.unizyText}
+              >
+                {t('write_a_review')}
+              </Text>
             </View>
-              <View style={[styles.backIconRow, { display: 'none' }]}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24, display: 'none' }}
-                />
-              </View>
+            <View style={[styles.backIconRow, { display: 'none' }]}>
+              <Image
+                source={require('../../../assets/images/back.png')}
+                style={{ height: 24, width: 24, display: 'none' }}
+              />
+            </View>
           </View>
         </View>
 
-        <KeyboardAvoidingView style={{flex:1}}>
-        <TouchableWithoutFeedback  onPress={Keyboard.dismiss} accessible={false}>
-          <View style={{
-            flex: 1,
-            paddingTop: Platform.OS === 'ios' ? 120 : 120,
-            paddingHorizontal: 20,
-          }}>
-            <View style={styles.innercontainer}>
-              <Text allowFontScaling={false} style={styles.mainlabel}>{t('how_many_stars')}</Text>
-              <Text allowFontScaling={false} style={styles.sublabel}>{t('slide_to_rate')}</Text>
-            </View>
+        <KeyboardAvoidingView style={{ flex: 1 }}>
+          <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+            accessible={false}
+          >
+            <View
+              style={{
+                flex: 1,
+                paddingTop: Platform.OS === 'ios' ? 120 : 120,
+                paddingHorizontal: 20,
+              }}
+            >
+              <View style={styles.innercontainer}>
+                <Text allowFontScaling={false} style={styles.mainlabel}>
+                  {t('how_many_stars')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.sublabel}>
+                  {t('slide_to_rate')}
+                </Text>
+              </View>
 
-            <View style={{ marginTop: 16, marginBottom: 20, alignItems: 'center' }}>
-              <AddRating starSize={40} onChange={setRating} />
-            </View>
+              <View
+                style={{
+                  marginTop: 16,
+                  marginBottom: 20,
+                  alignItems: 'center',
+                }}
+              >
+                <AddRating starSize={40} onChange={setRating} />
+              </View>
 
-            <View style={styles.innercontainer}>
-              <Text allowFontScaling={false} style={styles.mainlabel1}>{t('tell_us_more')} </Text>
+              <View style={styles.innercontainer}>
+                <Text allowFontScaling={false} style={styles.mainlabel1}>
+                  {t('tell_us_more')}{' '}
+                </Text>
                 <TextInput
-                 cursorColor="#F5F5F5"
-                 selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
+                  selectionColor="#F5F5F5"
                   allowFontScaling={false}
-                  style={[styles.personalEmailID_TextInput,styles.login_container, { textAlignVertical: 'top', paddingTop: 10}]}
+                  style={[
+                    styles.personalEmailID_TextInput,
+                    styles.login_container,
+                    { textAlignVertical: 'top', paddingTop: 10 },
+                  ]}
                   placeholder={t('tell')}
                   placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                   multiline={true}
@@ -213,9 +242,9 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                   onChangeText={usernameText => setUsername(usernameText)}
                   onSubmitEditing={Keyboard.dismiss}
                 />
+              </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         <Button title={t('submit_review')} onPress={() => handleSubmit()} />
 
@@ -252,15 +281,19 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                     style={styles.logo}
                     resizeMode="contain"
                   />
-                  <Text allowFontScaling={false} style={{
-                    color: 'rgba(255, 255, 255, 0.80)',
-                    fontFamily: 'Urbanist-SemiBold',
-                    fontSize: 20,
-                    fontWeight: '600',
-                    letterSpacing: -0.4,
-                    lineHeight: 28,
-                  }}>{t('review_submitted_success')}!</Text>
-
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.80)',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 20,
+                      fontWeight: '600',
+                      letterSpacing: -0.4,
+                      lineHeight: 28,
+                    }}
+                  >
+                    {t('review_submitted_success')}!
+                  </Text>
 
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -273,14 +306,16 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                             params: {
                               AddScreenBackactiveTab: 'Home',
                               isNavigate: false,
-                            }
-                          }
+                            },
+                          },
                         ],
                       });
                       setShowPopup1(false);
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.loginText}>{t('return_home')}</Text>
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      {t('return_home')}
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -291,14 +326,15 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                         index: 0,
                         routes: [
                           {
-                            name: 'MyReviews'
+                            name: 'MyReviews',
                           },
                         ],
                       });
-
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.loginText1}>{t('return_my_reviews')}</Text>
+                    <Text allowFontScaling={false} style={styles.loginText1}>
+                      {t('return_my_reviews')}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </BlurView>
@@ -313,7 +349,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
       )}
       <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 
