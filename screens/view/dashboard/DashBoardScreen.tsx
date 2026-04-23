@@ -1338,14 +1338,14 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             <View
               style={[
                 StyleSheet.absoluteFill,
-                { borderRadius: 25, backgroundColor: 'transparent' },
+                { borderRadius: 10, backgroundColor: 'transparent' },
               ]}
             >
               <BlurView
                 style={[
                   StyleSheet.absoluteFill,
                   {
-                    borderRadius: 25,
+                    borderRadius: 10,
                     backgroundColor: 'transparent',
                     overflow: 'hidden',
                   },
@@ -1361,7 +1361,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     backgroundColor: 'rgba(0, 3, 65, 0.98)',
                     width: '100%',
                     height: '100%',
-                    borderRadius: 25,
+                    borderRadius: 10,
                   }}
                 ></View>
               </BlurView>
