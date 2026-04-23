@@ -1820,82 +1820,6 @@ typingTimeout.current = setTimeout(async () => {
       }
 
 
-      // case 'boolean':
-      //   return (
-      //     <View key={field.id} style={styles.featurecard}>
-      //       <View style={styles.featuredRow}>
-      //         <View style={{ width: '80%' }}>
-      //           {renderLabel1(field.param.field_name, field.mandatory)}
-      //         </View>
-      //         <ToggleButton
-      //           value={!!formValues[field.param.id]?.value}
-      //           onValueChange={val =>
-      //             handleValueChange(field.param.id, field.param.alias_name, val)
-      //           }
-      //         />
-      //       </View>
-
-      //       <View style={styles.textbg}>
-      //         <Image
-      //           source={require('../../../assets/images/info_icon.png')}
-      //           style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-      //         />
-
-      //         <View style={{ flex: 1 }}>
-      //           {productId !== 4 ? (
-      //             <>
-      //               <Text allowFontScaling={false} style={styles.importantText1}>
-      //                 {t('important')}
-      //               </Text>
-
-      //               <Text allowFontScaling={false} style={styles.importantText}>
-      //                 {t('featured_listing_note_1')}{' '}
-      //                 <Text allowFontScaling={false} style={styles.importantText1}>
-      //                   {Math.trunc(featureFee)}%
-      //                 </Text>{' '}
-      //                 {t('featured_listing_fee_percentage')}{' '}
-
-      //                 <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-      //                 <Text allowFontScaling={false} style={styles.importantText}>
-      //                   {t('capped')}{' '}
-      //                 </Text>
-      //                 <Text allowFontScaling={false} style={styles.importantText1}>
-      //                   £{Math.trunc(maxFeatureCap)}
-      //                 </Text>
-      //                 <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
-      //                 {t('featured_listing_fee_cap')}
-      //               </Text>
-      //             </>
-      //           ) : (
-      //             <View>
-      //               <Text allowFontScaling={false} style={styles.importantText1}>
-      //                 {t('important')}
-      //               </Text>
-
-      //               <Text allowFontScaling={false} style={styles.importantText}>
-      //                 {t('fixed_commission')}{' '}
-      //                 <Text allowFontScaling={false} style={styles.importantText1}>
-      //                   £{Math.trunc(accommodation_amount)}
-      //                 </Text>{' '}
-      //                 {t('featured_listing_fee_percentage')}
-
-      //                 <Text allowFontScaling={false} style={styles.importantText}></Text>
-      //                 <Text allowFontScaling={false} style={styles.importantText}>
-
-      //                 </Text>
-      //                 <Text allowFontScaling={false} style={styles.importantText1} />
-
-      //                 <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
-      //                 {t('featured_listing_fee_cap')}
-      //               </Text>
-      //             </View>
-      //           )}
-      //         </View>
-
-      //       </View>
-      //     </View>
-      //   );
-
       case 'boolean':
         return (
           <View key={field.id} style={styles.featurecard}>
@@ -1911,34 +1835,140 @@ typingTimeout.current = setTimeout(async () => {
               />
             </View>
 
-            {/* Only for NON-4 products */}
-            {/* {productId !== 4 && ( */}
-              <View style={styles.textbg}>
-                <Image
-                  source={require('../../../assets/images/info_icon.png')}
-                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {t('important')}
-                  </Text>
+            <View style={styles.textbg}>
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
 
-                  <Text allowFontScaling={false} style={styles.importantText}>
-                    {t('featured_listing_note_homesearch')}{' '}
-                    <Text style={styles.importantText1}>
-                      £{featureFee}
-                    </Text>{' '}
-                    {t('featured_listing_note_homesearch1')} 
-                    {/* <Text style={styles.importantText1}>
-                      £{Math.trunc(maxFeatureCap)}
-                    </Text> */}
-                    
-                  </Text>
-                </View>
+              <View style={{ flex: 1 }}>
+                {productId !== 4 ? (
+                  <>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('featured_listing_note_1')}{' '}
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        {Math.trunc(featureFee)}%
+                      </Text>{' '}
+                      {t('featured_listing_fee_percentage')}{' '}
+
+                      <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>
+                        {t('capped')}{' '}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        £{Math.trunc(maxFeatureCap)}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
+                      {t('featured_listing_fee_cap')}
+                    </Text>
+                  </>
+                ) : (
+                  <View>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('featured_listing_note_homesearch')}{' '}
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        £{Math.trunc(accommodation_amount)}
+                      </Text>{' '}
+                      {t('featured_listing_note_homesearch1')}
+
+                      <Text allowFontScaling={false} style={styles.importantText}></Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>
+
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText1} />
+
+                      {/* <Text allowFontScaling={false} style={styles.importantText}></Text>{' '} */}
+                      {/* {t('featured_listing_fee_cap')} */}
+                    </Text>
+                  </View>
+                )}
               </View>
-           {/* )}  */}
+
+            </View>
           </View>
         );
+
+      // case 'boolean':
+      //   return (
+      //     <View key={field.id} style={styles.featurecard}>
+      //       <View style={styles.featuredRow}>
+      //         <View style={{ width: '80%' }}>
+      //           {renderLabel1(field.param.field_name, field.mandatory)}
+      //         </View>
+      //         <ToggleButton
+      //           value={!!formValues[field.param.id]?.value}
+      //           onValueChange={val =>
+      //             handleValueChange(field.param.id, field.param.alias_name, val)
+      //           }
+      //         />
+      //       </View>
+
+      //       {/* Only for NON-4 products */}
+      //       {productId === 4 ? (
+      //         <View style={styles.textbg}>
+      //           <Image
+      //             source={require('../../../assets/images/info_icon.png')}
+      //             style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+      //           />
+      //           <View style={{ flex: 1 }}>
+      //             <Text allowFontScaling={false} style={styles.importantText1}>
+      //               {t('important')}
+      //             </Text>
+
+      //             <Text allowFontScaling={false} style={styles.importantText}>
+      //               {t('featured_listing_note_homesearch')}{' '}
+      //               <Text style={styles.importantText1}>
+                   
+      //                 £{featureFee > maxFeatureCap ? Math.trunc(maxFeatureCap) : `${Math.trunc(featureFee)}%`}
+      //               </Text>{' '}
+      //               {t('featured_listing_note_homesearch1')}
+      //               {/* <Text style={styles.importantText1}>
+      //                 £{Math.trunc(maxFeatureCap)}
+      //               </Text> */}
+                    
+      //             </Text>
+      //           </View>
+      //         </View>
+      //       ) : (
+      //            <View style={styles.textbg}>
+      //           <Image
+      //             source={require('../../../assets/images/info_icon.png')}
+      //             style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+      //             />
+      //              <View style={{ flex: 1 }}>
+      //           <Text allowFontScaling={false} style={styles.importantText1}>
+      //             {t('important')}
+      //           </Text>
+
+      //           <Text allowFontScaling={false} style={styles.importantText}>
+      //             {t('fixed_commission')}{' '}
+      //             <Text allowFontScaling={false} style={styles.importantText1}>
+      //               £{Math.trunc(accommodation_amount)}
+      //             </Text>{' '}
+      //             {t('featured_listing_fee_percentage')}
+
+      //             <Text allowFontScaling={false} style={styles.importantText}></Text>
+      //             <Text allowFontScaling={false} style={styles.importantText}>
+
+      //             </Text>
+      //             <Text allowFontScaling={false} style={styles.importantText1} />
+
+      //             <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
+      //             {t('featured_listing_fee_cap')}
+      //               </Text>
+      //               </View>
+      //         </View>
+      //       )}
+      //     </View>
+      //   );
 
       default:
         return null;
@@ -2317,31 +2347,6 @@ typingTimeout.current = setTimeout(async () => {
                           </Text>
                         </View>
                     </View>
-              //       <View  style={styles.featurecard}>
-              // <View style={styles.textbg}>
-              //   <Image
-              //     source={require('../../../assets/images/info_icon.png')}
-              //     style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-              //   />
-              //   <View style={{ flex: 1 }}>
-              //     <Text allowFontScaling={false} style={styles.importantText1}>
-              //       {t('important')}
-              //     </Text>
-
-              //     <Text allowFontScaling={false} style={styles.importantText}>
-              //       {t('featured_listing_note_1')}{' '}
-              //       <Text style={styles.importantText1}>
-              //         {Math.trunc(featureFee)}%
-              //       </Text>{' '}
-              //       {t('featured_listing_fee_percentage')} ({t('capped')}{' '}
-              //       <Text style={styles.importantText1}>
-              //         £{Math.trunc(maxFeatureCap)}
-              //       </Text>
-              //       ) {t('featured_listing_fee_cap')}
-              //     </Text>
-              //   </View>
-              //         </View>
-              //         </View>
                 )} 
 
 
