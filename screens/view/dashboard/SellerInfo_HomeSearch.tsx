@@ -275,6 +275,7 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
           contentContainerStyle={[
             styles.listContainer,
             {
+
               paddingTop: Platform.OS === 'ios' ? 70 : 70,
               paddingBottom: Platform.OS === 'ios' ? 200 : 100,
               // paddingBottom: isEmpty
@@ -286,7 +287,8 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
               flexGrow: 1,
             },
           ]}
-          ListFooterComponent={ <View style={styles.textbg}>
+          ListFooterComponent={ 
+          <View style={styles.textbg}>
           <Image
             source={require('../../../assets/images/info_icon.png')}
             style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -404,7 +406,7 @@ const styles = StyleSheet.create({
  
   textbg: {
     position:'absolute',
-    top:Platform.OS === 'ios' ? 0 : 70,
+    top:Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 : 70,
     overflow: 'hidden',
     alignContent: 'center',
     alignSelf: 'center',

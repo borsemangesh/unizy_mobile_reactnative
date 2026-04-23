@@ -1596,7 +1596,7 @@ typingTimeout.current = setTimeout(async () => {
 
               <Image
                 source={require('../../../assets/images/right.png')}
-                style={[styles.dropdownIcon, {paddingLeft: field?.info_icon ? 70 : 0}]}
+                style={[styles.dropdownIcon, {marginRight: field?.info_icon ? 30 : 0 } ]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -3075,6 +3075,7 @@ const styles = StyleSheet.create({
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    overflow: 'visible',
   },
 
   featuredRow: {

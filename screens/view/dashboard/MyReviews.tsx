@@ -530,10 +530,24 @@ const initialTab = route?.params?.activeTab ?? 'Given Reviews';
         <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() =>
+              
+             Platform.OS === 'ios' ?  navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'Dashboard',
+                  params: {
+                    AddScreenBackactiveTab: 'Profile',
+                    isNavigate: false,
+                  },
+                },
+              ],
+            }):
               navigation.replace('Dashboard', {
                 AddScreenBackactiveTab: 'Profile',
                 isNavigate: false,
               })
+              
             }
             style={styles.backButtonContainer}
             activeOpacity={0.7}
