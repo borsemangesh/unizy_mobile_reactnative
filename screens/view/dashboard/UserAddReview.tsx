@@ -138,7 +138,15 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
       if (result.statusCode === 200) {
 
         showToast(t(result.message))
-        setShowPopup1(true);
+        if(Platform.OS === 'ios'){
+          setTimeout(() => {
+            setShowPopup1(true);
+          }, 2000);
+        } else {
+          setShowPopup1(true);
+        }
+        
+        
       } else {
         console.warn('Error saving review:', result);
         showToast(t(result.message) || 'Failed to submit review');
