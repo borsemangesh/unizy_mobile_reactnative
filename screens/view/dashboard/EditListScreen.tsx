@@ -1754,7 +1754,13 @@ const handlePreview = async (latestFormValues: any) => {
 
              <View style={{ flex: 1 }}>
                             {productId !== 4 ? (
-                              <>
+                <>
+                   <View style={[styles.textbg, { marginTop: 12,gap: 2 }]}>
+                    <Image
+                      source={IMAGE_URLS.INFO_ICON}
+                      style={{ width: 16, height: 16, marginRight:6, marginTop: 2 }}
+                    />
+                     <View >
                                 <Text allowFontScaling={false} style={styles.importantText1}>
                                   {t('important')}
                                 </Text>
@@ -1775,10 +1781,18 @@ const handlePreview = async (latestFormValues: any) => {
                                   </Text>
                                   <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
                                   {t('featured_listing_fee_cap')}
-                                </Text>
+                      </Text>
+                      </View>
+                    </View>
                               </>
-                            ) : (
-                              <View>
+              ) : (
+                  <View style={[styles.textbg, { marginTop: 12 }]}>
+                    <Image
+                      source={IMAGE_URLS.INFO_ICON}
+                      style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                    />
+                              <View >
+                                
                                 <Text allowFontScaling={false} style={styles.importantText1}>
                                   {t('important')}
                                 </Text>
@@ -1786,7 +1800,7 @@ const handlePreview = async (latestFormValues: any) => {
                                 <Text allowFontScaling={false} style={styles.importantText}>
                                   {t('featured_listing_note_homesearch')}{' '}
                                   <Text allowFontScaling={false} style={styles.importantText1}>
-                                    £{Math.trunc(accommodation_amount)}
+                                    £{Math.trunc(maxFeatureCap)}
                                   </Text>{' '}
                                   {t('featured_listing_note_homesearch1')}
             
@@ -1799,7 +1813,8 @@ const handlePreview = async (latestFormValues: any) => {
                                   {/* <Text allowFontScaling={false} style={styles.importantText}></Text>{' '} */}
                                   {/* {t('featured_listing_fee_cap')} */}
                                 </Text>
-                              </View>
+                    </View>
+                    </View>
                             )}
                           </View>
 
@@ -2182,7 +2197,7 @@ const handlePreview = async (latestFormValues: any) => {
                       <Text allowFontScaling={false} style={styles.importantText}>
                         {t('fixed_commission')}{' '}
                         <Text style={styles.importantText1}>
-                          £{Math.trunc(maxFeatureCap)}
+                          £{Math.trunc(accommodation_amount)}
                         </Text>{' '}
                         {t('acc_message')}
                       </Text>

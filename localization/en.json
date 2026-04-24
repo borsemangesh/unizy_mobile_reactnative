@@ -794,7 +794,7 @@
    "min":"Min",
    "max": "Max",
    "university": "University",
-   "home_sell_title1": "Get Notified When  Someone Shows Interest.",
+   "home_sell_title1": "Get Notified When Someone Shows Interest.",
    "home_sell_info1": "You’ll receive a notification when a buyer contacts you about your listing.",
    "home_sell_title2": "Manage Your Listing in My Listings.",
    "home_sell_info2": "Go to My Listings to view your accommodation details or edit your existing listing anytime.",
@@ -808,6 +808,9 @@
    "desclmer": "The quoted price shown is final and already includes platform service charges as well as transaction fees. Buyers will not be asked to pay any additional hidden costs beyond this amount.",
    "featured_listing_note_homesearch": "A fixed featured listing fee of",
    "featured_listing_note_homesearch1": "will be charged. This fee is charged upfront together with the accommodation listing fee.",
-   "complete_orderotp_note":"To complete an order with OTP, please go to the My Listings screen. There you can enter the OTP, and the order will be marked as completed."
+   "complete_orderotp_note":"To complete an order with OTP, please go to the My Listings screen. There you can enter the OTP, and the order will be marked as completed.",
+   "ReviewAlreadyExist": "Review already exists.", 
+   "ReviewSubmited": "Review submitted successfully."
+ 
 
 }

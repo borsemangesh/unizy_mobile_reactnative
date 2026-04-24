@@ -368,7 +368,71 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     type?: string;
   };
 
-  const handleListPress = async () => {
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    return `${String(today.getDate()).padStart(2, '0')}-${String(
+      today.getMonth() + 1,
+    ).padStart(2, '0')}-${today.getFullYear()}`;
+  };
+
+  const getInitials = (firstName = '', lastName = '') => {
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return f + l || '?';
+  };
+
+  const raw = getValueByAlias(storedForm, 'price') ?? '0';
+  const priceValue = parseFloat(String(raw)) || 0;
+
+  const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
+  const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
+
+  const commissionAmount = priceValue * (commissionPercent / 100);
+  const calculatedPrice = priceValue + commissionAmount;
+  const maxAllowedPrice = priceValue + maxCap;
+  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+    2,
+  );
+
+  const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+  const priceValue1 = parseFloat(String(raw1)) || 0;
+
+  const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
+  const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
+
+  const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+  const calculatedPrice1 = priceValue1 + commissionAmount1;
+  const maxAllowedPrice1 = priceValue1 + maxCap1;
+  const commissionPrice1 = +Math.min(
+    calculatedPrice1,
+    maxAllowedPrice1,
+  ).toFixed(2);
+  const diff1 = commissionPrice1 - priceValue1;
+
+  const priceText =
+    userMeta?.category?.id === 2
+      ? `£${commissionPrice}/${t('hr')}`
+      : userMeta?.category?.id === 4
+      ? `£${commissionPrice}/${t('week')}`
+      : userMeta?.category?.id === 5
+      ? `£${commissionPrice}/${t('session')}`
+      : `£${commissionPrice}`;
+
+  const form =
+    typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+
+  // 🔥 FIX: use alias_name instead of hardcoded '13'
+  const isToggleOn =
+    Object.values(form || {}).find((f: any) => f.alias_name === 'isfeatured')
+      ?.value === true;
+  
+
+  
+
+
+
+    const handleListPress = async () => {
     setIsLoading(true);
     try {
       const storedData = await AsyncStorage.getItem('formData1');
@@ -559,63 +623,87 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     }
   };
 
-  const getCurrentDate = () => {
-    const today = new Date();
-    return `${String(today.getDate()).padStart(2, '0')}-${String(
-      today.getMonth() + 1,
-    ).padStart(2, '0')}-${today.getFullYear()}`;
+
+
+   let isSubmitting = false; // Flag to prevent multiple submissions
+
+  const handlePayment = async () => {
+    if (isSubmitting) return;
+
+    isSubmitting = true;
+
+    try {
+      // const form =
+      //   typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+
+      // const isFeatured =
+      //   form?.['13']?.value === true || form?.['13']?.value === 'true';
+
+      // if (!isFeatured && categoryid === 4 && accomodation_amount > 0) {
+      //   navigation.navigate('PaymentScreen', {
+      //     amount: isFeatured ? featurePercent: accomodation_amount,
+      //     feature_id: 1,
+      //     nav: 'add',
+
+      //     onSuccess: async () => {
+      //       try {
+      //         await handleListPress();
+      //       } finally {
+      //         isSubmitting = false; // ✅ reset AFTER payment success
+      //       }
+      //     },
+
+      //     onCancel: () => {
+      //       isSubmitting = false; // ✅ reset if user cancels payment
+      //     },
+      //   });
+      // }
+
+      const form =
+        typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+      const isToggleOn =
+        (
+          Object.values(form || {}).find(
+            (f: any) => f?.alias_name === 'isfeatured',
+          ) as any
+        )?.value === true;
+
+      const apiIsFeaturedValue = apiIsFeatured;
+
+      if (categoryid === 4 && maxCap1 > 0 && !apiIsFeaturedValue && isToggleOn) {
+        if (apiIsFeaturedValue) {
+          return t('update');
+        }
+
+        if (!apiIsFeaturedValue && isToggleOn) {
+          navigation.navigate('PaymentScreen', {
+            amount: maxCap1,
+            feature_id: 1,
+            nav: 'add',
+
+            onSuccess: async () => {
+              try {
+                await handleListPress();
+              } finally {
+                isSubmitting = false;
+              }
+            },
+
+            onCancel: () => {
+              isSubmitting = false;
+            },
+          });
+        }
+        return t('update');
+      } else {
+        await handleListPress();
+        isSubmitting = false;
+      }
+    } catch (e) {
+      console.log('Error:', e);
+      isSubmitting = false;
+    }
   };
-
-  const getInitials = (firstName = '', lastName = '') => {
-    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-    return f + l || '?';
-  };
-
-  const raw = getValueByAlias(storedForm, 'price') ?? '0';
-  const priceValue = parseFloat(String(raw)) || 0;
-
-  const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
-  const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
-
-  const commissionAmount = priceValue * (commissionPercent / 100);
-  const calculatedPrice = priceValue + commissionAmount;
-  const maxAllowedPrice = priceValue + maxCap;
-  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
-    2,
-  );
-
-  const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
-  const priceValue1 = parseFloat(String(raw1)) || 0;
-
-  const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
-  const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
-
-  const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
-  const calculatedPrice1 = priceValue1 + commissionAmount1;
-  const maxAllowedPrice1 = priceValue1 + maxCap1;
-  const commissionPrice1 = +Math.min(
-    calculatedPrice1,
-    maxAllowedPrice1,
-  ).toFixed(2);
-  const diff1 = commissionPrice1 - priceValue1;
-
-  const priceText =
-    userMeta?.category?.id === 2
-      ? `£${commissionPrice}/${t('hr')}`
-      : userMeta?.category?.id === 4
-      ? `£${commissionPrice}/${t('week')}`
-      : userMeta?.category?.id === 5
-      ? `£${commissionPrice}/${t('session')}`
-      : `£${commissionPrice}`;
-
-  const form =
-    typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-
-  // 🔥 FIX: use alias_name instead of hardcoded '13'
-  const isToggleOn =
-    Object.values(form || {}).find((f: any) => f.alias_name === 'isfeatured')
-      ?.value === true;
 
   return (
     // <BackgroundWrapper>
@@ -1129,7 +1217,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
         <Button
-          onPress={handleListPress}
+          onPress={handlePayment}
           title={(() => {
             try {
               const form =
