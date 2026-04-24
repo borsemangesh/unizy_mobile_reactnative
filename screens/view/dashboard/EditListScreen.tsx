@@ -1018,12 +1018,34 @@ const handlePreview = async (latestFormValues: any) => {
       </View>
     );
   };
+  // const getSafeDate = (value?: any) => {
+  //   if (value instanceof Date && !isNaN(value.getTime())) {
+  //     return value;
+  //   }
+  //   const parsed = new Date(value);
+  //   return isNaN(parsed.getTime()) ? new Date() : parsed;
+  // };
+
   const getSafeDate = (value?: any) => {
+    // ✅ already valid Date
     if (value instanceof Date && !isNaN(value.getTime())) {
       return value;
     }
-    const parsed = new Date(value);
-    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  
+    // ✅ handle timestamp (number)
+    if (typeof value === 'number') {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? new Date() : d;
+    }
+  
+    // ✅ handle string (API / stored)
+    if (typeof value === 'string') {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? new Date() : d;
+    }
+  
+    // ❌ fallback
+    return new Date();
   };
 
   const formatDateWithDash = (dateString?: string, t?: any) => {
@@ -1673,7 +1695,17 @@ const handlePreview = async (latestFormValues: any) => {
               {/* FROM DATE */}
               <TouchableOpacity
                 style={[styles.pickerContainer, styles.dateBox]}
+                // onPress={() => {
+                //   setActiveDateField({ param, type: 'start' });
+                //   setDatePickerVisible(true);
+                // }}
                 onPress={() => {
+                  const currentValue = formValues[param.id]?.value;
+                
+                  setTempDate(
+                    getSafeDate(currentValue?.startDate || currentValue?.endDate)
+                  );
+                
                   setActiveDateField({ param, type: 'start' });
                   setDatePickerVisible(true);
                 }}
@@ -1700,6 +1732,12 @@ const handlePreview = async (latestFormValues: any) => {
               <TouchableOpacity
                 style={[styles.pickerContainer, styles.dateBox]}
                 onPress={() => {
+                  const currentValue = formValues[param.id]?.value;
+                
+                  setTempDate(
+                    getSafeDate(currentValue?.startDate || currentValue?.endDate)
+                  );
+                
                   setActiveDateField({ param, type: 'end' });
                   setDatePickerVisible(true);
                 }}
@@ -2248,36 +2286,108 @@ const handlePreview = async (latestFormValues: any) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                  // onPress={() => {
+                  //   const currentValue =
+                  //     formValues[activeDateField.param.id]?.value || {};
+
+                  //   if (activeDateField.type === 'start') {
+                  //     // handleValueChange(
+                  //     //   activeDateField.param.id,
+                  //     //   activeDateField.param.alias_name ??
+                  //     //   activeDateField.param.field_name,
+                  //     //   {
+                  //     //     // startDate: tempDate,
+                  //     //     // endDate:
+                  //     //     //   currentValue.endDate &&
+                  //     //     //     dayjs(currentValue.endDate).isBefore(tempDate)
+                  //     //     //     ? null
+                  //     //     //     : currentValue.endDate,
+                  //     //     startDate: getSafeDate(tempDate),
+                  //     //     endDate: getSafeDate(currentValue.endDate)
+                  //     //   },
+                  //     // );
+                  //     handleValueChange(
+                  //       activeDateField.param.id,
+                  //       activeDateField.param.alias_name ??
+                  //         activeDateField.param.field_name,
+                  //       {
+                  //         startDate:
+                  //           activeDateField.type === 'start'
+                  //             ? getSafeDate(tempDate)
+                  //             : getSafeDate(currentValue.startDate),
+                      
+                  //         endDate:
+                  //           activeDateField.type === 'end'
+                  //             ? getSafeDate(tempDate)
+                  //             : currentValue.endDate &&
+                  //               dayjs(currentValue.endDate).isBefore(tempDate)
+                  //             ? null
+                  //             : getSafeDate(currentValue.endDate),
+                  //       }
+                  //     );
+                  //   } else {
+                  //     // handleValueChange(
+
+                  //     //   activeDateField.param.id,
+                  //     //   activeDateField.param.alias_name ??
+                  //     //   activeDateField.param.field_name,
+                  //     //   {
+                  //     //     startDate: currentValue.startDate,
+                  //     //     endDate: tempDate,
+                  //     //   },
+                  //     // );
+                  //     handleValueChange(
+                  //       activeDateField.param.id,
+                  //       activeDateField.param.alias_name ??
+                  //         activeDateField.param.field_name,
+                  //       {
+                  //         startDate:
+                  //           activeDateField.type === 'start'
+                  //             ? getSafeDate(tempDate)
+                  //             : getSafeDate(currentValue.startDate),
+                      
+                  //         endDate:
+                  //           activeDateField.type === 'end'
+                  //             ? getSafeDate(tempDate)
+                  //             : currentValue.endDate &&
+                  //               dayjs(currentValue.endDate).isBefore(tempDate)
+                  //             ? null
+                  //             : getSafeDate(currentValue.endDate),
+                  //       }
+                  //     );
+                  //   }
+
+                  //   setDatePickerVisible(false);
+                  //   setActiveDateField(null);
+                  // }}
+
                   onPress={() => {
+                    if (!activeDateField) return; // ✅ IMPORTANT FIX
+                  
                     const currentValue =
                       formValues[activeDateField.param.id]?.value || {};
-
-                    if (activeDateField.type === 'start') {
-                      handleValueChange(
-                        activeDateField.param.id,
-                        activeDateField.param.alias_name ??
+                  
+                    const isStart = activeDateField.type === 'start';
+                    const isEnd = activeDateField.type === 'end';
+                  
+                    handleValueChange(
+                      activeDateField.param.id,
+                      activeDateField.param.alias_name ??
                         activeDateField.param.field_name,
-                        {
-                          startDate: tempDate,
-                          endDate:
-                            currentValue.endDate &&
-                              dayjs(currentValue.endDate).isBefore(tempDate)
-                              ? null
-                              : currentValue.endDate,
-                        },
-                      );
-                    } else {
-                      handleValueChange(
-                        activeDateField.param.id,
-                        activeDateField.param.alias_name ??
-                        activeDateField.param.field_name,
-                        {
-                          startDate: currentValue.startDate,
-                          endDate: tempDate,
-                        },
-                      );
-                    }
-
+                      {
+                        startDate: isStart
+                          ? getSafeDate(tempDate)
+                          : getSafeDate(currentValue.startDate),
+                  
+                        endDate: isEnd
+                          ? getSafeDate(tempDate)
+                          : currentValue.endDate &&
+                            dayjs(currentValue.endDate).isBefore(tempDate)
+                          ? null
+                          : getSafeDate(currentValue.endDate),
+                      }
+                    );
+                  
                     setDatePickerVisible(false);
                     setActiveDateField(null);
                   }}
@@ -2288,20 +2398,30 @@ const handlePreview = async (latestFormValues: any) => {
 
               {/* DATE PICKER */}
               <DateTimePicker
-                value={tempDate}
+               value={tempDate instanceof Date ? tempDate : new Date()}
                 mode="date"
                 display="spinner"
                 themeVariant='light'
                 minimumDate={
                   activeDateField.type === 'end'
-                    ? formValues[activeDateField.param.id]?.value?.startDate ??
-                    new Date()
+                    ? getSafeDate(
+                        formValues[activeDateField.param.id]?.value?.startDate
+                      )
                     : new Date()
                 }
+                // onChange={(event, selectedDate) => {
+                //   if (event.type !== 'set' || !selectedDate) {
+                //     setDatePickerVisible(false);
+                //     setActiveDateField(null);
+                //     return;
+                //   }
+                
+                //   setTempDate(selectedDate); // ✅ REQUIRED
+                // }}
                 onChange={(event, selectedDate) => {
-                  if (selectedDate) {
-                    setTempDate(selectedDate);
-                  }
+                  if (!selectedDate) return;
+                
+                  setTempDate(selectedDate);
                 }}
               />
             </View>
@@ -2311,13 +2431,20 @@ const handlePreview = async (latestFormValues: any) => {
 
       {Platform.OS === 'android' && datePickerVisible && activeDateField && (
         <DateTimePicker
-          value={tempDate}
+        value={getSafeDate(tempDate)}
           mode="date"
           display="calendar"
+          // minimumDate={
+          //   activeDateField.type === 'end'
+          //     ? formValues[activeDateField.param.id]?.value?.startDate ??
+          //     new Date()
+          //     : new Date()
+          // }
           minimumDate={
             activeDateField.type === 'end'
-              ? formValues[activeDateField.param.id]?.value?.startDate ??
-              new Date()
+              ? getSafeDate(
+                  formValues[activeDateField.param.id]?.value?.startDate
+                )
               : new Date()
           }
           onChange={(event, selectedDate) => {
