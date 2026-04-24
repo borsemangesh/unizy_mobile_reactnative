@@ -130,18 +130,34 @@ export const handleNotification = async (
 
       const featureId = notificationData?.feature_id || null;
 
+      // Platform.OS === 'ios'
+      //   ? resetNavigation('ReviewDetails', {
+      //       category_id: notificationData?.category_id,
+      //       id: featureId,
+      //       purchase: false,
+      //       seller_id: notificationData?.seller_id || 64,
+      //     })
+      //   : navigate('ReviewDetails', {
+      //       category_id: notificationData?.category_id,
+      //       id: featureId,
+      //       purchase: false,
+      //       seller_id: notificationData?.seller_id || 64,
+      //     });
+
       Platform.OS === 'ios'
-        ? resetNavigation('ReviewDetails', {
+        ? resetNavigation('MyReviews', {
             category_id: notificationData?.category_id,
             id: featureId,
             purchase: false,
-            seller_id: notificationData?.seller_id || 64,
+          seller_id: notificationData?.seller_id || 64,
+            activeTab: 'Received Reviews',
           })
-        : navigate('ReviewDetails', {
+        : navigate('MyReviews', {
             category_id: notificationData?.category_id,
             id: featureId,
             purchase: false,
             seller_id: notificationData?.seller_id || 64,
+            activeTab: 'Received Reviews',
           });
       return;
     }

@@ -1033,12 +1033,20 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       <View style={styles.bottombutton}>
                         <TouchableOpacity
                           onPress={() => {
-                            navigation.navigate('ReviewDetails', {
-                              category_id: detail?.category_id,
-                              id: detail?.id,
-                              purchase: detail?.ispurchased,
-                              seller_id: detail?.createdby?.id ?? 1,
-                            });
+                            // navigation.navigate('ReviewDetails', {
+                            //   category_id: detail?.category_id,
+                            //   id: detail?.id,
+                            //   purchase: detail?.ispurchased,
+                            //   seller_id: detail?.createdby?.id ?? 1,
+                            // });
+                             navigation.navigate('MyReviews', {
+                               catagory_id: detail?.category_id,
+                               id: detail?.id,
+                               purchase: false,
+                               seller_id: detail?.createdby?.id || 1,
+                               activeTab: 'Received Reviews',
+                             });
+                            
                           }}
                           style={{
                             flexDirection: 'row',

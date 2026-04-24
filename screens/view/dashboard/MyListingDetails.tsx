@@ -839,7 +839,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
 
                 <View style={styles.card}>
                   <View style={styles.gap12}>
-                    <Text
+                    {/* <Text
                       allowFontScaling={false}
                       style={styles.productDeatilsHeading1}
                     >
@@ -857,11 +857,14 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                             return t('product_details');
                         }
                       })()}
-                    </Text>
+                    </Text> */}
 
-                    {detail?.params
+                    {/* {detail?.params
                       ?.filter((param: Param) => param.field_type !== 'boolean')
-                      .map((param: Param) => (
+                      .map((param: Param) => ( */}
+                      {detail?.params
+                          ?.filter((param: Param) => param.field_type !== 'boolean' && param.id !== 8 && param.id !== 22 && param.id !== 15 && param.id !==32 && param.id !== 58 && param.id !== 7 && param.id !== 11 && param.id !== 21&& param.id !== 51&& param.id !== 11 && param.id !== 14)
+                      .map((param: Param) =>(
                         <View
                           key={param.id}
                           style={{ marginTop: 4, marginBottom: 0 }}

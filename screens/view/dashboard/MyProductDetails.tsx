@@ -333,26 +333,26 @@ const handleBookmarkPress = async (productId: number) => {
                 </View>
               </TouchableOpacity>
               <Text allowFontScaling={false} style={styles.unizyText}>
-                
                 {detail?.category?.name
                   ? `${detail.category.name} Details`
                   : ''}
               </Text>
               <TouchableOpacity
                 onPress={() => {
-                    handleBookmarkPress(id);
-                }}>
-              <View style={styles.MylistingsBackground}>
-                {/* <Image source={mylistings1} style={styles.iconSmall} /> */}
-                <Image
+                  handleBookmarkPress(id);
+                }}
+              >
+                <View style={styles.MylistingsBackground}>
+                  {/* <Image source={mylistings1} style={styles.iconSmall} /> */}
+                  <Image
                     source={
-                        detail?.isbookmarked
-                          ? require("../../../assets/images/favourite_filled.png") // bookmarked
-                         : require("../../../assets/images/favourite.png") // not bookmarked
-                        }
-                      style={styles.iconSmall}
-                    />
-              </View>
+                      detail?.isbookmarked
+                        ? require('../../../assets/images/favourite_filled.png') // bookmarked
+                        : require('../../../assets/images/favourite.png') // not bookmarked
+                    }
+                    style={styles.iconSmall}
+                  />
+                </View>
               </TouchableOpacity>
             </View>
           </View>
@@ -373,7 +373,9 @@ const handleBookmarkPress = async (productId: number) => {
                 <View style={{ gap: 8 }}>
                   {detail && (
                     <>
-                      <Text allowFontScaling={false} style={styles.QuaddText}>{detail.title}</Text>
+                      <Text allowFontScaling={false} style={styles.QuaddText}>
+                        {detail.title}
+                      </Text>
                       <Text allowFontScaling={false} style={styles.priceText}>
                         £{Number(detail.price).toFixed(2)}
                       </Text>
@@ -389,7 +391,10 @@ const handleBookmarkPress = async (productId: number) => {
                     alignSelf: 'stretch',
                   }}
                 >
-                  <Text allowFontScaling={false} style={styles.productDesHeding}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDesHeding}
+                  >
                     Product Description
                   </Text>
                   <Text allowFontScaling={false} style={styles.productDesc}>
@@ -410,35 +415,49 @@ const handleBookmarkPress = async (productId: number) => {
 
               <View style={styles.card}>
                 <View style={styles.gap12}>
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDeatilsHeading}
+                  >
                     Product Details
                   </Text>
 
                   {detail?.params?.map((param: Param) => (
                     <View key={param.id} style={{ marginBottom: 12 }}>
                       {/* Param name */}
-                      <Text allowFontScaling={false} style={styles.itemcondition}>{param.name}</Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.itemcondition}
+                      >
+                        {param.name}
+                      </Text>
 
                       {/* Param value */}
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
                           {param.options
                             .filter(opt =>
-                              (param.param_value?.toString() || "")
+                              (param.param_value?.toString() || '')
                                 .split(',')
                                 .map(v => v.trim())
-                                .includes(opt.option_id.toString())
+                                .includes(opt.option_id.toString()),
                             )
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>
-                                <Text allowFontScaling={false} style={styles.catagoryText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={styles.catagoryText}
+                                >
                                   {opt.option_name}
                                 </Text>
                               </View>
                             ))}
                         </View>
                       ) : (
-                        <Text allowFontScaling={false} style={[styles.new, { marginTop:2 }]}>
+                        <Text
+                          allowFontScaling={false}
+                          style={[styles.new, { marginTop: 2 }]}
+                        >
                           {param.param_value || '—'}
                         </Text>
                       )}
@@ -450,27 +469,33 @@ const handleBookmarkPress = async (productId: number) => {
               {/* Selaer details */}
               <View style={styles.card}>
                 <View style={{ gap: 12 }}>
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDeatilsHeading}
+                  >
                     Seller Details
                   </Text>
 
                   {/* User Info */}
                   <View style={{ flexDirection: 'row' }}>
                     {detail?.createdby?.profile ? (
-                    <Image
-                      source={{ uri: detail.createdby.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
-                        {getInitials(
-                          detail?.createdby?.firstname ?? 'Alan',
-                          detail?.createdby?.lastname ?? 'Walker'
-                        )}
-                      </Text>
-                    </View>
-                  )}
+                      <Image
+                        source={{ uri: detail.createdby.profile }}
+                        style={styles.avatar}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            detail?.createdby?.firstname ?? 'Alan',
+                            detail?.createdby?.lastname ?? 'Walker',
+                          )}
+                        </Text>
+                      </View>
+                    )}
 
                     <View style={{ width: '80%', gap: 4 }}>
                       <Text allowFontScaling={false} style={styles.userName}>
@@ -481,18 +506,23 @@ const handleBookmarkPress = async (productId: number) => {
                           : 'Unknown User'}
                       </Text>
 
-                      <Text allowFontScaling={false} style={styles.univeritytext}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.univeritytext}
+                      >
                         {detail?.createdby?.university_name ||
                           'University of Warwick'}
                       </Text>
-                      <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
+                      <Text
+                        allowFontScaling={false}
+                        style={[styles.univeritytext, { marginTop: -5 }]}
+                      >
                         {'Coventry'}
                       </Text>
                     </View>
                   </View>
 
                   <View style={{ flexDirection: 'row', gap: 8 }}>
-                    
                     <View
                       style={{
                         borderRadius: 10,
@@ -509,35 +539,42 @@ const handleBookmarkPress = async (productId: number) => {
                         width: '20%',
                       }}
                     >
-                      <TouchableOpacity 
-                      onPress={() =>
-                        navigation.navigate('ReviewDetails', {
-                          category_id: detail?.category_id,
-                          id: detail?.id,
-                        })
-                      }
-                        style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Image
-                        source={require('../../../assets/images/staricon.png')}
-                        style={{ height: 16, width: 16 }}
-                      />
-                      
-                      <Text
-                      allowFontScaling={false}
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.48)',
-                          fontFamily: 'Urbanist-SemiBold',
-                          fontSize: 14,
-                          fontWeight: '600',
-                          fontStyle: 'normal',
-                          letterSpacing: -0.28,
-                        }}
+                      <TouchableOpacity
+                        onPress={() =>
+                          // navigation.navigate('ReviewDetails', {
+                          //   category_id: detail?.category_id,
+                          //   id: detail?.id,
+                          // })
+                          navigation.navigate('MyReviews', {
+                            catagory_id: detail?.category_id,
+                            id: detail?.id,
+                            purchase: false,
+                            seller_id: detail?.createdby?.id || 1,
+                            activeTab: 'Received Reviews',
+                          })
+                        }
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
                       >
-                        4.5
-                      </Text>
+                        <Image
+                          source={require('../../../assets/images/staricon.png')}
+                          style={{ height: 16, width: 16 }}
+                        />
+
+                        <Text
+                          allowFontScaling={false}
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.48)',
+                            fontFamily: 'Urbanist-SemiBold',
+                            fontSize: 14,
+                            fontWeight: '600',
+                            fontStyle: 'normal',
+                            letterSpacing: -0.28,
+                          }}
+                        >
+                          4.5
+                        </Text>
                       </TouchableOpacity>
                     </View>
-                   
 
                     <View
                       style={{
@@ -563,7 +600,7 @@ const handleBookmarkPress = async (productId: number) => {
                           style={{ height: 16, width: 16, marginRight: 6 }}
                         />
                         <Text
-                        allowFontScaling={false}
+                          allowFontScaling={false}
                           style={{
                             color: 'rgba(255, 255, 255, 0.48)',
                             fontFamily: 'Urbanist-SemiBold',
@@ -583,157 +620,188 @@ const handleBookmarkPress = async (productId: number) => {
             </View>
           </ScrollView>
 
+          {/* Bottom */}
+          <TouchableOpacity
+            style={styles.previewBtn}
+            // onPress={() => setShowPopup1(true)}
 
-      {/* Bottom */}
-      <TouchableOpacity
-        style={styles.previewBtn}
-       // onPress={() => setShowPopup1(true)}
-
-        onPress={() => navigation.navigate('AddReview')}
-      >
-        <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
-        <Text allowFontScaling={false} style={styles.payText}>Write a Review </Text>
-        
-      </Text>
-      </TouchableOpacity>
-      {/* </ScrollView> */}
-
-      <Modal
-        visible={showPopup}
-        transparent
-        animationType="fade"
-        onRequestClose={closePopup}
-      >
-        <TouchableWithoutFeedback onPress={closePopup}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="dark"
-            blurAmount={1000}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            onPress={() => navigation.navigate('AddReview')}
           >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
- 
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/alerticon.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text allowFontScaling={false} 
-              style={{
-                color: 'rgba(255, 255, 255, 0.80)',
-                fontFamily: 'Urbanist-SemiBold',
-                fontSize: 20,
-                fontWeight: '600',
-                letterSpacing: -0.4,
-                lineHeight: 28,
-              }}>Complete Your Purchase</Text>
-              <Text 
-              allowFontScaling={false}
-              style={{
-                color: 'rgba(255, 255, 255, 0.48)',
-                fontFamily: 'Urbanist-Regular',
-                fontSize: 14,
-                textAlign:'center',
-                fontWeight: '400',
-                letterSpacing: -0.28,
-                lineHeight: 19.6,
-              }}>
-                Chat with the seller will be available after you’ve bought this product or service.
+            <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
+              <Text allowFontScaling={false} style={styles.payText}>
+                Write a Review{' '}
               </Text>
- 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup(false);}}
-              >
-                <Text allowFontScaling={false} style={styles.loginText}>Go Back</Text>
-              </TouchableOpacity>
-            </View>
-          </BlurView>
-        </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+            </Text>
+          </TouchableOpacity>
+          {/* </ScrollView> */}
 
-      <Modal
-        visible={showPopup1}
-        transparent
-        animationType="fade"
-        onRequestClose={closePopup1}
-      >
-        <TouchableWithoutFeedback onPress={closePopup1}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+          <Modal
+            visible={showPopup}
+            transparent
+            animationType="fade"
+            onRequestClose={closePopup}
           >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
- 
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/success_icon.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text 
-              allowFontScaling={false}
-              style={{
-                color: 'rgba(255, 255, 255, 0.80)',
-                fontFamily: 'Urbanist-SemiBold',
-                fontSize: 20,
-                fontWeight: '600',
-                letterSpacing: -0.4,
-                lineHeight: 28,
-              }}>Order Placed Successfully!</Text>
-              
- 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
-              >
-                <Text allowFontScaling={false}
-                style={styles.loginText}>Return to Home</Text>
-              </TouchableOpacity>
+            <TouchableWithoutFeedback onPress={closePopup}>
+              <View style={styles.overlay}>
+                <BlurView
+                  style={{
+                    flex: 1,
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    alignItems: 'center',
+                  }}
+                  blurType="dark"
+                  blurAmount={1000}
+                  reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                >
+                  <View
+                    style={[
+                      StyleSheet.absoluteFill,
+                      { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                    ]}
+                  />
 
-               <TouchableOpacity
-                style={styles.loginButton1}
-                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
-              >
-                <Text allowFontScaling={false} style={styles.loginText1}>Chat with Sellar</Text>
-              </TouchableOpacity>
-            </View>
-          </BlurView>
+                  <View style={styles.popupContainer}>
+                    <Image
+                      source={require('../../../assets/images/alerticon.png')}
+                      style={styles.logo}
+                      resizeMode="contain"
+                    />
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.80)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 20,
+                        fontWeight: '600',
+                        letterSpacing: -0.4,
+                        lineHeight: 28,
+                      }}
+                    >
+                      Complete Your Purchase
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.48)',
+                        fontFamily: 'Urbanist-Regular',
+                        fontSize: 14,
+                        textAlign: 'center',
+                        fontWeight: '400',
+                        letterSpacing: -0.28,
+                        lineHeight: 19.6,
+                      }}
+                    >
+                      Chat with the seller will be available after you’ve bought
+                      this product or service.
+                    </Text>
+
+                    <TouchableOpacity
+                      style={styles.loginButton}
+                      onPress={() => {
+                        navigation.replace('Dashboard', {
+                          AddScreenBackactiveTab: 'Home',
+                          isNavigate: false,
+                        });
+                        setShowPopup(false);
+                      }}
+                    >
+                      <Text allowFontScaling={false} style={styles.loginText}>
+                        Go Back
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </BlurView>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+
+          <Modal
+            visible={showPopup1}
+            transparent
+            animationType="fade"
+            onRequestClose={closePopup1}
+          >
+            <TouchableWithoutFeedback onPress={closePopup1}>
+              <View style={styles.overlay}>
+                <BlurView
+                  style={{
+                    flex: 1,
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    alignItems: 'center',
+                  }}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                >
+                  <View
+                    style={[
+                      StyleSheet.absoluteFill,
+                      { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                    ]}
+                  />
+
+                  <View style={styles.popupContainer}>
+                    <Image
+                      source={require('../../../assets/images/success_icon.png')}
+                      style={styles.logo}
+                      resizeMode="contain"
+                    />
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.80)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 20,
+                        fontWeight: '600',
+                        letterSpacing: -0.4,
+                        lineHeight: 28,
+                      }}
+                    >
+                      Order Placed Successfully!
+                    </Text>
+
+                    <TouchableOpacity
+                      style={styles.loginButton}
+                      onPress={() => {
+                        navigation.replace('Dashboard', {
+                          AddScreenBackactiveTab: 'Home',
+                          isNavigate: false,
+                        });
+                        setShowPopup1(false);
+                      }}
+                    >
+                      <Text allowFontScaling={false} style={styles.loginText}>
+                        Return to Home
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.loginButton1}
+                      onPress={() => {
+                        navigation.replace('Dashboard', {
+                          AddScreenBackactiveTab: 'Home',
+                          isNavigate: false,
+                        });
+                        setShowPopup1(false);
+                      }}
+                    >
+                      <Text allowFontScaling={false} style={styles.loginText1}>
+                        Chat with Sellar
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </BlurView>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-      </View>
-      <NewCustomToastContainer/>
-    </ImageBackground>
-  );
+        <NewCustomToastContainer />
+      </ImageBackground>
+    );
 };
 
 const styles = StyleSheet.create({
