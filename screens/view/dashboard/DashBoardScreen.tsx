@@ -1560,7 +1560,7 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff31',
     
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.1,
+    bottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 +4 :  Dimensions.get('window').height * 0.1,
   left: 16,
   right: 16,
   borderRadius: 10,
