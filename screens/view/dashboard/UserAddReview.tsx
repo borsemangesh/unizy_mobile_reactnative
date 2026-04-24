@@ -137,7 +137,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
       if (result.statusCode === 200) {
 
-        showToast(t(result.message))
+        showToast(t(result.message, "success"));
         if(Platform.OS === 'ios'){
           setTimeout(() => {
             setShowPopup1(true);
