@@ -1760,7 +1760,7 @@ const handlePreview = async (latestFormValues: any) => {
                       source={IMAGE_URLS.INFO_ICON}
                       style={{ width: 16, height: 16, marginRight:6, marginTop: 2 }}
                     />
-                     <View >
+                     <View style={{width: Platform.OS === 'ios' ? '94%' : '90%'}} >
                                 <Text allowFontScaling={false} style={styles.importantText1}>
                                   {t('important')}
                                 </Text>
