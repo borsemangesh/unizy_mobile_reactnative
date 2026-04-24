@@ -1412,7 +1412,6 @@ typingTimeout.current = setTimeout(async () => {
                 style={[
                   styles.personalEmailID_TextInput,
                   styles.login_container,
-                  styles.inputWithIcon, // padding for icon space
                   {
                     height: 44,
                     textAlignVertical: 'center',
