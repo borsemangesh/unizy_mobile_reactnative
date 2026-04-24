@@ -137,7 +137,8 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
       if (result.statusCode === 200) {
 
-        showToast(t(result.message, "success"));
+        // showToast(t(result.message, "success"));
+        showToast(t("ReviewSubmited"), "success");
         if(Platform.OS === 'ios'){
           setTimeout(() => {
             setShowPopup1(true);
@@ -149,7 +150,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         
       } else {
         console.warn('Error saving review:', result);
-        showToast(t(result.message) || 'Failed to submit review');
+        showToast(t("ReviewAlreadyExist") || 'Failed to submit review', 'error');
       }
     } catch (error) {
       console.error('Review error:', error);
