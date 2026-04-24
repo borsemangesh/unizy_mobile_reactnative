@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
  
   textbg: {
     position:'absolute',
-    top:Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 : 70,
+    top:Platform.OS === 'ios' ? 0 : 70,
     overflow: 'hidden',
     alignContent: 'center',
     alignSelf: 'center',
