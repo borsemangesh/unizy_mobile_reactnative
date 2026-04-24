@@ -2050,7 +2050,7 @@ const handlePreview = async (latestFormValues: any) => {
               scrollEventThrottle={16}
               contentContainerStyle={[
                 styles.scrollContainer,
-                { paddingBottom: height * 0.1 },
+                { paddingBottom: height * 0.1+10 },
               ]}>
 
 
