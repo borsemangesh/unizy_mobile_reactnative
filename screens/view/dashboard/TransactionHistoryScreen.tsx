@@ -622,7 +622,7 @@ export default function TransactionHistoryScreen(
       <ScrollView
         style={{
           width: '100%',
-          marginBottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.34,
+          marginBottom: selectedTab === 'Sales' ? Platform.OS === 'ios' ? Dimensions.get('window').height * 0.2 :  Dimensions.get('window').height * 0.34 : Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.34,
         }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
