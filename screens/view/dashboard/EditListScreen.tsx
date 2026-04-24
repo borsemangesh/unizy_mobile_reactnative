@@ -1752,8 +1752,59 @@ const handlePreview = async (latestFormValues: any) => {
               />
             </View>
 
+             <View style={{ flex: 1 }}>
+                            {productId !== 4 ? (
+                              <>
+                                <Text allowFontScaling={false} style={styles.importantText1}>
+                                  {t('important')}
+                                </Text>
+            
+                                <Text allowFontScaling={false} style={styles.importantText}>
+                                  {t('featured_listing_note_1')}{' '}
+                                  <Text allowFontScaling={false} style={styles.importantText1}>
+                                    {Math.trunc(featureFee)}%
+                                  </Text>{' '}
+                                  {t('featured_listing_fee_percentage')}{' '}
+            
+                                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                                  <Text allowFontScaling={false} style={styles.importantText}>
+                                    {t('capped')}{' '}
+                                  </Text>
+                                  <Text allowFontScaling={false} style={styles.importantText1}>
+                                    £{Math.trunc(maxFeatureCap)}
+                                  </Text>
+                                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
+                                  {t('featured_listing_fee_cap')}
+                                </Text>
+                              </>
+                            ) : (
+                              <View>
+                                <Text allowFontScaling={false} style={styles.importantText1}>
+                                  {t('important')}
+                                </Text>
+            
+                                <Text allowFontScaling={false} style={styles.importantText}>
+                                  {t('featured_listing_note_homesearch')}{' '}
+                                  <Text allowFontScaling={false} style={styles.importantText1}>
+                                    £{Math.trunc(accommodation_amount)}
+                                  </Text>{' '}
+                                  {t('featured_listing_note_homesearch1')}
+            
+                                  <Text allowFontScaling={false} style={styles.importantText}></Text>
+                                  <Text allowFontScaling={false} style={styles.importantText}>
+            
+                                  </Text>
+                                  <Text allowFontScaling={false} style={styles.importantText1} />
+            
+                                  {/* <Text allowFontScaling={false} style={styles.importantText}></Text>{' '} */}
+                                  {/* {t('featured_listing_fee_cap')} */}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+
             {/* {productId !== 4 && ( */}
-              <View style={styles.textbg}>
+              {/* <View style={styles.textbg}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
                   style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -1775,7 +1826,7 @@ const handlePreview = async (latestFormValues: any) => {
                     ) {t('featured_listing_fee_cap')}
                   </Text>
                 </View>
-              </View>
+              </View> */}
             {/* )} */}
           </View>
         );
@@ -2131,7 +2182,7 @@ const handlePreview = async (latestFormValues: any) => {
                       <Text allowFontScaling={false} style={styles.importantText}>
                         {t('fixed_commission')}{' '}
                         <Text style={styles.importantText1}>
-                          £{Math.trunc(accommodation_amount)}
+                          £{Math.trunc(maxFeatureCap)}
                         </Text>{' '}
                         {t('acc_message')}
                       </Text>
