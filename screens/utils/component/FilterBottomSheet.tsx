@@ -10,8 +10,10 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   TextInput,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 
 import { MAIN_URL } from '../APIConstant';
@@ -70,6 +72,8 @@ const FilterBottomSheet = ({
 
   const [isPriceChanged, setIsPriceChanged] = useState(false);
   const [isDistanceChanged, setIsDistanceChanged] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
 
   const fetchFilters = async () => {
     try {
@@ -159,11 +163,47 @@ const FilterBottomSheet = ({
     }
   }, [visible]);
 
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+  
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+  
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   const { t } = useTranslation();
 
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
   };
+
+  // const handleTabPress = (tabName: string) => {
+  //   const nextFilter = filters.find(f => f.field_name === tabName);
+  
+  //   setSelectedTab(tabName);
+  
+  //   // 🔥 Reset only if switching to new filter
+  //   if (nextFilter) {
+  //     setDropdownSelections(prev => ({
+  //       ...prev,
+  //       [nextFilter.id]: [],   // ✅ clear selection
+  //     }));
+  
+  //     setOtherInputs(prev => {
+  //       const copy = { ...prev };
+  //       delete copy[nextFilter.id]; // ✅ clear "Other" input
+  //       return copy;
+  //     });
+  //   }
+  // };
 
   // const toggleDropdownOption = (
   //   fieldId: number,
@@ -333,13 +373,20 @@ const FilterBottomSheet = ({
   const milesToKm = (mi: number) => mi / 0.621371;
 
   const currentFilter = filters.find(f => f.field_name === selectedTab);
+  const scrollRef = useRef<ScrollView>(null);
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
 
     if (currentFilter.field_type === 'dropdown') {
       return (
-        <ScrollView style={{ flexGrow: 0, paddingTop: 10 ,zIndex:1000}}>
+//         <ScrollView
+//   style={{ flex: 1, paddingTop: 10 }}
+//   contentContainerStyle={{ paddingBottom: 180 }}
+//   keyboardShouldPersistTaps="handled"
+
+// >
+<View style={{ paddingTop: 10 }}>
           {currentFilter.options.map((opt: any) => {
             const isMultiple = currentFilter.ismultilple;
             const selectedValues = dropdownSelections[currentFilter.id] || [];
@@ -430,7 +477,9 @@ const FilterBottomSheet = ({
                     {opt.option_name || opt.name}
                   </Text>
                 </TouchableOpacity>
-                {isOtherOption && isSelected && (
+                {/* {isOtherOption && isSelected && ( */}
+                {isOtherOption &&
+  dropdownSelections[currentFilter.id]?.includes(opt.id) && (
                   <TextInput
                     style={[
                       styles.login_container,
@@ -442,6 +491,11 @@ const FilterBottomSheet = ({
                     selectionColor={'#FFFFFF'}
                     cursorColor={'#FFFFFF'}
                     value={otherInputs[currentFilter.id] || ''}
+                    onFocus={() => {
+                      setTimeout(() => {
+                        scrollRef.current?.scrollToEnd({ animated: true });
+                      }, 300);
+                    }}
                     onChangeText={text => {
                       setOtherInputs(prev => ({
                         ...prev,
@@ -453,7 +507,8 @@ const FilterBottomSheet = ({
               </View>
             );
           })}
-        </ScrollView>
+        {/* </ScrollView> */}
+        </View>
       );
     } else if (currentFilter.alias_name === 'price') {
       return (
@@ -1124,10 +1179,17 @@ const FilterBottomSheet = ({
                   </ScrollView>
                 </View>
 
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                 >
                 <ScrollView
+                ref={scrollRef}
                   style={styles.scrollview_style}
-                  contentContainerStyle={{ padding: 16, paddingBottom: 70 }}
+                 contentContainerStyle={{ padding: 16, paddingBottom: 240 }}
+                
                   showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
                 >
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
                     {selectedTab}
@@ -1146,8 +1208,10 @@ const FilterBottomSheet = ({
                       ({currentFilter.description} )
                     </Text>
                   ) : null}
+                  
                   {renderRightContent()}
                 </ScrollView>
+                </KeyboardAvoidingView>
               </View>
               {/* Bottom buttons */}
               <View style={styles.bottomview}>
