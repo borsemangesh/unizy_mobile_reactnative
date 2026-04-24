@@ -1875,7 +1875,7 @@ typingTimeout.current = setTimeout(async () => {
                     <Text allowFontScaling={false} style={styles.importantText}>
                       {t('featured_listing_note_homesearch')}{' '}
                       <Text allowFontScaling={false} style={styles.importantText1}>
-                        £{Math.trunc(accommodation_amount)}
+                        £{Math.trunc(maxFeatureCap)}
                       </Text>{' '}
                       {t('featured_listing_note_homesearch1')}
 
@@ -2341,7 +2341,7 @@ typingTimeout.current = setTimeout(async () => {
                           <Text allowFontScaling={false} style={styles.importantText}>
                             {t('fixed_commission')}{' '}
                             <Text style={styles.importantText1}>
-                              £{maxFeatureCap}
+                              £{accommodation_amount} 
                             </Text>{' '}
                             {t('acc_message')}
                           </Text>
