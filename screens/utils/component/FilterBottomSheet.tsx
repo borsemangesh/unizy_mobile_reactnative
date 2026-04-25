@@ -747,7 +747,7 @@ const FilterBottomSheet = ({
                 <Text style={styles.rangeText}>
                   {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'} */}
-                  0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
+                  1 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)} {' '}
                   {isKm ? 'km' : 'mi'}
                 </Text>
               </View>
@@ -759,9 +759,13 @@ const FilterBottomSheet = ({
               sliderLength={SCREEN_WIDTH / 2 - 10}
               min={1}
               max={isKm ? 1000 : kmToMiles(1000)}
-              step={1}
+              step={isKm ? 1 : 0.1}
+              // values={[
+              //   isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ only ONE value
+              // ]}
+
               values={[
-                isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ only ONE value
+                isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1)),
               ]}
               onValuesChange={values => {
                 const [value] = values;
