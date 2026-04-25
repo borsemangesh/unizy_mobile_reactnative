@@ -679,7 +679,7 @@ const FilterAndroid = ({
 
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
-              min={0}
+              min={1}
               max={isKm ? 1000 : kmToMiles(1000)}
               step={1}
               // values={[

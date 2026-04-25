@@ -1790,74 +1790,120 @@ const handlePreview = async (latestFormValues: any) => {
               />
             </View>
 
-             <View style={{ flex: 1 }}>
-                            {productId !== 4 ? (
+            <View style={{ flex: 1 }}>
+              {productId !== 4 ? (
                 <>
-                   <View style={[styles.textbg, { marginTop: 12,gap: 2 }]}>
+                  <View style={[styles.textbg, { marginTop: 12, gap: 2 }]}>
                     <Image
                       source={IMAGE_URLS.INFO_ICON}
-                      style={{ width: 16, height: 16, marginRight:6, marginTop: 2 }}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        marginRight: 6,
+                        marginTop: 2,
+                      }}
                     />
-                     <View style={{width: Platform.OS === 'ios' ? '94%' : '90%'}} >
-                                <Text allowFontScaling={false} style={styles.importantText1}>
-                                  {t('important')}
-                                </Text>
-            
-                                <Text allowFontScaling={false} style={styles.importantText}>
-                                  {t('featured_listing_note_1')}{' '}
-                                  <Text allowFontScaling={false} style={styles.importantText1}>
-                                    {Math.trunc(featureFee)}%
-                                  </Text>{' '}
-                                  {t('featured_listing_fee_percentage')}{' '}
-            
-                                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                                  <Text allowFontScaling={false} style={styles.importantText}>
-                                    {t('capped')}{' '}
-                                  </Text>
-                                  <Text allowFontScaling={false} style={styles.importantText1}>
-                                    £{Math.trunc(maxFeatureCap)}
-                                  </Text>
-                                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
-                                  {t('featured_listing_fee_cap')}
+                    <View
+                      style={{ width: Platform.OS === 'ios' ? '94%' : '90%' }}
+                    >
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
+                        {t('important')}
                       </Text>
-                      </View>
+
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        {t('featured_listing_note_1')}{' '}
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.importantText1}
+                        >
+                          {Math.trunc(featureFee)}%
+                        </Text>{' '}
+                        {t('featured_listing_fee_percentage')}{' '}
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.importantText}
+                        >
+                          (
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.importantText}
+                        >
+                          {t('capped')}{' '}
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.importantText1}
+                        >
+                          £{Math.trunc(maxFeatureCap)}
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.importantText}
+                        >
+                          )
+                        </Text>{' '}
+                        {t('featured_listing_fee_cap')}
+                      </Text>
                     </View>
-                              </>
+                  </View>
+                </>
               ) : (
-                  <View style={[styles.textbg, { marginTop: 12 }]}>
-                    <Image
-                      source={IMAGE_URLS.INFO_ICON}
-                      style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-                    />
-                              <View >
-                                
-                                <Text allowFontScaling={false} style={styles.importantText1}>
-                                  {t('important')}
-                                </Text>
-            
-                                <Text allowFontScaling={false} style={styles.importantText}>
-                                  {t('featured_listing_note_homesearch')}{' '}
-                                  <Text allowFontScaling={false} style={styles.importantText1}>
-                                    £{Math.trunc(maxFeatureCap)}
-                                  </Text>{' '}
-                                  {t('featured_listing_note_homesearch1')}
-            
-                                  <Text allowFontScaling={false} style={styles.importantText}></Text>
-                                  <Text allowFontScaling={false} style={styles.importantText}>
-            
-                                  </Text>
-                                  <Text allowFontScaling={false} style={styles.importantText1} />
-            
-                                  {/* <Text allowFontScaling={false} style={styles.importantText}></Text>{' '} */}
-                                  {/* {t('featured_listing_fee_cap')} */}
-                                </Text>
-                    </View>
-                    </View>
-                            )}
-                          </View>
+                <View style={[styles.textbg, { marginTop: 12 }]}>
+                  <Image
+                    source={IMAGE_URLS.INFO_ICON}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      marginRight: 8,
+                      marginTop: 2,
+                    }}
+                  />
+                  <View style={{ width: Platform.OS === 'ios' ? '94%' : '90%'}}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText1}
+                    >
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('featured_listing_note_homesearch')}{' '}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
+                        £{Math.trunc(maxFeatureCap)}
+                      </Text>{' '}
+                      {t('featured_listing_note_homesearch1')}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      ></Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      ></Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      />
+                      {/* <Text allowFontScaling={false} style={styles.importantText}></Text>{' '} */}
+                      {/* {t('featured_listing_fee_cap')} */}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
 
             {/* {productId !== 4 && ( */}
-              {/* <View style={styles.textbg}>
+            {/* <View style={styles.textbg}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
                   style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -2227,7 +2273,7 @@ const handlePreview = async (latestFormValues: any) => {
                       source={IMAGE_URLS.INFO_ICON}
                       style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
                     />
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1 ,}}>
                       <Text allowFontScaling={false} style={styles.importantText1}>
                         {t('important')}
                       </Text>
@@ -3067,17 +3113,17 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff31',
   },
   importantText: {
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_12,
     color: '#FFFFFFCC',
-    fontSize: 12,
     marginBottom: 6,
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: 400,
   },
   importantText1: {
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_12,
+    ...COMMONSTYLE.FONTWEIGHT_500,
     color: '#FFFFFF',
-    fontSize: 12,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
   },
 
   login_container: {
