@@ -311,70 +311,91 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   };
 
 
- const handleListPress = async () => {
-  if (isSubmitting) return;
-
-  isSubmitting = true;
-
-  try {
-    const form =
-      typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-
-    const isFeatured =
-      form?.['13']?.value === true || form?.['13']?.value === 'true';
-
-    if (categoryid === 4 && accomodation_amount > 0) {
-      navigation.navigate('PaymentScreen', {
-        amount: isFeatured ? finalPrice: accomodation_amount,
-        feature_id: 1,
-        nav: 'add',
-
-        onSuccess: async () => {
-          try {
-            await listProduct();
-          } finally {
-            isSubmitting = false; // ✅ reset AFTER payment success
-          }
-        },
-
-        onCancel: () => {
-          isSubmitting = false; // ✅ reset if user cancels payment
-        },
-      });
-    } else {
-      await listProduct();
-      isSubmitting = false; // ✅ reset after direct listing
+  const handleListPress = async () => {
+    if (isSubmitting) return;
+  
+    isSubmitting = true;
+  
+    try {
+      const form =
+        typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+  
+      const isFeatured =
+        form?.['13']?.value === true || form?.['13']?.value === 'true';
+  
+      if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)) {
+  
+        const amount = isFeatured
+          ? finalPrice          // ✅ FEATURED CASE
+          : accomodation_amount; // ✅ NORMAL CASE
+  
+        navigation.navigate('PaymentScreen', {
+          amount: amount,
+          feature_id: 1,
+          nav: 'add',
+  
+          onSuccess: async () => {
+            try {
+              await listProduct();
+            } finally {
+              isSubmitting = false;
+            }
+          },
+  
+          onCancel: () => {
+            isSubmitting = false;
+          },
+        });
+  
+      } else {
+        await listProduct();
+        isSubmitting = false;
+      }
+    } catch (e) {
+      console.log('Error:', e);
+      isSubmitting = false;
     }
-  } catch (e) {
-    console.log('Error:', e);
-    isSubmitting = false;
-  }
-};
+  };
 
+//  const handleListPress = async () => {
+//   if (isSubmitting) return;
 
-  // const handleListPress = async () => {
-  //   if (isSubmitting) {
+//   isSubmitting = true;
 
-  //     return;
-  //   }
-  //   isSubmitting = true;
+//   try {
+//     const form =
+//       typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
 
+//     const isFeatured =
+//       form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-  //   try {
-  //     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-  //     const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+//       if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)){
+//       navigation.navigate('PaymentScreen', {
+//         amount: isFeatured && accomodation_amount> 0 ? finalPrice: accomodation_amount,
+//         feature_id: 1,
+//         nav: 'add',
 
-  //     await listProduct();
-  //   } catch (e) {
+//         onSuccess: async () => {
+//           try {
+//             await listProduct();
+//           } finally {
+//             isSubmitting = false; // ✅ reset AFTER payment success
+//           }
+//         },
 
-  //   }
-  //   finally {
-  //     setTimeout(() => {
-  //       isSubmitting = false;
-  //     }, 2000);
-  //   }
-  // };
-
+//         onCancel: () => {
+//           isSubmitting = false; // ✅ reset if user cancels payment
+//         },
+//       });
+//     } else {
+//       await listProduct();
+//       isSubmitting = false; // ✅ reset after direct listing
+//     }
+//   } catch (e) {
+//     console.log('Error:', e);
+//     isSubmitting = false;
+//   }
+// };
   const listProduct = async () => {
 
 
