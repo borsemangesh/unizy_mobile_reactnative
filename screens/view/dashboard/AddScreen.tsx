@@ -2725,9 +2725,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  inputWithIcon: {
-    paddingRight: 40, // space for icon inside input
-  },
+  // inputWithIcon: {
+  //   paddingRight: 40, // space for icon inside input
+  // },
 
   iconWrapper: {
     position: 'absolute',
