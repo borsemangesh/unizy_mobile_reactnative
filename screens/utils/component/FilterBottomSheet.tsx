@@ -747,7 +747,7 @@ const FilterBottomSheet = ({
                 <Text style={styles.rangeText}>
                   {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'} */}
-                  1 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)} {' '}
+                  1 - {isKm ? distanceHigh.toFixed(0) : kmToMiles(distanceHigh).toFixed(1)} {' '}
                   {isKm ? 'km' : 'mi'}
                 </Text>
               </View>
@@ -760,20 +760,19 @@ const FilterBottomSheet = ({
               min={1}
               max={isKm ? 1000 : kmToMiles(1000)}
               step={isKm ? 1 : 0.1}
+             
+
               // values={[
-              //   isKm ? distanceHigh : kmToMiles(distanceHigh), // ✅ only ONE value
+              //   isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1)),
               // ]}
 
-              values={[
-                isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1)),
-              ]}
+              values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
               onValuesChange={values => {
                 const [value] = values;
 
                 // Always store in KM internally
                 const valueInKm = isKm ? value : milesToKm(value);
-
-                setDistanceHigh(Math.round(valueInKm));
+                setDistanceHigh(valueInKm);
                 setIsDistanceChanged(true);
               }}
               allowOverlap={false}
