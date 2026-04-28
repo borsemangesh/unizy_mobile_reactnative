@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   BackHandler,
   ImageSourcePropType,
+  Linking,
 } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -82,6 +83,16 @@ type Param = {
   param_value: ParamValue;
 };
 
+
+// const openMapWithPostalCode = (lat:string, lng: string ) => {
+//   // const url = `https://www.google.com/maps/search/?api=1&query=${postalCode}`;
+
+//   const url  = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+
+//   Linking.openURL(url).catch(err =>
+//     console.error('Error opening map:', err)
+//   );
+// };
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showPopup1, setShowPopup1] = useState(false);
@@ -797,8 +808,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       ? 20
                       : height * 0.04
                     : Platform.OS === 'ios'
-                      ? 75
-                      : height * 0.08,
+                    ? 75
+                    : height * 0.08,
               },
             ]}
           >
@@ -816,38 +827,39 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         <Text allowFontScaling={false} style={styles.priceText}>
                           {detail?.category?.id === 2
                             ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
-                              'hr',
-                            )}`
+                                'hr',
+                              )}`
                             : detail?.category?.id === 4
-                              ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
                                 'week',
                               )}`
-                              : detail?.category?.id === 5
-                                ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
-                                  'session',
-                                )}`
-                                : `£${Number(detail?.price ?? 0).toFixed(2)}`}
+                            : detail?.category?.id === 5
+                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                                'session',
+                              )}`
+                            : `£${Number(detail?.price ?? 0).toFixed(2)}`}
                         </Text>
                       </>
                     )}
                     {(detail?.category_id === 2 ||
                       detail?.category_id === 5) && (
-                        <View style={styles.datePosted1}>
-                          <Image
-                            source={require('../../../assets/images/duration_info.png')}
-                            style={{ height: 16, width: 16 }}
-                          />
-                          <Text allowFontScaling={false} style={styles.datetext1}>
-                            {t('service_duration')}:{' '}
-                            <Text style={styles.durationValue}>
-                              {detail?.hours
-                                ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
+                      <View style={styles.datePosted1}>
+                        <Image
+                          source={require('../../../assets/images/duration_info.png')}
+                          style={{ height: 16, width: 16 }}
+                        />
+                        <Text allowFontScaling={false} style={styles.datetext1}>
+                          {t('service_duration')}:{' '}
+                          <Text style={styles.durationValue}>
+                            {detail?.hours
+                              ? `${detail.hours} ${
+                                  detail.hours > 1 ? t('hours') : t('hour')
                                 }`
-                                : `1 ${t('hour')}`}
-                            </Text>
+                              : `1 ${t('hour')}`}
                           </Text>
-                        </View>
-                      )}
+                        </Text>
+                      </View>
+                    )}
                   </View>
 
                   <View
@@ -905,73 +917,96 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </Text> */}
 
                     {detail?.params
-                          ?.filter((param: Param) => param.field_type !== 'boolean' && param.id !== 8 && param.id !== 22 && param.id !== 15 && param.id !==32 && param.id !== 58 && param.id !== 7 && param.id !== 11 && param.id !== 21&& param.id !== 51&& param.id !== 11 && param.id !== 14)
-                      .map((param: Param) =>(
-                          
-                      <View
-                        key={param.id}
-                        style={{ marginTop: 4, marginBottom: 0 }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.itemcondition}
+                      ?.filter(
+                        (param: Param) =>
+                          param.field_type !== 'boolean' &&
+                          param.id !== 8 &&
+                          param.id !== 22 &&
+                          param.id !== 15 &&
+                          param.id !== 32 &&
+                          param.id !== 58 &&
+                          param.id !== 7 &&
+                          param.id !== 11 &&
+                          param.id !== 21 &&
+                          param.id !== 51 &&
+                          param.id !== 11 &&
+                          param.id !== 14,
+                      )
+                      .map((param: Param) => (
+                        <View
+                          key={param.id}
+                          style={{ marginTop: 4, marginBottom: 0 }}
                         >
-                          {param.name}
-                        </Text>
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.itemcondition}
+                          >
+                            {param.name}
+                          </Text>
 
-                        {param.options && param.options.length > 0 ? (
-                          <View style={styles.categoryContainer}>
-                            {param.options
-                              .filter(opt => {
-                                const selectedValues = (param.param_value || '')
-                                  .toString()
-                                  .split(',')
-                                  .map(v => v.trim());
-                                return selectedValues.includes(
-                                  (opt.option_id ?? '').toString(),
-                                );
-                              })
-                              .map((opt: ParamOption) => (
-                                <View key={opt.id} style={styles.categoryTag}>
-                                  <Text
-                                    allowFontScaling={false}
-                                    style={styles.catagoryText}
-                                  >
-                                    {opt.other_text
-                                      ? `${opt.option_name} (${opt.other_text})`
-                                      : opt.option_name}
-                                  </Text>
-                                </View>
-                              ))}
-                          </View>
-                        ) : param.field_type === 'date' &&
-                          typeof param.param_value === 'object' &&
-                          param.param_value !== null &&
-                          'startDate' in param.param_value &&
-                          'endDate' in param.param_value ? (
-                          <Text
-                            allowFontScaling={false}
-                            style={[styles.new, { marginTop: 0 }]}
-                          >
-                            {param.param_value.startDate &&
+                          {param.options && param.options.length > 0 ? (
+                            <View style={styles.categoryContainer}>
+                              {param.options
+                                .filter(opt => {
+                                  const selectedValues = (
+                                    param.param_value || ''
+                                  )
+                                    .toString()
+                                    .split(',')
+                                    .map(v => v.trim());
+                                  return selectedValues.includes(
+                                    (opt.option_id ?? '').toString(),
+                                  );
+                                })
+                                .map((opt: ParamOption) => (
+                                  <View key={opt.id} style={styles.categoryTag}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.catagoryText}
+                                    >
+                                      {opt.other_text
+                                        ? `${opt.option_name} (${opt.other_text})`
+                                        : opt.option_name}
+                                    </Text>
+
+                                    {/* <TouchableOpacity
+                                      onPress={() =>
+                                        openMapWithPostalCode('51.4584480', '-2.587990')
+                                      }
+                                    >
+                                      <Text>BS11AD</Text>
+                                    </TouchableOpacity> // This code is for map open */}
+                                  </View>
+                                ))}
+                            </View>
+                          ) : param.field_type === 'date' &&
+                            typeof param.param_value === 'object' &&
+                            param.param_value !== null &&
+                            'startDate' in param.param_value &&
+                            'endDate' in param.param_value ? (
+                            <Text
+                              allowFontScaling={false}
+                              style={[styles.new, { marginTop: 0 }]}
+                            >
+                              {param.param_value.startDate &&
                               param.param_value.endDate
-                              ? `${dayjs(param.param_value.startDate).format(
-                                'DD-MM-YYYY',
-                              )} - ${dayjs(param.param_value.endDate).format(
-                                'DD-MM-YYYY',
-                              )}`
-                              : '—'}
-                          </Text>
-                        ) : (
-                          <Text
-                            allowFontScaling={false}
-                            style={[styles.new, { marginTop: 0 }]}
-                          >
-                            {String(param.param_value ?? '—')}
-                          </Text>
-                        )}
-                      </View>
-                    ))}
+                                ? `${dayjs(param.param_value.startDate).format(
+                                    'DD-MM-YYYY',
+                                  )} - ${dayjs(
+                                    param.param_value.endDate,
+                                  ).format('DD-MM-YYYY')}`
+                                : '—'}
+                            </Text>
+                          ) : (
+                            <Text
+                              allowFontScaling={false}
+                              style={[styles.new, { marginTop: 0 }]}
+                            >
+                              {String(param.param_value ?? '—')}
+                            </Text>
+                          )}
+                        </View>
+                      ))}
                   </View>
                 </View>
 
@@ -1007,8 +1042,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       <View style={{ width: '80%', gap: 0 }}>
                         <Text allowFontScaling={false} style={styles.userName}>
                           {detail?.createdby
-                            ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''
-                            }`
+                            ? `${detail.createdby.firstname || ''} ${
+                                detail.createdby.lastname || ''
+                              }`
                             : 'Unknown User'}
                         </Text>
 
@@ -1039,14 +1075,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             //   purchase: detail?.ispurchased,
                             //   seller_id: detail?.createdby?.id ?? 1,
                             // });
-                             navigation.navigate('MyReviews', {
-                               catagory_id: detail?.category_id,
-                               id: detail?.id,
-                               purchase: false,
-                               seller_id: detail?.createdby?.id || 1,
-                               activeTab: 'Received Reviews',
-                             });
-                            
+                            navigation.navigate('MyReviews', {
+                              catagory_id: detail?.category_id,
+                              id: detail?.id,
+                              purchase: false,
+                              seller_id: detail?.createdby?.id || 1,
+                              activeTab: 'Received Reviews',
+                            });
                           }}
                           style={{
                             flexDirection: 'row',
@@ -1137,7 +1172,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 )}
 
                 {detail?.isreported && (
-                  <TouchableOpacity onPress={() => { }}>
+                  <TouchableOpacity onPress={() => {}}>
                     <View style={styles.reportButtonCard}>
                       <Image
                         source={require('../../../assets/images/report.png')}
@@ -1162,21 +1197,30 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   <View style={styles.textbg}>
                     <Image
                       source={require('../../../assets/images/info_icon.png')}
-                      style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        marginRight: 8,
+                        marginTop: 2,
+                      }}
                     />
                     <View style={{ flex: 1 }}>
-                      <Text allowFontScaling={false} style={styles.importantText1}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
                         {t('note')}
                       </Text>
-                              
-                      <Text allowFontScaling={false} style={styles.importantText}>
+
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
                         {t('desclmer')}{' '}
                       </Text>
                     </View>
                   </View>
                 )}
-                      
-      
               </View>
             </View>
           </AnimatedReanimated.ScrollView>
@@ -1230,11 +1274,17 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               subtitle={t('select_units')}
               selectedValues={formValues[multiSelectModal.fieldId!]?.value}
               onClose={() =>
-                setMultiSelectModal((prev: any) => ({ ...prev, visible: false }))
+                setMultiSelectModal((prev: any) => ({
+                  ...prev,
+                  visible: false,
+                }))
               }
               continueToPay={amount => {
                 handlePay(amount);
-                setMultiSelectModal((prev: any) => ({ ...prev, visible: false }));
+                setMultiSelectModal((prev: any) => ({
+                  ...prev,
+                  visible: false,
+                }));
               }}
               onSelect={selectedIds => {
                 const quantity = Array.isArray(selectedIds)
