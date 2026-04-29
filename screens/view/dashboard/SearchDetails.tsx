@@ -926,10 +926,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           param.id !== 32 &&
                           param.id !== 58 &&
                           param.id !== 7 &&
-                          param.id !== 11 &&
                           param.id !== 21 &&
                           param.id !== 51 &&
                           param.id !== 11 &&
+                          param.id !== 31 &&
                           param.id !== 14,
                       )
                       .map((param: Param) => (

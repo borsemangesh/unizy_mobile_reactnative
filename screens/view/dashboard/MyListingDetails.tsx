@@ -863,7 +863,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                       ?.filter((param: Param) => param.field_type !== 'boolean')
                       .map((param: Param) => ( */}
                       {detail?.params
-                          ?.filter((param: Param) => param.field_type !== 'boolean' && param.id !== 8 && param.id !== 22 && param.id !== 15 && param.id !==32 && param.id !== 58 && param.id !== 7 && param.id !== 11 && param.id !== 21&& param.id !== 51&& param.id !== 11 && param.id !== 14)
+                          ?.filter((param: Param) => param.field_type !== 'boolean' && param.id !== 8 && param.id !== 22 && param.id !== 15 && param.id !==32 && param.id !== 58 && param.id !== 7 && param.id !== 11 && param.id !== 21&& param.id !== 51 && param.id !== 14&& param.id !== 31)
                       .map((param: Param) =>(
                         <View
                           key={param.id}
