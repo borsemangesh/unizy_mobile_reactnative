@@ -640,11 +640,12 @@ const FilterAndroid = ({
                   {isKm ? 'km' : 'mi'} */}
                   {/* 0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
                   {isKm ? 'km' : 'mi'} */}
-                  1 -{' '}
+                  {/* 1 -{' '}
                   {isKm
                     ? distanceHigh.toFixed(0)
                     : kmToMiles(distanceHigh).toFixed(1)}{' '}
-                  {isKm ? 'km' : 'mi'}
+                  {isKm ? 'km' : 'mi'} */}
+                  1 - {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)} {isKm ? 'km' : 'mi'}
                 </Text>
               </View>
             </View>
@@ -663,17 +664,28 @@ const FilterAndroid = ({
               // ]}
               // values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
               values={[distanceHigh]}
+              // onValuesChange={values => {
+              //   const [value] = values;
+
+              //   // Always store in KM internally
+              //   // const valueInKm = isKm ? value : milesToKm(value);
+
+              //   // setDistanceHigh(Math.round(valueInKm));
+              //   // setDistanceHigh(valueInKm);
+              //   setDistanceHigh(value);
+              //   setIsDistanceChanged(true);
+              // }}
+
               onValuesChange={values => {
-                const [value] = values;
+  const [value] = values;
 
-                // Always store in KM internally
-                // const valueInKm = isKm ? value : milesToKm(value);
+  const fixedValue = isKm
+    ? Math.round(value)                // integer for KM
+    : parseFloat(value.toFixed(1));   // 1 decimal for Miles
 
-                // setDistanceHigh(Math.round(valueInKm));
-                // setDistanceHigh(valueInKm);
-                setDistanceHigh(value);
-                setIsDistanceChanged(true);
-              }}
+  setDistanceHigh(fixedValue);
+  setIsDistanceChanged(true);
+}}
               allowOverlap={false}
               snapped
               selectedStyle={{ backgroundColor: '#fff' }}
@@ -710,7 +722,7 @@ const FilterAndroid = ({
                   //   return isKm ? newValue : milesToKm(newValue);
                   // });
                   setDistanceHigh(prev => {
-  let newValue = prev - 1;
+  let newValue = isKm ? prev - 1 : prev - 0.1;;
   if (newValue < 1) return prev;
   return newValue;
 });
@@ -738,9 +750,10 @@ const FilterAndroid = ({
                   fontWeight: 600,
                 }}
               >
-                {isKm
-                  ? distanceHigh.toFixed(0)
-                  : kmToMiles(distanceHigh).toFixed(1)}{' '}
+                {/* {isKm
+                  ? distanceHigh.toFixed(1)
+                  : distanceHigh.toFixed(0)}{' '} */}
+                {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)}
                 
               </Text>
 
@@ -760,7 +773,7 @@ const FilterAndroid = ({
                   //   return isKm ? newValue : milesToKm(newValue);
                   // });
                   setDistanceHigh(prev => {
-  let newValue = prev + 1;
+  let newValue = isKm ? prev + 1 : prev + 0.1;
   if (newValue > 10) return prev;
   return newValue;
 });
