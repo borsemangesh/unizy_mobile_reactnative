@@ -65,8 +65,8 @@ const FilterAndroid = ({
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
 
-  const [distanceLow, setDistanceLow] = useState(0);
-  const [distanceHigh, setDistanceHigh] = useState(1000);
+  const [distanceLow, setDistanceLow] = useState(1);
+  const [distanceHigh, setDistanceHigh] = useState(10);
 
   const [isPriceChanged, setIsPriceChanged] = useState(false);
   const [isDistanceChanged, setIsDistanceChanged] = useState(false);
@@ -167,28 +167,6 @@ const FilterAndroid = ({
     setSelectedTab(tabName);
   };
 
-  // const toggleDropdownOption = (
-  //   fieldId: number,
-  //   optionId: number,
-  //   isMultiple: boolean,
-  // ) => {
-  //   setDropdownSelections(prev => {
-  //     const current = prev[fieldId] || [];
-
-  //     if (isMultiple) {
-  //       // MULTI SELECT (checkbox)
-  //       if (current.includes(optionId)) {
-  //         return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
-  //       } else {
-  //         return { ...prev, [fieldId]: [...current, optionId] };
-  //       }
-  //     } else {
-  //       // SINGLE SELECT (radio)
-  //       return { ...prev, [fieldId]: [optionId] };
-  //     }
-  //   });
-  // };
-
   const toggleDropdownOption = (
     fieldId: number,
     optionId: number,
@@ -251,15 +229,7 @@ const FilterAndroid = ({
       return { ...prev, [fieldId]: updated };
     });
   };
-  // const handleClearFilters = () => {
-  //   setDropdownSelections({});
-  //   setPriceRange(defaultPriceRange);
-  //   setSliderLow(defaultPriceRange.min);
-  //   setSliderHigh(defaultPriceRange.max);
-  //   setDateSelections({});
-  //   setPostcode('');
-  //   setOtherInputs({});
-  // };
+  
   const handleClearFilters = () => {
     setDropdownSelections({});
 
@@ -267,13 +237,13 @@ const FilterAndroid = ({
     setSliderLow(defaultPriceRange.min);
     setSliderHigh(defaultPriceRange.max);
 
-    setDistanceLow(0);
-    setDistanceHigh(1000);
+    setDistanceLow(1);
+    setDistanceHigh(10);
 
-    setIsPriceChanged(false); // ✅ IMPORTANT
-    setIsDistanceChanged(false); // ✅ IMPORTANT
+    setIsPriceChanged(false);
+    setIsDistanceChanged(false); 
 
-    setIsKm(true);
+    setIsKm(false);
     setPostcode('');
     setOtherInputs({});
     setDateSelections({});
@@ -324,9 +294,7 @@ const FilterAndroid = ({
     Record<number, { startDate?: Date; endDate?: Date }>
   >({});
 
-  //   const [sliderLow, setSliderLow] = useState(0);
-  // const [sliderHigh, setSliderHigh] = useState(50);
-  const [isKm, setIsKm] = useState(true);
+  const [isKm, setIsKm] = useState(false);
 
   // Convert values dynamically
   const convertValue = (value: any) => {
@@ -607,7 +575,6 @@ const FilterAndroid = ({
       currentFilter.field_type?.toLowerCase() === 'text' &&
       currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
-      console.log('currentFilter', currentFilter);
       return (
         <View style={{ paddingTop: 10 }}>
           <View style={styles.container}>
@@ -634,8 +601,27 @@ const FilterAndroid = ({
               <View>
                 <View style={styles.toggleContainer}>
                   <TouchableOpacity
+                    style={[styles.toggleBtn, !isKm && styles.active]}
+                    // onPress={() => setIsKm(false)}
+                    onPress={() => {
+  setIsKm(false);
+}}
+                  >
+                    <Text
+                      style={[
+                        styles.toggleText,
+                        { color: isKm ? '#000' : '#fff' },
+                      ]}
+                    >
+                      Miles
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={[styles.toggleBtn, isKm && styles.active]}
-                    onPress={() => setIsKm(true)}
+                    // onPress={() => setIsKm(true)}
+                    onPress={() => {
+  setIsKm(true);
+}}
                   >
                     <Text
                       style={[
@@ -647,26 +633,14 @@ const FilterAndroid = ({
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={[styles.toggleBtn, !isKm && styles.active]}
-                    onPress={() => setIsKm(false)}
-                  >
-                    <Text
-                      style={[
-                        styles.toggleText,
-                        { color: isKm ? '#000' : '#fff' },
-                      ]}
-                    >
-                      Miles
-                    </Text>
-                  </TouchableOpacity>
+                  
                 </View>
                 <Text style={styles.rangeText}>
                   {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'} */}
                   {/* 0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
                   {isKm ? 'km' : 'mi'} */}
-                  0 -{' '}
+                  1 -{' '}
                   {isKm
                     ? distanceHigh.toFixed(0)
                     : kmToMiles(distanceHigh).toFixed(1)}{' '}
@@ -679,21 +653,25 @@ const FilterAndroid = ({
 
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
+              // min={1}
+              // max={isKm ? 1000 : kmToMiles(1000)}
               min={1}
-              max={isKm ? 1000 : kmToMiles(1000)}
-              step={1}
+              max={10}
+              step={isKm ? 1 : 0.1}
               // values={[
               //   isKm ? distanceHigh : kmToMiles(distanceHigh),
               // ]}
-              values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
+              // values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
+              values={[distanceHigh]}
               onValuesChange={values => {
                 const [value] = values;
 
                 // Always store in KM internally
-                const valueInKm = isKm ? value : milesToKm(value);
+                // const valueInKm = isKm ? value : milesToKm(value);
 
                 // setDistanceHigh(Math.round(valueInKm));
-                setDistanceHigh(valueInKm);
+                // setDistanceHigh(valueInKm);
+                setDistanceHigh(value);
                 setIsDistanceChanged(true);
               }}
               allowOverlap={false}
@@ -719,18 +697,23 @@ const FilterAndroid = ({
             >
               <TouchableOpacity
                 onPress={() => {
+                  // setDistanceHigh(prev => {
+                  //   let currentValue = isKm ? prev : kmToMiles(prev);
+
+                  //   let newValue = currentValue - 1;
+
+                  //   if (newValue < 1) return prev;
+
+                  //   // ✅ FIX: normalize to 1 decimal
+                  //   newValue = parseFloat(newValue.toFixed(1));
+
+                  //   return isKm ? newValue : milesToKm(newValue);
+                  // });
                   setDistanceHigh(prev => {
-                    let currentValue = isKm ? prev : kmToMiles(prev);
-
-                    let newValue = currentValue - 1;
-
-                    if (newValue < 1) return prev;
-
-                    // ✅ FIX: normalize to 1 decimal
-                    newValue = parseFloat(newValue.toFixed(1));
-
-                    return isKm ? newValue : milesToKm(newValue);
-                  });
+  let newValue = prev - 1;
+  if (newValue < 1) return prev;
+  return newValue;
+});
 
                   setIsDistanceChanged(true);
                 }}
@@ -763,19 +746,24 @@ const FilterAndroid = ({
 
               <TouchableOpacity
                 onPress={() => {
+                  // setDistanceHigh(prev => {
+                  //   let currentValue = isKm ? prev : kmToMiles(prev);
+
+                  //   let newValue = currentValue + 1;
+
+                  //   const max = isKm ? 1000 : kmToMiles(1000);
+                  //   if (newValue > max) return prev;
+
+                  //   // ✅ FIX: normalize to 1 decimal
+                  //   newValue = parseFloat(newValue.toFixed(1));
+
+                  //   return isKm ? newValue : milesToKm(newValue);
+                  // });
                   setDistanceHigh(prev => {
-                    let currentValue = isKm ? prev : kmToMiles(prev);
-
-                    let newValue = currentValue + 1;
-
-                    const max = isKm ? 1000 : kmToMiles(1000);
-                    if (newValue > max) return prev;
-
-                    // ✅ FIX: normalize to 1 decimal
-                    newValue = parseFloat(newValue.toFixed(1));
-
-                    return isKm ? newValue : milesToKm(newValue);
-                  });
+  let newValue = prev + 1;
+  if (newValue > 10) return prev;
+  return newValue;
+});
 
                   setIsDistanceChanged(true);
                 }}
@@ -904,14 +892,15 @@ const FilterAndroid = ({
           isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
-            const min = isKm ? distanceLow : kmToMiles(distanceLow);
-            const max = isKm ? distanceHigh : kmToMiles(distanceHigh);
+            const min = isKm ? distanceLow :  parseFloat(kmToMiles(distanceLow).toFixed(1));
+            const max = isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1));
+         
             return {
               id: f.id,
               field_name: f.field_name,
               field_type: f.field_type,
               alias_name: f.alias_name,
-              options: [Math.round(min), Math.round(max), isKm ? 'km' : 'mi'],
+              options: [min, max, isKm ? 'km' : 'mi'],
             };
           }
         }
