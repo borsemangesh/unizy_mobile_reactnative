@@ -44,6 +44,7 @@ import { useTranslation } from 'react-i18next';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { IMAGE_URLS } from '../../utils/Style';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -462,7 +463,13 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
 
   return (
-    <BackgroundWrapper>
+    // <BackgroundWrapper>
+    <ImageBackground
+      source={IMAGE_URLS.BACK_ICON}
+      style={{ flex: 1,width: '100%',
+      height: '100%', }}
+      resizeMode="cover"
+    >
        <StatusBar
           translucent
           backgroundColor="transparent"
@@ -723,7 +730,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
         />
       )}
       <NewCustomToastContainer />
-    </BackgroundWrapper>
+    {/* </BackgroundWrapper> */}
+    </ImageBackground>
   );
 };
 
