@@ -547,7 +547,9 @@ if (Number(productId1) === 4) {
         savecard: true,
         //status: paymentData.status,
         // featureamount: diff1
-        featureamount: featureAmountToSend
+        featureamount: featureAmountToSend,
+        fixed_commission: accommodationAmount,
+        listing_featureamount: maxCap1
       };
 
       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
