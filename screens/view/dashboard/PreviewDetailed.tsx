@@ -324,34 +324,61 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const isFeatured =
         form?.['13']?.value === true || form?.['13']?.value === 'true';
   
-      if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)) {
+      // if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)) {
   
-        const amount = isFeatured
-          ? finalPrice          // ✅ FEATURED CASE
-          : accomodation_amount; // ✅ NORMAL CASE
+      //   const amount = isFeatured
+      //     ? finalPrice          // ✅ FEATURED CASE
+      //     : accomodation_amount; // ✅ NORMAL CASE
   
-        navigation.navigate('PaymentScreen', {
-          amount: amount,
-          feature_id: 1,
-          nav: 'add',
+      //   navigation.navigate('PaymentScreen', {
+      //     amount: amount,
+      //     feature_id: 1,
+      //     nav: 'add',
   
-          onSuccess: async () => {
-            try {
-              await listProduct();
-            } finally {
-              isSubmitting = false;
-            }
-          },
+      //     onSuccess: async () => {
+      //       try {
+      //         await listProduct();
+      //       } finally {
+      //         isSubmitting = false;
+      //       }
+      //     },
   
-          onCancel: () => {
-            isSubmitting = false;
-          },
-        });
+      //     onCancel: () => {
+      //       isSubmitting = false;
+      //     },
+      //   });
   
-      } else {
+      // } else {
+      //   await listProduct();
+      //   isSubmitting = false;
+      // }
+
+      const amount = isFeatured
+  ? finalPrice
+  : accomodation_amount;
+
+if (categoryid === 4 && amount > 0) {
+  navigation.navigate('PaymentScreen', {
+    amount: amount,
+    feature_id: 1,
+    nav: 'add',
+
+    onSuccess: async () => {
+      try {
         await listProduct();
+      } finally {
         isSubmitting = false;
       }
+    },
+
+    onCancel: () => {
+      isSubmitting = false;
+    },
+  });
+} else {
+  await listProduct();
+  isSubmitting = false;
+}
     } catch (e) {
       console.log('Error:', e);
       isSubmitting = false;
@@ -494,8 +521,22 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
         return payload;
       });
+const form =
+        typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+  
+      const isFeatured =
+        form?.['13']?.value === true || form?.['13']?.value === 'true';
 
+      let featureAmountToSend = finalPrice;
 
+// Apply your logic
+if (Number(productId1) === 4) {
+  if (isFeatured && maxCap1 > 0) {
+    featureAmountToSend = finalPrice;
+  } else if (!isFeatured && accomodation_amount > 0) {
+    featureAmountToSend = accomodation_amount;
+  }
+}
 
 
       const createPayload = {
@@ -504,8 +545,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         //paymentintent_id: paymentData.transactionId, 
         paymentintent_id: paymentintent_id,
         savecard: true,
-        //status: paymentData.status, 
-        featureamount: diff1
+        //status: paymentData.status,
+        // featureamount: diff1
+        featureamount: featureAmountToSend
       };
 
       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
@@ -1151,26 +1193,52 @@ const applicableFee = Math.min(percentFee, maxCap1);
         <Button
           onPress={handleListPress}
           title={(() => {
-               try {
-              const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-              const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-              if (categoryid === Number(4)  ) {
-                if (isFeatured && maxCap1> 0 ) {
-                     return `${t('list')} for £${(finalPrice).toFixed(2)}`;;
-                } else { 
-                  if(!isFeatured && accomodation_amount> 0) {
-                    return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
-                  }
-                }
+
+             try {
+    const form =
+      typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+
+    const isFeatured =
+      form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+    if (categoryid === 4) {
+      const amount = isFeatured ? finalPrice : accomodation_amount;
+
+      if (amount > 0) {
+        return `${t('list')} for £${amount.toFixed(2)}`;
+      }
+    }
+
+    return t('list');
+  } catch (e) {
+    return 'List';
+  }
+
+            //Working The logice befor change 30_04_26
+            //    try {
+            //   const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+            //   const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+            //   if (categoryid === Number(4)  ) {
+            //     if (isFeatured && maxCap1> 0 ) {
+            //          return `${t('list')} for £${(finalPrice).toFixed(2)}`;;
+            //     } else { 
+            //       if(!isFeatured && accomodation_amount> 0) {
+            //         return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
+            //       }
+            //     }
                 
 
-              }
+            //   }
               
-              return t('list');
-            } catch (e) {
-              // console.log('Error parsing storedForm:', e);
-              return 'List';
-            }
+            //   return t('list');
+            // } catch (e) {
+            //   // console.log('Error parsing storedForm:', e);
+            //   return 'List';
+            // }
+
+
+
+            //Old Code
             // try {
             //   const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
             //   const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
