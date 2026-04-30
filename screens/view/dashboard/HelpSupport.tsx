@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   Platform,
   StyleSheet,
+  Button,
+  Linking,
+  Alert,
 } from 'react-native';
 const bgImage = require('../../../assets/images/backimg.png');
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
@@ -23,6 +26,18 @@ type HelpSupportProps = {
 const HelpSupport = ({ navigation }: HelpSupportProps) => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
+
+//   const openWhatsApp = () => {
+//   const phoneNumber = '919876543210'; // Include country code, no + sign
+//   const message = 'Hello, I want to connect!';
+
+//   const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+//   Linking.openURL(url).catch(() => {
+//     Alert.alert('Error', 'Make sure WhatsApp is installed');
+//   });
+// };
+
   return (
 <ImageBackground
           source={BACK_ICON}
@@ -67,6 +82,9 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
             onHttpError={() => setLoading(false)}
           />
         </View>
+     
+          {/* <Button title="Chat on WhatsApp" onPress={openWhatsApp} /> */}
+     
 
         {loading && (
           <View style={styles.loaderOverlay}>
