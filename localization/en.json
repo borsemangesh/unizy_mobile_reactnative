@@ -810,7 +810,8 @@
    "featured_listing_note_homesearch1": "will be charged. This fee is charged upfront together with the accommodation listing fee.",
    "complete_orderotp_note":"To complete an order with OTP, please go to the My Listings screen. There you can enter the OTP, and the order will be marked as completed.",
    "ReviewAlreadyExist": "Review already exists.", 
-   "ReviewSubmited": "Review submitted successfully."
+   "ReviewSubmited": "Review submitted successfully.",
+   "accommodation_fee":"Accommodation Fee"
  
 
 }

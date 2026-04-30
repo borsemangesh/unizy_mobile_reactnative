@@ -59,6 +59,7 @@ interface TransactionItem {
   originalprice: string;
   orderid: any;
   amount: string;
+  charge_type: string;
   purchased_quantity?: number
   category_id: number;
     hours?: number;
@@ -275,7 +276,8 @@ export default function TransactionHistoryScreen(
               viewUrl: item.view_listing_url,
               order_otp: 0,
               category_logo: item.category_logo,
-              feature_idNew: item.feature_id
+              feature_idNew: item.feature_id,
+              charge_type: item.charge_type
             })),
           }));
         }
@@ -622,7 +624,14 @@ export default function TransactionHistoryScreen(
       <ScrollView
         style={{
           width: '100%',
-          marginBottom: selectedTab === 'Sales' ? Platform.OS === 'ios' ? Dimensions.get('window').height * 0.2 :  Dimensions.get('window').height * 0.34 : Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.34,
+          marginBottom:
+            selectedTab === 'Sales'
+              ? Platform.OS === 'ios'
+                ? Dimensions.get('window').height * 0.2
+                : Dimensions.get('window').height * 0.34
+              : Platform.OS === 'ios'
+              ? Dimensions.get('window').height * 0.1
+              : Dimensions.get('window').height * 0.34,
         }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -661,7 +670,6 @@ export default function TransactionHistoryScreen(
                 <View key={i} style={styles.card}>
                   <View style={styles.row}>
                     <View style={{ flexDirection: 'row', gap: 12 }}>
-                      
                       <View>
                         <Image
                           source={background}
@@ -674,40 +682,58 @@ export default function TransactionHistoryScreen(
                           resizeMode="cover"
                         />
                       </View>
-                      <View style={{ flex: 1,gap: 4 }}>
-                        <View style={{width: '100%' ,flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{ flex: 1, gap: 4 }}>
+                        <View
+                          style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}
+                        >
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
-                            style={[styles.itemTitle, { width: '60%'}]}
+                            style={[styles.itemTitle, { width: '60%' }]}
                           >
                             {item.title}
                           </Text>
                           {item?.status === 'Awaiting Delivery' && (
-                              <Pressable
-                                              onPress={() => {
-                                           setOrderId(item?.order_id ?? 0);
-                              setShowDeleteModal(true);
-                          }}>
-                          {/* <Image
+                            <Pressable
+                              onPress={() => {
+                                setOrderId(item?.order_id ?? 0);
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              {/* <Image
                             source={require('../../../assets/images/ic_cancel.png')}
                             style={{width: 30,height:30}}
                             /> */}
-                              <View style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.09)',
-                                // paddingVertical: 5,
-                               borderColor: '#ffffff25',
-                                borderWidth: 1,
-                                padding: 6,
-                                borderRadius: 8
-                            }}>
-                            <Text allowFontScaling={false} style={[styles.price,{  color: 'rgba(255, 255, 255, 0.7)',fontSize: 12,fontWeight: 500}]}>
-                             {t('cancel_order')}
-                          </Text>
-                          </View>
+                              <View
+                                style={{
+                                  backgroundColor: 'rgba(255, 255, 255, 0.09)',
+                                  // paddingVertical: 5,
+                                  borderColor: '#ffffff25',
+                                  borderWidth: 1,
+                                  padding: 6,
+                                  borderRadius: 8,
+                                }}
+                              >
+                                <Text
+                                  allowFontScaling={false}
+                                  style={[
+                                    styles.price,
+                                    {
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      fontSize: 12,
+                                      fontWeight: 500,
+                                    },
+                                  ]}
+                                >
+                                  {t('cancel_order')}
+                                </Text>
+                              </View>
                             </Pressable>
                           )}
-                        
                         </View>
                         <View
                           style={{
@@ -723,38 +749,38 @@ export default function TransactionHistoryScreen(
                           {(item?.category_id === 3 ||
                             item?.category_id === 2 ||
                             item?.category_id === 5) && (
-                              <View style={styles.statusBox}>
-                                <Text
-                                  allowFontScaling={false}
-                                  style={{
-                                    color: '#9CD6FF',
-                                    fontWeight: '600',
-                                    fontSize: 12,
-                                    fontFamily: 'Urbanist-SemiBold',
-                                  }}
-                                >
-
-                                  {
-                                    item?.category_id === 3
-                                      ? `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1
+                            <View style={styles.statusBox}>
+                              <Text
+                                allowFontScaling={false}
+                                style={{
+                                  color: '#9CD6FF',
+                                  fontWeight: '600',
+                                  fontSize: 12,
+                                  fontFamily: 'Urbanist-SemiBold',
+                                }}
+                              >
+                                {item?.category_id === 3
+                                  ? `${item?.purchased_quantity ?? 1} ${
+                                      (item?.purchased_quantity ?? 1) > 1
                                         ? t('units')
                                         : t('unit')
-                                      }`
-                                      : item?.category_id === 2
-                                        ? `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1
-                                          ? t('hours')
-                                          : t('hour')
-                                        }`
-                                        : item?.category_id === 5
-                                          ? `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1
-                                            ? t('sessions')
-                                            : t('session')
-                                          }`
-                                          : ''
-                                  }
-                                </Text>
-                              </View>
-                            )}
+                                    }`
+                                  : item?.category_id === 2
+                                  ? `${item?.hours ?? 1} ${
+                                      (item?.hours ?? 1) > 1
+                                        ? t('hours')
+                                        : t('hour')
+                                    }`
+                                  : item?.category_id === 5
+                                  ? `${item?.hours ?? 1} ${
+                                      (item?.hours ?? 1) > 1
+                                        ? t('sessions')
+                                        : t('session')
+                                    }`
+                                  : ''}
+                              </Text>
+                            </View>
+                          )}
                         </View>
                       </View>
                       {/* </View> */}
@@ -774,10 +800,10 @@ export default function TransactionHistoryScreen(
                         {
                           height: 28,
                           backgroundColor:
-                            item.status !== 'Fulfilled' &&  item.status !== 'Cancelled'
+                            item.status !== 'Fulfilled' &&
+                            item.status !== 'Cancelled'
                               ? 'rgba(255, 255, 255, 0.06)'
                               : 'rgba(255,255,255,0.15)',
-                           
                         },
                       ]}
                     >
@@ -787,7 +813,8 @@ export default function TransactionHistoryScreen(
                           styles.codeText,
                           {
                             color:
-                              item.status !== 'Fulfilled' &&  item.status !== 'Cancelled'
+                              item.status !== 'Fulfilled' &&
+                              item.status !== 'Cancelled'
                                 ? '#9CD6FF'
                                 : 'rgba(255,255,255,0.15)',
                           },
@@ -843,7 +870,7 @@ export default function TransactionHistoryScreen(
                     padding: 1,
                   }}
                 >
-                  <View >
+                  <View>
                     <Text
                       allowFontScaling={false}
                       numberOfLines={2}
@@ -952,7 +979,8 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        {t('total_earnings')}: £{Number(item.total_earning).toFixed(2)}
+                        {t('total_earnings')}: £
+                        {Number(item.total_earning).toFixed(2)}
                       </Text>
                     </View>
 
@@ -1063,8 +1091,37 @@ export default function TransactionHistoryScreen(
                     </TouchableOpacity>
                   </View>
                   <View style={styles.cardconstinerdivider} />
+                  {/* <Text style={styles.viewListing}> */}
+                  {/*  {t('featured_listing_fee')}: {item.price}*/}
+                  {/* {item.charge_type === 'both'
+                      ? 'Feature Listing Fee + Accommodation Fee'
+                      : item.charge_type === 'feature_listing'
+                      ? 'Feature Listing Fee'
+                      : item.charge_type === 'fixed_commission'
+                      ? 'Accommodation Fee'
+                      : ''}
+                    : {item.price} */}
+
+                  {/* {item.charge_type === 'both'
+                      ? 'Feature Listing Fee + Accommodation Fee'
+                      : item.charge_type === 'feature_listing'
+                      ? 'Feature Listing Fee'
+                      : item.charge_type === 'fixed_commission'
+                      ? 'Accommodation Fee'
+                      : ''}
+                    : {item.price} */}
+                  {/* </Text> */}
                   <Text style={styles.viewListing}>
-                    {t('featured_listing_fee')}: {item.price}
+                    {item.charge_type === 'both'
+                      ? `${t('featured_listing_fee')} + ${t(
+                          'accommodation_fee',
+                        )}`
+                      : item.charge_type === 'feature_listing'
+                      ? t('featured_listing_fee')
+                      : item.charge_type === 'fixed_commission'
+                      ? t('accommodation_fee')
+                      : ''}
+                    : {item.price}
                   </Text>
                 </View>
               ))}
@@ -1073,196 +1130,193 @@ export default function TransactionHistoryScreen(
         )}
       </ScrollView>
 
-
-            <Modal
-              visible={showDeleteModal}
-              transparent
-              animationType="fade"
-              onRequestClose={() => setShowDeleteModal(false)}
-            >
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  // navigation.replace('EditProfile');
-                }}
-              >
-                <View style={styles.overlay}>
-                  <BlurView
-                    style={{
-                      flex: 1,
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.30)',
-                    }}
-                    blurType="light"
-                    blurAmount={2}
-                    reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                  >
-                    <View
-                      style={[
-                        StyleSheet.absoluteFill,
-                        { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                      ]}
-                    />
-      
-                    <View style={styles.popupContainer}>
-                      <Image
-                        source={require('../../../assets/images/alerticon.png')}
-                        style={styles.logo}
-                        resizeMode="contain"
-                      />
-                      <Text allowFontScaling={false} style={styles.mainheader1}>
-                        {t('confirm_action')}
-                      </Text>
-                      <Text
-                        allowFontScaling={false}
-                        style={[styles.mainheader, { marginTop: 10 }]}
-                      >
-                        {t('cancel_order_message_action')}
-                      </Text>
-      
-                      <TouchableOpacity
-                        style={styles.loginButton}
-                        onPress={() => {
-                            setShowDeleteModal(false);
-                            handleCancelOrder(orderId);
-                        }}
-                      >
-                        <Text allowFontScaling={false} style={styles.loginText}>
-                          {t('yes_cancel')}
-                        </Text>
-                      </TouchableOpacity>
-      
-                      <TouchableOpacity
-                        style={styles.loginButton1}
-                        onPress={() => {
-                          setShowDeleteModal(false);
-                        }}
-                      >
-                        <Text allowFontScaling={false} style={styles.loginText1}>
-                          {t('cancel')}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </BlurView>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal>
-      
-
-         <Modal
-          visible={showPopup1}
-          transparent
-          animationType="fade"
-          onRequestClose={closePopup1}
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => {
+            // navigation.replace('EditProfile');
+          }}
         >
-          <TouchableWithoutFeedback onPress={closePopup1}>
-            <View style={styles.overlay}>
-              <BlurView
-                style={{
-                  flex: 1,
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  alignItems: 'center',
-                }}
-                blurType="light"
-                blurAmount={10}
-                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-              >
-                <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                  ]}
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.30)',
+              }}
+              blurType="light"
+              blurAmount={2}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/alerticon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
                 />
+                <Text allowFontScaling={false} style={styles.mainheader1}>
+                  {t('confirm_action')}
+                </Text>
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.mainheader, { marginTop: 10 }]}
+                >
+                  {t('cancel_order_message_action')}
+                </Text>
 
-                {loading && (
-                  <View style={styles.fullLoader}>
-                    <Loader />
-                  </View>
-                )}
-
-                <View style={styles.popupContainer}>
-                  <Text allowFontScaling={false} style={styles.mainheader}>
-                    {t('Enter_Delivery_OTP')}
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    setShowDeleteModal(false);
+                    handleCancelOrder(orderId);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('yes_cancel')}
                   </Text>
+                </TouchableOpacity>
 
-                  <Text allowFontScaling={false} style={styles.subheader}>
-                    {t('please_enter_6digit_otp')}
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => {
+                    setShowDeleteModal(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
                   </Text>
-
-                  <View style={styles.otpContainer}>
-                    {[0, 1, 2, 3, 4, 5].map((_, index) => (
-                      <TextInput
-                        selectionColor={'#F5F5F5'}
-                        cursorColor='#F5F5F5'
-                        value={otp[index]}
-                        key={index}
-                        ref={ref => {
-                          inputs.current[index] = ref;
-                        }}
-                        style={styles.otpBox}
-                        keyboardType="number-pad"
-                        maxLength={1}
-                        onChangeText={text => {
-                          const digit = text.replace(/[^0-9]/g, '');
-                          handleChange(digit, index);
-                        }}
-                        returnKeyType="next"
-                        textAlign="center"
-                        secureTextEntry={true}
-                        onKeyPress={({ nativeEvent }) => {
-                          if (nativeEvent.key === 'Backspace') {
-                            // If current box has value, clear it
-                            if (otp[index] !== '') {
-                              const newOtp = [...otp];
-                              newOtp[index] = '';
-                              setOtp(newOtp);
-                              return;
-                            }
-
-                            if (index > 0) {
-                              inputs.current[index - 1]?.focus();
-
-                              const newOtp = [...otp];
-                              newOtp[index - 1] = '';
-                              setOtp(newOtp);
-                            }
-                          }
-                        }}
-                      />
-                    ))}
-                  </View>
-
-                  <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={otpverify}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText}>
-                      {t('verify')}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.loginButton1}
-                    onPress={() => {
-                      setShowPopup1(false);
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText1}>
-                      {t('cancel')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </BlurView>
-            </View>
-          </TouchableWithoutFeedback>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
       </Modal>
-      
 
-              {/* <Modal
+      <Modal
+        visible={showPopup1}
+        transparent
+        animationType="fade"
+        onRequestClose={closePopup1}
+      >
+        <TouchableWithoutFeedback onPress={closePopup1}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              {loading && (
+                <View style={styles.fullLoader}>
+                  <Loader />
+                </View>
+              )}
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('Enter_Delivery_OTP')}
+                </Text>
+
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  {t('please_enter_6digit_otp')}
+                </Text>
+
+                <View style={styles.otpContainer}>
+                  {[0, 1, 2, 3, 4, 5].map((_, index) => (
+                    <TextInput
+                      selectionColor={'#F5F5F5'}
+                      cursorColor="#F5F5F5"
+                      value={otp[index]}
+                      key={index}
+                      ref={ref => {
+                        inputs.current[index] = ref;
+                      }}
+                      style={styles.otpBox}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      onChangeText={text => {
+                        const digit = text.replace(/[^0-9]/g, '');
+                        handleChange(digit, index);
+                      }}
+                      returnKeyType="next"
+                      textAlign="center"
+                      secureTextEntry={true}
+                      onKeyPress={({ nativeEvent }) => {
+                        if (nativeEvent.key === 'Backspace') {
+                          // If current box has value, clear it
+                          if (otp[index] !== '') {
+                            const newOtp = [...otp];
+                            newOtp[index] = '';
+                            setOtp(newOtp);
+                            return;
+                          }
+
+                          if (index > 0) {
+                            inputs.current[index - 1]?.focus();
+
+                            const newOtp = [...otp];
+                            newOtp[index - 1] = '';
+                            setOtp(newOtp);
+                          }
+                        }
+                      }}
+                    />
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={otpverify}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('verify')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => {
+                    setShowPopup1(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      {/* <Modal
                 visible={showPopup2}
                 transparent
                 animationType="fade"
