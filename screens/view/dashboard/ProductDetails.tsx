@@ -7,15 +7,12 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
-  ActivityIndicator,
   ImageSourcePropType,
   Pressable,
   Dimensions,
-  ScrollView,
   BackHandler,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,8 +24,7 @@ import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
-import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
-import { SquircleView } from 'react-native-figma-squircle';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import Loader from '../../utils/component/Loader';
 
 import Animated, {
@@ -45,9 +41,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/ShortCustomToastManager';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -97,7 +91,9 @@ type RootStackParamList = {
 };
 
 type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
-const mylistings = require('../../../assets/images/filter_icon.png');
+import mylistings from '../../../assets/images/filter_icon.png';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
@@ -553,7 +549,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={BACK_ICON}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >

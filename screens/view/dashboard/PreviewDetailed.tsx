@@ -6,15 +6,13 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Animated,
   Modal,
   Dimensions,
   FlatList,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
-import { Key, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,14 +33,17 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
-import { Ellipse } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import dayjs from 'dayjs';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
+
+ 
 
 
 type previewDetailsProps = {
@@ -706,7 +707,7 @@ const applicableFee = Math.min(percentFee, maxCap1);
 
   return (
     <ImageBackground
-                     source={IMAGE_URLS.BACK_ICON}
+                     source={BACK_ICON}
                      style={{ flex: 1,width: '100%',
                      height: '100%', }}
                      resizeMode="cover"
@@ -2396,7 +2397,7 @@ export default PreviewDetailed;
 
 //   return (
 //     <ImageBackground
-//                      source={IMAGE_URLS.BACK_ICON}
+//                      source={BACK_ICON}
 //                      style={{ flex: 1,width: '100%',
 //                      height: '100%', }}
 //                      resizeMode="cover"

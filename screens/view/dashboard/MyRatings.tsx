@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-const bgImage = require('../../../assets/images/backimg.png');
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import MyReviewCard from '../../utils/MyReviewCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,8 +34,8 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
 
 type CreatedBy = {
   id: number;
@@ -299,7 +298,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
 
   return (
       <ImageBackground
-          source={IMAGE_URLS.BACK_ICON}
+          source={BACK_ICON}
           style={{ flex: 1,width: '100%',
           height: '100%', }}
           resizeMode="cover"

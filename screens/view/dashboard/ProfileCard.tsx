@@ -26,17 +26,33 @@ import { useTranslation } from "react-i18next";
 import { IMAGE_URLS } from '../../utils/Style';
 
 
+ import CITY_ICON from '../../../assets/images/ic_city.png';
+    import BUILDING_ICON from '../../../assets/images/buildings.png';
+    import SMS_ICON from '../../../assets/images/sms.png';
+    import PAYMENT_ICON from '../../../assets/images/payment.png';
+    import CART_ICON from '../../../assets/images/cart.png';
+    import OK_ICON from '../../../assets/images/ok.png';
+    import NOTIFY_ICON from '../../../assets/images/notify.png';
+    import CHANGEPASSWORD_ICON from '../../../assets/images/change_password.png';
+    import HELP_ICON from '../../../assets/images/helpicon.png';
+    import LOGOUT_ICON from '../../../assets/images/logout.png';
+    import VERSION_ICON from '../../../assets/images/versionicon.png';
+    import NEXTARROW_ICON from '../../../assets/images/nextarrow.png';
+import CALENDER_ICON from '../../../assets/images/calendar_icon1.png';
+    import DELETENEW_ICON from '../../../assets/images/delete_new.png';
+
+
 
 const cardData = [
-  { id: '1', titleKey: 'payment_methods', image: IMAGE_URLS.PAYMENT_ICON },
-  { id: '2', titleKey: 'my_orders', image: IMAGE_URLS.CART_ICON },
-  { id: '3', titleKey: 'reviews', image: IMAGE_URLS.OK_ICON },
-  { id: '4', titleKey: 'notifications', image: IMAGE_URLS.NOTIFY_ICON},
-  { id: '5', titleKey: 'change_password', image: IMAGE_URLS.CHANGEPASSWORD_ICON },
-  { id: '6', titleKey: 'delete_account', image: IMAGE_URLS.DELETENEW_ICON },
-  { id: '7', titleKey: 'help_support', image: IMAGE_URLS.HELP_ICON},
-  { id: '8', titleKey: 'logout', image: IMAGE_URLS.LOGOUT_ICON},
-  { id: '9', titleKey: 'app_version', image: IMAGE_URLS.VERSION_ICON },
+  { id: '1', titleKey: 'payment_methods', image: PAYMENT_ICON },
+  { id: '2', titleKey: 'my_orders', image: CART_ICON },
+  { id: '3', titleKey: 'reviews', image: OK_ICON },
+  { id: '4', titleKey: 'notifications', image: NOTIFY_ICON},
+  { id: '5', titleKey: 'change_password', image: CHANGEPASSWORD_ICON },
+  { id: '6', titleKey: 'delete_account', image: DELETENEW_ICON },
+  { id: '7', titleKey: 'help_support', image: HELP_ICON},
+  { id: '8', titleKey: 'logout', image: LOGOUT_ICON},
+  { id: '9', titleKey: 'app_version', image: VERSION_ICON },
   
 ];
 
@@ -50,7 +66,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
   const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+PAYMENT_ICON
   interface UserMeta {
     firstname: string | null;
     lastname: string | null;
@@ -292,7 +308,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         {isVersion ? (
           <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
         ) : !isLogout || isDelete && (
-          <Image source={IMAGE_URLS.NEXTARROW_ICON} style={styles.cardArrow} />
+          <Image source={NEXTARROW_ICON} style={styles.cardArrow} />
         )}
       </TouchableOpacity>
     );
@@ -360,7 +376,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
               >
                 <Image
-                  source={IMAGE_URLS.BUILDING_ICON}
+                  source={BUILDING_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
@@ -375,7 +391,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Image
-                  source={IMAGE_URLS.SMS_ICON}
+                  source={SMS_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
@@ -387,7 +403,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
               >
                 <Image
-                  source={IMAGE_URLS.SMS_ICON}
+                  source={SMS_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
@@ -399,7 +415,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
               >
                 <Image
-                  source={IMAGE_URLS.CITY_ICON}
+                  source={CITY_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>

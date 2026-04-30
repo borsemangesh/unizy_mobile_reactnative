@@ -6,18 +6,13 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Animated,
-  Modal,
   Dimensions,
   FlatList,
   StatusBar,
-  TouchableWithoutFeedback,
   BackHandler,
-  ActivityIndicator,
-  ImageSourcePropType,
 } from 'react-native';
-import { Key, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -26,13 +21,9 @@ import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Button from '../../utils/component/Button';
-import PayButton from '../../utils/component/PayButton';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   ShortCustomToastContainer,
-  shortshowToast,
 } from '../../utils/component/ShortCustomToastManager';
 
 import AnimatedReanimated, {
@@ -41,11 +32,8 @@ import AnimatedReanimated, {
   useAnimatedStyle,
   interpolate,
   interpolateColor,
-  useDerivedValue,
 } from 'react-native-reanimated';
 import MaskedView from '@react-native-masked-view/masked-view';
-import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity';
-import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
@@ -54,9 +42,10 @@ import dayjs from 'dayjs';
 import ImageViewing from 'react-native-image-viewing';
 import React from 'react';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -547,7 +536,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
         }
       />
       <ImageBackground
-                            source={IMAGE_URLS.BACK_ICON}
+                            source={BACK_ICON}
                             style={{ flex: 1,width: '100%',
                           height: '100%', }}
                             resizeMode="cover"
@@ -1240,15 +1229,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   
-  productDeatilsHeading1: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 18,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-    letterSpacing: -0.36,
-  },
+
   QuaddText: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',

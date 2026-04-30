@@ -57,6 +57,26 @@ import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 
+import CARDBACKGROUD_ICON from '../../../assets/images/cardbg.png';
+import mylistings from '../../../assets/images/mylistingicon.png';
+import mylistings1 from '../../../assets/images/favourite.png';
+
+import searchIcon from '../../../assets/images/searchicon.png';
+
+// Bottom tab icons
+import homeIcon from '../../../assets/images/tab1.png';
+import searchTabIcon from '../../../assets/images/tab2.png';
+import addIcon from '../../../assets/images/tab3.png';
+import bookmarkIcon from '../../../assets/images/tab4.png';
+import profileIcon from '../../../assets/images/tab5.png';
+
+import homeIcon1 from '../../../assets/images/filled1.png';
+import searchTabIcon2 from '../../../assets/images/filled2.png';
+import addIcon3 from '../../../assets/images/filled3.png';
+import bookmarkIcon4 from '../../../assets/images/filled4.png';
+import profileIcon5 from '../../../assets/images/filled5.png';
+
+
 type Product = {
   id: number;
   name: string;
@@ -302,7 +322,7 @@ const handleProductPress = async (item: any) => {
 
 
                 <ImageBackground
-                  source={IMAGE_URLS.CARDBACKGROUD_ICON}
+                  source={CARDBACKGROUD_ICON}
                   style={styles.iconBackground}>
 
                   <Image source={item.icon} style={styles.cardIcon1} />
@@ -1072,12 +1092,21 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }
   };
 
-  const tabs = [
-    { key: 'Home', icon: IMAGE_URLS.HOME_ICON, activeIcon: IMAGE_URLS.homeIcon1 },
-    { key: 'Search', icon: IMAGE_URLS.SEARCJTABICON_ICON, activeIcon: IMAGE_URLS.searchTabIcon2 },
-    { key: 'Add', icon: IMAGE_URLS.ADD_ICON, activeIcon: IMAGE_URLS.addIcon3 },
-    { key: 'Bookmark', icon: IMAGE_URLS.BOOLMARK_ICON, activeIcon: IMAGE_URLS.bookmarkIcon4 },
-    { key: 'Profile', icon: IMAGE_URLS.PROFILE_ICON, activeIcon: IMAGE_URLS.profileIcon5 },
+
+  // const tabs = [
+  //   { key: 'Home', icon: IMAGE_URLS.HOME_ICON, activeIcon: IMAGE_URLS.homeIcon1 },
+  //   { key: 'Search', icon: IMAGE_URLS.SEARCJTABICON_ICON, activeIcon: IMAGE_URLS.searchTabIcon2 },
+  //   { key: 'Add', icon: IMAGE_URLS.ADD_ICON, activeIcon: IMAGE_URLS.addIcon3 },
+  //   { key: 'Bookmark', icon: IMAGE_URLS.BOOLMARK_ICON, activeIcon: IMAGE_URLS.bookmarkIcon4 },
+  //   { key: 'Profile', icon: IMAGE_URLS.PROFILE_ICON, activeIcon: IMAGE_URLS.profileIcon5 },
+  // ];
+
+    const tabs = [
+    { key: 'Home', icon: homeIcon, activeIcon: homeIcon1 },
+    { key: 'Search', icon: searchTabIcon, activeIcon: searchTabIcon2 },
+    { key: 'Add', icon: addIcon, activeIcon: addIcon3 },
+    { key: 'Bookmark', icon: bookmarkIcon, activeIcon: bookmarkIcon4 },
+    { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
   ];
 
   const clickbookmark = () => {
@@ -1089,6 +1118,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
      navigation.replace('MyListing', { animation: 'none' });
     //  navigation.replace('OnboardingScreen', { animation: 'none' });
     //  navigation.replace('SellerInfoHomeSearch', { animation: 'none' });
+    //  navigation.replace('MyListingNew', { animation: 'none' });
    
   };
 
@@ -1118,7 +1148,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >
@@ -1147,7 +1177,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               >
                 <View style={styles.MylistingsBackground}>
                   <Image
-                    source={IMAGE_URLS.MY_LISTING_ICON}
+                    source={mylistings}
                     style={styles.iconSmall}
                   />
                 </View>
@@ -1160,7 +1190,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
                   <Image
-                    source={IMAGE_URLS.FAVOURTE_ICON}
+                    source={mylistings1}
                     style={styles.iconSmall}
                   />
                 </View>
@@ -1174,7 +1204,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               ]}
             >
               <Image
-                source={IMAGE_URLS.SEARCH_ICON}
+                source={require('../../../assets/images/searchicon.png')}
                 style={styles.searchIcon}
               />
               <TextInput

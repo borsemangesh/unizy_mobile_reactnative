@@ -40,8 +40,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 
 type CreatedBy = {
@@ -518,7 +519,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
   return (
 <ImageBackground
-                      source={IMAGE_URLS.BACK_ICON}
+                      source={BACK_ICON}
                       style={{ flex: 1,width: '100%',
                     height: '100%', }}
                       resizeMode="cover"

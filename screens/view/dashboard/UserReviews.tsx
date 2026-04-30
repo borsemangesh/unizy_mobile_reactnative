@@ -3,15 +3,12 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
   Dimensions,
 
 } from 'react-native';
@@ -38,9 +35,10 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 type CreatedBy = {
   id: number;
@@ -397,7 +395,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
 
   return (
           <ImageBackground
-                 source={IMAGE_URLS.BACK_ICON}
+                 source={BACK_ICON}
                   style={{ flex: 1,width: '100%',
                   height: '100%', }}
                   resizeMode="cover"

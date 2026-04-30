@@ -76,6 +76,12 @@ import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 
+
+import INFO_ICON from '../../../assets/images/info_icon.png';
+import DELETE_ICON from '../../../assets/images/delete.png';
+import FILEUPLOAD_ICON from '../../../assets/images/fileupload.png';
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 type AddScreenContentProps = {
   navigation: any;
 };
@@ -314,7 +320,7 @@ const isValidPostalCode = (code: string) => {
             >
               {' '}
               <Image
-                source={IMAGE_URLS.DELETE_ICON}
+                source={DELETE_ICON}
                 style={{ width: 38, height: 38, resizeMode: 'contain' }}
               />{' '}
             </TouchableOpacity>{' '}
@@ -1710,7 +1716,7 @@ typingTimeout.current = setTimeout(async () => {
               style={styles.uploadButton}
               onPress={handleImageSelect}
             >
-              <Image source={IMAGE_URLS.FILEUPLOAD_ICON} style={styles.uploadIcon} />
+              <Image source={FILEUPLOAD_ICON} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
                 {t('upload_images')}
               </Text>
@@ -1983,7 +1989,7 @@ typingTimeout.current = setTimeout(async () => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-              source={IMAGE_URLS.BACK_ICON}
+              source={BACK_ICON}
               style={{ flex: 1,width: '100%',
             height: '100%', }}
               resizeMode="cover"
@@ -2329,7 +2335,7 @@ typingTimeout.current = setTimeout(async () => {
                  {productId === 4 && (
                       <View style={[styles.textbg, { marginTop: 12 }]}>
                         <Image
-                          source={IMAGE_URLS.INFO_ICON}
+                          source={INFO_ICON}
                           style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
                         />
                         <View style={{ flex: 1 }}>

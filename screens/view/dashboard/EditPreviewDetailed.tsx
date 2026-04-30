@@ -6,20 +6,17 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Animated,
   Modal,
   Dimensions,
   FlatList,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
-import { Key, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
 import {
   NewCustomToastContainer,
@@ -42,9 +39,10 @@ import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
 
 type EditPreviewDetailedProps = {
   navigation: any;
@@ -708,7 +706,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={BACK_ICON}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >

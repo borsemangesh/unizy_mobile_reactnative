@@ -7,7 +7,6 @@ import {
   Image,
   StyleSheet,
   Platform,
-  ScrollView,
   Animated,
   Modal,
   TouchableWithoutFeedback,
@@ -15,7 +14,6 @@ import {
   Keyboard,
   StatusBar,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -38,13 +36,13 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import { IMAGE_URLS } from '../../utils/Style';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -301,7 +299,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   };
   return (
     <ImageBackground
-                     source={IMAGE_URLS.BACK_ICON}
+                     source={BACK_ICON}
                       style={{ flex: 1,width: '100%',
                       height: '100%', }}
                       resizeMode="cover"
@@ -638,7 +636,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         }}
                       >
                         <Image
-                          source={IMAGE_URLS.SELLECTFILE_ICON}
+                          source={SELLECTFILE_ICON}
                           style={{ width: 24, height: 24 }}
                           resizeMode="cover"
                         />

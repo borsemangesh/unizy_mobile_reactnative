@@ -47,6 +47,11 @@ import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
+import BACK_ICON from '../../../assets/images/backimg.png';
+import DRONE_ICON from '../../../assets/images/fileupload.png';
+import NOPRODUCT_ICON from '../../../assets/images/noproduct.png';
+import BACKICON_ICON from '../../../assets/images/back.png';
+
 
 type CreatedBy = {
   id: number;
@@ -489,7 +494,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               }
               rating={feature.isfeatured ? '4.5' : '4.5'}
               productImage={
-                productImage ?? IMAGE_URLS.DRONE_ICON
+                productImage ?? DRONE_ICON
               }
               bookmark={feature.isbookmarked}
               //bookmark={bookmarkedIds.includes(item.id)}
@@ -504,7 +509,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
   return (
    <ImageBackground
-             source={IMAGE_URLS.BACK_ICON}
+             source={BACK_ICON}
              style={{ flex: 1,width: '100%',
            height: '100%', }}
              resizeMode="cover"
@@ -607,7 +612,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
               {/* Back Icon */}
               <Animated.Image
-                source={IMAGE_URLS.BACKICON_ICON}
+                source={BACKICON_ICON}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
               />
             </Animated.View>
@@ -657,7 +662,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
               {/* Back Icon */}
               <Animated.Image
-                source={IMAGE_URLS.BACKICON_ICON}
+                source={BACKICON_ICON}
                 style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
@@ -765,7 +770,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
                 <View style={styles.emptyContainer}>
                   <Image
-                    source={IMAGE_URLS.NOPRODUCT_ICON}
+                    source={NOPRODUCT_ICON}
                     style={styles.emptyImage}
                     resizeMode="contain"
                   />

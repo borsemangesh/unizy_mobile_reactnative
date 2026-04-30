@@ -3,10 +3,8 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
@@ -39,12 +37,18 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
 import ReviewDetailCard from '../../utils/ReviewDetailCard';
 import StarRating from '../../utils/StarRating';
-import { useRoute,RouteProp  } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
+
+ 
+
+
 
 type CreatedBy = {
   id: number;
@@ -479,7 +483,7 @@ const initialTab = route?.params?.activeTab ?? 'Given Reviews';
 
   return (
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={BACK_ICON}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >

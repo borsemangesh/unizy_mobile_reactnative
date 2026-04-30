@@ -13,7 +13,6 @@ import {
   Easing,
   TouchableWithoutFeedback,
   Modal,
-  SectionList,
   Pressable,
   TextInput,
   Keyboard,
@@ -26,12 +25,13 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { BlurView } from '@react-native-community/blur';
-import { IMAGE_URLS } from '../../utils/Style';
 import { Constant } from '../../utils/Constant';
 import {
-  NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
+
+import TOTALEARNING_ICON from '../../../assets/images/totalearnings.png';
+
 
 type TransactionPropos = {
   // replace(arg0: string): unknown;
@@ -828,7 +828,7 @@ export default function TransactionHistoryScreen(
                     resizeMode="cover"
                   />
                   <Image
-                    source={IMAGE_URLS.TOTALEARNING_ICON}
+                    source={TOTALEARNING_ICON}
                     style={styles.image}
                     resizeMode="cover"
                   />

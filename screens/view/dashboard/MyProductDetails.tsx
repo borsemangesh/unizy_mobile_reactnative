@@ -24,6 +24,8 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import { IMAGE_URLS } from '../../utils/Style';
 
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 type MyProductDetailsProps = {
   navigation: any;
 };
@@ -146,7 +148,7 @@ const renderImage = () => {
 
     return (
       <ImageBackground
-                            source={IMAGE_URLS.BACK_ICON}
+                            source={BACK_ICON}
                             style={{ flex: 1,width: '100%',
                           height: '100%', }}
                             resizeMode="cover"

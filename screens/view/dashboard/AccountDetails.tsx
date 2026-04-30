@@ -50,6 +50,14 @@ import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
+import DELETENEW_ICON from '../../../assets/images/delete_new.png';
+import CHIP_ICON from '../../../assets/images/chip.png'
+import BACKICON_ICON from '../../../assets/images/back.png';
+import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
+import NOPRODUCT_ICON from '../../../assets/images/noproduct.png';
+import SUCCESS_ICON from '../../../assets/images/success_icon.png';
+import PROFILE_DELETE_ICON from '../../../assets/images/profile_delete.png';
+
 type AccountDetailsProps = {
   navigation: any;
 };
@@ -478,7 +486,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           >
             {/* Chip */}
             <Image
-              source={IMAGE_URLS.CHIP_ICON}
+              source={CHIP_ICON}
               style={{
                 width: 34,
                 height: 26,
@@ -518,7 +526,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               }}
             >
               <Image
-                source={IMAGE_URLS.DELETENEW_ICON}
+                source={DELETENEW_ICON}
                 style={{
                   width: 18,
                   height: 18,
@@ -593,7 +601,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >
@@ -687,7 +695,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
               {/* Back Icon */}
               <Animated.Image
-                source={IMAGE_URLS.BACKICON_ICON}
+                source={BACKICON_ICON}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
               />
             </Animated.View>
@@ -720,7 +728,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
               {/* Back Icon */}
               <Animated.Image
-                source={IMAGE_URLS.BACKICON_ICON}
+                source={BACKICON_ICON}
                 style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </Animated.View>
@@ -799,7 +807,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                       }}
                     >
                       <Image
-                        source={IMAGE_URLS.SELLECTFILE_ICON}
+                        source={SELLECTFILE_ICON}
                         style={{ width: 24, height: 24 }}
                         resizeMode="cover"
                       />
@@ -875,7 +883,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                               }}
                             >
                               <Image
-                                source={IMAGE_URLS.SELLECTFILE_ICON}
+                                source={SELLECTFILE_ICON}
                                 style={{ width: 24, height: 24 }}
                                 resizeMode="cover"
                               />
@@ -966,7 +974,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                               }}
                             >
                               <Image
-                                source={IMAGE_URLS.SELLECTFILE_ICON}
+                                source={SELLECTFILE_ICON}
                                 style={{ width: 24, height: 24 }}
                                 resizeMode="cover"
                               />
@@ -1053,7 +1061,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                           }}
                         >
                           <Image
-                            source={IMAGE_URLS.SELLECTFILE_ICON}
+                            source={SELLECTFILE_ICON}
                             style={{ width: 24, height: 24 }}
                             resizeMode="cover"
                           />
@@ -1091,7 +1099,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                   <View style={styles.emptyWrapper}>
                     <View style={[styles.emptyContainer]}>
                       <Image
-                        source={IMAGE_URLS.NOPRODUCT_ICON}
+                        source={NOPRODUCT_ICON}
                         style={styles.emptyImage}
                         resizeMode="contain"
                       />
@@ -1163,7 +1171,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
             <View style={styles.popupContainer}>
               <Image
-                source={IMAGE_URLS.SUCCESS_ICON}
+                source={SUCCESS_ICON}
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -1222,7 +1230,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
               <View style={styles.popupContainer1}>
                 <Image
-                  source={IMAGE_URLS.PROFILE_DELETE_ICON}
+                  source={PROFILE_DELETE_ICON}
                   style={styles.logo}
                   resizeMode="contain"
                 />

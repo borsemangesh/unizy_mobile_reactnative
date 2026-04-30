@@ -4,16 +4,13 @@ import {
   Image,
   ImageBackground,
   Platform,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import ProductCard from '../../utils/ProductCard';
 
-import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import NewProductCard from '../../utils/NewProductCard';
@@ -37,8 +34,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -281,7 +279,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     return (
       // <BackgroundWrapper>
       <ImageBackground
-              source={IMAGE_URLS.BACK_ICON}
+              source={BACK_ICON}
               style={{ flex: 1,width: '100%',
             height: '100%', }}
               resizeMode="cover"
@@ -595,7 +593,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   }
   return (
    <ImageBackground
-                 source={IMAGE_URLS.BACK_ICON}
+                 source={BACK_ICON}
                  style={{ flex: 1,width: '100%',
                height: '100%', }}
                  resizeMode="cover"

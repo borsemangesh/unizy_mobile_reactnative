@@ -6,11 +6,9 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
-  ActivityIndicator,
   ImageSourcePropType,
   Dimensions,
   BackHandler,
@@ -42,9 +40,9 @@ import { NewCustomToastContainer, showToast } from '../../utils/component/NewCus
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import { useTranslation } from 'react-i18next';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -465,7 +463,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={BACK_ICON}
       style={{ flex: 1,width: '100%',
       height: '100%', }}
       resizeMode="cover"

@@ -33,6 +33,11 @@ import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+import BACKICON_ICON from '../../../assets/images/back.png';
+import SUCCESS_ICON from '../../../assets/images/success_icon.png';
+
 type AddReviewProps = {
   navigation: any;
 };
@@ -117,7 +122,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-              source={IMAGE_URLS.BACK_ICON}
+              source={BACK_ICON}
               style={{ flex: 1,width: '100%',
             height: '100%', }}
               resizeMode="cover"
@@ -133,7 +138,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
             >
               <View style={styles.backIconRow}>
                 <Image
-                  source={IMAGE_URLS.BACKICON_ICON}
+                  source={BACKICON_ICON}
                   style={{ height: 24, width: 24 }}
                 />
               </View>
@@ -225,7 +230,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
                 <View style={styles.popupContainer}>
                   <Image
-                    source={IMAGE_URLS.SUCCESS_ICON}
+                    source={SUCCESS_ICON}
                     style={styles.logo}
                     resizeMode="contain"
                   />

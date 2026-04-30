@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
@@ -38,9 +36,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 
 type CreatedBy = {
@@ -433,7 +432,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
 
   return (
       <ImageBackground
-         source={IMAGE_URLS.BACK_ICON}
+         source={BACK_ICON}
           style={{ flex: 1,width: '100%',
           height: '100%', }}
           resizeMode="cover"

@@ -41,6 +41,8 @@ import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 import { IMAGE_URLS } from '../../utils/Style';
 
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 type Feature = {
   avg_rating: string | null | undefined;
   id: number;
@@ -360,7 +362,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
   return (
      <ImageBackground
-                      source={IMAGE_URLS.BACK_ICON}
+                      source={BACK_ICON}
                       style={{ flex: 1,width: '100%',
                     height: '100%', }}
                       resizeMode="cover"

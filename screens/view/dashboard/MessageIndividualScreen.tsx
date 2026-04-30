@@ -32,19 +32,18 @@ import Animated, {
 import { waitForTwilioReady } from '../../view/emoji/twilioService';
 import Loader from '../../utils/component/Loader';
 
-import { TransWithoutContext, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import Button from '../../utils/component/Button';
-import ButtonNew from '../../utils/component/ButtonNew';
 import MessageHeaderButton from '../../utils/component/MessageHeaderButton';
 import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
-import { updateBadgeFromFCM } from '../../utils/badgeHelper';
 import { getBadgeCount } from '../../utils/BadgeManager';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
 
-const bgImage = require('../../../assets/images/backimg.png');
-const back = require('../../../assets/images/back.png');
+
+import  back from '../../../assets/images/back.png';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
 
 type MessagesIndividualScreenProps = {
   navigation: any;
@@ -1568,7 +1567,7 @@ const MessagesIndividualScreen = ({
   return (
     // <BackgroundWrapper>
     <ImageBackground
-                  source={IMAGE_URLS.BACK_ICON}
+                  source={BACK_ICON}
                   style={{ flex: 1,width: '100%',
                 height: '100%', }}
                   resizeMode="cover"

@@ -22,9 +22,7 @@ import {
   FlatList,
   Modal,
   Alert,
-  PermissionsAndroid,
   Platform,
-  InteractionManager,
   KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
@@ -34,13 +32,9 @@ import { selectlang_styles } from '../SelectLanguage/SelectLanguage.style';
 import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import i18n, {
-  initI18n,
+import {
   changeAppLanguage,
-  loadLanguageFromServer,
 } from '../../../localization/i18n';
-import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
 import { Constant } from '../../utils/Constant';
@@ -55,22 +49,23 @@ import {
   PassToastContainer,
   passshowToast,
 } from '../../utils/component/PassToastManager';
-import {
-  check,
-  openSettings,
-  PERMISSIONS,
-  request,
-  RESULTS,
-} from 'react-native-permissions';
 import { resetTwilioClient } from '../emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import DeviceInfo from 'react-native-device-info';
 
 import ImagePicker from 'react-native-image-crop-picker';
-import { IMAGE_URLS } from '../../utils/Style';
 import { requestCameraPermission } from '../../utils/COMFUN';
 
 const { height } = Dimensions.get('window');
+
+import BACKGOUND_ANIMATION_ICON from '../../../assets/images/bganimationscreen.png';
+
+import SEARCH_ICON from '../../../assets/images/searchicon.png';
+
+
+ 
+
+
 
 type SinglePageProps = {
   navigation: any;
@@ -1806,7 +1801,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   // };
   return (
     <ImageBackground
-      source={IMAGE_URLS.BACKGOUND_ANIMATION_ICON}
+      source={BACKGOUND_ANIMATION_ICON}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
@@ -1976,7 +1971,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
                   <View style={selectlang_styles.search_container}>
                     <Image
-                      source={IMAGE_URLS.SEARCH_ICON}
+                      source={SEARCH_ICON}
                       style={selectlang_styles.searchIcon}
                     />
                     <TextInput

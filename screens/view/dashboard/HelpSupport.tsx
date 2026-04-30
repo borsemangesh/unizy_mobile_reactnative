@@ -1,27 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
-  StatusBar,
-  ScrollView,
-  ActivityIndicator,
-  Dimensions,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 const bgImage = require('../../../assets/images/backimg.png');
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { useTranslation } from 'react-i18next';
 import { WebView } from 'react-native-webview';
 import Loader from '../../utils/component/Loader';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
 
 type HelpSupportProps = {
   navigation: any;
@@ -32,7 +25,7 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
   const { t } = useTranslation();
   return (
 <ImageBackground
-          source={IMAGE_URLS.BACK_ICON}
+          source={BACK_ICON}
           style={{ flex: 1,width: '100%',
         height: '100%', }}
           resizeMode="cover"

@@ -1,24 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { FlatList, Image, ImageBackground, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { FlatList, Image, ImageBackground, Modal, Platform, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../utils/component/Loader';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { BlurView } from '@react-native-community/blur';
-import { Constant } from '../../utils/Constant';
-import { resetTwilioClient } from '../emoji/twilioService';
-import { clearTwilioCache } from './MessageIndividualScreen';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
 
 
-const profileImage = require('../../../assets/images/user.jpg');
-const back = require('../../../assets/images/back.png');
-const smileyhappy = require('../../../assets/images/smileyhappy.png');
 const arrowIcon = require('../../../assets/images/nextarrow.png');
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 type RouteParams = {
   source?: 'chatList' | 'sellerPage';
@@ -102,7 +96,6 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   const renderItem = ({ item }: any) => {
     const isBlockUser = item.id === '3';  // <-- add this
     const isLogout = item.id.toLowerCase() === 'logout';
-    const isVersion = item.title.toLowerCase() === 'app version';
 
     return (
       <TouchableOpacity
@@ -173,7 +166,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 });
   return (
       <ImageBackground
-             source={IMAGE_URLS.BACK_ICON}
+             source={BACK_ICON}
               style={{ flex: 1,width: '100%',
               height: '100%', }}
               resizeMode="cover"
@@ -291,7 +284,6 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
                   onPress={async () => {
                     try {
                       const token = await AsyncStorage.getItem('userToken');
-                      const user_id = await AsyncStorage.getItem('userId');
 
                       const body = {
                         blockedUserId: userList.id,

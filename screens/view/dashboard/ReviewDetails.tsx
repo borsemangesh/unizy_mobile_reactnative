@@ -1,6 +1,6 @@
 
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -16,14 +16,12 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 
-const bgImage = require('../../../assets/images/backimg.png');
-import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import  bgImage  from '../../../assets/images/backimg.png';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import StarRating from '../../utils/StarRating';
 import ReviewDetailCard from '../../utils/ReviewDetailCard';
-import MyReviewCard from '../../utils/MyReviewCard';
 import Button from '../../utils/component/Button';
-import { InfoToast } from 'react-native-toast-message';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -39,9 +37,15 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
+
+ 
+
+
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -309,7 +313,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={IMAGE_URLS.BACK_ICON}
+      source={BACK_ICON}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >

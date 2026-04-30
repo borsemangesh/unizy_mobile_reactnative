@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   TextInput,
   Alert,
   Animated,
@@ -19,7 +18,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 // import { showToast } from '../../utils/toast';
 import ToggleButton from '../../utils/component/ToggleButton';
@@ -31,21 +30,12 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
-import {
-  check,
-  openSettings,
-  PERMISSIONS,
-  request,
-  RESULTS,
-} from 'react-native-permissions';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 import {
   NestableScrollContainer,
   NestableDraggableFlatList,
 } from 'react-native-draggable-flatlist';
 import AnimatedReanimated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
   useAnimatedStyle,
   interpolate,
   interpolateColor,
@@ -64,18 +54,17 @@ import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 import { requestCameraPermission } from '../../utils/COMFUN';
-import { IMAGE_URLS } from '../../utils/Style';
 
 
-const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg');
-const uploadIcon = require('../../../assets/images/upload.png');
-const fileIcon = require('../../../assets/images/file.png');
-const deleteIcon = require('../../../assets/images/delete.png');
-const uploadIcon1 = require('../../../assets/images/fileupload.png');
+import deleteIcon from'../../../assets/images/delete.png';
+import uploadIcon1 from'../../../assets/images/fileupload.png';
+
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+import CALENDER_ICON from '../../../assets/images/calendar_icon1.png';
+import INFO_ICON from '../../../assets/images/info_icon.png';
 
 type EditListScreenContentProps = {
   navigation: any;
@@ -92,7 +81,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const MAX_SIZE_MB = 1;
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
-  const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
   const [newdate, setnewdate] = useState('');
   const [category, setcategory] = useState('');
@@ -160,11 +148,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const [featureFee, setFeatureFee] = useState(0);
   const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
-  const { productId, productName, shareid } = route.params;
+  const { productId, shareid } = route.params;
   const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
   const { height } = Dimensions.get('window');
-  const bottomPadding = height * 0.0005;
   const MAX_IMAGES = 5;
   const [slideUp1] = useState(new Animated.Value(0));
 
@@ -214,9 +201,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     };
   });
 
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
 
   useEffect(() => {
     const fetchFields = async () => {
@@ -527,17 +511,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     }));
   };
 
-  const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
-    const prevSelected: number[] = Array.isArray(formValues[fieldId])
-      ? formValues[fieldId]
-      : [];
-
-    const updated = prevSelected.includes(optionId)
-      ? prevSelected.filter(id => id !== optionId)
-      : [...prevSelected, optionId];
-
-    setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
-  };
 
   const pluralizeLabel = (label: string) => {
     if (!label) return '';
@@ -569,10 +542,9 @@ const handlePreview = async (latestFormValues: any) => {
     // 1️⃣ Mandatory validation
     for (const field of fields) {
       const param = field.param || field;
-      const { id, field_type, field_name, alias_name, mandatory } = param;
+      const { id, field_type, field_name, alias_name } = param;
       const fieldId = String(id);
 
-      const nameToShow = alias_name || field_name || 'Unnamed Field';
 
       let value =
         latestFormValues[fieldId]?.value ??
@@ -896,9 +868,6 @@ const handlePreview = async (latestFormValues: any) => {
 
   const [isCheckbox, setCheckBox] = useState(false);
 
-  const handleDeleteImage = async (fileId: string) => {
-    setUploadedImages(prev => prev.filter(img => img.id !== fileId));
-  };
 
   const [showThumnail, setShowThumnail] = useState(false);
   const [uri, setUri] = useState('');
@@ -1165,12 +1134,10 @@ const handlePreview = async (latestFormValues: any) => {
     if (!param) return null;
 
     const fieldType = param.field_type?.toLowerCase() ?? '';
-    const field_ismultilple = param.ismultilple ?? false;
     const field_name = param.field_name ?? '';
     const placeholder = param.placeholder ?? '';
     const id = param.id;
     const options = Array.isArray(param.options) ? param.options : [];
-    const isToggle = false;
 
     if (!fieldType || !id) return null;
 
@@ -1183,8 +1150,6 @@ const handlePreview = async (latestFormValues: any) => {
           formValues[param.id]?.value ??
           (alias_name ? formValues[alias_name]?.value : '') ??
           '';
-        const finalValue =
-          rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
         // const placeholderText =
@@ -1193,7 +1158,6 @@ const handlePreview = async (latestFormValues: any) => {
         //     : `${t('enter')} ${field_name}`;
 
         const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
-        const isPostcodeField = alias_name?.toLowerCase() === 'postcode';
 
         let rnKeyboardType:
           | 'default'
@@ -1616,7 +1580,7 @@ const handlePreview = async (latestFormValues: any) => {
 
       case 'image': {
         const { param } = field;
-        const { field_name, maxvalue, ismulltiple } = param;
+        const { field_name, maxvalue } = param;
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
@@ -1795,7 +1759,7 @@ const handlePreview = async (latestFormValues: any) => {
                 <>
                   <View style={[styles.textbg, { marginTop: 12, gap: 2 }]}>
                     <Image
-                      source={IMAGE_URLS.INFO_ICON}
+                      source={INFO_ICON}
                       style={{
                         width: 16,
                         height: 16,
@@ -1857,7 +1821,7 @@ const handlePreview = async (latestFormValues: any) => {
               ) : (
                 <View style={[styles.textbg, { marginTop: 12 }]}>
                   <Image
-                    source={IMAGE_URLS.INFO_ICON}
+                    source={INFO_ICON}
                     style={{
                       width: 16,
                       height: 16,
@@ -1941,7 +1905,7 @@ const handlePreview = async (latestFormValues: any) => {
 
   return (
       <ImageBackground
-              source={IMAGE_URLS.BACK_ICON}
+              source={BACK_ICON}
               style={{ flex: 1,width: '100%',
             height: '100%', }}
               resizeMode="cover"
@@ -2206,7 +2170,7 @@ const handlePreview = async (latestFormValues: any) => {
                           }}
                         >
                           <Image
-                            source={IMAGE_URLS.CALENDER_ICON}
+                            source={CALENDER_ICON}
                             style={{ height: 20, width: 20 }}
                           />
                           <Text
@@ -2270,7 +2234,7 @@ const handlePreview = async (latestFormValues: any) => {
                 {productId === 4 && (
                   <View style={[styles.textbg, { marginTop: 12 }]}>
                     <Image
-                      source={IMAGE_URLS.INFO_ICON}
+                      source={INFO_ICON}
                       style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
                     />
                     <View style={{ flex: 1 ,}}>

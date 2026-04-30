@@ -5,15 +5,10 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
-  StatusBar,
-  ScrollView,
-  ActivityIndicator,
   Dimensions,
 } from 'react-native';
 import Animated, {
@@ -38,8 +33,15 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
 import notifee from '@notifee/react-native';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
+
+ 
+
+
 type NotificationProps = {
   navigation: any;
 };
@@ -369,7 +371,7 @@ const Notification = ({ navigation }: NotificationProps) => {
 
   return (
    <ImageBackground
-                 source={IMAGE_URLS.BACK_ICON}
+                 source={BACK_ICON}
                  style={{ flex: 1,width: '100%',
                  height: '100%', }}
                  resizeMode="cover"

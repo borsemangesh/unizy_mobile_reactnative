@@ -1,5 +1,4 @@
 import {
-  Animated,
   Dimensions,
   Image,
   ImageBackground,
@@ -19,15 +18,14 @@ import AnimatedReanimated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   interpolate,
-  interpolateColor,
-  useDerivedValue,
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
 
 type SellerInfoProps = {
   navigation: any;
@@ -198,7 +196,7 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
 
   return (
      <ImageBackground
-                            source={IMAGE_URLS.BACK_ICON}
+                            source={BACK_ICON}
                             style={{ flex: 1,width: '100%',
                           height: '100%', }}
                             resizeMode="cover"

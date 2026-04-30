@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -6,25 +6,18 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
-  StatusBar,
-  ScrollView,
-  ActivityIndicator,
-  ImageSourcePropType,
-  ListRenderItem,
   Modal,
   TouchableWithoutFeedback,
   Dimensions,
-  KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
-import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import {
   NewCustomToastContainer,
   showToast,
@@ -34,8 +27,14 @@ import Button from '../../utils/component/Button';
 import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
-import { IMAGE_URLS } from '../../utils/Style';
+
+import BACK_ICON from '../../../assets/images/backimg.png';
+
+
+
+ 
+
+
 
 type ReportProductProps = {
   navigation: any
@@ -124,7 +123,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
   const inputCursorColor = "#FFFFFF";
   return (
      <ImageBackground
-                            source={IMAGE_URLS.BACK_ICON}
+                            source={BACK_ICON}
                             style={{ flex: 1,width: '100%',
                           height: '100%', }}
                             resizeMode="cover"
