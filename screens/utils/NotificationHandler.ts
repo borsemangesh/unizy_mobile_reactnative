@@ -180,6 +180,67 @@ export const handleNotification = async (
       return;
     }
 
+    /* ---------------------------------------------------
+   CHAT MESSAGE
+--------------------------------------------------- */
+if (title === 'chat') {
+  await readUnRead(notificationId);
+
+  const parseValue = (value: any) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  };
+
+  let members = null;
+
+  if (notificationData?.members) {
+    const parsedMembers = parseValue(notificationData.members);
+
+    if (Array.isArray(parsedMembers)) {
+      members = parsedMembers[0];
+    } else if (typeof parsedMembers === 'object') {
+      members = parsedMembers;
+    }
+  }
+
+  if (!members) return;
+
+  const params = {
+    animation: 'none',
+    members: {
+      id: members.id,
+      firstname: members.firstname,
+      lastname: members.lastname,
+      profile: members.profile,
+      university: {
+        name: members.universityName || '',
+      },
+    },
+    userConvName:
+      notificationData?.conv_name ||
+      notificationData?.friendlyname ||
+      '',
+    currentUserIdList: Number(notificationData?.current_user_id) || 0,
+    conversationSid:
+      notificationData?.twilio_conversation_sid || '',
+    source: 'chatList',
+  };
+
+  if (Platform.OS === 'ios') {
+    resetNavigation('MessagesIndividualScreen', params);
+  } else {
+    navigate('MessagesIndividualScreen', params);
+  }
+
+  return;
+}
+
   } catch (error) {
     console.error('Error handling notification:', error);
   }
