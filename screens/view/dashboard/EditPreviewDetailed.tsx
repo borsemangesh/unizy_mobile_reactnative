@@ -439,7 +439,8 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         // console.log("⚠️ No form data found");
         return;
       }
-
+     
+      const paymentintent_id = await AsyncStorage.getItem('paymentintent_id');
       const formData: Record<string, FormField> = JSON.parse(storedData);
 
       const token = await AsyncStorage.getItem('userToken');
@@ -500,10 +501,21 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         })
         .filter(Boolean);
 
-      const createPayload = {
-        category_id: productId,
-        data: dataArray,
-      };
+      // const createPayload = {
+      //   category_id: productId,
+      //   data: dataArray,
+      // };
+
+
+const createPayload: any = {
+  category_id: productId,
+  data: dataArray,
+  ...(Number(productId) === 4 && {
+    paymentintent_id,
+    featureamount: maxCap1,
+  }),
+};
+
 
       console.log('Payload: ', createPayload);
 
@@ -657,6 +669,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
       //   });
       // }
 
+
       const form =
         typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
       const isToggleOn =
@@ -682,6 +695,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             onSuccess: async () => {
               try {
                 await handleListPress();
+                
               } finally {
                 isSubmitting = false;
               }
