@@ -524,37 +524,109 @@ if (categoryid === 4 && amount > 0) {
 const form =
         typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
   
-      const isFeatured =
-        form?.['13']?.value === true || form?.['13']?.value === 'true';
+//       const isFeatured =
+//         form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-      let featureAmountToSend = finalPrice;
+//       // let featureAmountToSend = finalPrice;
 
-// Apply your logic
+// // Apply your logic
+// // if (Number(productId1) === 4) {
+// //   if (isFeatured && maxCap1 > 0) {
+// //     featureAmountToSend = finalPrice;
+// //   } else if (!isFeatured && accomodation_amount > 0) {
+// //     featureAmountToSend = accomodation_amount;
+// //   }
+// // }
+
+// let featureAmountToSend = 0;
+
+// if (Number(productId1) === 4) {
+//   // ✅ EDGE CASE: everything is 0
+//   if (isFeatured && accomodation_amount === 0 && maxCap1 === 0) {
+//     featureAmountToSend = 0;
+
+//   }
+//   // ✅ FEATURED CASE
+//   else if (isFeatured && maxCap1 > 0) {
+//     featureAmountToSend = finalPrice;
+//   }
+//   // ✅ NORMAL CASE
+//   else if (!isFeatured && accomodation_amount > 0) {
+//     featureAmountToSend = accomodation_amount;
+//   }
+// }
+
+
+//       const createPayload = {
+//         category_id: productId1,
+//         data: dataArray,
+//         //paymentintent_id: paymentData.transactionId, 
+//         paymentintent_id: paymentintent_id,
+//         savecard: true,
+//         //status: paymentData.status,
+//         // featureamount: diff1
+//         featureamount: featureAmountToSend,
+//         fixed_commission: accommodationAmount,
+//         listing_featureamount: maxCap1
+//       };
+
+//       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
+      
+const isFeatured =
+  form?.['13']?.value === true || form?.['13']?.value === 'true';
+
+let featureAmountToSend = 0;
+let paymentIntentToSend = paymentintent_id || "";
+let fixedCommissionToSend = accommodationAmount;
+let listingFeatureAmountToSend = maxCap1;
+
+console.log("DEBUG VALUES:", {
+  isFeatured,
+  accomodation_amount,
+  maxCap1,
+  productId1
+});
+
 if (Number(productId1) === 4) {
-  if (isFeatured && maxCap1 > 0) {
+
+  // ✅ EDGE CASE (FIXED PROPERLY)
+  if (
+    Number(accomodation_amount) === 0 &&
+    Number(maxCap1) === 0
+  ) {
+    console.log("EDGE CASE HIT ✅");
+
+    featureAmountToSend = 0;
+    paymentIntentToSend = "";
+    fixedCommissionToSend = 0;
+    listingFeatureAmountToSend = 0;
+  }
+
+  // ✅ FEATURED CASE
+  else if (isFeatured && Number(maxCap1) > 0) {
     featureAmountToSend = finalPrice;
-  } else if (!isFeatured && accomodation_amount > 0) {
+  }
+
+  // ✅ NORMAL CASE
+  else if (!isFeatured && Number(accomodation_amount) > 0) {
     featureAmountToSend = accomodation_amount;
   }
 }
 
+const createPayload = {
+  category_id: productId1,
+  data: dataArray,
+  paymentintent_id: paymentIntentToSend,
+  savecard: true,
+  featureamount: featureAmountToSend,
+  fixed_commission: fixedCommissionToSend,
+  listing_featureamount: listingFeatureAmountToSend
+};
 
-      const createPayload = {
-        category_id: productId1,
-        data: dataArray,
-        //paymentintent_id: paymentData.transactionId, 
-        paymentintent_id: paymentintent_id,
-        savecard: true,
-        //status: paymentData.status,
-        // featureamount: diff1
-        featureamount: featureAmountToSend,
-        fixed_commission: accommodationAmount,
-        listing_featureamount: maxCap1
-      };
-
-      console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
-      
-
+console.log(
+  'Create Feature Payload:',
+  JSON.stringify(createPayload, null, 2)
+);
 
       const createRes = await fetch(
         `${MAIN_URL.baseUrl}category/featurelistv2/create`,
