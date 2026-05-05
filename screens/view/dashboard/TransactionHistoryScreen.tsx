@@ -1,11 +1,12 @@
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
+  SectionList,
   Image,
   Platform,
   Dimensions,
@@ -26,26 +27,30 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
-import {
-  showToast,
-} from '../../utils/component/NewCustomToastManager';
+import { showToast } from '../../utils/component/NewCustomToastManager';
 
 import TOTALEARNING_ICON from '../../../assets/images/totalearnings.png';
 import CHAT_ICON from '../../../assets/images/message_chat.png';
 import NOPRODUCT from '../../../assets/images/noproduct.png';
 import ITEMBACKGROUND from '../../../assets/images/placeholder_history.png';
 
+// ─── Constants ───────────────────────────────────────────────────────────────
+const TAB_PURCHASES = 'Purchases';
+const TAB_SALES = 'Sales';
+const TAB_CHARGES = 'Charges';
+const TABS = [{ key: TAB_PURCHASES }, { key: TAB_SALES }, { key: TAB_CHARGES }];
+const TAB_KEYS = [TAB_PURCHASES, TAB_SALES, TAB_CHARGES];
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 type TransactionPropos = {
-  // replace(arg0: string): unknown;
-  // reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
   navigation: any;
   route: any;
 };
 
 interface TransactionItem {
   total_earning: number;
-  total_orders: number
+  total_orders: number;
   title: string;
   price: string;
   status: string;
@@ -63,9 +68,9 @@ interface TransactionItem {
   orderid: any;
   amount: string;
   charge_type: string;
-  purchased_quantity?: number
+  purchased_quantity?: number;
   category_id: number;
-    hours?: number;
+  hours?: number;
   order_id?: number;
   firstname: string;
   lastname: string;
@@ -78,1021 +83,938 @@ interface TransactionItem {
 interface TransactionSection {
   date: string;
   total_sales: number;
-  items: TransactionItem[];
+  data: TransactionItem[];
 }
 
+// ─── Helpers (defined outside component to avoid re-creation) ─────────────────
+const months = [
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+];
 
-export default function TransactionHistoryScreen(
- { navigation, onSalesTabChange }: any
+const getFormattedDate = (dateString: string, t?: any): string => {
+  const parts = dateString.split(' ');
+  if (parts.length !== 3) return dateString;
+  const [dayStr, monthStr, yearStr] = parts;
+  const day = parseInt(dayStr);
+  if (isNaN(day)) return dateString;
 
-) {
+  const lang = i18n.language;
+  let suffix = '';
+  if (lang === 'en') {
+    suffix =
+      day % 10 === 1 && day !== 11
+        ? 'st'
+        : day % 10 === 2 && day !== 12
+        ? 'nd'
+        : day % 10 === 3 && day !== 13
+        ? 'rd'
+        : 'th';
+  }
 
+  const monthShort = monthStr.substring(0, 3).toLowerCase();
+  const monthIndex = months.indexOf(monthShort);
+  const translatedMonth =
+    t && monthIndex !== -1 ? t(months[monthIndex]) : monthStr;
+  return `${day}${suffix} ${translatedMonth} ${yearStr}`;
+};
+
+const formatSalesSection = (section: any) => ({
+  date: section.date,
+  total_sales: section.total_sales,
+  data: section.transactions.map((item: any) => ({
+    title: item.title,
+    price: `£${item.amount}`,
+    status: item.status,
+    code: '',
+    seller: item.sold_to,
+    amount: item.amount,
+    university: item.university_name,
+    category_logo: item.category_logo,
+    feature_idNew: item.id,
+    featureId: item.id,
+    total_sales: item.total_sales,
+    total_orders: item.total_orders,
+    total_earning: item.total_earning,
+  })),
+});
+
+const formatPurchaseSection = (section: any) => ({
+  date: section.date,
+  data: section.transactions.map((item: any) => ({
+    title: item.title,
+    price: `£${item.amount}`,
+    status: item.order_status,
+    code: item.status,
+    seller: item.purchased_from,
+    university: item.university_name,
+    order_otp: item.order_otp,
+    category_logo: item.category_logo,
+    purchased_quantity: item.purchased_quantity ?? 0,
+    category_id: item.category_id,
+    hours: item.hours ?? 0,
+    order_id: item.order_id,
+    firstname: item.firstname,
+    lastname: item.lastname,
+    profile: item.profile,
+    isblocked: item.isblocked,
+    blocked_you: item.blocked_you,
+    chat_with_seller: item.chat_with_seller,
+  })),
+});
+
+const formatChargesSection = (section: any) => ({
+  date: section.date,
+  data: section.transactions.map((item: any) => ({
+    title: item.title,
+    price: `£${item.listing_fee}`,
+    status: item.payment_status,
+    code: '',
+    featureId: item.feature_id,
+    viewUrl: item.view_listing_url,
+    order_otp: 0,
+    category_logo: item.category_logo,
+    feature_idNew: item.feature_id,
+    charge_type: item.charge_type,
+  })),
+});
+
+// ─── Sub-components (memoized) ────────────────────────────────────────────────
+const SectionHeader = React.memo(
+  ({ date, isSales, t }: { date: string; isSales: boolean; t: any }) => (
+    <Text
+      allowFontScaling={false}
+      style={isSales ? styles.dateText1 : styles.dateText}
+    >
+      {getFormattedDate(date, t)}
+    </Text>
+  ),
+);
+
+interface PurchaseCardProps {
+  item: TransactionItem;
+  onCancelPress: (id: number) => void;
+  onChatPress: (item: TransactionItem) => void;
+  t: any;
+}
+const PurchaseCard = React.memo(
+  ({ item, onCancelPress, onChatPress, t }: PurchaseCardProps) => {
+    const isFulfilledOrCancelled =
+      item.status === 'Fulfilled' || item.status === 'Cancelled';
+    const isAwaiting = item.status === 'Awaiting Delivery';
+    const showQty =
+      item?.category_id === 3 ||
+      item?.category_id === 2 ||
+      item?.category_id === 5;
+
+    const qtyLabel =
+      item?.category_id === 3
+        ? `${item?.purchased_quantity ?? 1} ${
+            (item?.purchased_quantity ?? 1) > 1 ? t('units') : t('unit')
+          }`
+        : item?.category_id === 2
+        ? `${item?.hours ?? 1} ${
+            (item?.hours ?? 1) > 1 ? t('hours') : t('hour')
+          }`
+        : `${item?.hours ?? 1} ${
+            (item?.hours ?? 1) > 1 ? t('sessions') : t('session')
+          }`;
+
+    return (
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <View>
+              <Image
+                source={ITEMBACKGROUND}
+                style={styles.imgcontainer}
+                resizeMode="cover"
+              />
+              <Image
+                source={{ uri: item.category_logo }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <View style={styles.title}>
+                <Text
+                  numberOfLines={2}
+                  allowFontScaling={false}
+                  style={[styles.itemTitle, { width: '60%' }]}
+                >
+                  {item.title}
+                </Text>
+                {isAwaiting && (
+                  <Pressable onPress={() => onCancelPress(item?.order_id ?? 0)}>
+                    <View style={styles.cancelButton}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.cancelButtonText}
+                      >
+                        {t('cancel_order')}
+                      </Text>
+                    </View>
+                  </Pressable>
+                )}
+              </View>
+              <View style={styles.priceContainer}>
+                <Text allowFontScaling={false} style={styles.price}>
+                  {item.price}
+                </Text>
+                {showQty && (
+                  <View style={styles.statusBox}>
+                    <Text allowFontScaling={false} style={styles.purchasedText}>
+                      {qtyLabel}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.statusRow}>
+          <View style={styles.statusBox}>
+            <Text allowFontScaling={false} style={styles.statusText}>
+              {item.status}
+            </Text>
+          </View>
+          <View
+            style={[
+              styles.codeBox,
+              {
+                height: 28,
+                backgroundColor: isFulfilledOrCancelled
+                  ? 'rgba(255,255,255,0.15)'
+                  : 'rgba(255, 255, 255, 0.06)',
+              },
+            ]}
+          >
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.codeText,
+                {
+                  color: isFulfilledOrCancelled
+                    ? 'rgba(255,255,255,0.15)'
+                    : '#9CD6FF',
+                },
+              ]}
+            >
+              {item.order_otp}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.cardconstinerdivider} />
+
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ flex: 1.8 }}>
+            <Text style={styles.sellerText}>
+              {t('purchased_from')}
+              {'  '}
+              <Text style={styles.sellerTextName}>
+                {item.firstname} {item.lastname} ({item.university})
+              </Text>
+            </Text>
+          </View>
+          {!isFulfilledOrCancelled && (
+            <TouchableOpacity
+              style={styles.chatcard}
+              activeOpacity={0.8}
+              onPress={() => onChatPress(item)}
+            >
+              <Image source={CHAT_ICON} style={{ height: 16, width: 16 }} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    );
+  },
+);
+
+interface SalesCardProps {
+  item: TransactionItem;
+  onAllDetails: (item: TransactionItem) => void;
+  t: any;
+}
+const SalesCard = React.memo(({ item, onAllDetails, t }: SalesCardProps) => (
+  <View style={styles.salesCard}>
+    <View style={styles.salescardHeadercontainer}>
+      <View style={styles.salescardrow}>
+        <View>
+          <Image
+            source={ITEMBACKGROUND}
+            style={styles.imgcontainer}
+            resizeMode="cover"
+          />
+          <Image
+            source={{ uri: item.category_logo }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        <View style={{ width: 160 }}>
+          <Text numberOfLines={2} style={styles.salesTitle}>
+            {item.title.length > 24
+              ? `${item.title.substring(0, 24)}...`
+              : item.title}
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity onPress={() => onAllDetails(item)}>
+        <Text allowFontScaling={false} style={styles.allDetails}>
+          {t('all_details')}
+        </Text>
+      </TouchableOpacity>
+    </View>
+    <View style={styles.cardconstinerdivider} />
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <Text allowFontScaling={false} style={styles.earningLabel}>
+        {t('total_order')}: {item.total_orders}
+      </Text>
+      <Text allowFontScaling={false} style={styles.earningLabel}>
+        {t('total_earnings')}: £{Number(item.total_earning).toFixed(2)}
+      </Text>
+    </View>
+  </View>
+));
+
+interface ChargesCardProps {
+  item: TransactionItem;
+  onViewListing: (featureId: number) => void;
+  t: any;
+}
+const ChargesCard = React.memo(
+  ({ item, onViewListing, t }: ChargesCardProps) => {
+    const chargeLabel =
+      item.charge_type === 'both'
+        ? `${t('featured_listing_fee')} + ${t('accommodation_fee')}`
+        : item.charge_type === 'feature_listing'
+        ? t('featured_listing_fee')
+        : item.charge_type === 'fixed_commission'
+        ? t('accommodation_fee')
+        : '';
+
+    return (
+      <View style={styles.chargesCard}>
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 10,
+            justifyContent: 'space-between',
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View>
+              <Image
+                source={ITEMBACKGROUND}
+                style={styles.imgcontainer}
+                resizeMode="cover"
+              />
+              <Image
+                source={{ uri: item.category_logo }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </View>
+            <View style={{ width: 160 }}>
+              <Text
+                numberOfLines={2}
+                allowFontScaling={false}
+                style={styles.chargesTitle}
+              >
+                {item.title}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity onPress={() => onViewListing(item.featureId)}>
+            <Text allowFontScaling={false} style={styles.viewListingLink}>
+              {t('view_listing')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.cardconstinerdivider} />
+        <Text style={styles.viewListing}>
+          {chargeLabel}: {item.price}
+        </Text>
+      </View>
+    );
+  },
+);
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+export default function TransactionHistoryScreen({
+  navigation,
+  onSalesTabChange,
+}: any) {
   const navigation1: NavigationProp<any> = useNavigation();
-  const [selectedTab, setSelectedTab] = useState('Purchases');
+  const [selectedTab, setSelectedTab] = useState<string>(TAB_PURCHASES);
   const [transactions, setTransactions] = useState<TransactionSection[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { route } = navigation;
-  const { issales } = route?.params || {}
-  const screenWidth = Dimensions.get('window').width;
-  const tabsname = ['Purchases', 'Sales', 'Charges'];
+  const { issales } = route?.params || {};
+  const tabWidth = (SCREEN_WIDTH * 0.9) / TABS.length;
 
   const { t } = useTranslation();
-
-  const tabWidth = (screenWidth * 0.9) / tabsname.length;
-
-  const translateX = useRef(new Animated.Value(0)).current;
-  const screenHeight = Dimensions.get('window').height;
-
-  const bottomNaviationSlideupAnimation = useRef(
-    new Animated.Value(screenHeight),
-  ).current;
   const bubbleX = useRef(new Animated.Value(0)).current;
-
-  const [activeTab, setActiveTab] = useState<string>('Purchases');
   const [overallEarning, setOverallEarning] = useState(0);
   const [showPopup1, setShowPopup1] = useState(false);
-  const closePopup1 = () => setShowPopup1(false);
-
-  const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
-  const getTabLabel = (key: string) => {
-    switch (key) {
-      case 'Purchases':
-        return t('purchases');
-      case 'Sales':
-        return t('sales');
-      case 'Charges':
-        return t('charges');
-      default:
-        return key;
-    }
-  };
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
-  const { height } = Dimensions.get('window');
+  const [catagoryid, setCatagoryid] = useState(0);
+  const [salesData, setSalesData] = useState<any[]>([]);
+  const [salesTitle, setSalesTitle] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [orderId, setOrderId] = useState(0);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const inputs = useRef<Array<TextInput | null>>([]);
+  const [selectedOrderId, setSelectedOrderId] = useState<any>(null);
 
+  const getTabLabel = useCallback(
+    (key: string) => {
+      switch (key) {
+        case TAB_PURCHASES:
+          return t('purchases');
+        case TAB_SALES:
+          return t('sales');
+        case TAB_CHARGES:
+          return t('charges');
+        default:
+          return key;
+      }
+    },
+    [t],
+  );
 
   useEffect(() => {
-    if (issales) {
-      setActiveTab('Sales');   // Switch to Sales tab automatically
-    }
+    if (issales) setSelectedTab(TAB_SALES);
   }, [issales]);
 
   useEffect(() => {
-  if (onSalesTabChange) {
-    onSalesTabChange(activeTab === 'Sales');
-  }
-}, [selectedTab]);
+    if (onSalesTabChange) onSalesTabChange(selectedTab === TAB_SALES);
+  }, [selectedTab, onSalesTabChange]);
 
   useEffect(() => {
-    if (activeTab === 'Purchases') {
-      bottomNaviationSlideupAnimation.setValue(screenHeight);
-
-      Animated.timing(bottomNaviationSlideupAnimation, {
-        toValue: 0,
-        duration: 1000,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    } else if (activeTab === 'Sales') {
-      bottomNaviationSlideupAnimation.setValue(0);
-    }
-  }, [activeTab]);
-
-  useEffect(() => {
-    const index = ['Purchases', 'Sales', 'Charges'].indexOf(activeTab);
+    const index = TAB_KEYS.indexOf(selectedTab);
     Animated.spring(bubbleX, {
       toValue: index * tabWidth,
       friction: 6,
       tension: 20,
-
       useNativeDriver: true,
     }).start();
-  }, [activeTab, bubbleX, tabWidth]);
+  }, [selectedTab, tabWidth]);
 
-  // useEffect(() => {
-  //   const index = ['Purchases', 'Sales', 'Charges'].indexOf(activeTab);
-  //   Animated.spring(bubbleX, {
-  //     toValue: index * tabWidth,
-  //     friction: 6,
-  //     tension: 20,
+  const handleForceLogout = useCallback(async () => {
+    await AsyncStorage.clear();
+  }, []);
 
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, [activeTab, bubbleX, tabWidth]);
-      const fetchTransactions = async () => {
-      try {
-        setLoading(true);
-        const token = await AsyncStorage.getItem('userToken');
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-
-        if (!token) {
-          // console.log('No token found');
-          return;
-        }
-        let url = '';
-        if (selectedTab === 'Purchases') {
-          url = `${MAIN_URL.baseUrl}transaction/purchase`;
-        } if (selectedTab === 'Sales') {
-          url = `${MAIN_URL.baseUrl}transaction/sales`;
-        } if (selectedTab === 'Charges') {
-          url = `${MAIN_URL.baseUrl}transaction/charges`;
-        }
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            languagecode: language_code
-          },
-        });
-
-        if (response.status === 401 || response.status === 403) {
-          handleForceLogout();
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const json = await response.json();
-        console.log("TransactionURL GET: ", url);
-        console.log("TransactionResponse: ", json);
-        console.log("token: ",  token);
-
-        if (json.statusCode === 401 || json.statusCode === 403) {
-          handleForceLogout();
-          return;
-        }
-
-
-        let formatted: TransactionSection[] = [];
-
-        if (selectedTab === 'Purchases' && Array.isArray(json.data)) {
-          formatted = json.data.map((section: any) => ({
-            date: section.date,
-            items: section.transactions.map((item: any) => ({
-              title: item.title,
-              price: `£${item.amount}`,
-              status: item.order_status,
-              code: item.status,
-              seller: item.purchased_from,
-              university: item.university_name,
-              order_otp: item.order_otp,
-              category_logo: item.category_logo,
-              purchased_quantity: item.purchased_quantity ?? 0,
-              category_id: item.category_id,
-              hours: item.hours ?? 0,
-              order_id: item.order_id,
-
-              firstname: item.firstname,
-              lastname: item.lastname,
-              profile: item.profile,
-              isblocked: item.isblocked,
-              blocked_you: item.blocked_you,
-              chat_with_seller: item.chat_with_seller,
-            })),
-          }));
-
-        } if (selectedTab === 'Sales' && json.data?.sales_history) {
-          setOverallEarning(json.data.total_earning),
-            formatted = json.data.sales_history.map((section: any) => ({
-
-              date: section.date,
-              total_sales: section.total_sales,
-              items: section.transactions.map((item: any) => ({
-                title: item.title,
-                price: `£${item.amount}`,
-                status: item.status,
-                code: '',
-                seller: item.sold_to,
-                amount: item.amount,
-                university: item.university_name,
-                category_logo: item.category_logo,
-                feature_idNew: item.id,
-                featureId: item.id,
-                total_sales: item.total_sales,
-                total_orders: item.total_orders,
-                total_earning: item.total_earning
-              })),
-            }));
-        }
-        if (selectedTab === 'Charges' && json.data?.charges_history) {
-          formatted = json.data.charges_history.map((section: any) => ({
-            date: section.date,
-            items: section.transactions.map((item: any) => ({
-              title: item.title,
-              price: `£${item.listing_fee}`,
-              status: item.payment_status,
-              code: '',
-              featureId: item.feature_id,
-              viewUrl: item.view_listing_url,
-              order_otp: 0,
-              category_logo: item.category_logo,
-              feature_idNew: item.feature_id,
-              charge_type: item.charge_type
-            })),
-          }));
-        }
-        setLoading(false);
-        setTransactions(formatted);
-      } catch (err) {
-
-      } finally {
-        setLoading(false);
-      }
-    };
-      const handleForceLogout = async () => {
-
-      await AsyncStorage.clear();
-    };
-
-  useEffect(() => {
-  
-
-  
-
-    setLoading(true);
-    fetchTransactions();
-  }, [selectedTab]);
-
-  const getFormattedDate = (dateString: string, t?: any) => {
-    const parts = dateString.split(" ");
-    if (parts.length !== 3) return dateString;
-
-    const [dayStr, monthStr, yearStr] = parts;
-    const day = parseInt(dayStr);
-
-    if (isNaN(day)) return dateString;
-    if (isNaN(day)) return dateString;
-
-    const lang = i18n.language;
-
-    let suffix = "";
-    if (lang === "en") {
-      suffix =
-        day % 10 === 1 && day !== 11
-          ? "st"
-          : day % 10 === 2 && day !== 12
-            ? "nd"
-            : day % 10 === 3 && day !== 13
-              ? "rd"
-              : "th";
-    }
-
-    const months = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
-    ];
-
-    const monthShort = monthStr.substring(0, 3).toLowerCase();
-    const monthIndex = months.indexOf(monthShort);
-
-    const translatedMonth =
-      t && monthIndex !== -1 ? t(months[monthIndex]) : monthStr;
-
-    return `${day}${suffix} ${translatedMonth} ${yearStr}`;
-  };
-
-  const [catagoryid, setCatagoryid] = useState(0)
-
-  const [salesData, setSalesData] = useState<any[]>([]);
-  const [salesTitle, setSalesTitle] = useState('');
-  const ITEMBACKGROUND = require('../../../assets/images/placeholder_history.png');
-
-  const fetchSalesHistory = async (catagory_id: number) => {
+  const fetchTransactions = useCallback(async () => {
     try {
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        // console.log('No token found');
-        return;
-      }
+      setLoading(true);
+      const [token, language_code] = await Promise.all([
+        AsyncStorage.getItem('userToken'),
+        AsyncStorage.getItem('selectedLanguage'),
+      ]);
 
-      const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
+      if (!token) return;
+
+      const urlMap: Record<string, string> = {
+        [TAB_PURCHASES]: `${MAIN_URL.baseUrl}transaction/purchase`,
+        [TAB_SALES]: `${MAIN_URL.baseUrl}transaction/sales`,
+        [TAB_CHARGES]: `${MAIN_URL.baseUrl}transaction/charges`,
+      };
+      const url = urlMap[selectedTab];
 
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          languagecode: language_code
+          languagecode: language_code || 'en',
         },
       });
 
       if (response.status === 401 || response.status === 403) {
-        // handleForceLogout();
+        handleForceLogout();
         return;
       }
-
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
-      }
 
       const json = await response.json();
 
-
       if (json.statusCode === 401 || json.statusCode === 403) {
-        // handleForceLogout();
+        handleForceLogout();
         return;
       }
-      setSalesData(json);
-      setFilterVisible(true);
 
+      let formatted: TransactionSection[] = [];
+
+      if (selectedTab === TAB_PURCHASES && Array.isArray(json.data)) {
+        formatted = json.data.map(formatPurchaseSection);
+      } else if (selectedTab === TAB_SALES && json.data?.sales_history) {
+        setOverallEarning(json.data.total_earning);
+        formatted = json.data.sales_history.map(formatSalesSection);
+      } else if (selectedTab === TAB_CHARGES && json.data?.charges_history) {
+        formatted = json.data.charges_history.map(formatChargesSection);
+      }
+
+      setTransactions(formatted);
     } catch (err) {
-      // console.log('Error fetching sales history:', err);
+      // silent
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedTab, handleForceLogout]);
 
+  useEffect(() => {
+    setTransactions([]);   // ✅ Clear old data
+    fetchTransactions();
+  }, [fetchTransactions]);
 
-  const [isSelected, setIsSelected] = useState(false);
+  useEffect(() => {
+    if (showPopup1) {
+      const timer = setTimeout(() => inputs.current[0]?.focus(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup1]);
 
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [orderId, setOrderId] = useState(0);
-    const handleCancelOrder = async (id: number) => {
+  const handleCancelOrder = useCallback(
+    async (id: number) => {
       setShowDeleteModal(false);
-      let orderId = id;
-      console.log('OrederID: ', orderId);
-  
       try {
-        // Get user token
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-          console.log('No token found');
-          return;
-        }
-  
-        // Construct the URL
-        const url = `${MAIN_URL.baseUrl}transaction/post-order-cancel`;
-  
-        const body = { orderid: orderId };
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+        if (!token) return;
+
+        const response = await fetch(
+          `${MAIN_URL.baseUrl}transaction/post-order-cancel`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderid: id }),
           },
-          body: JSON.stringify(body),
-        });
+        );
         const json = await response.json();
-  
-        console.log('CanelUrl: ', url);
-        console.log('Caneljson: ', json);
-  
-        // Handle response status codes
-        if (response.status === 200) {
-          setLoading(false);
-           fetchTransactions();
-        }
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        if (json.statusCode === 401 || json.statusCode === 403) {
-          // handleForceLogout();
-          return;
-        }
+
+        if (response.status === 200) fetchTransactions();
+        if (json.statusCode === 401 || json.statusCode === 403)
+          handleForceLogout();
       } catch (err) {
-        console.log('Error fetching sales history:', err);
+        // silent
       } finally {
         setLoading(false);
       }
-  };
+    },
+    [fetchTransactions, handleForceLogout],
+  );
 
-   const [otp, setOtp] = useState(['', '', '', '']);
-  const inputs = useRef<Array<TextInput | null>>([]);
-  const [price, setprice] = useState('');
-    const [showPopup2, setShowPopup2] = useState(false);
-  const closePopup2 = () => setShowPopup2(false);
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
-   useEffect(() => {
-    if (showPopup1) {
-      const timer = setTimeout(() => {
-        inputs.current[0]?.focus();
-      }, 300);
+  const fetchSalesHistory = useCallback(async (catagory_id: number) => {
+    try {
+      const [token, language_code] = await Promise.all([
+        AsyncStorage.getItem('userToken'),
+        AsyncStorage.getItem('selectedLanguage'),
+      ]);
+      if (!token) return;
 
-      return () => clearTimeout(timer);
+      const response = await fetch(
+        `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            languagecode: language_code || 'en',
+          },
+        },
+      );
+
+      if (response.status === 401 || response.status === 403) return;
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+
+      const json = await response.json();
+      if (json.statusCode === 401 || json.statusCode === 403) return;
+
+      setSalesData(json);
+      setFilterVisible(true);
+    } catch (err) {
+      // silent
+    } finally {
+      setLoading(false);
     }
-   }, [showPopup1]);
-  
-    const otpverify = async () => {
-      Keyboard.dismiss();
-      setLoading(true);
-  
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        if (!token) {
-  
-          setLoading(false);
-          return;
-        }
-        const otpValue = otp.join('');
-        const order_id = await AsyncStorage.getItem('last_order_id');
-  
-        const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
-  
-        const createPayload = {
-          otp: otpValue,
-          orderid: selectedOrderId,
-        };
-  
-  
-        const res = await fetch(url, {
+  }, []);
+
+  const otpverify = useCallback(async () => {
+    Keyboard.dismiss();
+    setLoading(true);
+    try {
+      const [token, language_code] = await Promise.all([
+        AsyncStorage.getItem('userToken'),
+        AsyncStorage.getItem('selectedLanguage'),
+      ]);
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const otpValue = otp.join('');
+      const res = await fetch(
+        `${MAIN_URL.baseUrl}transaction/verify-post-order-otp`,
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code || 'en',
           },
-          body: JSON.stringify(createPayload),
-        });
-  
-        const data = await res.json();
-  
-        setShowPopup1(false);
-        if (data?.statusCode === 200) {
-          setLoading(false);
-  
-          showToast(t(data.message), 'success');
-          setShowPopup2(true);
-        } else {
-          setLoading(false);
-          setShowPopup1(false);
-          setOtp(['', '', '', '', '', '']);
-  
-          showToast(t(data?.message), 'error');
-        }
-      } catch (err) {
-        setLoading(false);
-        console.error(err);
-        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
-      }
-    };
-  const handleChange = (text: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
+          body: JSON.stringify({ otp: otpValue, orderid: selectedOrderId }),
+        },
+      );
 
+      const data = await res.json();
+      setShowPopup1(false);
+
+      if (data?.statusCode === 200) {
+        setLoading(false);
+        showToast(t(data.message), 'success');
+      } else {
+        setLoading(false);
+        setOtp(['', '', '', '', '', '']);
+        showToast(t(data?.message), 'error');
+      }
+    } catch (err) {
+      setLoading(false);
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    }
+  }, [otp, selectedOrderId, t]);
+
+  const handleChange = useCallback((text: string, index: number) => {
+    setOtp(prev => {
+      const next = [...prev];
+      next[index] = text;
+      return next;
+    });
     if (text && index < inputs.current.length - 1) {
       inputs.current[index + 1]?.focus();
     } else if (!text && index > 0) {
       inputs.current[index - 1]?.focus();
     }
-  };
+  }, []);
+
+  // ─── Stable callbacks for sub-components ──────────────────────────────────
+  const handleCancelPress = useCallback((id: number) => {
+    setOrderId(id);
+    setShowDeleteModal(true);
+  }, []);
+
+  const handleChatPress = useCallback(
+    (item: TransactionItem) => {
+      if (
+        item?.chat_with_seller &&
+        item.status !== 'Fulfilled' &&
+        item.status !== 'Cancelled'
+      ) {
+        navigation.navigate('MessagesIndividualScreen', {
+          animation: 'none',
+          sellerData: {
+            featureId: item.featureId,
+            firstname: item.firstname,
+            lastname: item.lastname,
+            profile: item.profile,
+            universityName: item.university,
+            id: item.category_id,
+            isblocked: item.isblocked,
+            blocked_you: item.blocked_you,
+          },
+          source: 'sellerPage',
+        });
+      }
+    },
+    [navigation],
+  );
+
+  const handleAllDetails = useCallback(
+    (item: TransactionItem) => {
+      setSalesImageUrl(item.category_logo);
+      setCatagoryid(item.featureId);
+      fetchSalesHistory(item.featureId);
+      setSalesTitle(item.title);
+    },
+    [fetchSalesHistory],
+  );
+
+  const handleViewListing = useCallback(
+    (featureId: number) => {
+      navigation1.navigate('ViewListingDetails', { shareid: featureId });
+    },
+    [navigation1],
+  );
+
+  // ─── SectionList handlers (stable refs) ───────────────────────────────────
+  const keyExtractor = useCallback(
+    (item: TransactionItem, index: number) =>
+      `${selectedTab}-${item.title}-${index}`,
+    [selectedTab],
+  );
+
+  const renderSectionHeader = useCallback(
+    ({ section: { date } }: { section: TransactionSection }) => (
+      <SectionHeader date={date} isSales={selectedTab === TAB_SALES} t={t} />
+    ),
+    [selectedTab, t],
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: TransactionItem }) => {
+      if (selectedTab === TAB_PURCHASES) {
+        return (
+          <PurchaseCard
+            item={item}
+            onCancelPress={handleCancelPress}
+            onChatPress={handleChatPress}
+            t={t}
+          />
+        );
+      }
+      if (selectedTab === TAB_SALES) {
+        return <SalesCard item={item} onAllDetails={handleAllDetails} t={t} />;
+      }
+      return (
+        <ChargesCard item={item} onViewListing={handleViewListing} t={t} />
+      );
+    },
+    [
+      selectedTab,
+      handleCancelPress,
+      handleChatPress,
+      handleAllDetails,
+      handleViewListing,
+      t,
+    ],
+  );
+
+  const ListHeaderComponent =
+    selectedTab === TAB_SALES ? (
+      <View style={styles.chargesCard}>
+        <View style={styles.salescard}>
+          <View>
+            <Image
+              source={ITEMBACKGROUND}
+              style={styles.imgcontainer}
+              resizeMode="cover"
+            />
+            <Image
+              source={TOTALEARNING_ICON}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.overallEarningContainer}>
+            <Text
+              allowFontScaling={false}
+              numberOfLines={2}
+              style={styles.Overall_Earnings_value}
+            >
+              {t('overall_earnings')}
+            </Text>
+            <Text
+              allowFontScaling={false}
+              style={styles.Overall_Earnings_title}
+            >
+              {`£${Number(overallEarning).toFixed(2)}`}
+            </Text>
+          </View>
+        </View>
+      </View>
+    ) : null;
+
+  // const ListEmptyComponent = loading && transactions.length === 0 ? (
+  //   <View style={styles.loaderWrapper}>
+  //     <Loader containerStyle={styles.loaderContainer} />
+  //   </View>
+  // ) : (
+    const ListEmptyComponent = !loading ? (
+      <View style={styles.emptyWrapper}>
+        <View
+          style={[
+            styles.emptyContainer,
+            {
+              height:
+                Platform.OS === 'ios'
+                  ? SCREEN_HEIGHT * 0.7
+                  : SCREEN_HEIGHT * 0.72,
+            },
+          ]}
+        >
+          <Image
+            source={NOPRODUCT}
+            style={styles.emptyImage}
+            resizeMode="contain"
+          />
+          <Text allowFontScaling={false} style={styles.emptyText}>
+            {t('no_transactions_found')}
+          </Text>
+        </View>
+      </View>
+    ) : null;
+    // <View style={styles.emptyWrapper}>
+    //   <View
+    //     style={[
+    //       styles.emptyContainer,
+    //       {
+    //         height:
+    //           Platform.OS === 'ios'
+    //             ? SCREEN_HEIGHT * 0.7
+    //             : SCREEN_HEIGHT * 0.72,
+    //       },
+    //     ]}
+    //   >
+    //     <Image
+    //       source={NOPRODUCT}
+    //       style={styles.emptyImage}
+    //       resizeMode="contain"
+    //     />
+    //     <Text allowFontScaling={false} style={styles.emptyText}>
+    //       {t('no_transactions_found')}
+    //     </Text>
+    //   </View>
+    // </View>
+  // );
+
+  const listMarginBottom =
+    selectedTab === TAB_SALES
+      ? Platform.OS === 'ios'
+        ? SCREEN_HEIGHT * 0.2
+        : SCREEN_HEIGHT * 0.34
+      : Platform.OS === 'ios'
+      ? SCREEN_HEIGHT * 0.1
+      : SCREEN_HEIGHT * 0.34;
 
   return (
     <View style={styles.fullScreen}>
-      <View style={[styles.bottomTabContainer]}>
+      {/* Tab Bar */}
+      <View style={styles.bottomTabContainer}>
         <View style={styles.height_38}>
           <Animated.View
             style={[
               styles.bubble,
-              {
-                width: tabWidth - 3,
-                transform: [{ translateX: bubbleX }],
-              },
+              { width: tabWidth - 3, transform: [{ translateX: bubbleX }] },
             ]}
           />
         </View>
-        {tabs.map(({ key }, index) => (
+        {TABS.map(({ key }, index) => (
           <React.Fragment key={key}>
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.tabItem,
                 { width: tabWidth, alignItems: 'center' },
               ]}
               onPress={() => {
-                setActiveTab(key as any);
+                setLoading(true);        // 🔥 force loader immediately
+                setTransactions([]);     // clear old data
                 setSelectedTab(key);
-                // console.log('Key: ', key);
               }}
             >
               <View style={styles.iconWrapper}>
                 <Text
                   allowFontScaling={false}
-                  style={[styles.tabLable,{color: key === selectedTab ? '#FFFFFF' : '#89C7FF',}]}
+                  style={[
+                    styles.tabLable,
+                    { color: key === selectedTab ? '#FFFFFF' : '#89C7FF' },
+                  ]}
                 >
                   {getTabLabel(key)}
                 </Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
 
-            {key === 'Purchases' &&
-              index !== tabs.length - 1 &&
-              selectedTab !== 'Purchases' &&
-              selectedTab !== 'Sales' && (
-                <View style={[styles.leftVerticalLine,{left: '34%'}]} />
+            {key === TAB_PURCHASES &&
+              index !== TABS.length - 1 &&
+              selectedTab !== TAB_PURCHASES &&
+              selectedTab !== TAB_SALES && (
+                <View style={[styles.leftVerticalLine, { left: '34%' }]} />
               )}
-
-            {key === 'Sales' &&
-              index !== tabs.length - 1 &&
-              selectedTab !== 'Sales' &&
-              selectedTab !== 'Charges' && (
-              <View  style={[styles.leftVerticalLine,{right: '34%'}]} />
+            {key === TAB_SALES &&
+              index !== TABS.length - 1 &&
+              selectedTab !== TAB_SALES &&
+              selectedTab !== TAB_CHARGES && (
+                <View style={[styles.leftVerticalLine, { right: '34%' }]} />
               )}
           </React.Fragment>
         ))}
       </View>
 
-      <ScrollView
-        style={{
-          width: '100%',
-          marginBottom:
-            selectedTab === 'Sales'
-              ? Platform.OS === 'ios'
-                ? Dimensions.get('window').height * 0.2
-                : Dimensions.get('window').height * 0.34
-              : Platform.OS === 'ios'
-              ? Dimensions.get('window').height * 0.1
-              : Dimensions.get('window').height * 0.34,
-        }}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        {loading ? (
-          <View style={styles.loaderWrapper}>
-            <Loader containerStyle={styles.loaderContainer} />
-          </View>
-        ) : transactions.length === 0 ? (
-          <View style={styles.emptyWrapper}>
-            <View
-              style={[
-                styles.emptyContainer,
-                {
-                  height: Platform.OS === 'ios' ? height * 0.7 : height * 0.72,
-                },
-              ]}
-            >
-              <Image
-                source={NOPRODUCT}
-                style={styles.emptyImage}
-                resizeMode="contain"
-              />
-              <Text allowFontScaling={false} style={styles.emptyText}>
-                {t('no_transactions_found')}
-              </Text>
-            </View>
-          </View>
-        ) : selectedTab === 'Purchases' ? (
-          transactions.map((section, idx) => (
-            <View key={idx} style={styles.section}>
-              <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date, t)}
-              </Text>
-              {section.items.map((item, i) => (
-                <View key={i} style={styles.card}>
-                  <View style={styles.row}>
-                    <View style={{ flexDirection: 'row', gap: 12 }}>
-                      <View>
-                        <Image
-                          source={ITEMBACKGROUND}
-                          style={styles.imgcontainer}
-                          resizeMode="cover"
-                        />
-                        <Image
-                          source={{ uri: item.category_logo }}
-                          style={styles.image}
-                          resizeMode="cover"
-                        />
-                      </View>
-                      <View style={{ flex: 1, gap: 4 }}>
-                        <View style={styles.title}>
-                          <Text
-                            numberOfLines={2}
-                            allowFontScaling={false}
-                            style={[styles.itemTitle, { width: '60%' }]}
-                          >
-                            {item.title}
-                          </Text>
-                          {item?.status === 'Awaiting Delivery' && (
-                            <Pressable
-                              onPress={() => {
-                                setOrderId(item?.order_id ?? 0);
-                                setShowDeleteModal(true);
-                              }}
-                            >
-                              <View
-                                style={{
-                                  backgroundColor: 'rgba(255, 255, 255, 0.09)',
-                                  borderColor: '#ffffff25',
-                                  borderWidth: 1,
-                                  padding: 6,
-                                  borderRadius: 8,
-                                }}
-                              >
-                                <Text
-                                  allowFontScaling={false}
-                                  style={[
-                                    styles.price,
-                                    {
-                                      color: 'rgba(255, 255, 255, 0.7)',
-                                      fontSize: 12,
-                                      fontWeight: 500,
-                                    },
-                                  ]}
-                                >
-                                  {t('cancel_order')}
-                                </Text>
-                              </View>
-                            </Pressable>
-                          )}
-                        </View>
-                        <View  style={styles.priceContainer}>
-                          <Text allowFontScaling={false} style={styles.price}>
-                            {item.price}
-                          </Text>
-                          {(item?.category_id === 3 ||
-                            item?.category_id === 2 ||
-                            item?.category_id === 5) && (
-                            <View style={styles.statusBox}>
-                              <Text
-                                allowFontScaling={false}
-                                style={styles.purchasedText}
-                              >
-                                {item?.category_id === 3
-                                  ? `${item?.purchased_quantity ?? 1} ${
-                                      (item?.purchased_quantity ?? 1) > 1
-                                        ? t('units')
-                                        : t('unit')
-                                    }`
-                                  : item?.category_id === 2
-                                  ? `${item?.hours ?? 1} ${
-                                      (item?.hours ?? 1) > 1
-                                        ? t('hours')
-                                        : t('hour')
-                                    }`
-                                  : item?.category_id === 5
-                                  ? `${item?.hours ?? 1} ${
-                                      (item?.hours ?? 1) > 1
-                                        ? t('sessions')
-                                        : t('session')
-                                    }`
-                                  : ''}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                      {/* </View> */}
-                    </View>
-                  </View>
+      {/* List */}
+      {/* {loading && (
+  <View
+    style={{
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.2)', // optional
+      zIndex: 999,
+    }}
+  >
+    <Loader />
+  </View>
+)} */}
+      {loading ? (
+        <View style={styles.loaderWrapper}>
+          <Loader containerStyle={styles.loaderContainer} />
+        </View>
+      ) : (
+        <SectionList
+          sections={transactions}
+          keyExtractor={keyExtractor}
+          renderSectionHeader={renderSectionHeader}
+          renderItem={renderItem}
+          ListHeaderComponent={ListHeaderComponent}
+          ListEmptyComponent={ListEmptyComponent}
+          style={{ width: '100%', marginBottom: listMarginBottom }}
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={Platform.OS === 'android'}
+        />
+      )}
 
-                  <View style={styles.statusRow}>
-                    <View style={[styles.statusBox]}>
-                      <Text allowFontScaling={false} style={styles.statusText}>
-                        {item.status}
-                      </Text>
-                    </View>
-
-                    <View
-                      style={[
-                        styles.codeBox,
-                        {
-                          height: 28,
-                          backgroundColor:
-                            item.status !== 'Fulfilled' &&
-                            item.status !== 'Cancelled'
-                              ? 'rgba(255, 255, 255, 0.06)'
-                              : 'rgba(255,255,255,0.15)',
-                        },
-                      ]}
-                    >
-                      <Text
-                        allowFontScaling={false}
-                        style={[
-                          styles.codeText,
-                          {
-                            color:
-                              item.status !== 'Fulfilled' &&
-                              item.status !== 'Cancelled'
-                                ? '#9CD6FF'
-                                : 'rgba(255,255,255,0.15)',
-                          },
-                        ]}
-                      >
-                        {item.order_otp}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.cardconstinerdivider} />
-                  <View style={{flexDirection: 'row',justifyContent: 'space-between'}}>
-                   
-                    <View style={{ flex: 1.8 }}>
-                       {' '}
-                    <Text style={styles.sellerText}>
-                      {t('purchased_from')}
-                      {'  '}<Text style={styles.sellerTextName}>{item.firstname}{' '}{item.lastname}{' '}({item.university})</Text>{/* {item.seller} */}
-                    </Text>
-                    </View>
-                    
-                    <TouchableOpacity
-                      style={[styles.chatcard, {
-                          display:
-                            item.status !== 'Fulfilled' &&
-                            item.status !== 'Cancelled'
-                              ? 'flex'
-                              : 'none',
-                        
-                      }]}
-                      activeOpacity={0.8}
-                      onPress={() => {
-                        if (item?.chat_with_seller && item.status !== 'Fulfilled' &&
-                            item.status !== 'Cancelled') {
-                        
-                          navigation.navigate('MessagesIndividualScreen', {
-                            animation: 'none',
-                            sellerData: {
-                              featureId: item.featureId,
-                              firstname: item.firstname,
-                              lastname:item.lastname,
-                              profile: item.profile,
-                              universityName: item.university,
-                              id: item.category_id,
-                              isblocked: item.isblocked,
-                              blocked_you: item.blocked_you,
-                            },
-                            source: 'sellerPage',
-                          });
-                        } else {
-                          //setShowPopup(true);
-                        }
-                      }}
-                    >
-                      <Image
-                        source={CHAT_ICON}
-                        style={{ height: 16, width: 16, }}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ))}
-            </View>
-          ))
-        ) : selectedTab === 'Sales' ? (
-          <>
-            <View style={styles.chargesCard}>
-              <View style={styles.salescard} >
-                <View>
-                  <Image
-                    source={ITEMBACKGROUND}
-                    style={styles.imgcontainer}
-                    resizeMode="cover"
-                  />
-                  <Image
-                    source={TOTALEARNING_ICON}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
-                </View>
-                <View
-                  style={styles.overallEarningContainer}
-                >
-                    <Text
-                      allowFontScaling={false}
-                      numberOfLines={2}
-                      style={styles.Overall_Earnings_value}
-                    >
-                      {t('overall_earnings')}
-                    </Text>
-
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.Overall_Earnings_title}
-                  >
-                    {`£${Number(overallEarning).toFixed(2)}`}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {transactions.map((section, idx) => (
-              <View key={idx} style={styles.section}>
-                <Text allowFontScaling={false} style={styles.dateText1}>
-                  {getFormattedDate(section.date, t)}
-                </Text>
-
-                {section.items.map((item, i) => (
-                  <View key={i} style={styles.salesCard}>
-                    <View
-                      style={styles.salescardHeadercontainer}
-                    >
-                      <View style={styles.salescardrow}>
-                        <View>
-                          <Image
-                            source={ITEMBACKGROUND}
-                            style={styles.imgcontainer}
-                            resizeMode="cover"
-                          />
-                          <Image
-                            source={{ uri: item.category_logo }}
-                            style={styles.image}
-                            resizeMode="cover"
-                          />
-                        </View>
-                        <View style={{ width: 160 }}>
-                          <Text numberOfLines={2} style={styles.salesTitle}>
-                            {item.title.length > 24
-                              ? `${item.title.substring(0, 24)}...`
-                              : item.title}
-                          </Text>
-                        </View>
-                      </View>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSalesImageUrl(item.category_logo);
-
-                          setCatagoryid(item.featureId);
-                          // setFilterVisible(true);
-                          fetchSalesHistory(item.featureId);
-                          setSalesTitle(item.title);
-                        }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.allDetails}
-                        >
-                          {t('all_details')}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.cardconstinerdivider} />
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Text
-                        allowFontScaling={false}
-                        style={{
-                          color: '#B2EBFF',
-                          fontFamily: 'Urbanist-SemiBold',
-                          fontSize: 12,
-                        }}
-                      >
-                        {t('total_order')}: {item.total_orders}
-                      </Text>
-                      <Text
-                        allowFontScaling={false}
-                        style={{
-                          color: '#B2EBFF',
-                          fontFamily: 'Urbanist-SemiBold',
-                          fontSize: 12,
-                        }}
-                      >
-                        {t('total_earnings')}: £
-                        {Number(item.total_earning).toFixed(2)}
-                      </Text>
-                    </View>
-
-                    {/* {!item.otpverified && !item.is_cancelled && (
-                      <View style={styles.cardconstinerdivider} />
-                    )} */}
-
-                    {/* {!item.otpverified && !item.is_cancelled && (
-                      <View
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <TouchableOpacity
-                          style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          }}
-                          
-                          onPress={() => {
-                            setSelectedOrderId(item.orderid);
-                            setprice(item.originalprice);
-                            setOtp(['', '', '', '', '', '']);   
-                            setTimeout(() => {
-                              inputs.current[0]?.focus();
-                            }, 200);
-                            setShowPopup1(true);
-                          }}
-                        >
-                          <Text allowFontScaling={false} style={styles.status1}>
-                            {t('enter_otp')}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    )} */}
-                  </View>
-                ))}
-              </View>
-            ))}
-          </>
-        ) : (
-          transactions.map((section, idx) => (
-            <View key={idx} style={styles.section}>
-              <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date, t)}
-              </Text>
-              {section.items.map((item, i) => (
-                <View key={i} style={styles.chargesCard}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      gap: 10,
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        gap: 10,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <View>
-                        <Image
-                          source={ITEMBACKGROUND}
-                          style={styles.imgcontainer}
-                          resizeMode="cover"
-                        />
-                        <Image
-                          source={{ uri: item.category_logo }}
-                          style={styles.image}
-                          resizeMode="cover"
-                        />
-                      </View>
-                      <View style={{ width: 160 }}>
-                        <Text
-                          numberOfLines={2}
-                          allowFontScaling={false}
-                          style={styles.chargesTitle}
-                        >
-                          {item.title}
-                        </Text>
-                      </View>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation1.navigate('ViewListingDetails', {
-                          shareid: item.featureId,
-                        });
-                      }}
-                    >
-                      <Text
-                        allowFontScaling={false}
-                        style={{
-                          color: '#ffffffff',
-                          fontFamily: 'Urbanist-SemiBold',
-                          fontSize: 12,
-                          marginTop: 10,
-
-                          textDecorationLine: 'underline',
-                        }}
-                      >
-                        {t('view_listing')}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.cardconstinerdivider} />
-                  <Text style={styles.viewListing}>
-                    {item.charge_type === 'both'
-                      ? `${t('featured_listing_fee')} + ${t(
-                          'accommodation_fee',
-                        )}`
-                      : item.charge_type === 'feature_listing'
-                      ? t('featured_listing_fee')
-                      : item.charge_type === 'fixed_commission'
-                      ? t('accommodation_fee')
-                      : ''}
-                    : {item.price}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ))
-        )}
-      </ScrollView>
-
+      {/* Cancel Order Modal */}
       <Modal
         visible={showDeleteModal}
         transparent
         animationType="fade"
         onRequestClose={() => setShowDeleteModal(false)}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            // navigation.replace('EditProfile');
-          }}
-        >
+        <TouchableWithoutFeedback onPress={() => {}}>
           <View style={styles.overlay}>
             <BlurView
               style={styles.blureView_style}
@@ -1106,7 +1028,6 @@ export default function TransactionHistoryScreen(
                   { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
                 ]}
               />
-
               <View style={styles.popupContainer}>
                 <Image
                   source={require('../../../assets/images/alerticon.png')}
@@ -1122,24 +1043,17 @@ export default function TransactionHistoryScreen(
                 >
                   {t('cancel_order_message_action')}
                 </Text>
-
                 <TouchableOpacity
                   style={styles.loginButton}
-                  onPress={() => {
-                    setShowDeleteModal(false);
-                    handleCancelOrder(orderId);
-                  }}
+                  onPress={() => handleCancelOrder(orderId)}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
                     {t('yes_cancel')}
                   </Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity
                   style={styles.loginButton1}
-                  onPress={() => {
-                    setShowDeleteModal(false);
-                  }}
+                  onPress={() => setShowDeleteModal(false)}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
                     {t('cancel')}
@@ -1151,13 +1065,14 @@ export default function TransactionHistoryScreen(
         </TouchableWithoutFeedback>
       </Modal>
 
+      {/* OTP Modal */}
       <Modal
         visible={showPopup1}
         transparent
         animationType="fade"
-        onRequestClose={closePopup1}
+        onRequestClose={() => setShowPopup1(false)}
       >
-        <TouchableWithoutFeedback onPress={closePopup1}>
+        <TouchableWithoutFeedback onPress={() => setShowPopup1(false)}>
           <View style={styles.overlay}>
             <BlurView
               style={{
@@ -1177,26 +1092,22 @@ export default function TransactionHistoryScreen(
                   { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
                 ]}
               />
-
               {loading && (
                 <View style={styles.fullLoader}>
                   <Loader />
                 </View>
               )}
-
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
                   {t('Enter_Delivery_OTP')}
                 </Text>
-
                 <Text allowFontScaling={false} style={styles.subheader}>
                   {t('please_enter_6digit_otp')}
                 </Text>
-
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3, 4, 5].map((_, index) => (
                     <TextInput
-                      selectionColor={'#F5F5F5'}
+                      selectionColor="#F5F5F5"
                       cursorColor="#F5F5F5"
                       value={otp[index]}
                       key={index}
@@ -1206,36 +1117,35 @@ export default function TransactionHistoryScreen(
                       style={styles.otpBox}
                       keyboardType="number-pad"
                       maxLength={1}
-                      onChangeText={text => {
-                        const digit = text.replace(/[^0-9]/g, '');
-                        handleChange(digit, index);
-                      }}
+                      onChangeText={text =>
+                        handleChange(text.replace(/[^0-9]/g, ''), index)
+                      }
                       returnKeyType="next"
                       textAlign="center"
-                      secureTextEntry={true}
+                      secureTextEntry
                       onKeyPress={({ nativeEvent }) => {
                         if (nativeEvent.key === 'Backspace') {
-                          // If current box has value, clear it
                           if (otp[index] !== '') {
-                            const newOtp = [...otp];
-                            newOtp[index] = '';
-                            setOtp(newOtp);
+                            setOtp(prev => {
+                              const n = [...prev];
+                              n[index] = '';
+                              return n;
+                            });
                             return;
                           }
-
                           if (index > 0) {
                             inputs.current[index - 1]?.focus();
-
-                            const newOtp = [...otp];
-                            newOtp[index - 1] = '';
-                            setOtp(newOtp);
+                            setOtp(prev => {
+                              const n = [...prev];
+                              n[index - 1] = '';
+                              return n;
+                            });
                           }
                         }
                       }}
                     />
                   ))}
                 </View>
-
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={otpverify}
@@ -1244,12 +1154,9 @@ export default function TransactionHistoryScreen(
                     {t('verify')}
                   </Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity
                   style={styles.loginButton1}
-                  onPress={() => {
-                    setShowPopup1(false);
-                  }}
+                  onPress={() => setShowPopup1(false)}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
                     {t('cancel')}
@@ -1261,113 +1168,33 @@ export default function TransactionHistoryScreen(
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* <Modal
-                visible={showPopup2}
-                transparent
-                animationType="fade"
-                onRequestClose={closePopup2}
-              >
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    navigation.replace('MyListing');
-                  }}
-                >
-                  <View style={styles.overlay}>
-                    <BlurView
-                      style={{
-                        flex: 1,
-                        alignContent: 'center',
-                        justifyContent: 'center',
-                        width: '100%',
-                        alignItems: 'center',
-                      }}
-                      blurType="dark"
-                      blurAmount={1000}
-                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                    >
-                      <View
-                        style={[
-                          StyleSheet.absoluteFill,
-                          { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                        ]}
-                      />
-      
-                      <View style={styles.popupContainer}>
-                        <Image
-                          source={require('../../../assets/images/success_icon.png')}
-                          style={styles.logo}
-                          resizeMode="contain"
-                        />
-                        <Text allowFontScaling={false} style={styles.mainheader}>
-                          {t('order_fulfilled')}
-                        </Text>
-                        <Text allowFontScaling={false} style={styles.subheader1}>
-                          {t('Delivery_Verified')}
-                        </Text>
-                        <Text
-                          allowFontScaling={false}
-                          style={[styles.subheader1, { marginTop: 0 }]}
-                        >
-                          {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
-                        </Text>
-                        <TouchableOpacity
-                          style={styles.loginButton}
-                          onPress={() => {
-                            navigation.replace('MyListing');
-      
-                            navigation.reset({
-                              index: 0,
-                              routes: [
-                                {
-                                  name: 'MyListing',
-                                },
-                              ],
-                            });
-                          }}
-                        >
-                          <Text allowFontScaling={false} style={styles.loginText}>
-                            {t('done')}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </BlurView>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Modal> */}
-
+      {/* Sales Details Dropdown */}
       {Platform.OS === 'android' ? (
-        <>
-          <SalesAllDetailsDropdown
-            catagory_id={catagoryid}
-            visible={isFilterVisible}
-            onClose={() => setFilterVisible(false)}
-            SalesImageUrl={SalesImageUrl}
-            salesDataResponse={salesData}
-            dropDowntitle={salesTitle}
-          />
-        </>
+        <SalesAllDetailsDropdown
+          catagory_id={catagoryid}
+          visible={isFilterVisible}
+          onClose={() => setFilterVisible(false)}
+          SalesImageUrl={SalesImageUrl}
+          salesDataResponse={salesData}
+          dropDowntitle={salesTitle}
+        />
       ) : (
-        <>
-          <SalesAllDetailsDropdown_IOS
-            catagory_id={catagoryid}
-            visible={isFilterVisible}
-            onClose={() => setFilterVisible(false)}
-            SalesImageUrl={SalesImageUrl}
-            salesDataResponse={salesData}
-            dropDowntitle={salesTitle}
-          />
-        </>
+        <SalesAllDetailsDropdown_IOS
+          catagory_id={catagoryid}
+          visible={isFilterVisible}
+          onClose={() => setFilterVisible(false)}
+          SalesImageUrl={SalesImageUrl}
+          salesDataResponse={salesData}
+          dropDowntitle={salesTitle}
+        />
       )}
     </View>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  salescardrow:{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 12,
-                        },
+  salescardrow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   salescardHeadercontainer: {
     flexDirection: 'row',
     gap: 10,
@@ -1447,20 +1274,23 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 12,
     paddingVertical: 12,
-    height: 'auto',
-    width: 50,
+    height: 30,
+    width: 20,
     flex: 0.2,
   },
-  //   subheader1: {
-  //   color: 'rgba(255, 255, 255, 0.48)',
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 14,
-  //   fontWeight: '400',
-  //   textAlign: 'center',
-  //   marginTop: 6,
-  //   letterSpacing: -0.28,
-  //   lineHeight: 19.6,
-  // },
+  cancelButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.09)',
+    borderColor: '#ffffff25',
+    borderWidth: 1,
+    padding: 6,
+    borderRadius: 8,
+  },
+  cancelButtonText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 12,
+    fontWeight: '500',
+    fontFamily: 'Urbanist-SemiBold',
+  },
   otpBox: {
     width: Platform.OS === 'ios' ? 42 : 48,
     height: Platform.OS === 'ios' ? 42 : 48,
@@ -1476,9 +1306,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ffffff2c',
     elevation: 0,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
   },
   otpContainer: {
     flexDirection: 'row',
@@ -1498,7 +1325,7 @@ const styles = StyleSheet.create({
   },
   fullLoader: {
     position: 'absolute',
-    top: 0,
+    top: '50%',
     left: 0,
     height: '100%',
     width: '100%',
@@ -1507,21 +1334,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 999,
   },
-  //   status1: {
-  //   color: 'rgba(255, 255, 255, 0.88)',
-  //   fontSize: 14,
-  //   fontWeight: '600',
-  //   letterSpacing: -0.28,
-  //   lineHeight: 16,
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   padding: 10,
-  // },
-  logo: {
-    width: 64,
-    height: 64,
-    borderRadius: 60,
-  },
-
+  logo: { width: 64, height: 64, borderRadius: 60 },
   mainheader1: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1530,7 +1343,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.4,
     lineHeight: 28,
   },
-
   popupContainer: {
     width: '90%',
     padding: 20,
@@ -1539,10 +1351,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
-
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
-
   mainheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
@@ -1566,13 +1376,12 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-
   loginText: {
     color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontWeight: 500,
+    fontWeight: '500',
     letterSpacing: 1,
     width: '100%',
   },
@@ -1581,11 +1390,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontWeight: 500,
+    fontWeight: '500',
     letterSpacing: 1,
     width: '100%',
   },
-
   loginButton: {
     display: 'flex',
     width: '100%',
@@ -1601,14 +1409,12 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-
   overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-
   loaderWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -1617,11 +1423,7 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? 547 : 300,
     paddingVertical: Platform.OS === 'ios' ? 0 : 40,
   },
-  loaderContainer: {
-    width: 100,
-    height: 100,
-  },
-
+  loaderContainer: { width: 100, height: 100 },
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -1638,20 +1440,14 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingVertical: 40,
   },
-
-  emptyImage: {
-    width: 64,
-    height: 64,
-    marginBottom: 0,
-  },
+  emptyImage: { width: 64, height: 64, marginBottom: 0 },
   emptyText: {
     fontSize: 20,
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600,
+    fontWeight: '600',
   },
-
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -1661,13 +1457,9 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? 2 : 1.5,
     borderStyle: 'dashed',
     borderBottomWidth: Platform.OS === 'ios' ? 0.9 : 1,
-    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
     borderColor:
-      Platform.OS === 'ios'
-        ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
-        : '#4169B8',
+      Platform.OS === 'ios' ? 'rgba(186, 218, 255, 0.43)' : '#4169B8',
   },
-
   imgcontainer: {
     width: 44,
     height: 44,
@@ -1677,10 +1469,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxSizing: 'border-box',
   },
   image: {
     width: 24,
@@ -1691,13 +1479,6 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 10,
     left: 10,
-  },
-
-  get section() {
-    return this._section;
-  },
-  set section(value) {
-    this._section = value;
   },
   dateText: {
     color: '#FFFFFF',
@@ -1721,10 +1502,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: 8,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  row: { flexDirection: 'row', alignItems: 'center' },
   itemTitle: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 17,
@@ -1738,14 +1516,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 2,
   },
-
   statusBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     paddingTop: 2,
@@ -1767,7 +1543,6 @@ const styles = StyleSheet.create({
     lineHeight: 15.6,
   },
   codeBox: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
     height: 24,
     paddingTop: 0,
     paddingBottom: 0,
@@ -1817,7 +1592,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginTop: 2,
   },
-
   chargesCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     padding: 12,
@@ -1850,7 +1624,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
   },
-
+  viewListingLink: {
+    color: '#ffffffff',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 12,
+    marginTop: 10,
+    textDecorationLine: 'underline',
+  },
+  earningLabel: {
+    color: '#B2EBFF',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 12,
+  },
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1876,7 +1661,6 @@ const styles = StyleSheet.create({
   bubble: {
     height: 38,
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1886,18 +1670,11 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 50,
     borderTopRightRadius: 50,
     borderBottomRightRadius: 50,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
     marginLeft: 2,
   },
-
   tabItem: {},
   iconWrapper: {
-    height: 50, //
+    height: 50,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
