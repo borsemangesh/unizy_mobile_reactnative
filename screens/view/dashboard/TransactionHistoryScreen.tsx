@@ -152,6 +152,7 @@ const formatSalesSection = (section: any) => ({
 const formatPurchaseSection = (section: any) => ({
   date: section.date,
   data: section.transactions.map((item: any) => ({
+    featureId: item.feature_id,
     title: item.title,
     price: `£${item.amount}`,
     status: item.order_status,
