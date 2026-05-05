@@ -1238,6 +1238,7 @@ const styles = StyleSheet.create({
     gap: 4,
     width: '100%',
     justifyContent: 'space-between',
+    
   },
   title: {
     width: '100%',
@@ -1516,7 +1517,7 @@ const styles = StyleSheet.create({
   price: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
-    marginTop: 2,
+    marginTop: -6,
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
