@@ -828,39 +828,32 @@ export default function TransactionHistoryScreen({
   );
 
   const ListHeaderComponent =
-    selectedTab === TAB_SALES ? (
-      <View style={styles.chargesCard}>
-        <View style={styles.salescard}>
-          <View>
-            <Image
-              source={ITEMBACKGROUND}
-              style={styles.imgcontainer}
-              resizeMode="cover"
-            />
-            <Image
-              source={TOTALEARNING_ICON}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <View style={styles.overallEarningContainer}>
-            <Text
-              allowFontScaling={false}
-              numberOfLines={2}
-              style={styles.Overall_Earnings_value}
-            >
-              {t('overall_earnings')}
-            </Text>
-            <Text
-              allowFontScaling={false}
-              style={styles.Overall_Earnings_title}
-            >
-              {`£${Number(overallEarning).toFixed(2)}`}
-            </Text>
-          </View>
+  selectedTab === TAB_SALES && transactions.length > 0 ? (
+    <View style={styles.chargesCard}>
+      <View style={styles.salescard}>
+        <View>
+          <Image
+            source={ITEMBACKGROUND}
+            style={styles.imgcontainer}
+            resizeMode="cover"
+          />
+          <Image
+            source={TOTALEARNING_ICON}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        <View style={styles.overallEarningContainer}>
+          <Text style={styles.Overall_Earnings_value}>
+            {t('overall_earnings')}
+          </Text>
+          <Text style={styles.Overall_Earnings_title}>
+            {`£${Number(overallEarning).toFixed(2)}`}
+          </Text>
         </View>
       </View>
-    ) : null;
+    </View>
+  ) : null;
 
   // const ListEmptyComponent = loading && transactions.length === 0 ? (
   //   <View style={styles.loaderWrapper}>
