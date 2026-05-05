@@ -563,6 +563,7 @@ export default function TransactionHistoryScreen({
           languagecode: language_code || 'en',
         },
       });
+      console.log("TransactionURL: ", url);
 
       if (response.status === 401 || response.status === 403) {
         handleForceLogout();
