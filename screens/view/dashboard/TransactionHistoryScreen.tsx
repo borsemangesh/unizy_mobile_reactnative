@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -78,6 +77,14 @@ interface TransactionItem {
   isblocked: boolean;
   blocked_you: boolean;
   chat_with_seller: boolean;
+  created_by: created_by;
+}
+
+interface created_by { 
+  id: number;
+  firstname: string;
+  lastname: string;
+  profile: string;
 }
 
 interface TransactionSection {
@@ -167,10 +174,12 @@ const formatPurchaseSection = (section: any) => ({
     order_id: item.order_id,
     firstname: item.firstname,
     lastname: item.lastname,
-    profile: item.profile,
+    // profile: item.profile,
     isblocked: item.isblocked,
     blocked_you: item.blocked_you,
     chat_with_seller: item.chat_with_seller,
+    created_by: item.created_by,
+    profile: item.created_by.profile
   })),
 });
 
@@ -745,9 +754,9 @@ export default function TransactionHistoryScreen({
             featureId: item.featureId,
             firstname: item.firstname,
             lastname: item.lastname,
-            profile: item.profile,
+            profile: item.created_by.profile,
             universityName: item.university,
-            id: item.category_id,
+            id: item.created_by.id,
             isblocked: item.isblocked,
             blocked_you: item.blocked_you,
           },
