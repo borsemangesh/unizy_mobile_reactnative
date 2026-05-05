@@ -31,6 +31,9 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 
 import TOTALEARNING_ICON from '../../../assets/images/totalearnings.png';
+import CHAT_ICON from '../../../assets/images/message_chat.png';
+import NOPRODUCT from '../../../assets/images/noproduct.png';
+import ITEMBACKGROUND from '../../../assets/images/placeholder_history.png';
 
 
 type TransactionPropos = {
@@ -63,7 +66,13 @@ interface TransactionItem {
   purchased_quantity?: number
   category_id: number;
     hours?: number;
-    order_id?: number;
+  order_id?: number;
+  firstname: string;
+  lastname: string;
+  profile: string;
+  isblocked: boolean;
+  blocked_you: boolean;
+  chat_with_seller: boolean;
 }
 
 interface TransactionSection {
@@ -161,16 +170,16 @@ export default function TransactionHistoryScreen(
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
-  useEffect(() => {
-    const index = ['Purchases', 'Sales', 'Charges'].indexOf(activeTab);
-    Animated.spring(bubbleX, {
-      toValue: index * tabWidth,
-      friction: 6,
-      tension: 20,
+  // useEffect(() => {
+  //   const index = ['Purchases', 'Sales', 'Charges'].indexOf(activeTab);
+  //   Animated.spring(bubbleX, {
+  //     toValue: index * tabWidth,
+  //     friction: 6,
+  //     tension: 20,
 
-      useNativeDriver: true,
-    }).start();
-  }, [activeTab, bubbleX, tabWidth]);
+  //     useNativeDriver: true,
+  //   }).start();
+  // }, [activeTab, bubbleX, tabWidth]);
       const fetchTransactions = async () => {
       try {
         setLoading(true);
@@ -235,9 +244,15 @@ export default function TransactionHistoryScreen(
               category_logo: item.category_logo,
               purchased_quantity: item.purchased_quantity ?? 0,
               category_id: item.category_id,
-                hours: item.hours ?? 0,
-                order_id: item.order_id,
-              
+              hours: item.hours ?? 0,
+              order_id: item.order_id,
+
+              firstname: item.firstname,
+              lastname: item.lastname,
+              profile: item.profile,
+              isblocked: item.isblocked,
+              blocked_you: item.blocked_you,
+              chat_with_seller: item.chat_with_seller,
             })),
           }));
 
@@ -345,7 +360,7 @@ export default function TransactionHistoryScreen(
 
   const [salesData, setSalesData] = useState<any[]>([]);
   const [salesTitle, setSalesTitle] = useState('');
-  const background = require('../../../assets/images/placeholder_history.png');
+  const ITEMBACKGROUND = require('../../../assets/images/placeholder_history.png');
 
   const fetchSalesHistory = async (catagory_id: number) => {
     try {
@@ -533,19 +548,9 @@ export default function TransactionHistoryScreen(
   };
 
   return (
-    <View
-      style={[
-        {
-          flex: 1,
-          marginTop: 11,
-          paddingHorizontal: 16,
-          height: '100%',
-          width: '100%',
-        },
-      ]}
-    >
+    <View style={styles.fullScreen}>
       <View style={[styles.bottomTabContainer]}>
-        <View style={[{ height: 38 }]}>
+        <View style={styles.height_38}>
           <Animated.View
             style={[
               styles.bubble,
@@ -572,14 +577,7 @@ export default function TransactionHistoryScreen(
               <View style={styles.iconWrapper}>
                 <Text
                   allowFontScaling={false}
-                  style={{
-                    fontSize: 14,
-                    fontFamily: 'Urbanist-SemiBold',
-                    color: key === selectedTab ? '#FFFFFF' : '#89C7FF',
-                    lineHeight: 18,
-                    letterSpacing: 0.25,
-                    textAlign: 'center',
-                  }}
+                  style={[styles.tabLable,{color: key === selectedTab ? '#FFFFFF' : '#89C7FF',}]}
                 >
                   {getTabLabel(key)}
                 </Text>
@@ -590,32 +588,14 @@ export default function TransactionHistoryScreen(
               index !== tabs.length - 1 &&
               selectedTab !== 'Purchases' &&
               selectedTab !== 'Sales' && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: '34%',
-                    height: '60%',
-                    width: 1,
-                    backgroundColor: 'rgba(158, 229, 255, 0.3)',
-                    marginHorizontal: 4,
-                  }}
-                />
+                <View style={[styles.leftVerticalLine,{left: '34%'}]} />
               )}
 
             {key === 'Sales' &&
               index !== tabs.length - 1 &&
               selectedTab !== 'Sales' &&
               selectedTab !== 'Charges' && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: '34%',
-                    height: '60%',
-                    width: 1,
-                    backgroundColor: 'rgba(158, 229, 255, 0.3)',
-                    marginHorizontal: 4,
-                  }}
-                />
+              <View  style={[styles.leftVerticalLine,{right: '34%'}]} />
               )}
           </React.Fragment>
         ))}
@@ -651,7 +631,7 @@ export default function TransactionHistoryScreen(
               ]}
             >
               <Image
-                source={require('../../../assets/images/noproduct.png')}
+                source={NOPRODUCT}
                 style={styles.emptyImage}
                 resizeMode="contain"
               />
@@ -672,7 +652,7 @@ export default function TransactionHistoryScreen(
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <View>
                         <Image
-                          source={background}
+                          source={ITEMBACKGROUND}
                           style={styles.imgcontainer}
                           resizeMode="cover"
                         />
@@ -683,13 +663,7 @@ export default function TransactionHistoryScreen(
                         />
                       </View>
                       <View style={{ flex: 1, gap: 4 }}>
-                        <View
-                          style={{
-                            width: '100%',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                          }}
-                        >
+                        <View style={styles.title}>
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
@@ -704,14 +678,9 @@ export default function TransactionHistoryScreen(
                                 setShowDeleteModal(true);
                               }}
                             >
-                              {/* <Image
-                            source={require('../../../assets/images/ic_cancel.png')}
-                            style={{width: 30,height:30}}
-                            /> */}
                               <View
                                 style={{
                                   backgroundColor: 'rgba(255, 255, 255, 0.09)',
-                                  // paddingVertical: 5,
                                   borderColor: '#ffffff25',
                                   borderWidth: 1,
                                   padding: 6,
@@ -735,14 +704,7 @@ export default function TransactionHistoryScreen(
                             </Pressable>
                           )}
                         </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            gap: 4,
-                            width: '100%',
-                            justifyContent: 'space-between',
-                          }}
-                        >
+                        <View  style={styles.priceContainer}>
                           <Text allowFontScaling={false} style={styles.price}>
                             {item.price}
                           </Text>
@@ -752,12 +714,7 @@ export default function TransactionHistoryScreen(
                             <View style={styles.statusBox}>
                               <Text
                                 allowFontScaling={false}
-                                style={{
-                                  color: '#9CD6FF',
-                                  fontWeight: '600',
-                                  fontSize: 12,
-                                  fontFamily: 'Urbanist-SemiBold',
-                                }}
+                                style={styles.purchasedText}
                               >
                                 {item?.category_id === 3
                                   ? `${item?.purchased_quantity ?? 1} ${
@@ -826,13 +783,55 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.cardconstinerdivider} />
-                  <Text style={styles.sellerText}>
-                    {t('purchased_from')}
-                    {'  '}
-                    <Text style={styles.sellerTextName}>
-                      {item.seller} ({item.university})
+                  <View style={{flexDirection: 'row',justifyContent: 'space-between'}}>
+                   
+                    <View style={{ flex: 1.8 }}>
+                       {' '}
+                    <Text style={styles.sellerText}>
+                      {t('purchased_from')}
+                      {'  '}<Text style={styles.sellerTextName}>{item.firstname}{' '}{item.lastname}{' '}({item.university})</Text>{/* {item.seller} */}
                     </Text>
-                  </Text>
+                    </View>
+                    
+                    <TouchableOpacity
+                      style={[styles.chatcard, {
+                          display:
+                            item.status !== 'Fulfilled' &&
+                            item.status !== 'Cancelled'
+                              ? 'flex'
+                              : 'none',
+                        
+                      }]}
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        if (item?.chat_with_seller && item.status !== 'Fulfilled' &&
+                            item.status !== 'Cancelled') {
+                        
+                          navigation.navigate('MessagesIndividualScreen', {
+                            animation: 'none',
+                            sellerData: {
+                              featureId: item.featureId,
+                              firstname: item.firstname,
+                              lastname:item.lastname,
+                              profile: item.profile,
+                              universityName: item.university,
+                              id: item.category_id,
+                              isblocked: item.isblocked,
+                              blocked_you: item.blocked_you,
+                            },
+                            source: 'sellerPage',
+                          });
+                        } else {
+                          //setShowPopup(true);
+                        }
+                      }}
+                    >
+                      <Image
+                        source={CHAT_ICON}
+                        style={{ height: 16, width: 16, }}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ))}
             </View>
@@ -840,17 +839,10 @@ export default function TransactionHistoryScreen(
         ) : selectedTab === 'Sales' ? (
           <>
             <View style={styles.chargesCard}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  alignItems: 'center',
-                  width: '100%',
-                }}
-              >
+              <View style={styles.salescard} >
                 <View>
                   <Image
-                    source={background}
+                    source={ITEMBACKGROUND}
                     style={styles.imgcontainer}
                     resizeMode="cover"
                   />
@@ -861,16 +853,8 @@ export default function TransactionHistoryScreen(
                   />
                 </View>
                 <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    flex: 1,
-                    gap: 10,
-                    justifyContent: 'space-between',
-                    padding: 1,
-                  }}
+                  style={styles.overallEarningContainer}
                 >
-                  <View>
                     <Text
                       allowFontScaling={false}
                       numberOfLines={2}
@@ -878,7 +862,6 @@ export default function TransactionHistoryScreen(
                     >
                       {t('overall_earnings')}
                     </Text>
-                  </View>
 
                   <Text
                     allowFontScaling={false}
@@ -899,23 +882,12 @@ export default function TransactionHistoryScreen(
                 {section.items.map((item, i) => (
                   <View key={i} style={styles.salesCard}>
                     <View
-                      style={{
-                        flexDirection: 'row',
-                        gap: 10,
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
+                      style={styles.salescardHeadercontainer}
                     >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 12,
-                        }}
-                      >
+                      <View style={styles.salescardrow}>
                         <View>
                           <Image
-                            source={background}
+                            source={ITEMBACKGROUND}
                             style={styles.imgcontainer}
                             resizeMode="cover"
                           />
@@ -1048,7 +1020,7 @@ export default function TransactionHistoryScreen(
                     >
                       <View>
                         <Image
-                          source={background}
+                          source={ITEMBACKGROUND}
                           style={styles.imgcontainer}
                           resizeMode="cover"
                         />
@@ -1091,26 +1063,6 @@ export default function TransactionHistoryScreen(
                     </TouchableOpacity>
                   </View>
                   <View style={styles.cardconstinerdivider} />
-                  {/* <Text style={styles.viewListing}> */}
-                  {/*  {t('featured_listing_fee')}: {item.price}*/}
-                  {/* {item.charge_type === 'both'
-                      ? 'Feature Listing Fee + Accommodation Fee'
-                      : item.charge_type === 'feature_listing'
-                      ? 'Feature Listing Fee'
-                      : item.charge_type === 'fixed_commission'
-                      ? 'Accommodation Fee'
-                      : ''}
-                    : {item.price} */}
-
-                  {/* {item.charge_type === 'both'
-                      ? 'Feature Listing Fee + Accommodation Fee'
-                      : item.charge_type === 'feature_listing'
-                      ? 'Feature Listing Fee'
-                      : item.charge_type === 'fixed_commission'
-                      ? 'Accommodation Fee'
-                      : ''}
-                    : {item.price} */}
-                  {/* </Text> */}
                   <Text style={styles.viewListing}>
                     {item.charge_type === 'both'
                       ? `${t('featured_listing_fee')} + ${t(
@@ -1143,14 +1095,7 @@ export default function TransactionHistoryScreen(
         >
           <View style={styles.overlay}>
             <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.30)',
-              }}
+              style={styles.blureView_style}
               blurType="light"
               blurAmount={2}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
@@ -1418,6 +1363,94 @@ export default function TransactionHistoryScreen(
 }
 
 const styles = StyleSheet.create({
+  salescardrow:{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 12,
+                        },
+  salescardHeadercontainer: {
+    flexDirection: 'row',
+    gap: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  overallEarningContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 10,
+    justifyContent: 'space-between',
+    padding: 1,
+  },
+  salescard: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    width: '100%',
+  },
+  blureView_style: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.30)',
+  },
+  purchasedText: {
+    color: '#9CD6FF',
+    fontWeight: '600',
+    fontSize: 12,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    gap: 4,
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  title: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  height_38: { height: 38 },
+  fullScreen: {
+    flex: 1,
+    marginTop: 11,
+    paddingHorizontal: 16,
+    height: '100%',
+    width: '100%',
+  },
+  tabLable: {
+    fontSize: 14,
+    fontFamily: 'Urbanist-SemiBold',
+    lineHeight: 18,
+    letterSpacing: 0.25,
+    textAlign: 'center',
+  },
+  leftVerticalLine: {
+    position: 'absolute',
+    height: '60%',
+    width: 1,
+    backgroundColor: 'rgba(158, 229, 255, 0.3)',
+    marginHorizontal: 4,
+  },
+  chatcard: {
+    borderRadius: 10,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    height: 'auto',
+    width: 50,
+    flex: 0.2,
+  },
   //   subheader1: {
   //   color: 'rgba(255, 255, 255, 0.48)',
   //   fontFamily: 'Urbanist-Regular',
@@ -1447,7 +1480,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
   },
-    otpContainer: {
+  otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     width: '100%',
@@ -1455,7 +1488,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: 16,
   },
-    subheader: {
+  subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
@@ -1463,7 +1496,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
-    fullLoader: {
+  fullLoader: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -1483,13 +1516,13 @@ const styles = StyleSheet.create({
   //   fontFamily: 'Urbanist-SemiBold',
   //   padding: 10,
   // },
-    logo: {
+  logo: {
     width: 64,
     height: 64,
     borderRadius: 60,
   },
 
-    mainheader1: {
+  mainheader1: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
@@ -1497,7 +1530,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.4,
     lineHeight: 28,
   },
-  
+
   popupContainer: {
     width: '90%',
     padding: 20,
@@ -1569,7 +1602,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
 
-    overlay: {
+  overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1582,7 +1615,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: Platform.OS === 'ios' ? 547 : 300,
-    paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
+    paddingVertical: Platform.OS === 'ios' ? 0 : 40,
   },
   loaderContainer: {
     width: 100,
@@ -1605,7 +1638,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingVertical: 40,
   },
-  
+
   emptyImage: {
     width: 64,
     height: 64,
@@ -1616,7 +1649,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600
+    fontWeight: 600,
   },
 
   cardconstinerdivider: {
@@ -1625,11 +1658,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    height: Platform.OS === 'ios' ? 2 : 1.5,
     borderStyle: 'dashed',
-    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    borderBottomWidth: Platform.OS === 'ios' ? 0.9 : 1,
     // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
+    borderColor:
+      Platform.OS === 'ios'
+        ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
+        : '#4169B8',
   },
 
   imgcontainer: {
@@ -1644,7 +1680,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   image: {
     width: 24,
@@ -1654,9 +1690,9 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
     bottom: 10,
-    left: 10
+    left: 10,
   },
- 
+
   get section() {
     return this._section;
   },
@@ -1676,7 +1712,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 5,
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 6
+    marginTop: 6,
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -1702,12 +1738,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
- 
+
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 2
+    gap: 2,
   },
 
   statusBox: {
@@ -1720,7 +1756,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     justifyContent: 'center',
     height: 20,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   statusText: {
     color: '#9CDDFF',
@@ -1738,7 +1774,7 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 8,
     borderRadius: 6,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   codeText: {
     color: '#fff',
@@ -1771,14 +1807,15 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 2
+    marginTop: 2,
   },
   allDetails: {
     color: '#FFFFFF',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
-    textDecorationLine: 'underline', marginTop: 2
+    textDecorationLine: 'underline',
+    marginTop: 2,
   },
 
   chargesCard: {
@@ -1815,7 +1852,6 @@ const styles = StyleSheet.create({
   },
 
   bottomTabContainer: {
-
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1825,7 +1861,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderWidth: 0.4,
     borderColor: 'transparent',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23), -0.90px -0.80px 1px 0px rgba(255, 255, 255, 0.19)inset, 0.90px 0.80px 0.90px 0px rgba(255, 255, 255, 0.19)inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23), -0.90px -0.80px 1px 0px rgba(255, 255, 255, 0.19)inset, 0.90px 0.80px 0.90px 0px rgba(255, 255, 255, 0.19)inset',
     backgroundColor: 'rgba(40, 55, 149, 0.12)',
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
@@ -1837,7 +1874,6 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   bubble: {
-
     height: 38,
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
@@ -1857,12 +1893,9 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     marginLeft: 2,
-
   },
 
-  tabItem: {
-
-  },
+  tabItem: {},
   iconWrapper: {
     height: 50, //
     borderRadius: 50,
