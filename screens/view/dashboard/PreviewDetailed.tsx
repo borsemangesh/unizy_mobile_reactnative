@@ -19,7 +19,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
-import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
 import Loader from '../../utils/component/Loader';
 
 import AnimatedReanimated, {
@@ -41,11 +44,6 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
 
-
-
- 
-
-
 type previewDetailsProps = {
   navigation: any;
 };
@@ -59,7 +57,6 @@ const itemOptions = [
   { id: 2, option_name: 'Like new' },
   { id: 3, option_name: 'Used' },
 ];
-
 
 const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -78,7 +75,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [fields, setFields] = useState<any[]>([]);
   const today = new Date();
 
-  const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
+  const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(
+    today.getMonth() + 1
+  )
     .toString()
     .padStart(2, '0')}-${today.getFullYear()}`;
 
@@ -90,9 +89,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     logo: string | null;
     commission: string | null;
     max_cappund: string | null;
-    feature_fee: string | null
-    max_feature_cap: | null,
-    accommodation_amount: | null
+    feature_fee: string | null;
+    max_feature_cap: null;
+    accommodation_amount: null;
   }
 
   interface UserMeta {
@@ -100,10 +99,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     lastname: string | null;
     profile: string | null;
     student_email: string | null;
-    university_name: string | null
+    university_name: string | null;
     category?: Category | null;
     city?: string | null;
-
   }
 
   const flatListRef = useRef(null);
@@ -117,11 +115,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
           setStoredForm(parsedData);
         } else {
-  
         }
-      } catch (error) {
- 
-      }
+      } catch (error) {}
     };
 
     fetchStoredData();
@@ -135,17 +130,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           const meta: UserMeta = JSON.parse(metaStr);
           setUserMeta(meta);
         }
-      } catch (error) {
-
-      }
+      } catch (error) {}
     };
 
     loadUserMeta();
   }, []);
 
-
   const { t } = useTranslation();
-
 
   type FormEntry = {
     value: any;
@@ -154,12 +145,12 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
   const getValueByAlias = (
     formData: Record<string, FormEntry> | null,
-    alias: string
+    alias: string,
   ): any => {
     if (!formData) return null;
 
     const entry = Object.values(formData).find(
-      (item) => item.alias_name === alias
+      item => item.alias_name === alias,
     ) as FormEntry | undefined;
 
     return entry ? entry.value : null;
@@ -167,9 +158,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
   const titleValue = getValueByAlias(storedForm, 'title') || t('no_des');
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
-  const descriptionvalue = getValueByAlias(storedForm, 'description') || t('no_des')
-  const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
-
+  const descriptionvalue =
+    getValueByAlias(storedForm, 'description') || t('no_des');
+  const duration_value = getValueByAlias(storedForm, 'service_duration') || '1';
 
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
@@ -221,7 +212,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-
   const onScroll = (event: {
     nativeEvent: { contentOffset: { x: number } };
   }) => {
@@ -234,12 +224,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-     
+        const language_code =
+          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
+
         const productId1 = await AsyncStorage.getItem('selectedProductId');
-        setcategoryid(Number(productId1))
-
-
+        setcategoryid(Number(productId1));
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
 
@@ -248,18 +237,17 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code,
           },
         });
 
-        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const json = await response.json();
-        console.log("category/listparams/user/", url)
-        console.log("category/listparams/user/ :", json)
+        console.log('category/listparams/user/', url);
+        console.log('category/listparams/user/ :', json);
 
         if (json?.metadata) {
           setUserMeta({
@@ -269,8 +257,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
             student_email: json.metadata.student_email ?? null,
             university_name: json.metadata.university_name ?? null,
             category: json.metadata.category ?? null,
-            city: json.metadata.city ?? null, // 
-
+            city: json.metadata.city ?? null, //
           });
 
           await AsyncStorage.setItem(
@@ -282,7 +269,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               student_email: json.metadata.student_email ?? null,
               university_name: json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
-              city: json.metadata.city ?? null, // 
+              city: json.metadata.city ?? null, //
             }),
           );
         }
@@ -303,7 +290,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     fetchFields();
   }, []);
 
-
   type ImageField = {
     id?: string;
     uri: string;
@@ -311,30 +297,29 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     type?: string;
   };
 
-
   const handleListPress = async () => {
     if (isSubmitting) return;
-  
+
     isSubmitting = true;
-  
+
     try {
       const form =
         typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-  
+
       const isFeatured =
         form?.['13']?.value === true || form?.['13']?.value === 'true';
-  
+
       // if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)) {
-  
+
       //   const amount = isFeatured
       //     ? finalPrice          // ✅ FEATURED CASE
       //     : accomodation_amount; // ✅ NORMAL CASE
-  
+
       //   navigation.navigate('PaymentScreen', {
       //     amount: amount,
       //     feature_id: 1,
       //     nav: 'add',
-  
+
       //     onSuccess: async () => {
       //       try {
       //         await listProduct();
@@ -342,100 +327,95 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       //         isSubmitting = false;
       //       }
       //     },
-  
+
       //     onCancel: () => {
       //       isSubmitting = false;
       //     },
       //   });
-  
+
       // } else {
       //   await listProduct();
       //   isSubmitting = false;
       // }
 
-      const amount = isFeatured
-  ? finalPrice
-  : accomodation_amount;
+      const amount = isFeatured ? finalPrice : accomodation_amount;
 
-if (categoryid === 4 && amount > 0) {
-  navigation.navigate('PaymentScreen', {
-    amount: amount,
-    feature_id: 1,
-    nav: 'add',
+      if (categoryid === 4 && amount > 0) {
+        navigation.navigate('PaymentScreen', {
+          amount: amount,
+          feature_id: 1,
+          nav: 'add',
 
-    onSuccess: async () => {
-      try {
+          onSuccess: async () => {
+            try {
+              await listProduct();
+            } finally {
+              isSubmitting = false;
+            }
+          },
+
+          onCancel: () => {
+            isSubmitting = false;
+          },
+        });
+      } else {
         await listProduct();
-      } finally {
         isSubmitting = false;
       }
-    },
-
-    onCancel: () => {
-      isSubmitting = false;
-    },
-  });
-} else {
-  await listProduct();
-  isSubmitting = false;
-}
     } catch (e) {
       console.log('Error:', e);
       isSubmitting = false;
     }
   };
 
-//  const handleListPress = async () => {
-//   if (isSubmitting) return;
+  //  const handleListPress = async () => {
+  //   if (isSubmitting) return;
 
-//   isSubmitting = true;
+  //   isSubmitting = true;
 
-//   try {
-//     const form =
-//       typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+  //   try {
+  //     const form =
+  //       typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
 
-//     const isFeatured =
-//       form?.['13']?.value === true || form?.['13']?.value === 'true';
+  //     const isFeatured =
+  //       form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-//       if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)){
-//       navigation.navigate('PaymentScreen', {
-//         amount: isFeatured && accomodation_amount> 0 ? finalPrice: accomodation_amount,
-//         feature_id: 1,
-//         nav: 'add',
+  //       if (categoryid === 4 && (accomodation_amount > 0 || isFeatured)){
+  //       navigation.navigate('PaymentScreen', {
+  //         amount: isFeatured && accomodation_amount> 0 ? finalPrice: accomodation_amount,
+  //         feature_id: 1,
+  //         nav: 'add',
 
-//         onSuccess: async () => {
-//           try {
-//             await listProduct();
-//           } finally {
-//             isSubmitting = false; // ✅ reset AFTER payment success
-//           }
-//         },
+  //         onSuccess: async () => {
+  //           try {
+  //             await listProduct();
+  //           } finally {
+  //             isSubmitting = false; // ✅ reset AFTER payment success
+  //           }
+  //         },
 
-//         onCancel: () => {
-//           isSubmitting = false; // ✅ reset if user cancels payment
-//         },
-//       });
-//     } else {
-//       await listProduct();
-//       isSubmitting = false; // ✅ reset after direct listing
-//     }
-//   } catch (e) {
-//     console.log('Error:', e);
-//     isSubmitting = false;
-//   }
-// };
+  //         onCancel: () => {
+  //           isSubmitting = false; // ✅ reset if user cancels payment
+  //         },
+  //       });
+  //     } else {
+  //       await listProduct();
+  //       isSubmitting = false; // ✅ reset after direct listing
+  //     }
+  //   } catch (e) {
+  //     console.log('Error:', e);
+  //     isSubmitting = false;
+  //   }
+  // };
   const listProduct = async () => {
-
-
     if (isLoading) return;
 
     setIsLoading(true);
     try {
-      const paymentintent_id = await AsyncStorage.getItem("paymentintent_id");
+      const paymentintent_id = await AsyncStorage.getItem('paymentintent_id');
       const storedData = await AsyncStorage.getItem('formData');
 
       if (!storedData) {
-
         showToast(t(Constant.DATA_NOT_SAVE), 'error');
         return;
       }
@@ -445,12 +425,10 @@ if (categoryid === 4 && amount > 0) {
         { value: any; alias_name: string | null }
       > = JSON.parse(storedData);
 
-
       const token = await AsyncStorage.getItem('userToken');
       const productId1 = await AsyncStorage.getItem('selectedProductId');
 
       if (!token) {
-
         return;
       }
 
@@ -464,16 +442,14 @@ if (categoryid === 4 && amount > 0) {
           );
         })
         .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-          string,
-          ImageField[]
-        ][];
+        string,
+        ImageField[],
+      ][];
 
       const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
         const v = obj.value;
         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
       });
-
- 
 
       // const dataArray = nonImageFields.map(([key, obj]: any) => {
       //     const payload: any = {
@@ -521,112 +497,107 @@ if (categoryid === 4 && amount > 0) {
 
         return payload;
       });
-const form =
+      const form =
         typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-  
-//       const isFeatured =
-//         form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-//       // let featureAmountToSend = finalPrice;
+      //       const isFeatured =
+      //         form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-// // Apply your logic
-// // if (Number(productId1) === 4) {
-// //   if (isFeatured && maxCap1 > 0) {
-// //     featureAmountToSend = finalPrice;
-// //   } else if (!isFeatured && accomodation_amount > 0) {
-// //     featureAmountToSend = accomodation_amount;
-// //   }
-// // }
+      //       // let featureAmountToSend = finalPrice;
 
-// let featureAmountToSend = 0;
+      // // Apply your logic
+      // // if (Number(productId1) === 4) {
+      // //   if (isFeatured && maxCap1 > 0) {
+      // //     featureAmountToSend = finalPrice;
+      // //   } else if (!isFeatured && accomodation_amount > 0) {
+      // //     featureAmountToSend = accomodation_amount;
+      // //   }
+      // // }
 
-// if (Number(productId1) === 4) {
-//   // ✅ EDGE CASE: everything is 0
-//   if (isFeatured && accomodation_amount === 0 && maxCap1 === 0) {
-//     featureAmountToSend = 0;
+      // let featureAmountToSend = 0;
 
-//   }
-//   // ✅ FEATURED CASE
-//   else if (isFeatured && maxCap1 > 0) {
-//     featureAmountToSend = finalPrice;
-//   }
-//   // ✅ NORMAL CASE
-//   else if (!isFeatured && accomodation_amount > 0) {
-//     featureAmountToSend = accomodation_amount;
-//   }
-// }
+      // if (Number(productId1) === 4) {
+      //   // ✅ EDGE CASE: everything is 0
+      //   if (isFeatured && accomodation_amount === 0 && maxCap1 === 0) {
+      //     featureAmountToSend = 0;
 
+      //   }
+      //   // ✅ FEATURED CASE
+      //   else if (isFeatured && maxCap1 > 0) {
+      //     featureAmountToSend = finalPrice;
+      //   }
+      //   // ✅ NORMAL CASE
+      //   else if (!isFeatured && accomodation_amount > 0) {
+      //     featureAmountToSend = accomodation_amount;
+      //   }
+      // }
 
-//       const createPayload = {
-//         category_id: productId1,
-//         data: dataArray,
-//         //paymentintent_id: paymentData.transactionId, 
-//         paymentintent_id: paymentintent_id,
-//         savecard: true,
-//         //status: paymentData.status,
-//         // featureamount: diff1
-//         featureamount: featureAmountToSend,
-//         fixed_commission: accommodationAmount,
-//         listing_featureamount: maxCap1
-//       };
+      //       const createPayload = {
+      //         category_id: productId1,
+      //         data: dataArray,
+      //         //paymentintent_id: paymentData.transactionId,
+      //         paymentintent_id: paymentintent_id,
+      //         savecard: true,
+      //         //status: paymentData.status,
+      //         // featureamount: diff1
+      //         featureamount: featureAmountToSend,
+      //         fixed_commission: accommodationAmount,
+      //         listing_featureamount: maxCap1
+      //       };
 
-//       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
-      
-const isFeatured =
-  form?.['13']?.value === true || form?.['13']?.value === 'true';
+      //       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
 
-let featureAmountToSend = 0;
-let paymentIntentToSend = paymentintent_id || "";
-let fixedCommissionToSend = accommodationAmount;
-let listingFeatureAmountToSend = maxCap1;
+      const isFeatured =
+        form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-console.log("DEBUG VALUES:", {
-  isFeatured,
-  accomodation_amount,
-  maxCap1,
-  productId1
-});
+      let featureAmountToSend = 0;
+      let paymentIntentToSend = paymentintent_id || '';
+      let fixedCommissionToSend = accommodationAmount;
+      let listingFeatureAmountToSend = maxCap1;
 
-if (Number(productId1) === 4) {
+      console.log('DEBUG VALUES:', {
+        isFeatured,
+        accomodation_amount,
+        maxCap1,
+        productId1,
+      });
 
-  // ✅ EDGE CASE (FIXED PROPERLY)
-  if (
-    Number(accomodation_amount) === 0 &&
-    Number(maxCap1) === 0
-  ) {
-    console.log("EDGE CASE HIT ✅");
+      if (Number(productId1) === 4) {
+        // ✅ EDGE CASE (FIXED PROPERLY)
+        if (Number(accomodation_amount) === 0 && Number(maxCap1) === 0) {
+          console.log('EDGE CASE HIT ✅');
 
-    featureAmountToSend = 0;
-    paymentIntentToSend = "";
-    fixedCommissionToSend = 0;
-    listingFeatureAmountToSend = 0;
-  }
+          featureAmountToSend = 0;
+          paymentIntentToSend = '';
+          fixedCommissionToSend = 0;
+          listingFeatureAmountToSend = 0;
+        }
 
-  // ✅ FEATURED CASE
-  else if (isFeatured && Number(maxCap1) > 0) {
-    featureAmountToSend = finalPrice;
-  }
+        // ✅ FEATURED CASE
+        else if (isFeatured && Number(maxCap1) > 0) {
+          featureAmountToSend = finalPrice;
+        }
 
-  // ✅ NORMAL CASE
-  else if (!isFeatured && Number(accomodation_amount) > 0) {
-    featureAmountToSend = accomodation_amount;
-  }
-}
+        // ✅ NORMAL CASE
+        else if (!isFeatured && Number(accomodation_amount) > 0) {
+          featureAmountToSend = accomodation_amount;
+        }
+      }
 
-const createPayload = {
-  category_id: productId1,
-  data: dataArray,
-  paymentintent_id: paymentIntentToSend,
-  savecard: true,
-  featureamount: featureAmountToSend,
-  fixed_commission: fixedCommissionToSend,
-  listing_featureamount: listingFeatureAmountToSend
-};
+      const createPayload = {
+        category_id: productId1,
+        data: dataArray,
+        paymentintent_id: paymentIntentToSend,
+        savecard: true,
+        featureamount: featureAmountToSend,
+        fixed_commission: fixedCommissionToSend,
+        listing_featureamount: listingFeatureAmountToSend,
+      };
 
-console.log(
-  'Create Feature Payload:',
-  JSON.stringify(createPayload, null, 2)
-);
+      console.log(
+        'Create Feature Payload:',
+        JSON.stringify(createPayload, null, 2),
+      );
 
       const createRes = await fetch(
         `${MAIN_URL.baseUrl}category/featurelistv2/create`,
@@ -640,15 +611,18 @@ console.log(
         },
       );
 
-
       const createJson = await createRes.json();
-      console.log(":category/featurelistv2/create`",`${MAIN_URL.baseUrl}category/featurelistv2/create`)
-      console.log(":category/featurelistv2/create: `",createJson)
-      const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
+      console.log(
+        ':category/featurelistv2/create`',
+        `${MAIN_URL.baseUrl}category/featurelistv2/create`,
+      );
+      console.log(':category/featurelistv2/create: `', createJson);
+      const apiMessage =
+        createJson?.message || createJson?.error || 'Something went wrong';
       const isSuccess = createRes.status === 200 || createRes.status === 201;
-      console.log("isSuccess: ",isSuccess, apiMessage);
+      console.log('isSuccess: ', isSuccess, apiMessage);
 
-      showToast(t(apiMessage), isSuccess ? "success" : "error");
+      showToast(t(apiMessage), isSuccess ? 'success' : 'error');
 
       if (!(createRes.status === 200 || createRes.status === 201)) {
         navigation.reset({
@@ -667,7 +641,7 @@ console.log(
       }
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error')
+        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
         return;
       }
       for (const [param_id, images] of imageFields) {
@@ -687,22 +661,25 @@ console.log(
               method: 'POST',
               headers: { Authorization: `Bearer ${token}` },
               body: data,
-            }
+            },
           );
 
           const uploadJson = await uploadRes.json();
 
-
-          const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
-          const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-          showToast(t(apiMessage), isSuccess ? "success" : "error");
+          const apiMessage =
+            uploadJson?.message ||
+            uploadJson?.error ||
+            `Failed to upload ${image.name}`;
+          const isSuccess =
+            uploadRes.status === 200 || uploadRes.status === 201;
+          showToast(t(apiMessage), isSuccess ? 'success' : 'error');
           if (!isSuccess) return;
         }
       }
       //showToast(t(Constant.DATA_UPLOAD), 'success');
       //setShowPopup(true);
 
-        setTimeout(() => {
+      setTimeout(() => {
         if (userMeta?.category?.id === 4) {
           //  navigation.reset({
           //       index: 0,
@@ -721,17 +698,12 @@ console.log(
           navigation.navigate('SellerInfo');
         }
       }, 300);
-    }
-    catch (error) {
+    } catch (error) {
       console.log('❌ Error in handleListPress:', error);
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
   };
-
-
-
 
   const getCurrentDate = (t?: any) => {
     const today = new Date();
@@ -743,19 +715,29 @@ console.log(
     // Month translation
     const monthIndex = today.getMonth(); // 0–11
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
     // Suffix only for English
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
 
     return `${day}${suffix} ${month} ${year}`;
@@ -764,11 +746,12 @@ console.log(
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
     const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-    return (f + l) || '?';
+    return f + l || '?';
   };
 
-
-  const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
+  const accomodation_amount = parseFloat(
+    userMeta?.category?.accommodation_amount ?? '0',
+  );
 
   const raw = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue = parseFloat(String(raw)) || 0;
@@ -779,14 +762,17 @@ console.log(
   const commissionAmount = priceValue * (commissionPercent / 100);
   const calculatedPrice = priceValue + commissionAmount;
   const maxAllowedPrice = priceValue + maxCap;
-  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+    2,
+  );
   const priceText =
-  userMeta?.category?.id === 2
-    ? `£${commissionPrice}/${t('hr')}`
-    : userMeta?.category?.id === 4
-    ? `£${commissionPrice}/${t('week')}`
-    : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}` 
-    : `£${commissionPrice}`;
+    userMeta?.category?.id === 2
+      ? `£${commissionPrice}/${t('hr')}`
+      : userMeta?.category?.id === 4
+      ? `£${commissionPrice}/${t('week')}`
+      : userMeta?.category?.id === 5
+      ? `£${commissionPrice}/${t('session')}`
+      : `£${commissionPrice}`;
 
   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue1 = parseFloat(String(raw1)) || 0;
@@ -797,40 +783,37 @@ console.log(
   const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
   const calculatedPrice1 = priceValue1 + commissionAmount1;
   const maxAllowedPrice1 = priceValue1 + maxCap1;
-  const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
-  const diff1 = commissionPrice1 - priceValue1
-
-
-
+  const commissionPrice1 = +Math.min(
+    calculatedPrice1,
+    maxAllowedPrice1,
+  ).toFixed(2);
+  const diff1 = commissionPrice1 - priceValue1;
 
   const price = parseFloat(String(getValueByAlias(storedForm, 'price'))) || 0;
 
-const accommodationAmount = parseFloat(userMeta?.category?.accommodation_amount ?? '0'); // 12
-const featurePercent = parseFloat(userMeta?.category?.feature_fee ?? '0'); // 12%
+  const accommodationAmount = parseFloat(
+    userMeta?.category?.accommodation_amount ?? '0',
+  ); // 12
+  const featurePercent = parseFloat(userMeta?.category?.feature_fee ?? '0'); // 12%
 
-// Step 1: Calculate % fee
-const percentFee = price * (featurePercent / 100);
+  // Step 1: Calculate % fee
+  const percentFee = price * (featurePercent / 100);
 
-// Step 2: Apply cap
-const applicableFee = Math.min(percentFee, maxCap1);
+  // Step 2: Apply cap
+  const applicableFee = Math.min(percentFee, maxCap1);
 
-// Step 3: Final price
+  // Step 3: Final price
   // const finalPrice = accommodationAmount + applicableFee;
   const finalPrice = accommodationAmount + maxCap1;
 
-
-
-
   return (
     <ImageBackground
-                     source={BACK_ICON}
-                     style={{ flex: 1,width: '100%',
-                     height: '100%', }}
-                     resizeMode="cover"
-                 >
-    {/* <BackgroundWrapper> */}
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
-
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -875,7 +858,9 @@ const applicableFee = Math.min(percentFee, maxCap1);
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             //onPress={() => navigation.replace('PreviewThumbnail')}
-            onPress={() => { navigation.goBack(); }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -936,11 +921,10 @@ const applicableFee = Math.min(percentFee, maxCap1);
           contentContainerStyle={[
             styles.scrollContainer,
             { paddingBottom: height * 0.1 },
-          ]}>
-
-          <View style={{ marginTop: (Platform.OS === 'ios' ? 10 : 12) }}>
-
-            {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5) ? (
+          ]}
+        >
+          <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 12 }}>
+            {userMeta?.category?.id === 2 || userMeta?.category?.id === 5 ? (
               <ImageBackground
                 source={require('../../../assets/images/featurebg.png')}
                 style={{
@@ -950,7 +934,9 @@ const applicableFee = Math.min(percentFee, maxCap1);
                   width: '100%',
                 }}
               >
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <View
+                  style={{ alignItems: 'center', justifyContent: 'center' }}
+                >
                   {userMeta?.profile ? (
                     <Image
                       source={{ uri: userMeta?.profile }}
@@ -982,15 +968,15 @@ const applicableFee = Math.min(percentFee, maxCap1);
                           fontFamily: 'Urbanist-SemiBold',
                         }}
                       >
-                        {`${userMeta?.firstname?.[0] ?? ''}${userMeta?.lastname?.[0] ?? ''
-                          }`.toUpperCase() || 'NA'}
+                        {`${userMeta?.firstname?.[0] ?? ''}${
+                          userMeta?.lastname?.[0] ?? ''
+                        }`.toUpperCase() || 'NA'}
                       </Text>
                     </View>
                   )}
                 </View>
               </ImageBackground>
             ) : storedForm?.[6]?.value?.length > 1 ? (
-
               <View>
                 <FlatList
                   ref={flatListRef}
@@ -1026,7 +1012,6 @@ const applicableFee = Math.min(percentFee, maxCap1);
                 </View>
               </View>
             ) : (
-
               <Image
                 source={
                   storedForm?.[6]?.value?.[0]?.uri
@@ -1058,11 +1043,12 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     />
                     <Text allowFontScaling={false} style={styles.datetext1}>
                       {t('service_duration')}:{' '}
-                      <Text style={styles.durationValue}>{duration_value} {t('hours')}</Text>
+                      <Text style={styles.durationValue}>
+                        {duration_value} {t('hours')}
+                      </Text>
                     </Text>
                   </View>
                 )}
-
               </View>
               <View
                 style={{
@@ -1074,7 +1060,7 @@ const applicableFee = Math.min(percentFee, maxCap1);
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {t('des')}    
+                  {t('des')}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.productDesc}>
@@ -1086,14 +1072,19 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {getCurrentDate(t)}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>
+                    {t('date_posted')}: {getCurrentDate(t)}
+                  </Text>
                 </View>
               </View>
             </View>
 
             <View style={styles.card}>
               <View style={styles.gap12}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
                   {(() => {
                     switch (userMeta?.category?.id) {
                       case 2:
@@ -1126,49 +1117,51 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     let displayValues: string[] = [];
 
                     if (field.param.field_type === 'dropdown') {
-                    const otherText = storedForm?.[fieldId]?.otherText;
+                      const otherText = storedForm?.[fieldId]?.otherText;
 
-                    if (Array.isArray(storedValue)) {
-                      displayValues = storedValue
-                        .map((id: number) => {
-                          const option = field.param.options.find((opt: any) => opt.id === id);
-                          if (!option) return null;
+                      if (Array.isArray(storedValue)) {
+                        displayValues = storedValue
+                          .map((id: number) => {
+                            const option = field.param.options.find(
+                              (opt: any) => opt.id === id,
+                            );
+                            if (!option) return null;
 
+                            if (option.is_other && otherText) {
+                              return `${option.option_name} (${otherText})`;
+                            }
+
+                            return option.option_name;
+                          })
+                          .filter(Boolean) as string[];
+                      } else {
+                        const option = field.param.options.find(
+                          (opt: any) => opt.id === storedValue,
+                        );
+                        if (option) {
                           if (option.is_other && otherText) {
-                            return `${option.option_name} (${otherText})`;
+                            displayValues = [
+                              `${option.option_name} (${otherText})`,
+                            ];
+                          } else {
+                            displayValues = [option.option_name];
                           }
-
-                          return option.option_name;
-                        })
-                        .filter(Boolean) as string[];
-                    } else {
-                      const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                      if (option) {
-                        if (option.is_other && otherText) {
-                          displayValues = [`${option.option_name} (${otherText})`];
-                        } else {
-                          displayValues = [option.option_name];
                         }
                       }
-                    }
-                  }
+                    } else if (field.param.field_type === 'date') {
+                      const startDate = storedValue?.startDate;
+                      const endDate = storedValue?.endDate;
 
-                  else if (field.param.field_type === 'date') {
-                    const startDate = storedValue?.startDate;
-                    const endDate = storedValue?.endDate;
-
-                    if (startDate && endDate) {
-                      displayValues = [
-                        `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(endDate).format(
-                          'DD-MM-YYYY'
-                        )}`,
-                      ];
-                    } else {
-                      displayValues = [];
-                    }
-                  }
-
-                    else if (Array.isArray(storedValue)) {
+                      if (startDate && endDate) {
+                        displayValues = [
+                          `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(
+                            endDate,
+                          ).format('DD-MM-YYYY')}`,
+                        ];
+                      } else {
+                        displayValues = [];
+                      }
+                    } else if (Array.isArray(storedValue)) {
                       displayValues = storedValue.map(String);
                     } else {
                       displayValues = [String(storedValue)];
@@ -1176,7 +1169,10 @@ const applicableFee = Math.min(percentFee, maxCap1);
 
                     return (
                       <View key={fieldId} style={{}}>
-                        <Text allowFontScaling={false} style={styles.detailLabel1}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.detailLabel1}
+                        >
                           {field.param.field_name}
                         </Text>
 
@@ -1184,14 +1180,20 @@ const applicableFee = Math.min(percentFee, maxCap1);
                           <View style={styles.categoryContainer}>
                             {displayValues.map((val, idx) => (
                               <View key={idx} style={styles.categoryTag}>
-                                <Text allowFontScaling={false} style={styles.catagoryText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={styles.catagoryText}
+                                >
                                   {val}
                                 </Text>
                               </View>
                             ))}
                           </View>
                         ) : (
-                          <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+                          <Text
+                            allowFontScaling={false}
+                            style={[styles.new, { marginTop: 0 }]}
+                          >
                             {displayValues.join(', ')}
                           </Text>
                         )}
@@ -1199,16 +1201,19 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     );
                   })}
                 </View>
-
               </View>
             </View>
 
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>{t('seller_details')}</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
+                  {t('seller_details')}
+                </Text>
 
                 <View style={{ flexDirection: 'row', marginBottom: 4 }}>
-
                   {userMeta?.profile ? (
                     <Image
                       source={{ uri: userMeta.profile }}
@@ -1216,10 +1221,13 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     />
                   ) : (
                     <View style={COMMONSTYLE.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker'
+                          userMeta?.lastname ?? 'Walker',
                         )}
                       </Text>
                     </View>
@@ -1227,35 +1235,58 @@ const applicableFee = Math.min(percentFee, maxCap1);
 
                   <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
-                      {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
+                      {`${userMeta?.firstname ?? ''} ${
+                        userMeta?.lastname ?? ''
+                      }`.trim()}
                     </Text>
                     <Text allowFontScaling={false} style={styles.univeritytext}>
                       {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-                    <Text allowFontScaling={false} style={[styles.univeritytext,]}>
+                    <Text
+                      allowFontScaling={false}
+                      style={[styles.univeritytext]}
+                    >
                       {userMeta?.city || ''}
                     </Text>
                   </View>
                 </View>
 
-
                 <View style={{ flexDirection: 'row' }}>
                   <View style={styles.bottombutton}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
                       <Image
                         source={require('../../../assets/images/staricon.png')}
                         style={{ height: 16, width: 16 }}
                       />
 
-                      <Text allowFontScaling={false} style={styles.chattext}>4.5</Text>
+                      <Text allowFontScaling={false} style={styles.chattext}>
+                        4.5
+                      </Text>
                     </View>
                   </View>
-                  <View style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}>
+                  <View
+                    style={[
+                      styles.chatcard,
+                      {
+                        marginLeft: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      },
+                    ]}
+                  >
                     <Image
                       source={require('../../../assets/images/message_chat.png')}
                       style={{ height: 16, width: 16, marginRight: 4 }}
                     />
-                    <Text allowFontScaling={false} style={styles.chattext}>{t('chat_with_seller')}</Text>
+                    <Text allowFontScaling={false} style={styles.chattext}>
+                      {t('chat_with_seller')}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -1263,30 +1294,30 @@ const applicableFee = Math.min(percentFee, maxCap1);
           </View>
         </AnimatedReanimated.ScrollView>
 
-
         <Button
           onPress={handleListPress}
           title={(() => {
+            try {
+              const form =
+                typeof storedForm === 'string'
+                  ? JSON.parse(storedForm)
+                  : storedForm;
 
-             try {
-    const form =
-      typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+              const isFeatured =
+                form?.['13']?.value === true || form?.['13']?.value === 'true';
 
-    const isFeatured =
-      form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+              if (categoryid === 4) {
+                const amount = isFeatured ? finalPrice : accomodation_amount;
 
-    if (categoryid === 4) {
-      const amount = isFeatured ? finalPrice : accomodation_amount;
+                if (amount > 0) {
+                  return `${t('list')} for £${amount.toFixed(2)}`;
+                }
+              }
 
-      if (amount > 0) {
-        return `${t('list')} for £${amount.toFixed(2)}`;
-      }
-    }
-
-    return t('list');
-  } catch (e) {
-    return 'List';
-  }
+              return t('list');
+            } catch (e) {
+              return 'List';
+            }
 
             //Working The logice befor change 30_04_26
             //    try {
@@ -1295,22 +1326,19 @@ const applicableFee = Math.min(percentFee, maxCap1);
             //   if (categoryid === Number(4)  ) {
             //     if (isFeatured && maxCap1> 0 ) {
             //          return `${t('list')} for £${(finalPrice).toFixed(2)}`;;
-            //     } else { 
+            //     } else {
             //       if(!isFeatured && accomodation_amount> 0) {
             //         return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
             //       }
             //     }
-                
 
             //   }
-              
+
             //   return t('list');
             // } catch (e) {
             //   // console.log('Error parsing storedForm:', e);
             //   return 'List';
             // }
-
-
 
             //Old Code
             // try {
@@ -1319,13 +1347,12 @@ const applicableFee = Math.min(percentFee, maxCap1);
             //   if (categoryid === Number(4) && accomodation_amount > 0) {
             //     if (isFeatured) {
             //          return `${t('list')} for £${(accomodation_amount + commissionAmount1).toFixed(2)}`;;
-            //     } else { 
+            //     } else {
             //        return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
             //     }
-                
 
             //   }
-              
+
             //   return t('list');
             // } catch (e) {
             //   // console.log('Error parsing storedForm:', e);
@@ -1390,7 +1417,7 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     fontStyle: 'normal',
                     letterSpacing: -0.28,
                     lineHeight: 19.6,
-                    textAlign: 'center'
+                    textAlign: 'center',
                   }}
                 >
                   {t('product_listed_message')}
@@ -1402,7 +1429,6 @@ const applicableFee = Math.min(percentFee, maxCap1);
                     try {
                       await AsyncStorage.removeItem('formData');
                       await AsyncStorage.removeItem('selectedProductId');
-
 
                       navigation.dispatch(
                         CommonActions.reset({
@@ -1416,7 +1442,7 @@ const applicableFee = Math.min(percentFee, maxCap1);
                               },
                             },
                           ],
-                        })
+                        }),
                       );
 
                       setShowPopup(false);
@@ -1441,23 +1467,22 @@ const applicableFee = Math.min(percentFee, maxCap1);
       )}
       <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-
   loaderOverlay: {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.4)',
-  justifyContent: 'center',
-  alignItems: 'center',
-  zIndex: 9999,
-},
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
   datetext1: {
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
@@ -1465,7 +1490,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 16,
     letterSpacing: -0.24,
-    paddingLeft: 4
+    paddingLeft: 4,
   },
   durationValue: {
     color: '#FFF',
@@ -1474,7 +1499,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 16,
     letterSpacing: -0.24,
-    paddingLeft: 4
+    paddingLeft: 4,
   },
 
   datePosted1: {
@@ -1512,8 +1537,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    marginTop: Platform.OS === 'ios' ? 0 : 0,
+    marginLeft: 1,
   },
   backButtonContainer: {
     position: 'absolute',
@@ -1532,8 +1557,7 @@ const styles = StyleSheet.create({
   //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
   // },
 
-
-   blurButtonWrapper: {
+  blurButtonWrapper: {
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -1547,7 +1571,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -1571,7 +1596,8 @@ const styles = StyleSheet.create({
   },
   chatcard: {
     borderRadius: 10,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     display: 'flex',
     flexDirection: 'row',
@@ -1581,12 +1607,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    height: 'auto'
+    height: 'auto',
   },
 
   bottombutton: {
     borderRadius: 10,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     display: 'flex',
     flexDirection: 'row',
@@ -1625,7 +1652,7 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     paddingTop: 2,
     paddingBottom: 2,
-    marginTop: 6
+    marginTop: 6,
   },
 
   productDesHeding: {
@@ -1668,7 +1695,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     gap: 6,
   },
- 
+
   activeStepCircle: {
     width: 12,
     height: 12,
@@ -1730,7 +1757,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
- 
+
   logo: {
     width: 64,
     height: 64,
@@ -1782,7 +1809,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.24,
   },
- 
+
   univeritytext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-Regular',
@@ -1803,12 +1830,12 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginRight: 12,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   gap12: {
     gap: 12,
   },
-  
+
   new: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-Regular',
@@ -1817,7 +1844,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 20,
   },
- 
+
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1846,7 +1873,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 700,
     letterSpacing: -0.1,
-    paddingTop: 8
+    paddingTop: 8,
   },
   card: {
     flexDirection: 'column',
@@ -1855,7 +1882,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop: 6
+    marginTop: 6,
   },
   card1: {
     flexDirection: 'column',
@@ -1864,7 +1891,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 10,
-    marginTop: 6
+    marginTop: 6,
   },
 });
 
@@ -1915,7 +1942,6 @@ export default PreviewDetailed;
 // import COMMONSTYLE from '../../utils/CommonStyle';
 // import { IMAGE_URLS } from '../../utils/Style';
 
-
 // type previewDetailsProps = {
 //   navigation: any;
 // };
@@ -1929,7 +1955,6 @@ export default PreviewDetailed;
 //   { id: 2, option_name: 'Like new' },
 //   { id: 3, option_name: 'Used' },
 // ];
-
 
 // const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 //   const [showPopup, setShowPopup] = useState(false);
@@ -1987,10 +2012,10 @@ export default PreviewDetailed;
 
 //           setStoredForm(parsedData);
 //         } else {
-  
+
 //         }
 //       } catch (error) {
- 
+
 //       }
 //     };
 
@@ -2013,9 +2038,7 @@ export default PreviewDetailed;
 //     loadUserMeta();
 //   }, []);
 
-
 //   const { t } = useTranslation();
-
 
 //   type FormEntry = {
 //     value: any;
@@ -2039,7 +2062,6 @@ export default PreviewDetailed;
 //   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
 //   const descriptionvalue = getValueByAlias(storedForm, 'description') || t('no_des')
 //   const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
-
 
 //   const screenHeight = Dimensions.get('window').height;
 //   const [slideUp1] = useState(new Animated.Value(0));
@@ -2091,7 +2113,6 @@ export default PreviewDetailed;
 //     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
 //   );
 
-
 //   const onScroll = (event: {
 //     nativeEvent: { contentOffset: { x: number } };
 //   }) => {
@@ -2105,11 +2126,9 @@ export default PreviewDetailed;
 //       try {
 //         const token = await AsyncStorage.getItem('userToken');
 //         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-     
+
 //         const productId1 = await AsyncStorage.getItem('selectedProductId');
 //         setcategoryid(Number(productId1))
-
-
 
 //         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
 
@@ -2122,7 +2141,6 @@ export default PreviewDetailed;
 //           },
 //         });
 
-        
 //         if (!response.ok) {
 //           throw new Error(`HTTP error! status: ${response.status}`);
 //         }
@@ -2139,7 +2157,7 @@ export default PreviewDetailed;
 //             student_email: json.metadata.student_email ?? null,
 //             university_name: json.metadata.university_name ?? null,
 //             category: json.metadata.category ?? null,
-//             city: json.metadata.city ?? null, // 
+//             city: json.metadata.city ?? null, //
 
 //           });
 
@@ -2152,7 +2170,7 @@ export default PreviewDetailed;
 //               student_email: json.metadata.student_email ?? null,
 //               university_name: json.metadata.university_name ?? null,
 //               category: json.metadata.category ?? null,
-//               city: json.metadata.city ?? null, // 
+//               city: json.metadata.city ?? null, //
 //             }),
 //           );
 //         }
@@ -2173,14 +2191,12 @@ export default PreviewDetailed;
 //     fetchFields();
 //   }, []);
 
-
 //   type ImageField = {
 //     id?: string;
 //     uri: string;
 //     name: string;
 //     type?: string;
 //   };
-
 
 //  const handleListPress = async () => {
 //   if (isSubmitting) return;
@@ -2222,14 +2238,12 @@ export default PreviewDetailed;
 //   }
 // };
 
-
 //   // const handleListPress = async () => {
 //   //   if (isSubmitting) {
 
 //   //     return;
 //   //   }
 //   //   isSubmitting = true;
-
 
 //   //   try {
 //   //     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
@@ -2248,7 +2262,6 @@ export default PreviewDetailed;
 
 //   const listProduct = async () => {
 
-
 //     if (isLoading) return;
 
 //     setIsLoading(true);
@@ -2266,7 +2279,6 @@ export default PreviewDetailed;
 //         string,
 //         { value: any; alias_name: string | null }
 //       > = JSON.parse(storedData);
-
 
 //       const token = await AsyncStorage.getItem('userToken');
 //       const productId1 = await AsyncStorage.getItem('selectedProductId');
@@ -2294,8 +2306,6 @@ export default PreviewDetailed;
 //         const v = obj.value;
 //         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
 //       });
-
- 
 
 //       // const dataArray = nonImageFields.map(([key, obj]: any) => {
 //       //     const payload: any = {
@@ -2344,22 +2354,17 @@ export default PreviewDetailed;
 //         return payload;
 //       });
 
-
-
-
 //       const createPayload = {
 //         category_id: productId1,
 //         data: dataArray,
-//         //paymentintent_id: paymentData.transactionId, 
+//         //paymentintent_id: paymentData.transactionId,
 //         paymentintent_id: paymentintent_id,
 //         savecard: true,
-//         //status: paymentData.status, 
+//         //status: paymentData.status,
 //         featureamount: diff1
 //       };
 
 //       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
-      
-
 
 //       const createRes = await fetch(
 //         `${MAIN_URL.baseUrl}category/featurelistv2/create`,
@@ -2372,7 +2377,6 @@ export default PreviewDetailed;
 //           body: JSON.stringify(createPayload),
 //         },
 //       );
-
 
 //       const createJson = await createRes.json();
 //       console.log(":category/featurelistv2/create`",`${MAIN_URL.baseUrl}category/featurelistv2/create`)
@@ -2425,7 +2429,6 @@ export default PreviewDetailed;
 
 //           const uploadJson = await uploadRes.json();
 
-
 //           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
 //           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
 //           showToast(t(apiMessage), isSuccess ? "success" : "error");
@@ -2463,9 +2466,6 @@ export default PreviewDetailed;
 //     }
 //   };
 
-
-
-
 //   const getCurrentDate = (t?: any) => {
 //     const today = new Date();
 
@@ -2500,7 +2500,6 @@ export default PreviewDetailed;
 //     return (f + l) || '?';
 //   };
 
-
 //   const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
 
 //   const raw = getValueByAlias(storedForm, 'price') ?? '0';
@@ -2518,7 +2517,7 @@ export default PreviewDetailed;
 //     ? `£${commissionPrice}/${t('hr')}`
 //     : userMeta?.category?.id === 4
 //     ? `£${commissionPrice}/${t('week')}`
-//     : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}` 
+//     : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}`
 //     : `£${commissionPrice}`;
 
 //   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
@@ -2532,10 +2531,6 @@ export default PreviewDetailed;
 //   const maxAllowedPrice1 = priceValue1 + maxCap1;
 //   const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
 //   const diff1 = commissionPrice1 - priceValue1
-
-
-
-
 
 //   return (
 //     <ImageBackground
@@ -2790,7 +2785,7 @@ export default PreviewDetailed;
 //                 }}
 //               >
 //                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-//                   {t('des')}    
+//                   {t('des')}
 //                 </Text>
 
 //                 <Text allowFontScaling={false} style={styles.productDesc}>
@@ -2954,7 +2949,6 @@ export default PreviewDetailed;
 //                   </View>
 //                 </View>
 
-
 //                 <View style={{ flexDirection: 'row' }}>
 //                   <View style={styles.bottombutton}>
 //                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, }}>
@@ -2988,15 +2982,14 @@ export default PreviewDetailed;
 //               if (categoryid === Number(4)  ) {
 //                 if (isFeatured && accomodation_amount > 0) {
 //                      return `${t('list')} for £${(accomodation_amount + maxCap1).toFixed(2)}`;;
-//                 } else { 
+//                 } else {
 //                   if(!isFeatured  && accomodation_amount > 0) {
 //                     return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
 //                   }
 //                 }
-                
 
 //               }
-              
+
 //               return t('list');
 //             } catch (e) {
 //               // console.log('Error parsing storedForm:', e);
@@ -3008,13 +3001,12 @@ export default PreviewDetailed;
 //             //   if (categoryid === Number(4) && accomodation_amount > 0) {
 //             //     if (isFeatured) {
 //             //          return `${t('list')} for £${(accomodation_amount + commissionAmount1).toFixed(2)}`;;
-//             //     } else { 
+//             //     } else {
 //             //        return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
 //             //     }
-                
 
 //             //   }
-              
+
 //             //   return t('list');
 //             // } catch (e) {
 //             //   // console.log('Error parsing storedForm:', e);
@@ -3091,7 +3083,6 @@ export default PreviewDetailed;
 //                     try {
 //                       await AsyncStorage.removeItem('formData');
 //                       await AsyncStorage.removeItem('selectedProductId');
-
 
 //                       navigation.dispatch(
 //                         CommonActions.reset({
@@ -3220,7 +3211,6 @@ export default PreviewDetailed;
 //   //   borderColor: '#ffffff2c',
 //   //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
 //   // },
-
 
 //    blurButtonWrapper: {
 //     width: 48,
@@ -3357,7 +3347,7 @@ export default PreviewDetailed;
 //     marginTop: 12,
 //     gap: 6,
 //   },
- 
+
 //   activeStepCircle: {
 //     width: 12,
 //     height: 12,
@@ -3419,7 +3409,7 @@ export default PreviewDetailed;
 //     borderWidth: 0.5,
 //     borderColor: '#ffffff2c',
 //   },
- 
+
 //   logo: {
 //     width: 64,
 //     height: 64,
@@ -3471,7 +3461,7 @@ export default PreviewDetailed;
 //     lineHeight: 16,
 //     letterSpacing: -0.24,
 //   },
- 
+
 //   univeritytext: {
 //     color: 'rgba(255, 255, 255, 0.88)',
 //     fontFamily: 'Urbanist-Regular',
@@ -3497,7 +3487,7 @@ export default PreviewDetailed;
 //   gap12: {
 //     gap: 12,
 //   },
-  
+
 //   new: {
 //     color: 'rgba(255, 255, 255, 0.64)',
 //     fontFamily: 'Urbanist-Regular',
@@ -3506,7 +3496,7 @@ export default PreviewDetailed;
 //     fontStyle: 'normal',
 //     lineHeight: 20,
 //   },
- 
+
 //   categoryContainer: {
 //     flexDirection: 'row',
 //     flexWrap: 'wrap',

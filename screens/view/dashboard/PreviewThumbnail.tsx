@@ -35,16 +35,14 @@ import { useTranslation } from 'react-i18next';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
 
-
-
 type PreviewThumbnailProps = {
   navigation: any;
 };
 type CategoryDetailsType = {
   commission: string;
   max_cappund: string;
-  feature_fee: string,
-  max_feature_cap: string
+  feature_fee: string;
+  max_feature_cap: string;
 };
 
 interface Category {
@@ -55,8 +53,8 @@ interface Category {
   logo: string | null;
   commission: string | null;
   max_cappund: string | null;
-  feature_fee: string | null
-  max_feature_cap: | null,
+  feature_fee: string | null;
+  max_feature_cap: null;
 }
 
 interface UserMeta {
@@ -65,13 +63,13 @@ interface UserMeta {
   profile: string | null;
   student_email: string | null;
   category?: Category | null;
-  university_name?: string | null
+  university_name?: string | null;
 }
 
 const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
-
   const [storedForm, setStoredForm] = useState<any | null>(null);
-  const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsType | null>(null);
+  const [categoryDetails, setCategoryDetails] =
+    useState<CategoryDetailsType | null>(null);
   const [uniname, setUniname] = useState<string>('');
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
@@ -112,7 +110,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     };
   });
 
-
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';
     const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
@@ -130,7 +127,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const blurAmount = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
-
 
   useEffect(() => {
     const fetchStoredData = async () => {
@@ -151,21 +147,25 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           const parsedUserMeta: UserMeta = JSON.parse(storedUserMeta);
           setUniname(parsedUserMeta?.university_name ?? '');
           setCategoryId(parsedUserMeta?.category?.id ?? null);
-          setProfile(parsedUserMeta?.profile ?? '')
+          setProfile(parsedUserMeta?.profile ?? '');
 
-          const full = `${parsedUserMeta?.firstname} ${parsedUserMeta?.lastname}`.trim();
+          const full =
+            `${parsedUserMeta?.firstname} ${parsedUserMeta?.lastname}`.trim();
           setFullName(full);
-          const init = `${parsedUserMeta?.firstname?.charAt(0) ?? ''}${parsedUserMeta?.lastname?.charAt(0) ?? ''}`.toUpperCase();
+          const init = `${parsedUserMeta?.firstname?.charAt(0) ?? ''}${
+            parsedUserMeta?.lastname?.charAt(0) ?? ''
+          }`.toUpperCase();
           setInitials(init);
 
-
-
-
-
           if (parsedUserMeta.category) {
-            const { commission, max_cappund, feature_fee, max_feature_cap, } = parsedUserMeta.category;
-            setCategoryDetails({ commission: commission ?? '0', max_cappund: max_cappund ?? '0', feature_fee: feature_fee ?? '0', max_feature_cap: max_feature_cap ?? '0' });
-
+            const { commission, max_cappund, feature_fee, max_feature_cap } =
+              parsedUserMeta.category;
+            setCategoryDetails({
+              commission: commission ?? '0',
+              max_cappund: max_cappund ?? '0',
+              feature_fee: feature_fee ?? '0',
+              max_feature_cap: max_feature_cap ?? '0',
+            });
           } else {
             // console.log('No category in userMeta');
           }
@@ -187,12 +187,12 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const getValueByAlias = (
     formData: Record<string, FormEntry> | null,
-    alias: string
+    alias: string,
   ): any => {
     if (!formData) return null;
 
     const entry = Object.values(formData).find(
-      (item) => item.alias_name === alias
+      item => item.alias_name === alias,
     ) as FormEntry | undefined;
 
     return entry ? entry.value : null;
@@ -200,8 +200,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const { t } = useTranslation();
 
   const isFeatured =
-    storedForm?.[13]?.value === true ||
-    storedForm?.[13]?.value === 'true';
+    storedForm?.[13]?.value === true || storedForm?.[13]?.value === 'true';
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   const imageArray = storedForm?.[6]?.value || [];
@@ -214,7 +213,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const commissionAmount = priceValue * (commissionPercent / 100);
   const calculatedPrice = priceValue + commissionAmount;
   const maxAllowedPrice = priceValue + maxCap;
-  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+    2,
+  );
 
   ///feature
 
@@ -227,7 +228,10 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
   const calculatedPrice1 = priceValue1 + commissionAmount1;
   const maxAllowedPrice1 = priceValue1 + maxCap1;
-  const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
+  const commissionPrice1 = +Math.min(
+    calculatedPrice1,
+    maxAllowedPrice1,
+  ).toFixed(2);
   const commission = parseFloat(categoryDetails?.commission ?? '0');
   const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
 
@@ -235,137 +239,212 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     categoryId === 2
       ? `£${commissionPrice}/${t('hr')}`
       : categoryId === 4
-        ? `£${commissionPrice}/${t('week')}`
-        : categoryId === 5 ? `£${commissionPrice}/${t('session')}`
-          : `£${commissionPrice}`;
+      ? `£${commissionPrice}/${t('week')}`
+      : categoryId === 5
+      ? `£${commissionPrice}/${t('session')}`
+      : `£${commissionPrice}`;
 
-if (isFeatured) {
-  return (
-    <ImageBackground
-                     source={BACK_ICON}
-                     style={{ flex: 1,width: '100%',
-                   height: '100%', }}
-                     resizeMode="cover"
-                   >
-    {/* <BackgroundWrapper> */}
-      <View style={styles.fullScreenContainer}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
-        <AnimatedReanimated.View
-          style={[styles.headerWrapper, animatedBlurStyle]}
-          pointerEvents="none"
-        >
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
+  if (isFeatured) {
+    return (
+      <ImageBackground
+        source={BACK_ICON}
+        style={{ flex: 1, width: '100%', height: '100%' }}
+        resizeMode="cover"
+      >
+        {/* <BackgroundWrapper> */}
+        <View style={styles.fullScreenContainer}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle="light-content"
+          />
+          <AnimatedReanimated.View
+            style={[styles.headerWrapper, animatedBlurStyle]}
+            pointerEvents="none"
+          >
+            <MaskedView
+              style={StyleSheet.absoluteFill}
+              maskElement={
+                <LinearGradient
+                  colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                  locations={[0, 0.8]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={StyleSheet.absoluteFill}
+                />
+              }
+            >
+              <BlurView
+                style={StyleSheet.absoluteFill}
+                blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                // overlayColor="rgba(255,255,255,0.05)"
+                reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+              />
               <LinearGradient
-                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                locations={[0, 0.8]}
+                colors={[
+                  'rgba(255, 255, 255, 0.45)',
+                  'rgba(255, 255, 255, 0.02)',
+                  'rgba(255, 255, 255, 0.02)',
+                ]}
+                style={StyleSheet.absoluteFill}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
-                style={StyleSheet.absoluteFill}
               />
-            }
-          >
-            <BlurView
-              style={StyleSheet.absoluteFill}
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-            />
-            <LinearGradient
-              colors={[
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
-              ]}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-            />
-          </MaskedView>
-        </AnimatedReanimated.View>
+            </MaskedView>
+          </AnimatedReanimated.View>
 
-        {/* Header Content */}
-        <View style={styles.headerContent} pointerEvents="box-none">
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
-            style={styles.backButtonContainer}
-            activeOpacity={0.7}
-          >
-            <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+          {/* Header Content */}
+          <View style={styles.headerContent} pointerEvents="box-none">
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}
+              style={styles.backButtonContainer}
+              activeOpacity={0.7}
             >
               <AnimatedReanimated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 30],
-                      [1, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,
-                  })),
-                ]}
-              />
-              <AnimatedReanimated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 50],
-                      [0, 1],
-                      'clamp',
-                    ),
-                  })),
-                ]}
+                style={[styles.blurButtonWrapper, animatedButtonStyle]}
               >
-                <BlurView
-                  style={StyleSheet.absoluteFill}
-                  blurType="light"
-                  blurAmount={10}
-                  reducedTransparencyFallbackColor="transparent"
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 30],
+                        [1, 0],
+                        'clamp',
+                      ),
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: 40,
+                    })),
+                  ]}
+                />
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 50],
+                        [0, 1],
+                        'clamp',
+                      ),
+                    })),
+                  ]}
+                >
+                  <BlurView
+                    style={StyleSheet.absoluteFill}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="transparent"
+                  />
+                </AnimatedReanimated.View>
+
+                <AnimatedReanimated.Image
+                  source={require('../../../assets/images/back.png')}
+                  style={[{ height: 24, width: 24 }, animatedIconStyle]}
                 />
               </AnimatedReanimated.View>
+            </TouchableOpacity>
 
-              <AnimatedReanimated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 }, animatedIconStyle]}
-              />
-            </AnimatedReanimated.View>
-          </TouchableOpacity>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {t('preview_thumbnail')}
+            </Text>
+          </View>
+          <AnimatedReanimated.ScrollView
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              flexGrow: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingTop: Platform.OS === 'ios' ? 100 : 100,
+              paddingBottom: Platform.OS === 'ios' ? 100 : 100,
+            }}
+            onScroll={scrollHandler}
+          >
+            <View style={styles.productCarddisplay}>
+              {storedForm ? (
+                <>
+                  {categoryId === 2 || categoryId === 5 ? (
+                    storedForm[13]?.value === true ||
+                    storedForm[13]?.value === 'true' ? (
+                      <>
+                        <Text allowFontScaling={false} style={styles.newtext}>
+                          {t('preview_featured_listing')}
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.previewDesc}
+                        >
+                          {t('feature_note')}
+                        </Text>
+                        <NewTutitionCard
+                          tag={uniname}
+                          title={titleValue}
+                          infoTitle={fullName}
+                          inforTitlePrice={priceText}
+                          rating={storedForm[12]?.value || '4.5'}
+                          productImage={{ uri: profile }}
+                          isBookmarked={false}
+                        />
 
-          <Text allowFontScaling={false} style={styles.unizyText}>
-            {t('preview_thumbnail')}
-          </Text>
-        </View>
-        <AnimatedReanimated.ScrollView
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingTop: Platform.OS === 'ios' ? 100 : 100,
-            paddingBottom: Platform.OS === 'ios' ? 100 : 100,
-          }}
-          onScroll={scrollHandler}
-        >
-          <View style={styles.productCarddisplay}>
-            {storedForm ? (
-              <>
-                {categoryId === 2 || categoryId === 5 ? (
-                  storedForm[13]?.value === true ||
+                        <Text allowFontScaling={false} style={styles.newtext1}>
+                          {t('preview_regular_listing')}
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.previewDesc}
+                        >
+                          {t('normal_note')}
+                        </Text>
+                        <SeperateTutionCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          rating={storedForm[12]?.value || '4.5'}
+                          inforTitlePrice={priceText}
+                          productImage={{ uri: profile }}
+                          bookmark={false}
+                          showInitials={
+                            !profile ||
+                            profile === null ||
+                            profile.trim() === ''
+                          }
+                          isfeature={true}
+                          initialsName={initials}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Text allowFontScaling={false} style={styles.newtext1}>
+                          {t('preview_regular_listing')}
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.previewDesc}
+                        >
+                          {t('normal_note')}
+                        </Text>
+                        <SeperateTutionCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          rating={storedForm[12]?.value || '4.5'}
+                          inforTitlePrice={priceText}
+                          productImage={profile ? { uri: profile } : undefined}
+                          bookmark={false}
+                          showInitials={
+                            !profile ||
+                            profile === null ||
+                            profile.trim() === ''
+                          }
+                          isfeature={false}
+                          initialsName={initials}
+                        />
+                      </>
+                    )
+                  ) : storedForm[13]?.value === true ||
                     storedForm[13]?.value === 'true' ? (
                     <>
                       <Text allowFontScaling={false} style={styles.newtext}>
@@ -374,34 +453,33 @@ if (isFeatured) {
                       <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('feature_note')}
                       </Text>
-                      <NewTutitionCard
+                      <PreviewCard
                         tag={uniname}
-                        title={titleValue}
-                        infoTitle={fullName}
+                        infoTitle={titleValue}
                         inforTitlePrice={priceText}
                         rating={storedForm[12]?.value || '4.5'}
-                        productImage={{ uri: profile }}
-                        isBookmarked={false}
+                        productImage={
+                          imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')
+                        }
                       />
-
                       <Text allowFontScaling={false} style={styles.newtext1}>
                         {t('preview_regular_listing')}
                       </Text>
                       <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('normal_note')}
                       </Text>
-                      <SeperateTutionCard
+                      <NewFeatureCard
                         tag={uniname}
                         infoTitle={titleValue}
-                        rating={storedForm[12]?.value || '4.5'}
                         inforTitlePrice={priceText}
-                        productImage={{ uri: profile }}
-                        bookmark={false}
-                        showInitials={
-                          !profile || profile === null || profile.trim() === ''
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={
+                          imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')
                         }
-                        isfeature={true}
-                        initialsName={initials}
                       />
                     </>
                   ) : (
@@ -412,146 +490,112 @@ if (isFeatured) {
                       <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('normal_note')}
                       </Text>
-                      <SeperateTutionCard
+                      <NewProductCard
                         tag={uniname}
                         infoTitle={titleValue}
-                        rating={storedForm[12]?.value || '4.5'}
                         inforTitlePrice={priceText}
-                        productImage={profile ? { uri: profile } : undefined}
-                        bookmark={false}
-                        showInitials={
-                          !profile || profile === null || profile.trim() === ''
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={
+                          imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')
                         }
-                        isfeature={false}
-                        initialsName={initials}
                       />
                     </>
-                  )
-                ) : storedForm[13]?.value === true ||
-                  storedForm[13]?.value === 'true' ? (
-                  <>
-                    <Text allowFontScaling={false} style={styles.newtext}>
-                      {t('preview_featured_listing')}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.previewDesc}>
-                      {t('feature_note')}
-                    </Text>
-                    <PreviewCard
-                      tag={uniname}
-                      infoTitle={titleValue}
-                      inforTitlePrice={priceText}
-                      rating={storedForm[12]?.value || '4.5'}
-                      productImage={
-                        imageArray.length > 0
-                          ? { uri: imageArray[0].uri }
-                          : require('../../../assets/images/drone.png')
-                      }
-                    />
-                    <Text allowFontScaling={false} style={styles.newtext1}>
-                      {t('preview_regular_listing')}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.previewDesc}>
-                      {t('normal_note')}
-                    </Text>
-                    <NewFeatureCard
-                      tag={uniname}
-                      infoTitle={titleValue}
-                      inforTitlePrice={priceText}
-                      rating={storedForm[12]?.value || '4.5'}
-                      productImage={
-                        imageArray.length > 0
-                          ? { uri: imageArray[0].uri }
-                          : require('../../../assets/images/drone.png')
-                      }
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Text allowFontScaling={false} style={styles.newtext1}>
-                      {t('preview_regular_listing')}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.previewDesc}>
-                      {t('normal_note')}
-                    </Text>
-                    <NewProductCard
-                      tag={uniname}
-                      infoTitle={titleValue}
-                      inforTitlePrice={priceText}
-                      rating={storedForm[12]?.value || '4.5'}
-                      productImage={
-                        imageArray.length > 0
-                          ? { uri: imageArray[0].uri }
-                          : require('../../../assets/images/drone.png')
-                      }
-                    />
-                  </>
-                )}
-              </>
-            ) : (
-              <Text
-                allowFontScaling={false}
-                style={{ color: '#fff', textAlign: 'center' }}
-              >
-                {t('loading')}
-              </Text>
-            )}
+                  )}
+                </>
+              ) : (
+                <Text
+                  allowFontScaling={false}
+                  style={{ color: '#fff', textAlign: 'center' }}
+                >
+                  {t('loading')}
+                </Text>
+              )}
 
-            {categoryId !== 4 && (
-              <View style={styles.textbg}>
-                <Image
-                  source={require('../../../assets/images/info_icon.png')}
-                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {t('important')}
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.importantText}>
-                    {t('a')}
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      {' '}
-                      {Math.trunc(commission)}%
-                    </Text>{' '}
-                    {t('commission_or_maximum')}
-                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+              {categoryId !== 4 && (
+                <View style={styles.textbg}>
+                  <Image
+                    source={require('../../../assets/images/info_icon.png')}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      marginRight: 8,
+                      marginTop: 2,
+                    }}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText1}
+                    >
+                      {t('important')}
+                    </Text>
                     <Text allowFontScaling={false} style={styles.importantText}>
-                      {' '}{t('capped')}{' '}
+                      {t('a')}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
+                        {' '}
+                        {Math.trunc(commission)}%
+                      </Text>{' '}
+                      {t('commission_or_maximum')}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        (
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        {' '}
+                        {t('capped')}{' '}
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
+                        £{Math.trunc(maxCapPound)}
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        )
+                      </Text>{' '}
+                      {t('whichever_lower')}
                     </Text>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      £{Math.trunc(maxCapPound)}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>
-                    {' '}{t('whichever_lower')}
-                  </Text>
+                  </View>
                 </View>
-              </View>
-            )}
+              )}
+            </View>
+          </AnimatedReanimated.ScrollView>
+
+          <View style={styles.bottomFixed}>
+            <Button
+              title={t('next')}
+              onPress={() => navigation.navigate('PreviewDetailed')}
+            />
           </View>
-        </AnimatedReanimated.ScrollView>
-
-        <View style={styles.bottomFixed}>
-          <Button
-            title={t('next')}
-            onPress={() => navigation.navigate('PreviewDetailed')}
-          />
         </View>
-      </View>
 
-      <NewCustomToastContainer />
-      {/* </BackgroundWrapper> */}
+        <NewCustomToastContainer />
+        {/* </BackgroundWrapper> */}
       </ImageBackground>
-  );
-}
+    );
+  }
 
   return (
     <ImageBackground
-                     source={BACK_ICON}
-                     style={{ flex: 1,width: '100%',
-                   height: '100%', }}
-                     resizeMode="cover"
-                   >
-  {/* <BackgroundWrapper> */}
-     <View style={styles.fullScreenContainer}>
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
+      <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -669,7 +713,7 @@ if (isFeatured) {
               <>
                 {categoryId === 2 || categoryId === 5 ? (
                   storedForm[13]?.value === true ||
-                    storedForm[13]?.value === 'true' ? (
+                  storedForm[13]?.value === 'true' ? (
                     <>
                       <Text allowFontScaling={false} style={styles.newtext}>
                         {t('preview_featured_listing')}
@@ -798,41 +842,43 @@ if (isFeatured) {
                 {t('loading')}
               </Text>
             )}
-
-           
           </View>
         </AnimatedReanimated.ScrollView>
 
-         {categoryId !== 4 && (
-              <View style={[styles.textbg,{marginBottom:100}]}>
-                <Image
-                  source={require('../../../assets/images/info_icon.png')}
-                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {t('important')}
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.importantText}>
-                    {t('a')}
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      {' '}
-                      {Math.trunc(commission)}%
-                    </Text>{' '}
-                    {t('commission_or_maximum')}{' '}
-                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                    <Text allowFontScaling={false} style={styles.importantText}>
-                      {t('capped')}{' '}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      £{Math.trunc(maxCapPound)}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>
-                    {' '}{t('whichever_lower')}
-                  </Text>
-                </View>
-              </View>
-            )}
+        {categoryId !== 4 && (
+          <View style={[styles.textbg, { marginBottom: 100 }]}>
+            <Image
+              source={require('../../../assets/images/info_icon.png')}
+              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+            />
+            <View style={{ flex: 1 }}>
+              <Text allowFontScaling={false} style={styles.importantText1}>
+                {t('important')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.importantText}>
+                {t('a')}
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  {' '}
+                  {Math.trunc(commission)}%
+                </Text>{' '}
+                {t('commission_or_maximum')}{' '}
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  (
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  {t('capped')}{' '}
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  £{Math.trunc(maxCapPound)}
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  )
+                </Text>{' '}
+                {t('whichever_lower')}
+              </Text>
+            </View>
+          </View>
+        )}
 
         <View style={styles.bottomFixed}>
           <Button
@@ -842,15 +888,13 @@ if (isFeatured) {
         </View>
       </View>
 
-    <NewCustomToastContainer />
+      <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
-);
-
+    </ImageBackground>
+  );
 };
 
 const styles = StyleSheet.create({
-
   previewDesc: {
     // marginTop: 2,
     marginBottom: 10,
@@ -859,7 +903,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
-    textAlign:'center'
+    textAlign: 'center',
   },
 
   backButtonContainer: {
@@ -867,7 +911,7 @@ const styles = StyleSheet.create({
     left: 16,
     zIndex: 11,
   },
- 
+
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -882,7 +926,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -916,8 +961,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    marginTop: Platform.OS === 'ios' ? 0 : 0,
+    marginLeft: 1,
   },
   bottomFixed: {
     position: 'absolute',
@@ -929,7 +974,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
- 
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -953,7 +998,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     marginHorizontal: 6,
     marginTop: 48,
-    marginBottom: 6
+    marginBottom: 6,
   },
   textbg: {
     overflow: 'hidden',
@@ -962,7 +1007,8 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
     padding: 6,
     borderWidth: 0.5,
@@ -977,7 +1023,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginTop: 48
+    marginTop: 48,
   },
   importantText: {
     color: '#ccc',
@@ -999,7 +1045,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 24
+    marginTop: 24,
   },
 });
 
