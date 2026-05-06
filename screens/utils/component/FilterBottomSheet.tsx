@@ -466,13 +466,8 @@ const FilterBottomSheet = ({
       );
     } else if (currentFilter.alias_name === 'price') {
       return (
-        <View style={{ zIndex: 999, position: 'relative' }}>
-          {/* <Text
-            allowFontScaling={false}
-            style={{ color: 'white', marginBottom: 10 }}
-          >
-            {t('range')}: {sliderLow} - {sliderHigh}
-          </Text> */}
+        <View style={{ zIndex: 999, position: 'relative',width: '100%',flex: 1 }}>
+        
 
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
             {/* <MultiSlider
@@ -514,13 +509,14 @@ const FilterBottomSheet = ({
             <View
               style={{
                 flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'stretch',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
               }}
             >
               {/* MIN INPUT */}
               <View
-                style={{ flexDirection: 'column', flex: 1, paddingRight: 10 }}
+                style={{ width: '48%',}}
               >
                 <Text
                   allowFontScaling={false}
@@ -535,7 +531,7 @@ const FilterBottomSheet = ({
                   style={[
                     styles.login_container,
                     styles.personalEmailID_TextInput,
-                    { width: '100%' },
+                    { width: '100%',minWidth: 0, },
                   ]}
                   keyboardType="numeric"
                   placeholder="Min"
@@ -554,7 +550,7 @@ const FilterBottomSheet = ({
                   }}
                 />
               </View>
-              <View style={{ flexDirection: 'column', flex: 1 }}>
+              <View style={{ width: '48%', }}>
                 <Text
                   allowFontScaling={false}
                   style={[
@@ -569,7 +565,7 @@ const FilterBottomSheet = ({
                   style={[
                     styles.login_container,
                     styles.personalEmailID_TextInput,
-                    { width: '100%' },
+                    { width: '100%' ,minWidth: 0},
                   ]}
                   keyboardType="numeric"
                   placeholder="Max"
@@ -1169,13 +1165,13 @@ const FilterBottomSheet = ({
                 </View>
 
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={{ flex: 1 }}
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                  style={{ flex: 1 }}
                  >
-                <ScrollView
+                  <ScrollView
                 ref={scrollRef}
                   style={styles.scrollview_style}
-                 contentContainerStyle={{ padding: 16, paddingBottom: 240 }}
+                 contentContainerStyle={{ padding: 16, paddingBottom: 240,flexGrow: 1 }}
                 
                   showsVerticalScrollIndicator={false}
                   keyboardShouldPersistTaps="handled"
@@ -1363,7 +1359,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   login_container: {
-    width: '45%',
+    // width: '45%',
+    width: '100%',
     height: 44,
     display: 'flex',
     gap: 10,
@@ -1382,7 +1379,8 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
   },
   personalEmailID_TextInput: {
-    width: '45%',
+    // width: '45%',
+    width: '100%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
