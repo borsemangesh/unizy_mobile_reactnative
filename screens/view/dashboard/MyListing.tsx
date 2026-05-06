@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { SquircleView } from 'react-native-figma-squircle';
 import 'react-native-reanimated';
 import {
@@ -21,25 +21,20 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   interpolateColor,
-  useDerivedValue,
 } from 'react-native-reanimated';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { useTranslation } from "react-i18next";
-const bgImage = require('../../../assets/images/backimg.png');
+import { useTranslation } from 'react-i18next';
 import MyListingCard from '../../utils/MyListingCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
 
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
-import { IMAGE_URLS } from '../../utils/Style';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
 
@@ -73,6 +68,13 @@ type MyListingProps = {
   navigation: any;
 };
 
+ type Category = {
+    id: number | null;
+    name: string;
+};
+  
+const { width: SCREEN_WIDTH, height:SCREEN_HEIGHT } = Dimensions.get('window');
+
 const MyListing = ({ navigation }: MyListingProps) => {
   const { t } = useTranslation();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
@@ -81,13 +83,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const [featureList, setFeatureList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const { height } = Dimensions.get('window');
-
-  type Category = {
-    id: number | null;
-    name: string;
-  };
-
   const scrollY = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -145,7 +140,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
     useCallback(() => {
       setPage(1);
       displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-    }, [selectedCategory])
+    }, [selectedCategory]),
   );
 
   useEffect(() => {
@@ -164,19 +159,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
     loadCategories();
   }, [t]);
 
-
   useEffect(() => {
     const backAction = () => {
       navigation.replace('Dashboard', {
         AddScreenBackactiveTab: 'Home',
         isNavigate: false,
-      })
+      });
       return true;
     };
 
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
 
     return () => backHandler.remove();
@@ -192,7 +186,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     try {
       if (isInitialLoad) {
         setInitialLoading(true);
-
       } else {
         setIsLoading(true);
       }
@@ -203,12 +196,13 @@ const MyListing = ({ navigation }: MyListingProps) => {
         url += `&category_id=${categoryId}`;
       }
 
-      console.log(url)
+      console.log(url);
 
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
-      console.log(token)
+      console.log(token);
 
       if (!token) {
         if (isInitialLoad) {
@@ -224,7 +218,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
       });
 
@@ -329,29 +323,39 @@ const MyListing = ({ navigation }: MyListingProps) => {
   );
 
   const formatDate = (dateString?: string, t?: any) => {
-    if (!dateString) return "";
+    if (!dateString) return '';
 
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    if (isNaN(date.getTime())) return '';
 
     const day = date.getDate();
     const year = date.getFullYear();
     const lang = i18n.language;
 
     // ---------- Suffix only for English ----------
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
 
     // ---------- Month translation ----------
     const monthIndex = date.getMonth(); // 0–11
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -361,20 +365,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const isEmpty = featureList.length === 0;
 
   return (
-     <ImageBackground
-                      source={BACK_ICON}
-                      style={{ flex: 1,width: '100%',
-                    height: '100%', }}
-                      resizeMode="cover"
-                    >
-    {/* <BackgroundWrapper> */}
+    <ImageBackground
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
 
         <StatusBar
           translucent
@@ -420,22 +422,23 @@ const MyListing = ({ navigation }: MyListingProps) => {
         <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
-              console.log("MYLISTSTACK", navigation.getState())
-              if (navigation.getState().routes[navigation.getState().index].name === 'MyListing') {
+              console.log('MYLISTSTACK', navigation.getState());
+              if (
+                navigation.getState().routes[navigation.getState().index]
+                  .name === 'MyListing'
+              ) {
                 navigation.replace('Dashboard', {
                   AddScreenBackactiveTab: 'Home',
                   isNavigate: false,
-                })
+                });
               }
-            }
-            }
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
               style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
-
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -486,12 +489,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
           </View>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
-          // activeOpacity={0}
+            // activeOpacity={0}
           >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -504,7 +504,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -519,11 +520,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
-              >
-
-              </Animated.View>
+              ></Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
@@ -542,19 +542,17 @@ const MyListing = ({ navigation }: MyListingProps) => {
             renderItem={renderItem}
             keyExtractor={item => item.id.toString()}
             ListHeaderComponent={
-            
               <View
-              style={[
-                styles.categoryTabsContainer,
-                {
-                  marginHorizontal: -30, 
-                  paddingHorizontal: 30, 
-                  overflow: 'visible',
-                },
-              ]}
-              pointerEvents="box-none"
-             
-            >
+                style={[
+                  styles.categoryTabsContainer,
+                  {
+                    marginHorizontal: -30,
+                    paddingHorizontal: 30,
+                    overflow: 'visible',
+                  },
+                ]}
+                pointerEvents="box-none"
+              >
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -597,17 +595,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: (Platform.OS === 'ios' ? 120 : 100),
+                paddingTop: Platform.OS === 'ios' ? 120 : 100,
                 paddingBottom: isEmpty
                   ? 10
                   : Platform.select({
-                    ios: height * 0.01, 
-                    android: height * 0.04,
-                  }),
+                      ios: SCREEN_HEIGHT * 0.01,
+                      android: SCREEN_HEIGHT * 0.04,
+                    }),
                 flexGrow: 1,
               },
             ]}
-
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
@@ -631,13 +628,29 @@ const MyListing = ({ navigation }: MyListingProps) => {
               ) : null
             }
             ListEmptyComponent={
-
               (isLoading || initialLoading) && featurelist.length === 0 ? (
-                <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
-                  <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+                <View
+                  style={[
+                    styles.emptyWrapper,
+                    { justifyContent: 'center', flex: 1 },
+                  ]}
+                >
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
                 </View>
               ) : !isLoading && featurelist.length === 0 ? (
-                <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+                <View
+                  style={[
+                    styles.emptyWrapper,
+                    { justifyContent: 'center', alignItems: 'center', flex: 1 },
+                  ]}
+                >
                   <View style={styles.emptyContainer}>
                     <Image
                       source={require('../../../assets/images/noproduct.png')}
@@ -656,24 +669,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
       </View>
       <NewCustomToastContainer />
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 
 export default MyListing;
 
 const styles = StyleSheet.create({
-
-  categoryTabsContainer: {
-    },
-  categoryTabsScrollContent: { 
-    flexDirection: 'row', 
+  categoryTabsContainer: {},
+  categoryTabsScrollContent: {
+    flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    padding: 8
-   },
+    padding: 8,
+  },
   blurButtonWrapper_none: {
-
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -690,8 +700,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 16,
-    marginBottom: Platform.OS === "ios" ? 20 : 10,
-    paddingTop: 10
+    marginBottom: Platform.OS === 'ios' ? 20 : 10,
+    paddingTop: 10,
   },
 
   emptyContainer: {
@@ -704,7 +714,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-
   },
 
   emptyImage: {
@@ -717,10 +726,8 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600
+    fontWeight: 600,
   },
-
-
 
   headerWrapper: {
     position: 'absolute',
@@ -732,7 +739,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
- 
+
   tabtext: {
     color: '#fff',
     fontWeight: '600',
@@ -753,9 +760,8 @@ const styles = StyleSheet.create({
   backButtonContainer: {
     zIndex: 11,
   },
-  
-  unizyText: {
 
+  unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     textAlign: 'center',
@@ -763,11 +769,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
   },
-  
+
   listContainer: {
     width: '100%',
   },
-
 
   tabcard: {
     minHeight: 38,
@@ -781,7 +786,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     boxSizing: 'border-box',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
-
   },
   tabcard1: {
     minHeight: 38,
@@ -803,11 +807,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 
-
-
   itemContainer: {
     width: '100%',
     paddingHorizontal: 16,
-    marginTop: 2
+    marginTop: 2,
   },
 });

@@ -77,6 +77,7 @@ import searchTabIcon2 from '../../../assets/images/filled2.png';
 import addIcon3 from '../../../assets/images/filled3.png';
 import bookmarkIcon4 from '../../../assets/images/filled4.png';
 import profileIcon5 from '../../../assets/images/filled5.png';
+import SEARCHICON from '../../../assets/images/searchicon.png'
 
 // ─── Static tab config (defined once, outside component) ───────────────────────
 const TABS = [
@@ -1132,7 +1133,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
               ]}
             >
               <Image
-                source={require('../../../assets/images/searchicon.png')}
+                source={SEARCHICON}
                 style={styles.searchIcon}
               />
               <TextInput
@@ -1223,7 +1224,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
         </KeyboardAvoidingView>
 
         {/* ── Sales note banner ── */}
-        {activeTab === 'Search' && isSalesActive && (
+        {/* {activeTab === 'Search' && isSalesActive && (
           <View style={styles.textbg}>
             <BlurView
               style={[StyleSheet.absoluteFill, styles.noteBlur]}
@@ -1245,6 +1246,92 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
               </Text>
             </View>
           </View>
+        )} */}
+        {activeTab === 'Search' && isSalesActive && (
+
+          <View style={styles.textbg}>
+           {Platform.OS === 'ios' ? (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { borderRadius: 10, backgroundColor: 'transparent' },
+              ]}
+            >
+              <BlurView
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    borderRadius: 10,
+                    backgroundColor: 'transparent',
+                    overflow: 'hidden',
+                  },
+                ]}
+                blurType="light"
+                blurAmount={1.3}
+                reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
+                overlayColor="rgba(15, 21 ,131,0.8)"
+              >
+                <View
+                  style={{
+                    opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                    backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 10,
+                  }}
+                ></View>
+              </BlurView>
+            </View>
+          ) : (
+            <>
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { borderRadius: 25, backgroundColor: 'transparent' },
+                ]}
+              >
+                <BlurView
+                  style={[
+                    StyleSheet.absoluteFill,
+                    {
+                      borderRadius: 25,
+                      backgroundColor: 'transparent',
+                      overflow: 'hidden',
+                    },
+                  ]}
+                  blurType="light"
+                  blurAmount={1.3}
+                  reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.05)"
+                  overlayColor="rgba(15, 21, 131, 0.05)"
+                >
+                  <View
+                    style={{
+                      // opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                      // backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 25,
+                    }}
+                  ></View>
+                </BlurView>
+              </View>
+            </>
+          )}
+
+          <Image
+            source={require('../../../assets/images/info_icon.png')}
+            style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+          />
+          <View style={{ flex: 1 }}>
+            <Text allowFontScaling={false} style={styles.importantText1}>
+              {t('note')}
+            </Text>
+
+            <Text allowFontScaling={false} style={styles.importantText}>
+              {t('complete_orderotp_note')}{' '}
+            </Text>
+          </View>
+        </View>
         )}
 
         {/* ── Bottom tab bar ── */}
