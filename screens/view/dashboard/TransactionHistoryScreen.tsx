@@ -799,8 +799,7 @@ export default function TransactionHistoryScreen({
     [selectedTab, t],
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: TransactionItem }) => {
+  const renderItem = useCallback(({ item }: { item: TransactionItem }) => {
       if (selectedTab === TAB_PURCHASES) {
         return (
           <PurchaseCard
@@ -938,9 +937,13 @@ export default function TransactionHistoryScreen({
                 { width: tabWidth, alignItems: 'center' },
               ]}
               onPress={() => {
-                setLoading(true);        // 🔥 force loader immediately
-                setTransactions([]);     // clear old data
-                setSelectedTab(key);
+                if (key === selectedTab) {
+                  fetchTransactions(); // 🔥 manual refresh
+                } else {
+                  setLoading(true);
+                  setTransactions([]);
+                  setSelectedTab(key);
+                }
               }}
             >
               <View style={styles.iconWrapper}>
@@ -972,24 +975,6 @@ export default function TransactionHistoryScreen({
         ))}
       </View>
 
-      {/* List */}
-      {/* {loading && (
-  <View
-    style={{
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.2)', // optional
-      zIndex: 999,
-    }}
-  >
-    <Loader />
-  </View>
-)} */}
       {loading ? (
         <View style={styles.loaderWrapper}>
           <Loader containerStyle={styles.loaderContainer} />
