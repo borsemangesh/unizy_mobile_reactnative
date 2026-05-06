@@ -422,23 +422,21 @@ const FilterAndroid = ({
       );
     } else if (currentFilter.alias_name === 'price') {
       return (
-        <View style={{ zIndex: 999, position: 'relative' }}>
-          {/* <Text
-            allowFontScaling={false}
-            style={{ color: 'white', marginBottom: 10 }}
-          >
-            {t('range')}: {sliderLow} - {sliderHigh}
-          </Text> */}
-
+        <View style={{  zIndex: 999,
+      position: 'relative',
+      width: '100%',
+      flex: 1, }}>
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
             <View
               style={{
                 flexDirection: 'row',
-                flex: 2,
                 justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 4,
+                width: '100%',
               }}
             >
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, marginRight: 5 }}>
                 {/* MIN INPUT */}
                 <Text
                   allowFontScaling={false}
@@ -454,7 +452,7 @@ const FilterAndroid = ({
                   style={[
                     styles.login_container,
                     styles.personalEmailID_TextInput,
-                    { width: '94%' },
+                    { width: '100%' },
                   ]}
                   keyboardType="numeric"
                   placeholder="Min"
@@ -474,7 +472,7 @@ const FilterAndroid = ({
                 />
               </View>
 
-              <View style={{ flex: 1, width: '100%' }}>
+              <View style={{ flex: 1, marginLeft: 5 }}>
                 <Text
                   allowFontScaling={false}
                   style={{
@@ -490,7 +488,7 @@ const FilterAndroid = ({
                   style={[
                     styles.login_container,
                     styles.personalEmailID_TextInput,
-                    { width: '98%' },
+                    { width: '100%' },
                   ]}
                   keyboardType="numeric"
                   placeholder="Max"
@@ -1070,6 +1068,7 @@ const FilterAndroid = ({
                 </View>
 
                 <ScrollView
+                   key={selectedTab}
                   style={{ flex: 1, backgroundColor: '#5d5c5c3c' }}
                   contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
                   showsVerticalScrollIndicator={false}
@@ -1234,7 +1233,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   login_container: {
-    width: '45%',
+    width: '100%',
     height: 44,
     display: 'flex',
     gap: 10,
@@ -1252,7 +1251,7 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
   },
   personalEmailID_TextInput: {
-    width: '45%',
+    width: '100%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
