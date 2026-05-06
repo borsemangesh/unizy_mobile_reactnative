@@ -279,7 +279,7 @@ const PurchaseCard = React.memo(
                 )}
               </View>
               <View style={styles.priceContainer}>
-                <Text allowFontScaling={false} style={styles.price}>
+                <Text allowFontScaling={false} style={[styles.price,{marginTop: showQty ||isAwaiting ? -6 : 0}]}>
                   {item.price}
                 </Text>
                 {showQty && (
@@ -989,9 +989,9 @@ export default function TransactionHistoryScreen({
           ListEmptyComponent={ListEmptyComponent}
           style={{ width: '100%', marginBottom: listMarginBottom }}
           showsVerticalScrollIndicator={false}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={5}
+          initialNumToRender={4}
+maxToRenderPerBatch={4}
+windowSize={3}
           removeClippedSubviews={Platform.OS === 'android'}
         />
       )}
@@ -1502,7 +1502,6 @@ const styles = StyleSheet.create({
   price: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
-    marginTop: -6,
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
