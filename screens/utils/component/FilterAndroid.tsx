@@ -229,7 +229,7 @@ const FilterAndroid = ({
       return { ...prev, [fieldId]: updated };
     });
   };
-  
+
   const handleClearFilters = () => {
     setDropdownSelections({});
 
@@ -241,7 +241,7 @@ const FilterAndroid = ({
     setDistanceHigh(10);
 
     setIsPriceChanged(false);
-    setIsDistanceChanged(false); 
+    setIsDistanceChanged(false);
 
     setIsKm(false);
     setPostcode('');
@@ -324,11 +324,9 @@ const FilterAndroid = ({
             const isOtherOption =
               opt.option_name?.toLowerCase() === 'other' ||
               opt.name?.toLowerCase() === 'other';
-         
+
             return (
               <View key={opt.id}>
-               
-               
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
@@ -379,8 +377,6 @@ const FilterAndroid = ({
                     </View>
                   )}
 
-                 
-
                   <Text
                     allowFontScaling={false}
                     numberOfLines={3}
@@ -422,10 +418,9 @@ const FilterAndroid = ({
       );
     } else if (currentFilter.alias_name === 'price') {
       return (
-        <View style={{  zIndex: 999,
-      position: 'relative',
-      width: '100%',
-      flex: 1, }}>
+        <View
+          style={{ zIndex: 999, position: 'relative', width: '100%', flex: 1 }}
+        >
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
             <View
               style={{
@@ -602,8 +597,8 @@ const FilterAndroid = ({
                     style={[styles.toggleBtn, !isKm && styles.active]}
                     // onPress={() => setIsKm(false)}
                     onPress={() => {
-  setIsKm(false);
-}}
+                      setIsKm(false);
+                    }}
                   >
                     <Text
                       style={[
@@ -618,8 +613,8 @@ const FilterAndroid = ({
                     style={[styles.toggleBtn, isKm && styles.active]}
                     // onPress={() => setIsKm(true)}
                     onPress={() => {
-  setIsKm(true);
-}}
+                      setIsKm(true);
+                    }}
                   >
                     <Text
                       style={[
@@ -630,8 +625,6 @@ const FilterAndroid = ({
                       KM
                     </Text>
                   </TouchableOpacity>
-
-                  
                 </View>
                 <Text style={styles.rangeText}>
                   {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
@@ -643,7 +636,8 @@ const FilterAndroid = ({
                     ? distanceHigh.toFixed(0)
                     : kmToMiles(distanceHigh).toFixed(1)}{' '}
                   {isKm ? 'km' : 'mi'} */}
-                  1 - {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)} {isKm ? 'km' : 'mi'}
+                  1 - {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)}{' '}
+                  {isKm ? 'km' : 'mi'}
                 </Text>
               </View>
             </View>
@@ -675,15 +669,15 @@ const FilterAndroid = ({
               // }}
 
               onValuesChange={values => {
-  const [value] = values;
+                const [value] = values;
 
-  const fixedValue = isKm
-    ? Math.round(value)                // integer for KM
-    : parseFloat(value.toFixed(1));   // 1 decimal for Miles
+                const fixedValue = isKm
+                  ? Math.round(value) // integer for KM
+                  : parseFloat(value.toFixed(1)); // 1 decimal for Miles
 
-  setDistanceHigh(fixedValue);
-  setIsDistanceChanged(true);
-}}
+                setDistanceHigh(fixedValue);
+                setIsDistanceChanged(true);
+              }}
               allowOverlap={false}
               snapped
               selectedStyle={{ backgroundColor: '#fff' }}
@@ -720,10 +714,10 @@ const FilterAndroid = ({
                   //   return isKm ? newValue : milesToKm(newValue);
                   // });
                   setDistanceHigh(prev => {
-  let newValue = isKm ? prev - 1 : prev - 0.1;;
-  if (newValue < 1) return prev;
-  return newValue;
-});
+                    let newValue = isKm ? prev - 1 : prev - 0.1;
+                    if (newValue < 1) return prev;
+                    return newValue;
+                  });
 
                   setIsDistanceChanged(true);
                 }}
@@ -752,7 +746,6 @@ const FilterAndroid = ({
                   ? distanceHigh.toFixed(1)
                   : distanceHigh.toFixed(0)}{' '} */}
                 {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)}
-                
               </Text>
 
               <TouchableOpacity
@@ -771,10 +764,10 @@ const FilterAndroid = ({
                   //   return isKm ? newValue : milesToKm(newValue);
                   // });
                   setDistanceHigh(prev => {
-  let newValue = isKm ? prev + 1 : prev + 0.1;
-  if (newValue > 10) return prev;
-  return newValue;
-});
+                    let newValue = isKm ? prev + 1 : prev + 0.1;
+                    if (newValue > 10) return prev;
+                    return newValue;
+                  });
 
                   setIsDistanceChanged(true);
                 }}
@@ -903,9 +896,13 @@ const FilterAndroid = ({
           isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
-            const min = isKm ? distanceLow :  parseFloat(kmToMiles(distanceLow).toFixed(1));
-            const max = isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1));
-         
+            const min = isKm
+              ? distanceLow
+              : parseFloat(kmToMiles(distanceLow).toFixed(1));
+            const max = isKm
+              ? distanceHigh
+              : parseFloat(kmToMiles(distanceHigh).toFixed(1));
+
             return {
               id: f.id,
               field_name: f.field_name,
@@ -1068,7 +1065,7 @@ const FilterAndroid = ({
                 </View>
 
                 <ScrollView
-                   key={selectedTab}
+                  key={selectedTab}
                   style={{ flex: 1, backgroundColor: '#5d5c5c3c' }}
                   contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
                   showsVerticalScrollIndicator={false}
@@ -1081,14 +1078,13 @@ const FilterAndroid = ({
                       allowFontScaling={false}
                       style={{
                         color: 'rgba(255,255,255,0.7)',
-    fontFamily: 'Urbanist-medium',
-    fontSize: 10,
-    fontWeight: '400',
-    fontStyle: 'normal',
-                       
+                        fontFamily: 'Urbanist-medium',
+                        fontSize: 10,
+                        fontWeight: '400',
+                        fontStyle: 'normal',
                       }}
                     >
-                     ({currentFilter.description}) 
+                      ({currentFilter.description})
                     </Text>
                   ) : null}
                   {renderRightContent()}
