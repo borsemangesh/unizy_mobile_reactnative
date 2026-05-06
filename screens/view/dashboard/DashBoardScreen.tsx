@@ -56,7 +56,7 @@ import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
-
+import BACK_ICON from '../../../assets/images/backimg.png';
 import CARDBACKGROUD_ICON from '../../../assets/images/cardbg.png';
 import mylistings from '../../../assets/images/mylistingicon.png';
 import mylistings1 from '../../../assets/images/favourite.png';
@@ -1148,7 +1148,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={BACK_ICON}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >
