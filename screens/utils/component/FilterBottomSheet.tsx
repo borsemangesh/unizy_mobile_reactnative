@@ -328,6 +328,29 @@ const FilterBottomSheet = ({
 
   const currentFilter = filters.find(f => f.field_name === selectedTab);
   const scrollRef = useRef<ScrollView>(null);
+
+  const formatDistanceValue = (value: number) => {
+    // show 10 instead of 10.0
+    return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+  };
+
+  const updateDistance = (type: 'inc' | 'dec') => {
+    setDistanceHigh(prev => {
+      const step = isKm ? 1 : 0.1;
+
+      let newValue = type === 'inc' ? prev + step : prev - step;
+
+      newValue = parseFloat(newValue.toFixed(1));
+
+      if (newValue < 1 || newValue > 10) {
+        return prev;
+      }
+
+      return newValue;
+    });
+
+    setIsDistanceChanged(true);
+  };
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -696,17 +719,12 @@ const FilterBottomSheet = ({
 
                 </View>
                 <Text style={styles.rangeText}>
-                  {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
-                  {isKm ? 'km' : 'mi'} */}
-                  {/* 1 - {isKm ? distanceHigh.toFixed(0) : kmToMiles(distanceHigh).toFixed(1)} {' '}
-                  {isKm ? 'km' : 'mi'} */}
-                  {/* 1 - {' '}
-                  {isKm 
-                  ?distanceHigh.toFixed(0)
-                  : kmToMiles(distanceHigh).toFixed(1)} {' '}
-                  {isKm ? 'km' : 'mi'} */}
-
-                  1 - {isKm ? distanceHigh.toFixed(0): distanceHigh.toFixed(1)} {isKm ? 'km': 'mi'}
+                  {/* 1 - {isKm ? distanceHigh.toFixed(0): distanceHigh.toFixed(1)} {isKm ? 'km': 'mi'} */}
+                  1 -{' '}
+                  {isKm
+                    ? distanceHigh.toFixed(0)
+                    : formatDistanceValue(distanceHigh)}{' '}
+                  {isKm ? 'km' : 'mi'}
                  </Text>
               </View>
             </View>
@@ -781,13 +799,14 @@ const FilterBottomSheet = ({
 
                   //   return isKm ? newValue : milesToKm(newValue);
                   // });
-                  setDistanceHigh(prev => {
-                    let newValue = isKm ? prev -1: prev - 0.1;
-                    if(newValue <1) return prev;
-                    return newValue;
-                  })
+                  // setDistanceHigh(prev => {
+                  //   let newValue = isKm ? prev -1: prev - 0.1;
+                  //   if(newValue <1) return prev;
+                  //   return newValue;
+                  // })
 
-                  setIsDistanceChanged(true);
+                  // setIsDistanceChanged(true);
+                  updateDistance('dec');
                 }}
               >
                 <Image
@@ -810,9 +829,12 @@ const FilterBottomSheet = ({
                   fontWeight: 600,
                 }}
               >
-                {isKm
+                {/* {isKm
                   ? distanceHigh.toFixed(0)
-                  : distanceHigh.toFixed(1)}
+                  : distanceHigh.toFixed(1)} */}
+                  {isKm
+                  ? distanceHigh.toFixed(0)
+                : formatDistanceValue(distanceHigh)}
               
               </Text>
 
@@ -831,13 +853,15 @@ const FilterBottomSheet = ({
 
                   //   return isKm ? newValue : milesToKm(newValue);
                   // });
-                  setDistanceHigh(prev => {
-                    let newValue = isKm ? prev +1: prev + 0.1;
-                    if(newValue > 10) return prev;
-                    return newValue;
-                  })
+                  // setDistanceHigh(prev => {
+                  //   let newValue = isKm ? prev +1: prev + 0.1;
+                  //   if(newValue > 10) return prev;
+                  //   return newValue;
+                  // })
 
-                  setIsDistanceChanged(true);
+                  // setIsDistanceChanged(true);
+
+                  updateDistance('inc');
                 }}
               >
                 <Image
@@ -993,8 +1017,10 @@ const FilterBottomSheet = ({
           isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
-            const min = isKm ? distanceLow : parseFloat(kmToMiles(distanceLow).toFixed(1));
-            const max = isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1));
+            //const min = isKm ? distanceLow : parseFloat(kmToMiles(distanceLow).toFixed(1));
+            //const max = isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1));
+            const min = parseFloat(distanceLow.toFixed(isKm ? 0 : 1));
+            const max = parseFloat(distanceHigh.toFixed(isKm ? 0 : 1));
             return {
               id: f.id,
               field_name: f.field_name,
