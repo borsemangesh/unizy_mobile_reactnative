@@ -37,7 +37,7 @@ import i18n from '../../../localization/i18n';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
-import BACKICON_ICON from '../../../assets/images/back.png'
+import BACKICON_ICON from '../../../assets/images/back.png';
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -69,11 +69,11 @@ type MyListingProps = {
   navigation: any;
 };
 
- type Category = {
-    id: number | null;
-    name: string;
+type Category = {
+  id: number | null;
+  name: string;
 };
-  
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BLUR_ANMOUNT = 10;
 
@@ -368,23 +368,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
   };
   const isEmpty = featurelist.length === 0;
 
-
   const overlayAnimatedStyle = useAnimatedStyle(() => ({
-  opacity: interpolate(
-    scrollY.value,
-    [0, 30],
-    [1, 0],
-    'clamp',
-  ),
+    opacity: interpolate(scrollY.value, [0, 30], [1, 0], 'clamp'),
   }));
-  
-  const animatedBlurStyle_none  = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      scrollY.value,
-      [0, 0],
-      [0, 0],
-      'clamp',
-    ),
+
+  const animatedBlurStyle_none = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, 0], [0, 0], 'clamp'),
   }));
 
   return (
@@ -400,7 +389,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
           backgroundColor="transparent"
           barStyle="light-content"
         />
-{/* 
+        {/* 
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -465,16 +454,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
-                 useAnimatedStyle(() => ({
-                                    opacity: interpolate(
-                                      scrollY.value,
-                                      [0, 30],
-                                      [1, 0],
-                                      'clamp',
-                                    ),
-                                    backgroundColor: 'rgba(255,255,255,0.1)',
-                                    borderRadius: 40,
-                                  })),
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
                 ]}
               />
 
@@ -505,7 +494,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               />
             </Animated.View>
           </TouchableOpacity>
-          <View style={{ width: 280 }}>
+          <View style={styles.width_280}>
             <Text allowFontScaling={false} style={styles.unizyText}>
               {t('My_Listings')}
             </Text>
@@ -515,7 +504,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
             // activeOpacity={0}
           >
             <Animated.View style={[styles.blurButtonWrapper_none]}>
-              
               {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
@@ -527,7 +515,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               {/* Back Icon */}
               <Animated.Image
                 source={BACKICON_ICON}
-                style={[styles.BACKICON_ICON_STYLE,{display: 'none'}]}
+                style={[styles.BACKICON_ICON_STYLE, { display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -675,17 +663,20 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
-
+  width_280: { width: 280 },
   BACK_ICON_STYLE: {
-flex: 1, width: '100%', height: '100%' 
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
- 
+
   BACKICON_ICON_STYLE: {
-     height: 24, width: 24 
-    
+    height: 24,
+    width: 24,
   },
   flatListContainer: {
-    flex: 1, overflow: 'hidden'
+    flex: 1,
+    overflow: 'hidden',
   },
   categoryTabsContainer: {},
   categoryTabsScrollContent: {
