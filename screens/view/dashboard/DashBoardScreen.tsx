@@ -77,7 +77,11 @@ import searchTabIcon2 from '../../../assets/images/filled2.png';
 import addIcon3 from '../../../assets/images/filled3.png';
 import bookmarkIcon4 from '../../../assets/images/filled4.png';
 import profileIcon5 from '../../../assets/images/filled5.png';
-import SEARCHICON from '../../../assets/images/searchicon.png'
+import SEARCHICON from '../../../assets/images/searchicon.png';
+import INFO_ICON from '../../../assets/images/info_icon.png';
+import ALERT_ICON from '../../../assets/images/alerticon.png';
+import PRODUCTION_ICON from '../../../assets/images/producticon.png';
+import NOPRODUCT_ICON from '../../../assets/images/noproduct.png';
 
 // ─── Static tab config (defined once, outside component) ───────────────────────
 const TABS = [
@@ -286,7 +290,7 @@ const AddScreenContent = React.memo(
                 <View style={[StyleSheet.absoluteFill, styles.overlayDark]} />
                 <View style={styles.popupContainer}>
                   <Image
-                    source={require('../../../assets/images/alerticon.png')}
+                    source={ALERT_ICON}
                     style={styles.logo}
                     resizeMode="contain"
                   />
@@ -448,7 +452,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
             description: cat.description,
             icon: cat.logo
               ? { uri: cat.logo }
-              : require('../../../assets/images/producticon.png'),
+              : PRODUCTION_ICON,
           }));
         await AsyncStorage.setItem(
           'categories',
@@ -889,7 +893,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
           <View style={styles.emptyWrapper}>
             <View style={styles.emptyContainer}>
               <Image
-                source={require('../../../assets/images/noproduct.png')}
+                source={NOPRODUCT_ICON}
                 style={styles.emptyImage}
                 resizeMode="contain"
               />
@@ -1267,13 +1271,13 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
                   },
                 ]}
                 blurType="light"
-                blurAmount={1.3}
-                reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
+                blurAmount={1.4}
+                reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.56)"
                 overlayColor="rgba(15, 21 ,131,0.8)"
               >
                 <View
                   style={{
-                    opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                    opacity: Platform.OS === 'ios' ? 0.6 : 0,
                     backgroundColor: 'rgba(0, 3, 65, 0.98)',
                     width: '100%',
                     height: '100%',
@@ -1319,7 +1323,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
           )}
 
           <Image
-            source={require('../../../assets/images/info_icon.png')}
+            source={INFO_ICON}
             style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
           />
           <View style={{ flex: 1 }}>
