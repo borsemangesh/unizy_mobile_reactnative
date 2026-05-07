@@ -37,6 +37,7 @@ import i18n from '../../../localization/i18n';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import BACKICON_ICON from '../../../assets/images/back.png'
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -73,14 +74,15 @@ type MyListingProps = {
     name: string;
 };
   
-const { width: SCREEN_WIDTH, height:SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const BLUR_ANMOUNT = 10;
 
 const MyListing = ({ navigation }: MyListingProps) => {
   const { t } = useTranslation();
-  const [featurelist, setFeaturelist] = useState<Feature[]>([]);
+  // const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [featureList, setFeatureList] = useState<any[]>([]);
+  const [featurelist, setFeatureList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const scrollY = useSharedValue(0);
@@ -153,7 +155,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
-        setSelectedCategory(catObjects[0]);
+        setSelectedCategory(prev =>
+          prev.id === catObjects[0].id ? prev : catObjects[0],
+        );
       }
     };
     loadCategories();
@@ -362,12 +366,31 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
     return `${day}${suffix} ${monthShort} ${year}`;
   };
-  const isEmpty = featureList.length === 0;
+  const isEmpty = featurelist.length === 0;
+
+
+  const overlayAnimatedStyle = useAnimatedStyle(() => ({
+  opacity: interpolate(
+    scrollY.value,
+    [0, 30],
+    [1, 0],
+    'clamp',
+  ),
+  }));
+  
+  const animatedBlurStyle_none  = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      scrollY.value,
+      [0, 0],
+      [0, 0],
+      'clamp',
+    ),
+  }));
 
   return (
     <ImageBackground
       source={BACK_ICON}
-      style={{ flex: 1, width: '100%', height: '100%' }}
+      style={styles.BACK_ICON_STYLE}
       resizeMode="cover"
     >
       {/* <BackgroundWrapper> */}
@@ -377,12 +400,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
+{/* 
         <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
-        />
+        /> */}
 
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
@@ -442,16 +465,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 30],
-                      [1, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,
-                  })),
+                 overlayAnimatedStyle
                 ]}
               />
 
@@ -471,14 +485,14 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 <BlurView
                   style={StyleSheet.absoluteFill}
                   blurType="light"
-                  blurAmount={10}
+                  blurAmount={BLUR_ANMOUNT}
                   reducedTransparencyFallbackColor="transparent"
                 />
               </Animated.View>
 
               <Animated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                source={BACKICON_ICON}
+                style={[styles.BACKICON_ICON_STYLE, animatedIconStyle]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -492,50 +506,26 @@ const MyListing = ({ navigation }: MyListingProps) => {
             // activeOpacity={0}
           >
             <Animated.View style={[styles.blurButtonWrapper_none]}>
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 0],
-                      [0, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'transparent',
-                    borderRadius: 40,
-                  })),
-                  { display: 'none' },
-                ]}
-              />
-
+              
               {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 0],
-                      [0, 0],
-                      'clamp',
-                    ),
-                  })),
+                  animatedBlurStyle_none,
                   { display: 'none' },
                 ]}
-              ></Animated.View>
-
+              />
               {/* Back Icon */}
               <Animated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25, display: 'none' }]}
+                source={BACKICON_ICON}
+                style={[styles.BACKICON_ICON_STYLE,{display: 'none'}]}
               />
             </Animated.View>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 1, overflow: 'hidden' }}>
+        <View style={styles.flatListContainer}>
           <Animated.FlatList
-            data={featureList}
+            data={featurelist}
             scrollEnabled={true}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={false}
@@ -676,6 +666,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
+
+  BACK_ICON_STYLE: {
+flex: 1, width: '100%', height: '100%' 
+  },
+ 
+  BACKICON_ICON_STYLE: {
+     height: 24, width: 24 
+    
+  },
+  flatListContainer: {
+    flex: 1, overflow: 'hidden'
+  },
   categoryTabsContainer: {},
   categoryTabsScrollContent: {
     flexDirection: 'row',

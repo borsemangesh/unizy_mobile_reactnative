@@ -2,6 +2,7 @@ import { MAIN_URL } from "./APIConstant";
 
 export const getRequest = async (endpoint: string) => {
   try {
+    console.log("URL",MAIN_URL.baseUrl + endpoint)
     const response = await fetch(MAIN_URL.baseUrl + endpoint, {
       method: 'GET',
       headers: {
