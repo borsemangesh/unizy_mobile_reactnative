@@ -1227,30 +1227,6 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
           )}
         </KeyboardAvoidingView>
 
-        {/* ── Sales note banner ── */}
-        {/* {activeTab === 'Search' && isSalesActive && (
-          <View style={styles.textbg}>
-            <BlurView
-              style={[StyleSheet.absoluteFill, styles.noteBlur]}
-              blurType="light"
-              blurAmount={1.3}
-              reducedTransparencyFallbackColor="rgba(15,21,131,0.05)"
-              overlayColor="rgba(15,21,131,0.05)"
-            />
-            <Image
-              source={require('../../../assets/images/info_icon.png')}
-              style={styles.infoIcon}
-            />
-            <View style={styles.flex1}>
-              <Text allowFontScaling={false} style={styles.importantText1}>
-                {t('note')}
-              </Text>
-              <Text allowFontScaling={false} style={styles.importantText}>
-                {t('complete_orderotp_note')}{' '}
-              </Text>
-            </View>
-          </View>
-        )} */}
         {activeTab === 'Search' && isSalesActive && (
 
           <View style={styles.textbg}>
@@ -1262,14 +1238,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
               ]}
             >
               <BlurView
-                style={[
-                  StyleSheet.absoluteFill,
-                  {
-                    borderRadius: 10,
-                    backgroundColor: 'transparent',
-                    overflow: 'hidden',
-                  },
-                ]}
+                style={[StyleSheet.absoluteFill,styles.iosBlur]}
                 blurType="light"
                 blurAmount={1.4}
                 reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.56)"
@@ -1324,7 +1293,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
 
           <Image
             source={INFO_ICON}
-            style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              style={styles.infoIcon}
           />
           <View style={{ flex: 1 }}>
             <Text allowFontScaling={false} style={styles.importantText1}>
@@ -1756,27 +1725,12 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   androidBlurInner: { width: '100%', height: '100%', borderRadius: 25 },
-
-  // Note banner
-  // textbg: {
-  //   flexDirection: 'row',
-  //   alignItems: 'flex-start',
-  //   padding: 6,
-  //   borderWidth: 0.5,
-  //   borderRadius: 10,
-  //   borderTopColor: '#ffffff31',
-  //   borderBottomColor: '#ffffff31',
-  //   borderLeftColor: '#ffffff31',
-  //   borderRightColor: '#ffffff31',
-  //   borderColor: '#ffffff31',
-  //   position: 'absolute',
-  //   bottom: Platform.OS === 'ios' ? SH * 0.1 + 8 : SH * 0.1,
-  //   left: 16,
-  //   right: 16,
-  //   zIndex: 999,
-  // },
-  noteBlur: { borderRadius: 10, overflow: 'hidden' },
-  infoIcon: { width: 16, height: 16, marginRight: 8, marginTop: 2 },
+  iosBlur: {
+    borderRadius: 10,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  infoIcon: { width: 16, height: 16, marginRight: 8, marginTop: 2  },
   importantText: {
     color: '#FFFFFFCC',
     fontSize: 12,
