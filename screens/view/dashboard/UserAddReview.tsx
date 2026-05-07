@@ -155,7 +155,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   return (
     <ImageBackground
       source={BACK_ICON}
-      style={{ flex: 1, width: '100%', height: '100%' }}
+      style={styles.BACK_ICON_STYLE}
       resizeMode="cover"
     >
       {/* <BackgroundWrapper> */}
@@ -255,7 +255,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
           animationType="fade"
           onRequestClose={closePopup1}
         >
-          <TouchableWithoutFeedback onPress={closePopup1}>
+          <TouchableWithoutFeedback >
             <View style={styles.overlay}>
               <BlurView
                 style={{
@@ -357,6 +357,9 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 export default UserAddReview;
 
 const styles = StyleSheet.create({
+  BACK_ICON_STYLE: {
+    flex: 1, width: '100%', height: '100%'
+  },
   fullLoader: {
     position: "absolute",
     top: 0,

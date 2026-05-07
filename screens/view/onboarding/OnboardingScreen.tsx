@@ -144,9 +144,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     bottom: 30,
   },
-  clickskip: {
-    bottom: 50,
-  },
   skip: {
     color: '#FFFFFF',
     // opacity: 0.7,

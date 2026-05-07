@@ -805,9 +805,7 @@ const formatDate = (dateString?: string, t?: any) => {
         onRequestClose={() => setShowDeleteModal(false)}
       >
         <TouchableWithoutFeedback
-          onPress={() => {
-            navigation.replace('EditProfile');
-          }}
+          onPress={() => setShowDeleteModal(false)}
         >
           <View style={styles.overlay}>
             <BlurView
