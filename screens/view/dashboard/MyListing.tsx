@@ -465,7 +465,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
-                 overlayAnimatedStyle
+                 useAnimatedStyle(() => ({
+                                    opacity: interpolate(
+                                      scrollY.value,
+                                      [0, 30],
+                                      [1, 0],
+                                      'clamp',
+                                    ),
+                                    backgroundColor: 'rgba(255,255,255,0.1)',
+                                    borderRadius: 40,
+                                  })),
                 ]}
               />
 
