@@ -336,7 +336,7 @@ const FilterBottomSheet = ({
 
   const updateDistance = (type: 'inc' | 'dec') => {
     setDistanceHigh(prev => {
-      const step = isKm ? 1 : 0.1;
+      const step = isKm ? 0.1 : 0.1;
 
       let newValue = type === 'inc' ? prev + step : prev - step;
 
@@ -722,7 +722,7 @@ const FilterBottomSheet = ({
                   {/* 1 - {isKm ? distanceHigh.toFixed(0): distanceHigh.toFixed(1)} {isKm ? 'km': 'mi'} */}
                   1 -{' '}
                   {isKm
-                    ? distanceHigh.toFixed(0)
+                    ? formatDistanceValue(distanceHigh)
                     : formatDistanceValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'}
                  </Text>
@@ -737,7 +737,7 @@ const FilterBottomSheet = ({
               max={10}
 
               // max={isKm ? 1000 : kmToMiles(1000)}
-              step={isKm ? 1 : 0.1}
+              step={isKm ? 0.1 : 0.1}
              
 
               // values={[
@@ -833,7 +833,7 @@ const FilterBottomSheet = ({
                   ? distanceHigh.toFixed(0)
                   : distanceHigh.toFixed(1)} */}
                   {isKm
-                  ? distanceHigh.toFixed(0)
+                  ? formatDistanceValue(distanceHigh)
                 : formatDistanceValue(distanceHigh)}
               
               </Text>
@@ -1019,8 +1019,8 @@ const FilterBottomSheet = ({
           if (postcode || distanceLow !== null || distanceHigh !== null) {
             //const min = isKm ? distanceLow : parseFloat(kmToMiles(distanceLow).toFixed(1));
             //const max = isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1));
-            const min = parseFloat(distanceLow.toFixed(isKm ? 0 : 1));
-            const max = parseFloat(distanceHigh.toFixed(isKm ? 0 : 1));
+            const min = parseFloat(distanceLow.toFixed(isKm ? 1 : 1));
+            const max = parseFloat(distanceHigh.toFixed(isKm ? 1 : 1));
             return {
               id: f.id,
               field_name: f.field_name,
