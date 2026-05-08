@@ -1655,8 +1655,12 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const handleAnimationFinish = () => {
     const checkLoginStatus = async () => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
-      if(Platform.OS == 'android'){
+      if (Platform.OS == 'android') {
+        animRef.current?.reset();
         animRef.current?.pause();
+      } else {
+        animRef.current?.reset();
+        // animRef.current?.pause();
       }
       if (flag === 'true') {
         navigation.reset({
