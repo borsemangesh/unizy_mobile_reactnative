@@ -1229,7 +1229,13 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
 
         {activeTab === 'Search' && isSalesActive && (
 
-          <View style={styles.textbg}>
+          <View style={[styles.textbg,{
+              position: 'absolute',
+              bottom: insets.bottom + 60,
+              left: 16,
+              right: 16,
+              zIndex: 999,
+          }]}>
            {Platform.OS === 'ios' ? (
             <View
               style={[
