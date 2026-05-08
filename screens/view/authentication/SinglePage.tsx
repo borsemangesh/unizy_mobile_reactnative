@@ -1655,7 +1655,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const handleAnimationFinish = () => {
     const checkLoginStatus = async () => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
-      animRef.current?.pause();
+      if(Platform.OS == 'android'){
+        animRef.current?.pause();
+      }
       if (flag === 'true') {
         navigation.reset({
           index: 0,
@@ -1843,15 +1845,32 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           {currentScreen === 'splashScreen' && (
             <>
               {/* <View style={Styles.ScreenLayout}> */}
-              <LottieView
-                ref={animRef}
-                source={require('../../../assets/animations/animation_new.json')}
-                autoPlay
-                loop={false}
-                resizeMode="contain"
-                style={{ width, height }}
-                onAnimationFinish={handleAnimationFinish}
-              />
+              {Platform.OS === 'ios' ? (
+                <LottieView
+                  ref={animRef}
+                  source={require('../../../assets/animations/animation_new.json')}
+                  autoPlay
+                  loop={false}
+                  resizeMode="contain"
+                  style={{ width, height }}
+                  onLayout={() => {
+                    animRef.current?.reset();
+                    animRef.current?.play();
+                  }}
+                  onAnimationFinish={handleAnimationFinish}
+                />
+              ) : (
+                <LottieView
+                  ref={animRef}
+                  source={require('../../../assets/animations/animation_new.json')}
+                  autoPlay
+                  loop={false}
+                  resizeMode="contain"
+                  style={{ width, height }}
+                  onAnimationFinish={handleAnimationFinish}
+                />
+              )}
+
               {/* </View> */}
             </>
           )}
@@ -2331,7 +2350,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     setIsChecked(false);
                                     setUserMeta(prev => ({
                                       ...prev,
-                                      city:   '',
+                                      city: '',
                                       latitude: 0,
                                       longitude: 0,
                                     }));
@@ -2592,14 +2611,12 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             </View>
                           </View>
 
-                          
                           <View
                             style={[
                               Styles.login_container,
                               {
                                 marginTop: Platform.OS === 'ios' ? 12 : 0,
-                                marginBottom: Platform.OS === 'ios' ? 0: 10,
-                               
+                                marginBottom: Platform.OS === 'ios' ? 0 : 10,
                               },
                             ]}
                           >
@@ -2637,10 +2654,17 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 setTypingTimeout(timeout);
                               }}
                             />
-                             <Text style={{position: 'absolute', right: 10,color: 'white'}}>{userMeta?.city}</Text>
+                            <Text
+                              style={{
+                                position: 'absolute',
+                                right: 10,
+                                color: 'white',
+                              }}
+                            >
+                              {userMeta?.city}
+                            </Text>
                           </View>
-                         
-                     
+
                           <View
                             style={[
                               Styles.password_container,
