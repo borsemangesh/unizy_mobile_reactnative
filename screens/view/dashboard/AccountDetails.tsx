@@ -601,7 +601,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   return (
     // <BackgroundWrapper>
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={require('../../../assets/images/backimg.png')}
       style={{ flex: 1, width: '100%', height: '100%' }}
       resizeMode="cover"
     >

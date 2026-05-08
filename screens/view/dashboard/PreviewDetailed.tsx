@@ -562,27 +562,68 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         productId1,
       });
 
+      // if (Number(productId1) === 4) {
+      //   // ✅ EDGE CASE (FIXED PROPERLY)
+      //   if (Number(accomodation_amount) === 0 && Number(maxCap1) === 0) {
+      //     console.log('EDGE CASE HIT ✅');
+
+      //     featureAmountToSend = 0;
+      //     paymentIntentToSend = '';
+      //     fixedCommissionToSend = 0;
+      //     listingFeatureAmountToSend = 0;
+      //   }
+
+      //   // ✅ FEATURED CASE
+      //   else if (isFeatured && Number(maxCap1) > 0) {
+      //     featureAmountToSend = finalPrice;
+      //   }
+
+      //   // ✅ NORMAL CASE
+      //   else if (!isFeatured && Number(accomodation_amount) > 0) {
+      //     featureAmountToSend = accomodation_amount;
+      //   }
+      // }
+
+// if (Number(productId1) === 4) {
+//   fixedCommissionToSend = Number(accomodation_amount) || 0;
+//   listingFeatureAmountToSend = Number(maxCap1) || 0;
+
+//   // ✅ paymentintent_id logic
+
+//   if (fixedCommissionToSend > 0) {
+//     paymentIntentToSend = paymentintent_id || '';
+//   } else {
+//     paymentIntentToSend = '';
+//   }
+
+//   // ✅ featureamount logic
+
+//   featureAmountToSend =
+//     fixedCommissionToSend + listingFeatureAmountToSend;
+      // }
+      
       if (Number(productId1) === 4) {
-        // ✅ EDGE CASE (FIXED PROPERLY)
-        if (Number(accomodation_amount) === 0 && Number(maxCap1) === 0) {
-          console.log('EDGE CASE HIT ✅');
+  fixedCommissionToSend = Number(accomodation_amount) || 0;
 
-          featureAmountToSend = 0;
-          paymentIntentToSend = '';
-          fixedCommissionToSend = 0;
-          listingFeatureAmountToSend = 0;
-        }
+  listingFeatureAmountToSend = isFeatured
+    ? Number(maxCap1) || 0
+    : 0;
 
-        // ✅ FEATURED CASE
-        else if (isFeatured && Number(maxCap1) > 0) {
-          featureAmountToSend = finalPrice;
-        }
+  // ✅ featureamount
+  featureAmountToSend =
+    fixedCommissionToSend + listingFeatureAmountToSend;
 
-        // ✅ NORMAL CASE
-        else if (!isFeatured && Number(accomodation_amount) > 0) {
-          featureAmountToSend = accomodation_amount;
-        }
-      }
+  // ✅ paymentintent_id logic (UPDATED RULE)
+  if (featureAmountToSend > 0) {
+    paymentIntentToSend = paymentintent_id || '';
+  } else {
+    paymentIntentToSend = '';
+  }
+
+  // keep finalPrice synced if needed
+    featureAmountToSend =
+    fixedCommissionToSend + listingFeatureAmountToSend;
+}
 
       const createPayload = {
         category_id: productId1,
@@ -593,12 +634,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         fixed_commission: fixedCommissionToSend,
         listing_featureamount: listingFeatureAmountToSend,
       };
+   
 
       console.log(
         'Create Feature Payload:',
         JSON.stringify(createPayload, null, 2),
       );
-
+  //  return;
       const createRes = await fetch(
         `${MAIN_URL.baseUrl}category/featurelistv2/create`,
         {
