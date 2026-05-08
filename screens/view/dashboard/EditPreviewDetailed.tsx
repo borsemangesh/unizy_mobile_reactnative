@@ -521,12 +521,12 @@ const createPayload: any = {
   data: dataArray,
   ...(Number(productId) === 4 && {
     paymentintent_id:
-      Number(accomodation_amount) === 0 && Number(maxCap1) === 0
+      Number(maxCap1) === 0
         ? ""
         : paymentintent_id,
 
     featureamount:
-      Number(accomodation_amount) === 0 && Number(maxCap1) === 0
+        Number(maxCap1) === 0
         ? 0
         : maxCap1,
   }),
