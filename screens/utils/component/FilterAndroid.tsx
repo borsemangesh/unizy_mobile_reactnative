@@ -310,21 +310,23 @@ const FilterAndroid = ({
   };
 
   const updateDistance = (type: 'inc' | 'dec') => {
-    setDistanceHigh(prev => {
-      const step = isKm ? 1 : 0.1;
+   setDistanceHigh(prev => {
+    let step = 0.1;
 
-      let newValue = type === 'inc' ? prev + step : prev - step;
+    let newValue =
+      type === 'inc' ? prev + step : prev - step;
 
-      newValue = parseFloat(newValue.toFixed(1));
+    // prevent going below 1
+    if (newValue < 1) return prev;
 
-      if (newValue < 1 || newValue > 10) {
-        return prev;
-      }
+    // optional max limit
+    const max = 10;
+    if (newValue > max) return prev;
 
-      return newValue;
-    });
+    return parseFloat(newValue.toFixed(1));
+  });
 
-    setIsDistanceChanged(true);
+  setIsDistanceChanged(true);
   };
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
@@ -662,7 +664,7 @@ const FilterAndroid = ({
                   {isKm ? 'km' : 'mi'} */}
                   1 -{' '}
                   {isKm
-                    ? distanceHigh.toFixed(0)
+                    ? formatDistanceValue(distanceHigh)
                     : formatDistanceValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'}
                 </Text>
@@ -677,7 +679,7 @@ const FilterAndroid = ({
               // max={isKm ? 1000 : kmToMiles(1000)}
               min={1}
               max={10}
-              step={isKm ? 1 : 0.1}
+              step={isKm ? 0.1 : 0.1}
               // values={[
               //   isKm ? distanceHigh : kmToMiles(distanceHigh),
               // ]}
@@ -699,7 +701,7 @@ const FilterAndroid = ({
                 const [value] = values;
 
                 const fixedValue = isKm
-                  ? Math.round(value) // integer for KM
+                  ? parseFloat(value.toFixed(1)) // integer for KM
                   : parseFloat(value.toFixed(1)); // 1 decimal for Miles
 
                 setDistanceHigh(fixedValue);
@@ -773,7 +775,7 @@ const FilterAndroid = ({
               >
                 {/* {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)} */}
                 {isKm
-                  ? distanceHigh.toFixed(0)
+                  ? formatDistanceValue(distanceHigh)
                   : formatDistanceValue(distanceHigh)}
               </Text>
 
@@ -932,8 +934,8 @@ const FilterAndroid = ({
             // const max = isKm
             //   ? distanceHigh
             //   : parseFloat(kmToMiles(distanceHigh).toFixed(1));
-            const min = parseFloat(distanceLow.toFixed(isKm ? 0 : 1));
-            const max = parseFloat(distanceHigh.toFixed(isKm ? 0 : 1));
+            const min = parseFloat(distanceLow.toFixed(isKm ? 1 : 1));
+            const max = parseFloat(distanceHigh.toFixed(isKm ? 1 : 1));
 
             return {
               id: f.id,
