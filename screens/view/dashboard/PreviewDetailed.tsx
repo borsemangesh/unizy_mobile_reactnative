@@ -667,19 +667,19 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       showToast(t(apiMessage), isSuccess ? 'success' : 'error');
 
       if (!(createRes.status === 200 || createRes.status === 201)) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'Dashboard',
-              params: {
-                AddScreenBackactiveTab: 'Add',
-                isNavigate: false,
-              },
-            },
-          ],
-        });
-        return;
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [
+        //     {
+        //       name: 'Dashboard',
+        //       params: {
+        //         AddScreenBackactiveTab: 'Add',
+        //         isNavigate: false,
+        //       },
+        //     },
+        //   ],
+        // });
+        // return;
       }
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
