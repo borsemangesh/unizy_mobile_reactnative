@@ -334,12 +334,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         updatedBookmarks = [...bookmarkedIds, productId];
       }
 
-      setBookmarkedIds(updatedBookmarks);
-
-      await AsyncStorage.setItem(
-        'bookmarkedIds',
-        JSON.stringify(updatedBookmarks),
-      );
 
       if (isCurrentlyBookmarked) {
         setFeaturelist(prevList =>
