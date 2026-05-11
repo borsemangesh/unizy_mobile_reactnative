@@ -588,6 +588,32 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     );
   };
 
+  const handleBackPress = () => {
+    if (isFromOnboarding.current || !navigation.canGoBack()) {
+      if (Platform.OS === 'ios') {
+        navigation.replace('Dashboard', {
+          AddScreenBackactiveTab: 'Profile',
+          isNavigate: false,
+        });
+      } else {
+        navigation.navigate('Dashboard', {
+          AddScreenBackactiveTab: 'Profile',
+          isNavigate: false,
+        });
+      }
+      isFromOnboarding.current = false;
+    } else {
+      if (Platform.OS === 'ios') {
+        navigation.replace('Dashboard', {
+          AddScreenBackactiveTab: 'Profile',
+          isNavigate: false,
+        });
+      } else {
+        navigation.goBack();
+      }
+    }
+  };
+  
   const dummyCards =
     savedCards?.length > 0
       ? Array.from({ length: 8 }, (_, i) => ({
@@ -649,31 +675,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => {
-              if (isFromOnboarding.current || !navigation.canGoBack()) {
-                if (Platform.OS === 'ios') {
-                  navigation.replace('Dashboard', {
-                    AddScreenBackactiveTab: 'Profile',
-                    isNavigate: false,
-                  });
-                } else {
-                  navigation.navigate('Dashboard', {
-                    AddScreenBackactiveTab: 'Profile',
-                    isNavigate: false,
-                  });
-                }
-                isFromOnboarding.current = false;
-              } else {
-                if (Platform.OS === 'ios') {
-                  navigation.replace('Dashboard', {
-                    AddScreenBackactiveTab: 'Profile',
-                    isNavigate: false,
-                  });
-                } else {
-                  navigation.goBack();
-                }
-              }
-            }}
+            onPress={() => handleBackPress}
             style={styles.backButtonContainer}
           >
             <Animated.View
@@ -696,7 +698,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               {/* Back Icon */}
               <Animated.Image
                 source={BACKICON_ICON}
-                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                style={[styles.HW_24, animatedIconStyle]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -729,7 +731,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               {/* Back Icon */}
               <Animated.Image
                 source={BACKICON_ICON}
-                style={[{ height: 24, width: 24, display: 'none' }]}
+                style={[styles.HW_24,styles.display_none]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -762,14 +764,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                 activeOpacity={0.7}
                 onPress={() => setSelectedTab(tab as any)}
               >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontFamily: 'Urbanist-SemiBold',
-                    color: selectedTab === tab ? '#FFFFFF' : '#89C7FF',
-                    textAlign: 'center',
-                  }}
-                >
+                <Text  style={[styles.tabText,{ color: selectedTab === tab ? '#FFFFFF' : '#89C7FF',}]}>
                   {t(tab)}
                 </Text>
               </TouchableOpacity>
@@ -808,7 +803,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     >
                       <Image
                         source={SELLECTFILE_ICON}
-                        style={{ width: 24, height: 24 }}
+                        style={styles.HW_24}
                         resizeMode="cover"
                       />
                       <Text
@@ -975,7 +970,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             >
                               <Image
                                 source={SELLECTFILE_ICON}
-                                style={{ width: 24, height: 24 }}
+                                style={styles.HW_24}
                                 resizeMode="cover"
                               />
                               <Text
@@ -1062,7 +1057,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                         >
                           <Image
                             source={SELLECTFILE_ICON}
-                            style={{ width: 24, height: 24 }}
+                            style={styles.HW_24}
                             resizeMode="cover"
                           />
                           <Text
@@ -1300,11 +1295,25 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 export default AccountDetails;
 
 const styles = StyleSheet.create({
+  tabText: {
+    fontSize: 14,
+    fontFamily: 'Urbanist-SemiBold',
+
+    textAlign: 'center',
+  },
+  display_none: {
+    display: 'none',
+  },
+
+  HW_24: {
+    height: 24,
+    width: 24,
+  },
 
   emptyWrapper: {
     // flex: 1,
     width: '100%',
-    height: Dimensions.get('window').height * 0.75 -50,
+    height: Dimensions.get('window').height * 0.75 - 50,
   },
   emptyContainer: {
     // flex: 1,
@@ -1428,7 +1437,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -1461,7 +1470,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
   },
-  
+
   fullScreenContainer: {
     flex: 1,
   },

@@ -25,7 +25,6 @@ import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import {
   NewCustomToastContainer,
-  showToast,
 } from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SquircleView } from 'react-native-figma-squircle';
@@ -43,8 +42,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
 import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
-import { IMAGE_URLS } from '../../utils/Style';
-import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
@@ -425,15 +422,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
     }
 
     return (
-      // <View
-      //   style={[
-      //     styles.itemContainer,
-      //     {
-      //       flex: isLastOddItem ? 0.5 : 0.5,
-      //       marginRight: isLastOddItem ? 0.5 : 0.5,
-      //     },
-      //   ]}
-      // >
+     
       <View
         style={[
           styles.itemContainer,
@@ -508,18 +497,16 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   };
 
   return (
-   <ImageBackground
-             source={BACK_ICON}
-             style={{ flex: 1,width: '100%',
-           height: '100%', }}
-             resizeMode="cover"
-           >
+    <ImageBackground
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
       <StatusBar
         translucent
         backgroundColor="transparent"
         barStyle="light-content"
       />
-
 
       <Animated.View
         style={[styles.headerWrapper, animatedBlurStyle]}
@@ -621,13 +608,8 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('Bookmarks')}
           </Text>
-          <TouchableOpacity
-            style={[styles.backButtonContainer]}
-          >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
+          <TouchableOpacity style={[styles.backButtonContainer]}>
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
