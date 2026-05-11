@@ -162,7 +162,7 @@ const AddScreenContent = React.memo(
   }: {
     navigation: any;
     products: any[];
-    onSetActiveTab?: (tab: string) => void;
+    onSetActiveTab: (tab: TabKey) => void;
   }) => {
     const [showOnboardingPopup, setShowOnboardingPopup] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -218,6 +218,7 @@ const AddScreenContent = React.memo(
     const handleGoToPayment = useCallback(() => {
       setShowOnboardingPopup(false);
       onSetActiveTab?.('Profile');
+      navigation.navigate('AccountDeatils');
     }, [onSetActiveTab]);
 
     const renderItem = useCallback(
@@ -1221,7 +1222,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
               {activeTab === 'Home' ? (
                 homeContent
               ) : activeTab === 'Add' ? (
-                <AddScreenContent navigation={navigation} products={products} />
+                <AddScreenContent navigation={navigation} products={products}  onSetActiveTab={setActiveTab} />
               ) : null}
             </>
           )}
