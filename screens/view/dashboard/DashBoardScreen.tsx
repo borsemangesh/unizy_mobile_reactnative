@@ -196,11 +196,11 @@ const AddScreenContent = React.memo(
       async (item: any) => {
         try {
           setLoading(true);
-          const isComplete = await checkOnboardingStatus();
-          if (!isComplete) {
-            setShowOnboardingPopup(true);
-            return;
-          }
+          // const isComplete = await checkOnboardingStatus();
+          // if (!isComplete) {
+          //   setShowOnboardingPopup(true);
+          //   return;
+          // }
           navigation.replace(
             'AddScreen',
             { productId: item.id, productName: item.name },

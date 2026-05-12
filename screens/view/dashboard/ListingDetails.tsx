@@ -45,6 +45,7 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 import BACK_ICON from '../../../assets/images/backimg.png';
 
 import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
+import ALERT_ICON from '../../../assets/images/alerticon.png';
 
 
 type ListingDetailsProps = {
@@ -81,6 +82,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
   const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
+      const [showOnboardingPopup, setShowOnboardingPopup] = useState(false);
 
   const scrollY = useSharedValue(0);
 
@@ -311,6 +313,70 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
     return `${day}${suffix} ${monthShort} ${year}`;
   };
+
+      const checkOnboardingStatus = useCallback(async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return false;
+        try {
+          const response = await fetch(
+            `${MAIN_URL.baseUrl}transaction/account-detail`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+              },
+            },
+          );
+          const result = await response.json();
+          if (response.ok && result?.statusCode === 200) {
+            return result.data?.stripeAccount?.isboardcomplete === true;
+          }
+          return false;
+        } catch {
+          return false;
+        }
+      }, []);
+
+
+  const handleProductPress = useCallback(
+    async (buyer: any) => {
+      try {
+        setLoading(true);
+        const isComplete = await checkOnboardingStatus();
+        if (!isComplete) {
+          setShowOnboardingPopup(true);
+          return;
+        }
+        setSelectedOrderId(buyer.orderid);
+        setprice(buyer.originalprice);
+        setOtp(['', '', '', '', '', '']); // 🔥 clear previous OTP
+        setTimeout(() => {
+          inputs.current[0]?.focus(); // optional: auto focus first box
+        }, 200);
+        setShowPopup1(true);
+        // navigation.replace(
+        //   'ListingDetails',
+        //   { shareid: item.shareid, catagory_id: item.catagory_id, catagory_name: item.catagory_name, reviews: item.reviews },
+        //   { animation: 'none' },
+        // );
+      } catch {
+        setShowOnboardingPopup(true);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [checkOnboardingStatus, navigation],
+  );
+
+  const handleGoToPayment = useCallback(() => {
+    setShowOnboardingPopup(false);
+    // onSetActiveTab?.('Profile');
+    navigation.navigate('AccountDeatils');
+  }, [navigation]);
+
+
+
   return (
     // <BackgroundWrapper>
     <ImageBackground
@@ -863,13 +929,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                           }}
                           //onPress={() => setShowPopup1(true)}
                           onPress={() => {
-                            setSelectedOrderId(buyer.orderid);
-                            setprice(buyer.originalprice);
-                            setOtp(['', '', '', '', '', '']);   // 🔥 clear previous OTP
-                            setTimeout(() => {
-                              inputs.current[0]?.focus();       // optional: auto focus first box
-                            }, 200);
-                            setShowPopup1(true);
+                           handleProductPress(buyer);
                           }}
                         >
                           <Text allowFontScaling={false} style={styles.status1}>
@@ -1248,6 +1308,56 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             </View>
           </TouchableWithoutFeedback>
         </Modal>
+
+        
+        <Modal
+          visible={showOnboardingPopup}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowOnboardingPopup(false)}
+        >
+          <TouchableWithoutFeedback
+            onPress={() => setShowOnboardingPopup(false)}
+          >
+            <View style={styles.overlay}>
+              <BlurView
+                style={styles.blurFull}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View style={[StyleSheet.absoluteFill, styles.overlayDark]} />
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={ALERT_ICON}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                    {t('complete_payment_method')}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                    {t('complete_onboarding')}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.popupButton}
+                    onPress={handleGoToPayment}
+                  >
+                    <Text
+                      numberOfLines={2}
+                      allowFontScaling={false}
+                      style={styles.popupButtonText}
+                    >
+                      {t('go_payments')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+
       </View>
       <NewCustomToastContainer />
    
@@ -1257,6 +1367,61 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
+    popupButtonText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: '500',
+    letterSpacing: 1,
+    width: '100%',
+  },
+    popupButton: {
+    width: '100%',
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor: 'rgba(255,255,255,0.56)',
+    marginTop: 20,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  //  popupContainer: {
+  //   width: '85%',
+  //   padding: 20,
+  //   borderRadius: 24,
+  //   borderWidth: 1,
+  //   borderColor: 'rgba(255,255,255,0.1)',
+  //   alignItems: 'center',
+  //   overflow: 'hidden',
+  //   backgroundColor: 'rgba(255,255,255,0.04)',
+  // },
+  popupMainHeader: {
+    color: 'rgba(255,255,255,0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+    textAlign: 'center',
+  },
+  popupSubHeader: {
+    color: 'rgba(255,255,255,0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+  overlayDark: { backgroundColor: 'rgba(0,0,0,0.32)' },
+  blurFull: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    alignItems: 'center',
+  },
   topRightText: {
     color: '#fff',
     fontSize: 12,
@@ -1361,14 +1526,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  
+
   backButtonContainer: {
     // position: 'absolute',
     // left: 16,
     zIndex: 11,
     //top: 7,
   },
- 
 
   initialsCircle: {
     backgroundColor: '#8390D4',
@@ -1519,7 +1683,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
- 
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
