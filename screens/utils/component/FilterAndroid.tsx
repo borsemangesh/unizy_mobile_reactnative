@@ -650,24 +650,22 @@ const FilterAndroid = ({
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <Text style={styles.rangeText}>
-                  {/* {convertValue(distanceLow)} - {convertValue(distanceHigh)}{' '}
-                  {isKm ? 'km' : 'mi'} */}
-                  {/* 0 - {isKm ? distanceHigh : kmToMiles(distanceHigh).toFixed(1)}{' '}
-                  {isKm ? 'km' : 'mi'} */}
-                  {/* 1 -{' '}
-                  {isKm
-                    ? distanceHigh.toFixed(0)
-                    : kmToMiles(distanceHigh).toFixed(1)}{' '}
-                  {isKm ? 'km' : 'mi'} */}
-                  {/* 1 - {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)}{' '}
-                  {isKm ? 'km' : 'mi'} */}
+                {/* <Text style={styles.rangeText}>
                   1 -{' '}
                   {isKm
                     ? formatDistanceValue(distanceHigh)
                     : formatDistanceValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'}
-                </Text>
+                </Text> */}
+                <Text style={styles.rangeText}>
+  1 -{' '}
+  {distanceHigh >= 10
+    ? '∞'
+    : isKm
+    ? formatDistanceValue(distanceHigh)
+    : formatDistanceValue(distanceHigh)}{' '}
+  {distanceHigh >= 10 ? '' : isKm ? 'km' : 'mi'}
+</Text>
               </View>
             </View>
 
@@ -675,28 +673,10 @@ const FilterAndroid = ({
 
             <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
-              // min={1}
-              // max={isKm ? 1000 : kmToMiles(1000)}
               min={1}
               max={10}
               step={isKm ? 0.1 : 0.1}
-              // values={[
-              //   isKm ? distanceHigh : kmToMiles(distanceHigh),
-              // ]}
-              // values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
               values={[distanceHigh]}
-              // onValuesChange={values => {
-              //   const [value] = values;
-
-              //   // Always store in KM internally
-              //   // const valueInKm = isKm ? value : milesToKm(value);
-
-              //   // setDistanceHigh(Math.round(valueInKm));
-              //   // setDistanceHigh(valueInKm);
-              //   setDistanceHigh(value);
-              //   setIsDistanceChanged(true);
-              // }}
-
               onValuesChange={values => {
                 const [value] = values;
 
@@ -730,26 +710,6 @@ const FilterAndroid = ({
             >
               <TouchableOpacity
                 onPress={() => {
-                  // setDistanceHigh(prev => {
-                  //   let currentValue = isKm ? prev : kmToMiles(prev);
-
-                  //   let newValue = currentValue - 1;
-
-                  //   if (newValue < 1) return prev;
-
-                  //   // ✅ FIX: normalize to 1 decimal
-                  //   newValue = parseFloat(newValue.toFixed(1));
-
-                  //   return isKm ? newValue : milesToKm(newValue);
-                  // });
-                  // setDistanceHigh(prev => {
-                  //   let newValue = isKm ? prev - 1 : prev - 0.1;
-                  //   if (newValue < 1) return prev;
-                  //   return newValue;
-                  // });
-
-                  // setIsDistanceChanged(true);
-
                    updateDistance('dec')
                 }}
               >
@@ -763,7 +723,7 @@ const FilterAndroid = ({
                 />
               </TouchableOpacity>
 
-              <Text
+              {/* <Text
                 allowFontScaling={false}
                 style={{
                   color: '#FFF',
@@ -773,34 +733,29 @@ const FilterAndroid = ({
                   fontWeight: 600,
                 }}
               >
-                {/* {isKm ? distanceHigh.toFixed(0) : distanceHigh.toFixed(1)} */}
+              
                 {isKm
                   ? formatDistanceValue(distanceHigh)
                   : formatDistanceValue(distanceHigh)}
-              </Text>
-
+              </Text> */}
+<Text
+  allowFontScaling={false}
+  style={{
+    color: '#FFF',
+    fontSize: 14,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  }}
+>
+  {distanceHigh >= 10
+    ? '∞'
+    : isKm
+    ? formatDistanceValue(distanceHigh)
+    : formatDistanceValue(distanceHigh)}
+</Text>
               <TouchableOpacity
                 onPress={() => {
-                  // setDistanceHigh(prev => {
-                  //   let currentValue = isKm ? prev : kmToMiles(prev);
-
-                  //   let newValue = currentValue + 1;
-
-                  //   const max = isKm ? 1000 : kmToMiles(1000);
-                  //   if (newValue > max) return prev;
-
-                  //   // ✅ FIX: normalize to 1 decimal
-                  //   newValue = parseFloat(newValue.toFixed(1));
-
-                  //   return isKm ? newValue : milesToKm(newValue);
-                  // });
-                  // setDistanceHigh(prev => {
-                  //   let newValue = isKm ? prev + 1 : prev + 0.1;
-                  //   if (newValue > 10) return prev;
-                  //   return newValue;
-                  // });
-
-                  // setIsDistanceChanged(true);
                   updateDistance('inc')
                 }}
               >
@@ -815,25 +770,6 @@ const FilterAndroid = ({
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* <TextInput
-            style={[
-              styles.login_container,
-              styles.personalEmailID_TextInput,
-              { width: '100%' },
-            ]}
-            keyboardType="default"
-            placeholder={t('enter_postal_code')}
-            placeholderTextColor="#aaa"
-            value={postcode}
-            onChangeText={text => {
-              const filteredText = text
-                .replace(/[^a-zA-Z0-9]/g, '')
-                .toUpperCase();
-              if (filteredText.length > 7) return;
-              setPostcode(filteredText);
-            }}
-          /> */}
         </View>
       );
     }
