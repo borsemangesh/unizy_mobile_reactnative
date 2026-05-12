@@ -675,7 +675,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => handleBackPress}
+            onPress={() => handleBackPress()}
             style={styles.backButtonContainer}
           >
             <Animated.View
