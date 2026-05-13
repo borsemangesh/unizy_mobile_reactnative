@@ -718,14 +718,22 @@ const FilterBottomSheet = ({
                   </TouchableOpacity>
 
                 </View>
-                <Text style={styles.rangeText}>
-                  {/* 1 - {isKm ? distanceHigh.toFixed(0): distanceHigh.toFixed(1)} {isKm ? 'km': 'mi'} */}
+                {/* <Text style={styles.rangeText}>
                   1 -{' '}
                   {isKm
                     ? formatDistanceValue(distanceHigh)
                     : formatDistanceValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'}
-                 </Text>
+                 </Text> */}
+                 <Text style={styles.rangeText}>
+  1 -{' '}
+  {distanceHigh >= 10
+    ? '∞'
+    : isKm
+    ? formatDistanceValue(distanceHigh)
+    : formatDistanceValue(distanceHigh)}{' '}
+  {distanceHigh >= 10 ? '' : isKm ? 'km' : 'mi'}
+</Text>
               </View>
             </View>
 
@@ -819,7 +827,7 @@ const FilterBottomSheet = ({
                 />
               </TouchableOpacity>
 
-              <Text
+              {/* <Text
                 allowFontScaling={false}
                 style={{
                   color: '#FFF',
@@ -829,14 +837,28 @@ const FilterBottomSheet = ({
                   fontWeight: 600,
                 }}
               >
-                {/* {isKm
-                  ? distanceHigh.toFixed(0)
-                  : distanceHigh.toFixed(1)} */}
+                
                   {isKm
                   ? formatDistanceValue(distanceHigh)
                 : formatDistanceValue(distanceHigh)}
               
-              </Text>
+              </Text> */}
+              <Text
+  allowFontScaling={false}
+  style={{
+    color: '#FFF',
+    fontSize: 14,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  }}
+>
+  {distanceHigh >= 10
+    ? '∞'
+    : isKm
+    ? formatDistanceValue(distanceHigh)
+    : formatDistanceValue(distanceHigh)}
+</Text>
 
               <TouchableOpacity
                 onPress={() => {
