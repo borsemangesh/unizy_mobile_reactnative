@@ -762,7 +762,9 @@ const FilterBottomSheet = ({
                 marginTop: 16,
               }}
             >
-              <Text style={[styles.rangeText,{fontSize:16}]}>1</Text>
+              <Text style={[styles.rangeText,{fontSize: 16, marginTop: 8,color: '#ffffff',
+                          
+                          fontFamily: 'Urbanist-SemiBold',}]}>1</Text>
               {/* <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 20}
               min={1}
@@ -870,7 +872,9 @@ const FilterBottomSheet = ({
                   width: 4,
                 }}
               />
-              <Text style={[styles.rangeText,{fontSize: 26}]}>{distanceHigh >= 10 ? '∞' : '10'}</Text>
+              <Text style={[styles.rangeText,{fontSize: distanceHigh >= 10 ?16:14, marginTop: 8,color: '#ffffff',
+                          
+                          fontFamily: 'Urbanist-SemiBold',}]}>{distanceHigh >= 10 ? '∞' : '10'}</Text>
             </View>
             <View
               style={{
