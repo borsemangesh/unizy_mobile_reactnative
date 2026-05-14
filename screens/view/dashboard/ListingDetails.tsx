@@ -250,7 +250,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         orderid: selectedOrderId,
       };
 
-
+      console.log("URL_OTP",url, createPayload)
       const res = await fetch(url, {
         method: 'POST',
         headers: {
