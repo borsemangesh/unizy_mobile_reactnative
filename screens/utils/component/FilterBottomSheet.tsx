@@ -870,7 +870,7 @@ const FilterBottomSheet = ({
                   width: 4,
                 }}
               />
-              <Text style={[styles.rangeText,{fontSize: 26}]}>∞</Text>
+              <Text style={[styles.rangeText,{fontSize: 26}]}>{distanceHigh >= 10 ? '∞' : '10'}</Text>
             </View>
             <View
               style={{

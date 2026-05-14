@@ -596,14 +596,7 @@ const FilterAndroid = ({
       return (
         <View style={{ paddingTop: 10 }}>
           <View style={styles.container}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignContent: 'center',
-              }}
-            >
+            <View style={styles.toggleDistanceContainre}>
               {/* 🔁 KM / Miles Toggle */}
               <Text
                 style={[
@@ -788,7 +781,7 @@ const FilterAndroid = ({
                   width: 4,
                 }}
               />
-              <Text style={styles.rangeText}>∞</Text>
+              <Text style={styles.rangeText}>{distanceHigh >= 10 ? '∞' : '10'}</Text>
             </View>
             <View
               style={{
@@ -1236,6 +1229,12 @@ const FilterAndroid = ({
 };
 
 const styles = StyleSheet.create({
+  toggleDistanceContainre: {
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignContent: 'center',
+              },
   topRightBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
