@@ -674,25 +674,38 @@ const FilterBottomSheet = ({
       currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
 
+
       return (
         <View style={{ paddingTop: 10 }}>
           <View style={styles.container}>
             <View
               style={{
-              
+                flex: 1,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-               
+                alignContent: 'center',
               }}
             >
               {/* 🔁 KM / Miles Toggle */}
-              <Text style={{ color: 'white', marginBottom: 10,paddingRight: 10 }}>Distance</Text>
+              <Text
+                style={[
+                  {
+                    color: 'white',
+                    marginBottom: 10,
+                    fontFamily: 'Ubuntu-Medium',
+                  },
+                ]}
+              >
+                Distance
+              </Text>
               <View>
                 <View style={styles.toggleContainer}>
-
-                <TouchableOpacity
+                  <TouchableOpacity
                     style={[styles.toggleBtn, !isKm && styles.active]}
-                    onPress={() => setIsKm(false)}
+                    // onPress={() => setIsKm(false)}
+                    onPress={() => {
+                      setIsKm(false);
+                    }}
                   >
                     <Text
                       style={[
@@ -705,7 +718,10 @@ const FilterBottomSheet = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.toggleBtn, isKm && styles.active]}
-                    onPress={() => setIsKm(true)}
+                    // onPress={() => setIsKm(true)}
+                    onPress={() => {
+                      setIsKm(true);
+                    }}
                   >
                     <Text
                       style={[
@@ -716,7 +732,6 @@ const FilterBottomSheet = ({
                       KM
                     </Text>
                   </TouchableOpacity>
-
                 </View>
                 {/* <Text style={styles.rangeText}>
                   1 -{' '}
@@ -724,55 +739,46 @@ const FilterBottomSheet = ({
                     ? formatDistanceValue(distanceHigh)
                     : formatDistanceValue(distanceHigh)}{' '}
                   {isKm ? 'km' : 'mi'}
-                 </Text> */}
-                 <Text style={styles.rangeText}>
-  1 -{' '}
-  {distanceHigh >= 10
-    ? '∞'
-    : isKm
-    ? formatDistanceValue(distanceHigh)
-    : formatDistanceValue(distanceHigh)}{' '}
-  {distanceHigh >= 10 ? '' : isKm ? 'km' : 'mi'}
-</Text>
+                </Text> */}
+                {/* <Text style={styles.rangeText}>
+                  1 -{' '}
+                  {distanceHigh >= 10
+                    ? '∞'
+                    : isKm
+                    ? formatDistanceValue(distanceHigh)
+                    : formatDistanceValue(distanceHigh)}{' '}
+                  {distanceHigh >= 10 ? '' : isKm ? 'km' : 'mi'}
+                </Text> */}
               </View>
             </View>
 
             {/* 🎚 Multi Slider */}
-
-            <MultiSlider
-              sliderLength={SCREEN_WIDTH / 2 - 10}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                marginTop: 16,
+              }}
+            >
+              <Text style={[styles.rangeText,{fontSize:16}]}>1</Text>
+              {/* <MultiSlider
+              sliderLength={SCREEN_WIDTH / 2 - 20}
               min={1}
               max={10}
-
-              // max={isKm ? 1000 : kmToMiles(1000)}
               step={isKm ? 0.1 : 0.1}
-             
-
-              // values={[
-              //   isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1)),
-              // ]}
-
-              // values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
               values={[distanceHigh]}
-              // onValuesChange={values => {
-              //   const [value] = values;
-
-              //   // Always store in KM internally
-              //   // const valueInKm = isKm ? value : milesToKm(value);
-              //   // setDistanceHigh(valueInKm);
-              //   setDistanceHigh(value);
-              //   setIsDistanceChanged(true);
-              // }}
-
-              onValuesChange={values=>{
+              onValuesChange={values => {
                 const [value] = values;
-                const fixedValue = isKm
-                 ? Math.round(value)
-                 : parseFloat(value.toFixed(1));
-                 setDistanceHigh(fixedValue);
-                 setIsDistanceChanged(true);
-              }}
 
+                const fixedValue = isKm
+                  ? parseFloat(value.toFixed(1)) // integer for KM
+                  : parseFloat(value.toFixed(1)); // 1 decimal for Miles
+
+                setDistanceHigh(fixedValue);
+                setIsDistanceChanged(true);
+              }}
               allowOverlap={false}
               snapped
               selectedStyle={{ backgroundColor: '#fff' }}
@@ -782,9 +788,90 @@ const FilterBottomSheet = ({
                 height: 20,
                 borderRadius: 12,
                 backgroundColor: '#fff',
-                width: 4
+                width: 4,
               }}
-            />
+              /> */}
+              <MultiSlider
+                sliderLength={SCREEN_WIDTH / 2 - 34}
+                min={1}
+                max={10}
+                step={0.1}
+                values={[distanceHigh]}
+                onValuesChange={values => {
+                  const [value] = values;
+
+                  const fixedValue = parseFloat(value.toFixed(1));
+
+                  setDistanceHigh(fixedValue);
+                  setIsDistanceChanged(true);
+                }}
+                allowOverlap={false}
+                snapped
+                enableLabel={true}
+                customLabel={props => {
+                  return (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: -20,
+                        left: props.oneMarkerLeftPosition - 30,
+                        backgroundColor: 'rgba(220, 221, 228, 0.27)',
+                        paddingHorizontal: 8,
+                        paddingVertical: 5,
+                        borderRadius: 8,
+                        zIndex: 9,
+                        width: 58,
+                        alignItems: 'center',
+                        boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+                      }}
+                    >
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#ffffff',
+                          fontSize: 12,
+                          fontFamily: 'Urbanist-SemiBold',
+                        }}
+                      >
+                        {distanceHigh >= 10
+                          ? '∞'
+                          : isKm
+                          ? formatDistanceValue(distanceHigh)
+                          : formatDistanceValue(distanceHigh)}{' '}
+                        {isKm ? 'km' : 'mi'}
+                      </Text>
+
+                      <View
+                        style={{
+                          position: 'absolute',
+                          bottom: -8,
+                          alignSelf: 'center',
+                          width: 0,
+                          height: 0,
+                          borderLeftWidth: 6,
+                          borderRightWidth: 6,
+                          borderTopWidth: 8,
+                          borderLeftColor: 'transparent',
+                          borderRightColor: 'transparent',
+                          borderTopColor: 'rgba(220, 221, 228, 0.27)',
+                          boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+                        }}
+                      />
+                    </View>
+                  );
+                }}
+                selectedStyle={{ backgroundColor: '#fff' }}
+                unselectedStyle={{ backgroundColor: '#888' }}
+                trackStyle={{ height: 4, borderRadius: 2 }}
+                markerStyle={{
+                  height: 20,
+                  borderRadius: 12,
+                  backgroundColor: '#fff',
+                  width: 4,
+                }}
+              />
+              <Text style={[styles.rangeText,{fontSize: 26}]}>∞</Text>
+            </View>
             <View
               style={{
                 flexDirection: 'row',
@@ -795,129 +882,303 @@ const FilterBottomSheet = ({
             >
               <TouchableOpacity
                 onPress={() => {
-                  // setDistanceHigh(prev => {
-                  //   let currentValue = isKm ? prev : kmToMiles(prev);
-
-                  //   let newValue = currentValue - 1;
-
-                  //   if (newValue < 1) return prev;
-
-                  //   // ✅ FIX: normalize to 1 decimal
-                  //   newValue = parseFloat(newValue.toFixed(1));
-
-                  //   return isKm ? newValue : milesToKm(newValue);
-                  // });
-                  // setDistanceHigh(prev => {
-                  //   let newValue = isKm ? prev -1: prev - 0.1;
-                  //   if(newValue <1) return prev;
-                  //   return newValue;
-                  // })
-
-                  // setIsDistanceChanged(true);
                   updateDistance('dec');
                 }}
               >
                 <Image
-                  source={
-                    true
-                      ? require('../../../assets/images/blur_minus_512.png')
-                      : require('../../../assets/images/icon1.png')
-                  }
+                  source={require('../../../assets/images/icon1.png')}
                   style={{ width: 30, height: 30 }}
                 />
               </TouchableOpacity>
 
-              {/* <Text
-                allowFontScaling={false}
-                style={{
-                  color: '#FFF',
-                  fontSize: 14,
-                  textAlign: 'center',
-                  fontFamily: 'Urbanist-SemiBold',
-                  fontWeight: 600,
-                }}
+              <View
+                style={[
+                  styles.topRightBadge,
+                  {
+                    marginTop: 2,
+                    backgroundColor: 'rgba(220, 221, 228, 0.2)',
+                    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+                      
+                  },
+                ]}
               >
-                
-                  {isKm
-                  ? formatDistanceValue(distanceHigh)
-                : formatDistanceValue(distanceHigh)}
-              
-              </Text> */}
-              <Text
-  allowFontScaling={false}
-  style={{
-    color: '#FFF',
-    fontSize: 14,
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600,
-  }}
->
-  {distanceHigh >= 10
-    ? '∞'
-    : isKm
-    ? formatDistanceValue(distanceHigh)
-    : formatDistanceValue(distanceHigh)}
-</Text>
-
+                <Text
+                  allowFontScaling={false}
+                  style={[
+                    styles.rangeText,
+                    {
+                      marginBottom: 0,
+                      width:  30,
+                      fontSize: distanceHigh >= 10 ?14:12,
+                      color: '#FFFFFF',
+                    },
+                  ]}
+                >
+                  {distanceHigh >= 10
+                    ? '∞'
+                    : isKm
+                    ? formatDistanceValue(distanceHigh)
+                    : formatDistanceValue(distanceHigh)}
+                </Text>
+              </View>
               <TouchableOpacity
                 onPress={() => {
-                  // setDistanceHigh(prev => {
-                  //   let currentValue = isKm ? prev : kmToMiles(prev);
-
-                  //   let newValue = currentValue + 1;
-
-                  //   const max = isKm ? 1000 : kmToMiles(1000);
-                  //   if (newValue > max) return prev;
-
-                  //   // ✅ FIX: normalize to 1 decimal
-                  //   newValue = parseFloat(newValue.toFixed(1));
-
-                  //   return isKm ? newValue : milesToKm(newValue);
-                  // });
-                  // setDistanceHigh(prev => {
-                  //   let newValue = isKm ? prev +1: prev + 0.1;
-                  //   if(newValue > 10) return prev;
-                  //   return newValue;
-                  // })
-
-                  // setIsDistanceChanged(true);
-
                   updateDistance('inc');
                 }}
               >
                 <Image
-                  source={
-                    true //count === maxUnits
-                      ? require('../../../assets/images/blur_plus_512.png')
-                      : require('../../../assets/images/icon2.png')
-                  }
+                  source={require('../../../assets/images/icon2.png')}
                   style={{ width: 30, height: 30 }}
                 />
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* <TextInput
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  { width: '100%' },
-                ]}
-                keyboardType="default"
-                placeholder={t('enter_postal_code')}
-                placeholderTextColor="#aaa"
-                value={postcode}
-                onChangeText={text => {
-                  const filteredText = text
-                    .replace(/[^a-zA-Z0-9]/g, '')
-                    .toUpperCase();
-                  if (filteredText.length > 7) return;
-                  setPostcode(filteredText);
-                }}
-              /> */}
         </View>
       );
+//       return (
+//         <View style={{ paddingTop: 10 }}>
+//           <View style={styles.container}>
+//             <View
+//               style={{
+              
+//                 flexDirection: 'row',
+//                 justifyContent: 'space-between',
+               
+//               }}
+//             >
+//               {/* 🔁 KM / Miles Toggle */}
+//               <Text style={{ color: 'white', marginBottom: 10,paddingRight: 10 }}>Distance</Text>
+//               <View>
+//                 <View style={styles.toggleContainer}>
+
+//                 <TouchableOpacity
+//                     style={[styles.toggleBtn, !isKm && styles.active]}
+//                     onPress={() => setIsKm(false)}
+//                   >
+//                     <Text
+//                       style={[
+//                         styles.toggleText,
+//                         { color: isKm ? '#000' : '#fff' },
+//                       ]}
+//                     >
+//                       Miles
+//                     </Text>
+//                   </TouchableOpacity>
+//                   <TouchableOpacity
+//                     style={[styles.toggleBtn, isKm && styles.active]}
+//                     onPress={() => setIsKm(true)}
+//                   >
+//                     <Text
+//                       style={[
+//                         styles.toggleText,
+//                         { color: isKm ? '#FFF' : '#000' },
+//                       ]}
+//                     >
+//                       KM
+//                     </Text>
+//                   </TouchableOpacity>
+
+//                 </View>
+//                 {/* <Text style={styles.rangeText}>
+//                   1 -{' '}
+//                   {isKm
+//                     ? formatDistanceValue(distanceHigh)
+//                     : formatDistanceValue(distanceHigh)}{' '}
+//                   {isKm ? 'km' : 'mi'}
+//                  </Text> */}
+//                  <Text style={styles.rangeText}>
+//   1 -{' '}
+//   {distanceHigh >= 10
+//     ? '∞'
+//     : isKm
+//     ? formatDistanceValue(distanceHigh)
+//     : formatDistanceValue(distanceHigh)}{' '}
+//   {distanceHigh >= 10 ? '' : isKm ? 'km' : 'mi'}
+// </Text>
+//               </View>
+//             </View>
+
+//             {/* 🎚 Multi Slider */}
+
+//             <MultiSlider
+//               sliderLength={SCREEN_WIDTH / 2 - 10}
+//               min={1}
+//               max={10}
+
+//               // max={isKm ? 1000 : kmToMiles(1000)}
+//               step={isKm ? 0.1 : 0.1}
+             
+
+//               // values={[
+//               //   isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1)),
+//               // ]}
+
+//               // values={[isKm ? distanceHigh : kmToMiles(distanceHigh)]}
+//               values={[distanceHigh]}
+//               // onValuesChange={values => {
+//               //   const [value] = values;
+
+//               //   // Always store in KM internally
+//               //   // const valueInKm = isKm ? value : milesToKm(value);
+//               //   // setDistanceHigh(valueInKm);
+//               //   setDistanceHigh(value);
+//               //   setIsDistanceChanged(true);
+//               // }}
+
+//               onValuesChange={values=>{
+//                 const [value] = values;
+//                 const fixedValue = isKm
+//                  ? Math.round(value)
+//                  : parseFloat(value.toFixed(1));
+//                  setDistanceHigh(fixedValue);
+//                  setIsDistanceChanged(true);
+//               }}
+
+//               allowOverlap={false}
+//               snapped
+//               selectedStyle={{ backgroundColor: '#fff' }}
+//               unselectedStyle={{ backgroundColor: '#888' }}
+//               trackStyle={{ height: 4, borderRadius: 2 }}
+//               markerStyle={{
+//                 height: 20,
+//                 borderRadius: 12,
+//                 backgroundColor: '#fff',
+//                 width: 4
+//               }}
+//             />
+//             <View
+//               style={{
+//                 flexDirection: 'row',
+//                 alignItems: 'center',
+//                 justifyContent: 'space-between',
+//                 gap: 8,
+//               }}
+//             >
+//               <TouchableOpacity
+//                 onPress={() => {
+//                   // setDistanceHigh(prev => {
+//                   //   let currentValue = isKm ? prev : kmToMiles(prev);
+
+//                   //   let newValue = currentValue - 1;
+
+//                   //   if (newValue < 1) return prev;
+
+//                   //   // ✅ FIX: normalize to 1 decimal
+//                   //   newValue = parseFloat(newValue.toFixed(1));
+
+//                   //   return isKm ? newValue : milesToKm(newValue);
+//                   // });
+//                   // setDistanceHigh(prev => {
+//                   //   let newValue = isKm ? prev -1: prev - 0.1;
+//                   //   if(newValue <1) return prev;
+//                   //   return newValue;
+//                   // })
+
+//                   // setIsDistanceChanged(true);
+//                   updateDistance('dec');
+//                 }}
+//               >
+//                 <Image
+//                   source={
+//                     true
+//                       ? require('../../../assets/images/blur_minus_512.png')
+//                       : require('../../../assets/images/icon1.png')
+//                   }
+//                   style={{ width: 30, height: 30 }}
+//                 />
+//               </TouchableOpacity>
+
+//               {/* <Text
+//                 allowFontScaling={false}
+//                 style={{
+//                   color: '#FFF',
+//                   fontSize: 14,
+//                   textAlign: 'center',
+//                   fontFamily: 'Urbanist-SemiBold',
+//                   fontWeight: 600,
+//                 }}
+//               >
+                
+//                   {isKm
+//                   ? formatDistanceValue(distanceHigh)
+//                 : formatDistanceValue(distanceHigh)}
+              
+//               </Text> */}
+//               <Text
+//   allowFontScaling={false}
+//   style={{
+//     color: '#FFF',
+//     fontSize: 14,
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontWeight: 600,
+//   }}
+// >
+//   {distanceHigh >= 10
+//     ? '∞'
+//     : isKm
+//     ? formatDistanceValue(distanceHigh)
+//     : formatDistanceValue(distanceHigh)}
+// </Text>
+
+//               <TouchableOpacity
+//                 onPress={() => {
+//                   // setDistanceHigh(prev => {
+//                   //   let currentValue = isKm ? prev : kmToMiles(prev);
+
+//                   //   let newValue = currentValue + 1;
+
+//                   //   const max = isKm ? 1000 : kmToMiles(1000);
+//                   //   if (newValue > max) return prev;
+
+//                   //   // ✅ FIX: normalize to 1 decimal
+//                   //   newValue = parseFloat(newValue.toFixed(1));
+
+//                   //   return isKm ? newValue : milesToKm(newValue);
+//                   // });
+//                   // setDistanceHigh(prev => {
+//                   //   let newValue = isKm ? prev +1: prev + 0.1;
+//                   //   if(newValue > 10) return prev;
+//                   //   return newValue;
+//                   // })
+
+//                   // setIsDistanceChanged(true);
+
+//                   updateDistance('inc');
+//                 }}
+//               >
+//                 <Image
+//                   source={
+//                     true //count === maxUnits
+//                       ? require('../../../assets/images/blur_plus_512.png')
+//                       : require('../../../assets/images/icon2.png')
+//                   }
+//                   style={{ width: 30, height: 30 }}
+//                 />
+//               </TouchableOpacity>
+//             </View>
+//           </View>
+
+//           {/* <TextInput
+//                 style={[
+//                   styles.login_container,
+//                   styles.personalEmailID_TextInput,
+//                   { width: '100%' },
+//                 ]}
+//                 keyboardType="default"
+//                 placeholder={t('enter_postal_code')}
+//                 placeholderTextColor="#aaa"
+//                 value={postcode}
+//                 onChangeText={text => {
+//                   const filteredText = text
+//                     .replace(/[^a-zA-Z0-9]/g, '')
+//                     .toUpperCase();
+//                   if (filteredText.length > 7) return;
+//                   setPostcode(filteredText);
+//                 }}
+//               /> */}
+//         </View>
+//       );
 
       // return (
       //   <View style={{ paddingTop: 10 }}>
@@ -1340,6 +1601,17 @@ const FilterBottomSheet = ({
 };
 
 const styles = StyleSheet.create({
+
+  topRightBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    marginTop: 0,
+    flexDirection: 'row',
+  },
   distanceText: {
     color: 'rgba(255, 255, 255, 0.53)',
     fontFamily: 'Urbanist-SemiBold',
