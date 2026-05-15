@@ -990,8 +990,8 @@ export default function TransactionHistoryScreen({
           style={{ width: '100%', marginBottom: listMarginBottom }}
           showsVerticalScrollIndicator={false}
           initialNumToRender={4}
-maxToRenderPerBatch={4}
-windowSize={3}
+          maxToRenderPerBatch={4}
+          windowSize={3}
           removeClippedSubviews={Platform.OS === 'android'}
         />
       )}

@@ -1232,7 +1232,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
 
           <View style={[styles.textbg,{
               position: 'absolute',
-              bottom: insets.bottom + 90,
+              bottom: Dimensions.get('window').height * 0.1 +8,
               left: 16,
               right: 16,
               zIndex: 999,
