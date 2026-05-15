@@ -51,6 +51,8 @@ import ALERT_ICON from '../../../assets/images/alerticon.png';
 type ListingDetailsProps = {
   navigation: any;
 };
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const { t } = useTranslation();
@@ -1558,25 +1560,45 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 
+  // otpBox: {
+  //   width: Platform.OS === 'ios' ? 42 : 48,
+  //   height: Platform.OS === 'ios' ? 42 : 48,
+  //   borderRadius: 12,
+  //   paddingTop: 8,
+  //   paddingRight: 12,
+  //   paddingBottom: 8,
+  //   paddingLeft: 12,
+  //   textAlign: 'center',
+  //   fontSize: 18,
+  //   color: '#fff',
+  //   fontWeight: '600',
+  //   borderWidth: 1,
+  //   borderColor: '#ffffff2c',
+  //   elevation: 0,
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
+  //   boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+  // },
+
   otpBox: {
-    width: Platform.OS === 'ios' ? 42 : 48,
-    height: Platform.OS === 'ios' ? 42 : 48,
-    borderRadius: 12,
-    paddingTop: 8,
-    paddingRight: 12,
-    paddingBottom: 8,
-    paddingLeft: 12,
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
-    elevation: 0,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-  },
+  width: Platform.OS === 'ios'
+    ? SCREEN_WIDTH * 0.1
+    : SCREEN_WIDTH  * 0.1 ,
+
+  height: Platform.OS === 'ios'
+    ? SCREEN_WIDTH * 0.12
+      : SCREEN_WIDTH * 0.10,
+  borderRadius: 12,
+  paddingVertical: 8,
+  textAlign: 'center',
+  fontSize: 18,
+  color: '#fff',
+  fontWeight: '600',
+  borderWidth: 1,
+  borderColor: '#ffffff2c',
+  elevation: 0,
+  backgroundColor: 'rgba(255,255,255,0.12)',
+},
 
   mainheader: {
     color: 'rgba(255, 255, 255, 0.80)',
