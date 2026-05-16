@@ -68,6 +68,7 @@ const FilterAndroid = ({
 
   const [distanceLow, setDistanceLow] = useState(1);
   const [distanceHigh, setDistanceHigh] = useState(10);
+  const [lastAppliedDistanceHigh, setLastAppliedDistanceHigh] = useState(10);
 
   const [isPriceChanged, setIsPriceChanged] = useState(false);
   const [isDistanceChanged, setIsDistanceChanged] = useState(false);
@@ -231,56 +232,154 @@ const FilterAndroid = ({
     });
   };
 
-  const handleClearFilters = () => {
-    setDropdownSelections({});
+  // const handleClearFilters = () => {
+  //   setDropdownSelections({});
 
+  //   setPriceRange(defaultPriceRange);
+  //   setSliderLow(defaultPriceRange.min);
+  //   setSliderHigh(defaultPriceRange.max);
+
+  //   setDistanceLow(1);
+  //   setDistanceHigh(10);
+
+  //   setIsPriceChanged(false);
+  //   setIsDistanceChanged(false);
+
+  //   setIsKm(false);
+  //   setPostcode('');
+  //   setOtherInputs({});
+  //   setDateSelections({});
+  // };
+
+  const handleClearFilters = () => {
+  setDropdownSelections({});
+
+  setPriceRange(defaultPriceRange);
+  setSliderLow(defaultPriceRange.min);
+  setSliderHigh(defaultPriceRange.max);
+
+  setDistanceLow(1);
+  setDistanceHigh(10);
+
+  setIsPriceChanged(false);
+  setIsDistanceChanged(false);
+
+  setIsKm(false);
+  setPostcode('');
+  setOtherInputs({});
+  setDateSelections({});
+};
+  // const handleClose = () => {
+  //   if (initialFilters?.filters?.length > 0) {
+  //     const savedDropdowns: Record<number, number[]> = {};
+
+  //     initialFilters.filters.forEach((f: any) => {
+  //       if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
+  //         savedDropdowns[f.id] = f.options;
+  //       }
+
+  //       // if (
+  //       //   f.alias_name?.toLowerCase() === 'price' &&
+  //       //   Array.isArray(f.options)
+  //       // ) {
+  //       //   const [min, max] = f.options;
+
+  //       //   setDistanceHigh(max);
+  //       //   setLastAppliedDistanceHigh(max);
+
+  //       //   if (max < 10) {
+  //       //     setIsDistanceChanged(true);
+  //       //   } else {
+  //       //     setIsDistanceChanged(false);
+  //       //   }
+  //       // }
+  //       if (
+  //         f.field_type?.toLowerCase() === 'text' &&
+  //         f.alias_name?.toLowerCase().includes('postcode') &&
+  //         Array.isArray(f.options)
+  //       ) {
+  //         const [, max] = f.options;
+
+  //         setDistanceHigh(max);
+  //         setLastAppliedDistanceHigh(max);
+  //         setIsDistanceChanged(max !== 10);
+  //       }
+  //     });
+
+  //     setDropdownSelections(savedDropdowns);
+  //   } else {
+  //     setDropdownSelections({});
+  //     setPriceRange(defaultPriceRange);
+  //     setSliderLow(defaultPriceRange.min);
+  //     setSliderHigh(defaultPriceRange.max);
+
+  //     setDistanceHigh(lastAppliedDistanceHigh);
+  //     // setIsDistanceChanged(lastAppliedDistanceHigh !== 10);
+  //     // if (lastAppliedDistanceHigh < 10) {
+  //     //   setIsDistanceChanged(true);
+  //     // } else {
+  //     //   setIsDistanceChanged(false);
+  //     // }
+
+  //     setPostcode('');
+  //   }
+
+  //   onClose();
+  // };
+
+
+  const handleClose = () => {
+  if (initialFilters?.filters?.length > 0) {
+    const savedDropdowns: Record<number, number[]> = {};
+
+    let appliedDistanceHigh: number | null = null;
+
+    initialFilters.filters.forEach((f: any) => {
+      if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
+        savedDropdowns[f.id] = f.options;
+      }
+
+      if (
+        f.field_type?.toLowerCase() === 'text' &&
+        f.alias_name?.toLowerCase().includes('postcode') &&
+        Array.isArray(f.options)
+      ) {
+        const [, max] = f.options;
+
+        appliedDistanceHigh = max;
+
+        setLastAppliedDistanceHigh(max);
+      }
+    });
+
+    setDropdownSelections(savedDropdowns);
+
+    if (appliedDistanceHigh !== null) {
+      setDistanceHigh(appliedDistanceHigh);
+      setIsDistanceChanged(appliedDistanceHigh !== 10);
+    } else {
+      setDistanceHigh(10);
+      setIsDistanceChanged(false);
+    }
+  } else {
+    setDropdownSelections({});
     setPriceRange(defaultPriceRange);
     setSliderLow(defaultPriceRange.min);
     setSliderHigh(defaultPriceRange.max);
 
-    setDistanceLow(1);
-    setDistanceHigh(10);
-
-    setIsPriceChanged(false);
-    setIsDistanceChanged(false);
-
-    setIsKm(false);
-    setPostcode('');
-    setOtherInputs({});
-    setDateSelections({});
-  };
-
-  const handleClose = () => {
-    if (initialFilters?.filters?.length > 0) {
-      const savedDropdowns: Record<number, number[]> = {};
-
-      initialFilters.filters.forEach((f: any) => {
-        if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
-          savedDropdowns[f.id] = f.options;
-        }
-
-        if (
-          f.alias_name?.toLowerCase() === 'price' &&
-          Array.isArray(f.options)
-        ) {
-          const [min, max] = f.options;
-          setPriceRange({ min, max });
-          setSliderLow(min);
-          setSliderHigh(max);
-        }
-      });
-
-      setDropdownSelections(savedDropdowns);
+    if (lastAppliedDistanceHigh !== null) {
+      setDistanceHigh(lastAppliedDistanceHigh);
+      setIsDistanceChanged(lastAppliedDistanceHigh !== 10);
     } else {
-      setDropdownSelections({});
-      setPriceRange(defaultPriceRange);
-      setSliderLow(defaultPriceRange.min);
-      setSliderHigh(defaultPriceRange.max);
-      setPostcode('');
+      setDistanceHigh(10);
+      setIsDistanceChanged(false);
     }
 
-    onClose();
-  };
+    setPostcode('');
+  }
+
+  onClose();
+};
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -311,23 +410,22 @@ const FilterAndroid = ({
   };
 
   const updateDistance = (type: 'inc' | 'dec') => {
-   setDistanceHigh(prev => {
-    let step = 0.1;
+    setDistanceHigh(prev => {
+      let step = 0.1;
 
-    let newValue =
-      type === 'inc' ? prev + step : prev - step;
+      let newValue = type === 'inc' ? prev + step : prev - step;
 
-    // prevent going below 1
-    if (newValue < 1) return prev;
+      // prevent going below 1
+      if (newValue < 1) return prev;
 
-    // optional max limit
-    const max = 10;
-    if (newValue > max) return prev;
+      // optional max limit
+      const max = 10;
+      if (newValue > max) return prev;
 
-    return parseFloat(newValue.toFixed(1));
-  });
+      return parseFloat(newValue.toFixed(1));
+    });
 
-  setIsDistanceChanged(true);
+    setIsDistanceChanged(true);
   };
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
@@ -548,7 +646,6 @@ const FilterAndroid = ({
 
       return (
         <View style={{ paddingTop: 10 }}>
-          {/* START DATE */}
           <TouchableOpacity
             style={[
               styles.login_container,
@@ -568,7 +665,6 @@ const FilterAndroid = ({
             </Text>
           </TouchableOpacity>
 
-          {/* END DATE */}
           <TouchableOpacity
             style={[
               styles.login_container,
@@ -597,7 +693,6 @@ const FilterAndroid = ({
         <View style={{ paddingTop: 10 }}>
           <View style={styles.container}>
             <View style={styles.toggleDistanceContainre}>
-              {/* 🔁 KM / Miles Toggle */}
               <Text
                 style={[
                   {
@@ -613,7 +708,6 @@ const FilterAndroid = ({
                 <View style={styles.toggleContainer}>
                   <TouchableOpacity
                     style={[styles.toggleBtn, !isKm && styles.active]}
-                    // onPress={() => setIsKm(false)}
                     onPress={() => {
                       setIsKm(false);
                     }}
@@ -629,7 +723,6 @@ const FilterAndroid = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.toggleBtn, isKm && styles.active]}
-                    // onPress={() => setIsKm(true)}
                     onPress={() => {
                       setIsKm(true);
                     }}
@@ -644,22 +737,6 @@ const FilterAndroid = ({
                     </Text>
                   </TouchableOpacity>
                 </View>
-                {/* <Text style={styles.rangeText}>
-                  1 -{' '}
-                  {isKm
-                    ? formatDistanceValue(distanceHigh)
-                    : formatDistanceValue(distanceHigh)}{' '}
-                  {isKm ? 'km' : 'mi'}
-                </Text> */}
-                {/* <Text style={styles.rangeText}>
-                  1 -{' '}
-                  {distanceHigh >= 10
-                    ? '∞'
-                    : isKm
-                    ? formatDistanceValue(distanceHigh)
-                    : formatDistanceValue(distanceHigh)}{' '}
-                  {distanceHigh >= 10 ? '' : isKm ? 'km' : 'mi'}
-                </Text> */}
               </View>
             </View>
 
@@ -702,7 +779,7 @@ const FilterAndroid = ({
                 width: 4,
               }}
               /> */}
-              <MultiSlider
+              {/* <MultiSlider
                 sliderLength={SCREEN_WIDTH / 2 - 34}
                 min={1}
                 max={10}
@@ -781,7 +858,94 @@ const FilterAndroid = ({
                   width: 4,
                 }}
               />
-              <Text style={styles.rangeText}>{distanceHigh >= 10 ? '∞' : '10'}</Text>
+               */}
+              
+              <MultiSlider
+  sliderLength={SCREEN_WIDTH / 2 - 34}
+  min={1}
+  max={10}
+  step={0.1}
+  values={[distanceHigh]}
+  onValuesChange={values => {
+    const [value] = values;
+
+    const fixedValue = parseFloat(value.toFixed(1));
+
+    setDistanceHigh(fixedValue);
+
+    // ✅ Filter active only when value changes
+    setIsDistanceChanged(fixedValue !== 10);
+  }}
+  allowOverlap={false}
+  snapped
+  enableLabel={true}
+  customLabel={props => {
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: -20,
+          left: props.oneMarkerLeftPosition - 30,
+          backgroundColor: 'rgba(220, 221, 228, 0.27)',
+          paddingHorizontal: 8,
+          paddingVertical: 5,
+          borderRadius: 8,
+          zIndex: 9,
+          width: 58,
+          alignItems: 'center',
+          boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+        }}
+      >
+        <Text
+          allowFontScaling={false}
+          style={{
+            color: '#ffffff',
+            fontSize: 12,
+            fontFamily: 'Urbanist-SemiBold',
+          }}
+        >
+          {isDistanceChanged
+            ? formatDistanceValue(distanceHigh)
+            : '∞'}{' '}
+          {isDistanceChanged ? (isKm ? 'km' : 'mi') : ''}
+        </Text>
+
+        <View
+          style={{
+            position: 'absolute',
+            bottom: -8,
+            alignSelf: 'center',
+            width: 0,
+            height: 0,
+            borderLeftWidth: 6,
+            borderRightWidth: 6,
+            borderTopWidth: 8,
+            borderLeftColor: 'transparent',
+            borderRightColor: 'transparent',
+            borderTopColor: 'rgba(220, 221, 228, 0.27)',
+            boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+          }}
+        />
+      </View>
+    );
+  }}
+  selectedStyle={{ backgroundColor: '#fff' }}
+  unselectedStyle={{ backgroundColor: '#888' }}
+  trackStyle={{ height: 4, borderRadius: 2 }}
+  markerStyle={{
+    height: 20,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    width: 4,
+  }}
+/>
+
+<Text style={styles.rangeText}>
+                {/* {lastAppliedPriceRange || isDistanceChanged ? '10' : '∞'} */}
+                                {isDistanceChanged
+  ? formatDistanceValue(distanceHigh)
+  : '∞'}
+</Text>
             </View>
             <View
               style={{
@@ -809,11 +973,10 @@ const FilterAndroid = ({
                     marginTop: 2,
                     backgroundColor: 'rgba(220, 221, 228, 0.2)',
                     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-                      
                   },
                 ]}
               >
-                <Text
+                {/* <Text
                   allowFontScaling={false}
                   style={[
                     styles.rangeText,
@@ -830,7 +993,26 @@ const FilterAndroid = ({
                     : isKm
                     ? formatDistanceValue(distanceHigh)
                     : formatDistanceValue(distanceHigh)}
-                </Text>
+                </Text> */}
+                <Text
+  allowFontScaling={false}
+  style={[
+    styles.rangeText,
+    {
+      marginBottom: 0,
+      width: 40,
+      fontSize: 12,
+      color: '#FFFFFF',
+    },
+  ]}
+>
+{/* {lastAppliedPriceRange || isDistanceChanged
+  ? formatDistanceValue(distanceHigh)
+  : '∞'} */}
+                  {isDistanceChanged
+  ? formatDistanceValue(distanceHigh)
+  : '∞'}
+</Text>
               </View>
               <TouchableOpacity
                 onPress={() => {
@@ -918,35 +1100,20 @@ const FilterAndroid = ({
             };
           }
         }
-        // else if (
-        //   f.field_type?.toLowerCase() === 'text' &&
-        //   f.field_name?.toLowerCase().includes('postcode')
-        // ) {
-        //   if (postcode) {
-        //     return {
-        //       id: f.id,
-        //       field_name: f.field_name,
-        //       field_type: f.field_type,
-        //       alias_name: f.alias_name,
-        //       options: [postcode],
-        //     };
-        //   }
-        // }
         else if (
           f.field_type?.toLowerCase() === 'text' &&
           f.alias_name?.toLowerCase().includes('postcode') &&
           isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
-            // const min = isKm
-            //   ? distanceLow
-            //   : parseFloat(kmToMiles(distanceLow).toFixed(1));
-            // const max = isKm
-            //   ? distanceHigh
-            //   : parseFloat(kmToMiles(distanceHigh).toFixed(1));
             const min = parseFloat(distanceLow.toFixed(isKm ? 1 : 1));
             const max = parseFloat(distanceHigh.toFixed(isKm ? 1 : 1));
+setLastAppliedPriceRange({
+  min: distanceLow,
+  max: distanceHigh,
+});
 
+setLastAppliedDistanceHigh(distanceHigh);
             return {
               id: f.id,
               field_name: f.field_name,
@@ -1230,11 +1397,11 @@ const FilterAndroid = ({
 
 const styles = StyleSheet.create({
   toggleDistanceContainre: {
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignContent: 'center',
-              },
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+  },
   topRightBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
