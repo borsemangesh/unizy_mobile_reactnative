@@ -180,6 +180,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       if (!token) return;
 
       const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
+      console.log("DEACTIVE:", url2);
       const response = await fetch(url2, {
         method: 'POST',
         headers: {
@@ -189,6 +190,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         },
         body: JSON.stringify({
           product_id: shareid,
+          product_name: data.list.title,
         }),
       });
 
