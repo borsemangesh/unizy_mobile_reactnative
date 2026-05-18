@@ -5,31 +5,25 @@ import {
   TouchableOpacity,
   Image,
   Text,
-  FlatList,
   TextInput,
   ScrollView,
   Platform,
   TouchableWithoutFeedback,
   Dimensions,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import { CONSTDEFAULT } from '../CONSTDEFAULT';
 import { MAIN_URL } from '../APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RangeSlider from 'rn-range-slider';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import FilterButton from './FilterButton';
-import FilterButtonApply from './FilterButtonApply';
 import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { forceTouchGestureHandlerProps } from 'react-native-gesture-handler/lib/typescript/handlers/ForceTouchGestureHandler';
 
 interface FilterAndroidProps {
   catagory_id: number;
   visible: boolean;
   onClose: () => void;
-  onApply: (filters: any) => void; // 👈 new callback
+  onApply: (filters: any) => void;
   from: number;
   to: number;
   initialFilters?: any;
@@ -189,10 +183,8 @@ const FilterAndroid = ({
 
       if (isMultiple) {
         if (current.includes(optionId)) {
-          // ❌ UNSELECT
           updated = current.filter(id => id !== optionId);
 
-          // ✅ If "Other" unchecked → remove input
           if (isOtherOption) {
             setOtherInputs(prevInputs => {
               const copy = { ...prevInputs };
@@ -201,13 +193,10 @@ const FilterAndroid = ({
             });
           }
         } else {
-          // ✅ SELECT
           updated = [...current, optionId];
         }
       } else {
-        // 🔘 SINGLE SELECT (radio)
 
-        // ✅ If switching FROM "Other" → clear old input
         const previousSelectedId = current[0];
         const previousOption = filter?.options?.find(
           (o: any) => o.id === previousSelectedId,
@@ -232,25 +221,6 @@ const FilterAndroid = ({
     });
   };
 
-  // const handleClearFilters = () => {
-  //   setDropdownSelections({});
-
-  //   setPriceRange(defaultPriceRange);
-  //   setSliderLow(defaultPriceRange.min);
-  //   setSliderHigh(defaultPriceRange.max);
-
-  //   setDistanceLow(1);
-  //   setDistanceHigh(10);
-
-  //   setIsPriceChanged(false);
-  //   setIsDistanceChanged(false);
-
-  //   setIsKm(false);
-  //   setPostcode('');
-  //   setOtherInputs({});
-  //   setDateSelections({});
-  // };
-
   const handleClearFilters = () => {
   setDropdownSelections({});
 
@@ -268,64 +238,10 @@ const FilterAndroid = ({
   setPostcode('');
   setOtherInputs({});
   setDateSelections({});
+    if (filters.length > 0) {
+      setSelectedTab(filters[0].field_name);
+    }
 };
-  // const handleClose = () => {
-  //   if (initialFilters?.filters?.length > 0) {
-  //     const savedDropdowns: Record<number, number[]> = {};
-
-  //     initialFilters.filters.forEach((f: any) => {
-  //       if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
-  //         savedDropdowns[f.id] = f.options;
-  //       }
-
-  //       // if (
-  //       //   f.alias_name?.toLowerCase() === 'price' &&
-  //       //   Array.isArray(f.options)
-  //       // ) {
-  //       //   const [min, max] = f.options;
-
-  //       //   setDistanceHigh(max);
-  //       //   setLastAppliedDistanceHigh(max);
-
-  //       //   if (max < 10) {
-  //       //     setIsDistanceChanged(true);
-  //       //   } else {
-  //       //     setIsDistanceChanged(false);
-  //       //   }
-  //       // }
-  //       if (
-  //         f.field_type?.toLowerCase() === 'text' &&
-  //         f.alias_name?.toLowerCase().includes('postcode') &&
-  //         Array.isArray(f.options)
-  //       ) {
-  //         const [, max] = f.options;
-
-  //         setDistanceHigh(max);
-  //         setLastAppliedDistanceHigh(max);
-  //         setIsDistanceChanged(max !== 10);
-  //       }
-  //     });
-
-  //     setDropdownSelections(savedDropdowns);
-  //   } else {
-  //     setDropdownSelections({});
-  //     setPriceRange(defaultPriceRange);
-  //     setSliderLow(defaultPriceRange.min);
-  //     setSliderHigh(defaultPriceRange.max);
-
-  //     setDistanceHigh(lastAppliedDistanceHigh);
-  //     // setIsDistanceChanged(lastAppliedDistanceHigh !== 10);
-  //     // if (lastAppliedDistanceHigh < 10) {
-  //     //   setIsDistanceChanged(true);
-  //     // } else {
-  //     //   setIsDistanceChanged(false);
-  //     // }
-
-  //     setPostcode('');
-  //   }
-
-  //   onClose();
-  // };
 
 
   const handleClose = () => {
@@ -379,7 +295,19 @@ const FilterAndroid = ({
   }
 
   onClose();
-};
+  };
+  
+  const [dateSelections, setDateSelections] = useState<
+    Record<number, { startDate?: Date; endDate?: Date }>
+  >({});
+  
+    const hasChanges =
+  Object.keys(dropdownSelections).length > 0 ||
+  isPriceChanged ||
+  isDistanceChanged ||
+  Object.keys(dateSelections).length > 0 ||
+  Object.keys(otherInputs).length > 0 ||
+  postcode !== '';
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -390,9 +318,6 @@ const FilterAndroid = ({
 
   const [tempDate, setTempDate] = useState(new Date());
 
-  const [dateSelections, setDateSelections] = useState<
-    Record<number, { startDate?: Date; endDate?: Date }>
-  >({});
 
   const [isKm, setIsKm] = useState(false);
 
@@ -1215,11 +1140,14 @@ setLastAppliedDistanceHigh(distanceHigh);
                   <Text allowFontScaling={false} style={styles.modelTextHeader}>
                     {t('filters')}
                   </Text>
+                  {hasChanges && (
                   <TouchableOpacity onPress={handleClearFilters}>
                     <Text allowFontScaling={false} style={styles.clearAll}>
                       {t('clear_all')}
                     </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                    
+                  )}
                 </View>
               </View>
 
@@ -1324,38 +1252,6 @@ setLastAppliedDistanceHigh(distanceHigh);
           </View>
 
           {showDatePicker && activeDateField && (
-            // <DateTimePicker
-            //   value={tempDate}
-            //   mode="date"
-            //   display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
-            //   themeVariant="light"
-            //   minimumDate={
-            //     activeDateField.type === 'end'
-            //       ? dateSelections[activeDateField.param.id]?.startDate ??
-            //         new Date()
-            //       : new Date()
-            //   }
-            //   onChange={(event, selectedDate) => {
-            //     if (event.type === 'set' && selectedDate) {
-            //       const fieldId = activeDateField.param.id;
-
-            //       setDateSelections(prev => {
-            //         const existing = prev[fieldId] || {};
-
-            //         return {
-            //           ...prev,
-            //           [fieldId]: {
-            //             ...existing,
-            //             [activeDateField.type === 'start'
-            //               ? 'startDate'
-            //               : 'endDate']: selectedDate,
-            //           },
-            //         };
-            //       });
-            //     }
-            //     setShowDatePicker(false);
-            //   }}
-            // />
             <DateTimePicker
               value={tempDate}
               mode="date"
@@ -1365,7 +1261,7 @@ setLastAppliedDistanceHigh(distanceHigh);
                 activeDateField.type === 'end'
                   ? dateSelections[activeDateField.param.id]?.startDate ||
                     undefined
-                  : undefined // ✅ No restriction for start date
+                  : undefined
               }
               onChange={(event, selectedDate) => {
                 if (event.type === 'set' && selectedDate) {
