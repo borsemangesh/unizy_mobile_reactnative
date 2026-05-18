@@ -287,6 +287,9 @@ const FilterBottomSheet = ({
   setPostcode('');
   setOtherInputs({});
   setDateSelections({});
+  if(filters.length > 0){
+    setSelectedTab(filters[0].field_name)
+  }
 };
 
   const modelClose = () => {
@@ -382,6 +385,15 @@ const FilterBottomSheet = ({
   const [dateSelections, setDateSelections] = useState<
     Record<number, { startDate?: Date; endDate?: Date }>
   >({});
+  
+    const hasChanges =
+  Object.keys(dropdownSelections).length > 0 ||
+  isPriceChanged ||
+  isDistanceChanged ||
+  Object.keys(dateSelections).length > 0 ||
+  Object.keys(otherInputs).length > 0 ||
+  postcode !== '';
+
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -1178,11 +1190,14 @@ setLastAppliedDistanceHigh(distanceHigh);
                   <Text allowFontScaling={false} style={styles.modelTextHeader}>
                     {t('filters')}
                   </Text>
+                  {hasChanges && (
                   <TouchableOpacity onPress={handleClearFilters}>
                     <Text allowFontScaling={false} style={styles.clearAll}>
                       {t('clear_all')}
                     </Text>
                   </TouchableOpacity>
+
+                  )}
                 </View>
               </View>
               <View style={{ flex: 1, flexDirection: 'row' }}>
