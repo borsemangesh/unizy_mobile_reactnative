@@ -1735,7 +1735,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
       >
         <TouchableWithoutFeedback onPress={closePopup1}>
           <View style={styles.overlay}>
-            <BlurView
+            {/* <BlurView
               style={{
                 flex: 1,
                 alignContent: 'center',
@@ -1746,7 +1746,16 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            > */}
+             <BlurView
+               style={[
+                                              StyleSheet.absoluteFill,
+                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                            ]}
+                                          blurType="light"
+                                          blurAmount={10}
+                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                        />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1825,7 +1834,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                 </TouchableOpacity>
 
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -1839,7 +1848,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
       >
         <TouchableWithoutFeedback onPress={closePopup2}>
           <View style={styles.overlay}>
-            <BlurView
+            {/* <BlurView
               style={{
                 flex: 1,
                 alignContent: 'center',
@@ -1850,7 +1859,16 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            > */}
+             <BlurView
+                           style={[
+                                                          StyleSheet.absoluteFill,
+                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                                        ]}
+                                                      blurType="light"
+                                                      blurAmount={10}
+                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                                    />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1943,7 +1961,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   </Text>
                 </Text>
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -1957,7 +1975,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
       >
         <TouchableWithoutFeedback onPress={closePopup3}>
           <View style={styles.overlay}>
-            <BlurView
+            {/* <BlurView
               style={{
                 flex: 1,
                 alignContent: 'center',
@@ -1968,7 +1986,16 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            > */}
+             <BlurView
+                           style={[
+                                                          StyleSheet.absoluteFill,
+                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                                        ]}
+                                                      blurType="light"
+                                                      blurAmount={10}
+                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                                    />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -2047,7 +2074,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                 </TouchableOpacity>
 
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -2061,7 +2088,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
       >
         <TouchableWithoutFeedback onPress={closePopup4}>
           <View style={styles.overlay}>
-            <BlurView
+            {/* <BlurView
               style={{
                 flex: 1,
                 alignContent: 'center',
@@ -2072,7 +2099,16 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            > */}
+             <BlurView
+                           style={[
+                                                          StyleSheet.absoluteFill,
+                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                                        ]}
+                                                      blurType="light"
+                                                      blurAmount={10}
+                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                                    />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -2165,7 +2201,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   </Text>
                 </Text>
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -2184,7 +2220,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
           }}
         >
           <View style={styles.overlay}>
-            <BlurView
+            {/* <BlurView
               style={{
                 flex: 1,
                 alignContent: 'center',
@@ -2196,7 +2232,16 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurType="light"
               blurAmount={2}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            > */}
+             <BlurView
+                           style={[
+                                                          StyleSheet.absoluteFill,
+                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                                        ]}
+                                                      blurType="light"
+                                                      blurAmount={10}
+                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                                    />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -2241,7 +2286,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   </Text>
                 </TouchableOpacity>
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -2508,6 +2553,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+          position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 
   popupContainer: {

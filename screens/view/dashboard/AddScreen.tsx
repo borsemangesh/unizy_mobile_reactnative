@@ -2526,11 +2526,15 @@ typingTimeout.current = setTimeout(async () => {
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
             <BlurView
-              style={styles.blurStyle}
+              // style={styles.blurStyle}
+               style={[
+                  StyleSheet.absoluteFill,
+                 {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                ]}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -2561,7 +2565,7 @@ typingTimeout.current = setTimeout(async () => {
                   </Text>
                 </TouchableOpacity>
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -2576,17 +2580,23 @@ typingTimeout.current = setTimeout(async () => {
         <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
           <View style={styles.overlay}>
             <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
+              // style={{
+              //   // flex: 1,
+              //   alignContent: 'center',
+              //   justifyContent: 'center',
+              //   width: '100%',
+              //   height: '100%',
+              //   backgroundColor: 'red',
+              //   alignItems: 'center',
+              // }}
+               style={[
+                  StyleSheet.absoluteFill,
+                 {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                ]}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -2614,7 +2624,7 @@ typingTimeout.current = setTimeout(async () => {
                 </TouchableOpacity>
 
               </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -2718,13 +2728,13 @@ typingTimeout.current = setTimeout(async () => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
-  blurStyle: {
-    flex: 1,
-    alignContent: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    alignItems: 'center',
-  },
+  // blurStyle: {
+  //   flex: 1,
+  //   alignContent: 'center',
+  //   justifyContent: 'center',
+  //   width: '100%',
+  //   alignItems: 'center',
+  // },
 
   inputWrapper: {
     position: 'relative',
@@ -2817,6 +2827,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   popupContainer: {
     width: '90%',

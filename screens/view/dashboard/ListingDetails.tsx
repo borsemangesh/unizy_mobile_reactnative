@@ -1071,7 +1071,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         >
           <TouchableWithoutFeedback onPress={closePopup1}>
             <View style={styles.overlay}>
-              <BlurView
+              {/* <BlurView
                 style={{
                   flex: 1,
                   alignContent: 'center',
@@ -1082,7 +1082,27 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 blurType="light"
                 blurAmount={10}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-              >
+              > */}
+               <BlurView
+                          //   style={{
+                          //     flex: 1,
+                          //     alignContent: 'center',
+                          //     justifyContent: 'center',
+                          //     width: '100%',
+                          //     alignItems: 'center',
+                          //   }}
+                          //   blurType="light"
+                          //   blurAmount={10}
+                          //   reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                            // >
+                             style={[
+                                              StyleSheet.absoluteFill,
+                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                            ]}
+                                          blurType="light"
+                                          blurAmount={10}
+                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                        />
                 <View
                   style={[
                     StyleSheet.absoluteFill,
@@ -1168,7 +1188,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </BlurView>
+              {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
@@ -1185,7 +1205,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             }}
           >
             <View style={styles.overlay}>
-              <BlurView
+              {/* <BlurView
                 style={{
                   flex: 1,
                   alignContent: 'center',
@@ -1196,7 +1216,16 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 blurType="dark"
                 blurAmount={1000}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-              >
+              > */}
+               <BlurView
+               style={[
+                                              StyleSheet.absoluteFill,
+                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                            ]}
+                                          blurType="light"
+                                          blurAmount={10}
+                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                        />
                 <View
                   style={[
                     StyleSheet.absoluteFill,
@@ -1242,7 +1271,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </BlurView>
+              {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
@@ -1255,7 +1284,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         >
           <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
             <View style={styles.overlay}>
-              <BlurView
+              {/* <BlurView
                 style={{
                   flex: 1,
                   alignContent: 'center',
@@ -1266,7 +1295,16 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 blurType="light"
                 blurAmount={10}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-              >
+              > */}
+               <BlurView
+               style={[
+                                              StyleSheet.absoluteFill,
+                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                            ]}
+                                          blurType="light"
+                                          blurAmount={10}
+                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                        />
                 <View
                   style={[
                     StyleSheet.absoluteFill,
@@ -1308,7 +1346,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </BlurView>
+              {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
@@ -1325,11 +1363,14 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           >
             <View style={styles.overlay}>
               <BlurView
-                style={styles.blurFull}
-                blurType="light"
-                blurAmount={10}
-                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-              >
+               style={[
+                                              StyleSheet.absoluteFill,
+                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                                            ]}
+                                          blurType="light"
+                                          blurAmount={10}
+                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                                        />
                 <View style={[StyleSheet.absoluteFill, styles.overlayDark]} />
                 <View style={styles.popupContainer}>
                   <Image
@@ -1356,7 +1397,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </BlurView>
+              {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
@@ -1419,13 +1460,13 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   overlayDark: { backgroundColor: 'rgba(0,0,0,0.32)' },
-  blurFull: {
-    flex: 1,
-    alignContent: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    alignItems: 'center',
-  },
+  // blurFull: {
+  //   flex: 1,
+  //   alignContent: 'center',
+  //   justifyContent: 'center',
+  //   width: '100%',
+  //   alignItems: 'center',
+  // },
   topRightText: {
     color: '#fff',
     fontSize: 12,
@@ -1702,6 +1743,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 
   fullScreenContainer: {

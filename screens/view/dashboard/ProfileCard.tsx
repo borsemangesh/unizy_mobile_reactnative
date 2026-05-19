@@ -465,17 +465,25 @@ PAYMENT_ICON
         <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
           <View style={styles.overlay}>
             <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
-              blurType="light"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
+            //   style={{
+            //     flex: 1,
+            //     alignContent: 'center',
+            //     justifyContent: 'center',
+            //     width: '100%',
+            //     alignItems: 'center',
+            //   }}
+            //   blurType="light"
+            //   blurAmount={10}
+            //   reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              // >
+               style={[
+                                StyleSheet.absoluteFill,
+                               {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
+                              ]}
+                            blurType="light"
+                            blurAmount={10}
+                            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                          />
               <View
                 style={[
                   StyleSheet.absoluteFill,
@@ -594,7 +602,7 @@ PAYMENT_ICON
                 </TouchableOpacity>
               </View>
 
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -938,6 +946,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+      position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 
   editcard: {
