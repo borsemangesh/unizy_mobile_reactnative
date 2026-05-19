@@ -739,6 +739,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     try {
       console.log('LOGINUSR: ', MAIN_URL.baseUrl + 'user/login');
+      console.log('body',JSON.stringify({
+          email: username,
+          password: password,
+        }))
       const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
         method: 'POST',
         headers: {
