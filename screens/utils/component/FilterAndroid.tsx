@@ -171,8 +171,6 @@ const FilterAndroid = ({
   ) => {
     setDropdownSelections(prev => {
       const current = prev[fieldId] || [];
-
-      // 🔍 Find current filter + option
       const filter = filters.find(f => f.id === fieldId);
       const option = filter?.options?.find((o: any) => o.id === optionId);
 
@@ -271,7 +269,7 @@ const FilterAndroid = ({
 
       if (appliedDistanceHigh !== null) {
         setDistanceHigh(appliedDistanceHigh);
-        setIsDistanceChanged(appliedDistanceHigh !== 10);
+        setIsDistanceChanged(appliedDistanceHigh);
       } else {
         setDistanceHigh(10);
         setIsDistanceChanged(false);
@@ -666,7 +664,7 @@ const FilterAndroid = ({
                 marginTop: 16,
               }}
             >
-              <Text style={styles.rangeText}>1</Text>
+              <Text style={[styles.rangeText,{marginTop: 4}]}>1</Text>
 
               <MultiSlider
                 sliderLength={SCREEN_WIDTH / 2 - 34}
@@ -746,7 +744,7 @@ const FilterAndroid = ({
                 }}
               />
 
-              <Text style={styles.rangeText}>
+              <Text style={[styles.rangeText,{width: 20,marginTop: 4}]}>
                 {!isDistanceChanged
                   ? '∞'
                   : `${formatDistanceValue(distanceHigh)}`}
