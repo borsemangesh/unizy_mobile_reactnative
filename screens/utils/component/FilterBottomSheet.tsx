@@ -296,7 +296,7 @@ const FilterBottomSheet = ({
 
       if (appliedDistanceHigh !== null) {
         setDistanceHigh(appliedDistanceHigh);
-        setIsDistanceChanged(appliedDistanceHigh !== 10);
+        setIsDistanceChanged(appliedDistanceHigh);
       } else {
         setDistanceHigh(10);
         setIsDistanceChanged(false);
