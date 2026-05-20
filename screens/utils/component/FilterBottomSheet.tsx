@@ -70,12 +70,10 @@ const FilterBottomSheet = ({
   const [distanceLow, setDistanceLow] = useState(1);
   const [distanceHigh, setDistanceHigh] = useState(10);
   const [lastAppliedDistanceHigh, setLastAppliedDistanceHigh] = useState(10);
-  
 
   const [isPriceChanged, setIsPriceChanged] = useState(false);
   const [isDistanceChanged, setIsDistanceChanged] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-
 
   const fetchFilters = async () => {
     try {
@@ -161,20 +159,19 @@ const FilterBottomSheet = ({
       });
 
       setDropdownSelections(savedDropdowns);
-      setIsFirstLoad(false); // 🔥 prevent re-running on next modal open
+      setIsFirstLoad(false);
     }
   }, [visible]);
-
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardHeight(e.endCoordinates.height);
     });
-  
+
     const hideSub = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardHeight(0);
     });
-  
+
     return () => {
       showSub.remove();
       hideSub.remove();
@@ -207,10 +204,8 @@ const FilterBottomSheet = ({
 
       if (isMultiple) {
         if (current.includes(optionId)) {
-          // ❌ UNSELECT
           updated = current.filter(id => id !== optionId);
 
-          // ✅ If "Other" unchecked → remove input
           if (isOtherOption) {
             setOtherInputs(prevInputs => {
               const copy = { ...prevInputs };
@@ -219,13 +214,9 @@ const FilterBottomSheet = ({
             });
           }
         } else {
-          // ✅ SELECT
           updated = [...current, optionId];
         }
       } else {
-        // 🔘 SINGLE SELECT (radio)
-
-        // ✅ If switching FROM "Other" → clear old input
         const previousSelectedId = current[0];
         const previousOption = filter?.options?.find(
           (o: any) => o.id === previousSelectedId,
@@ -250,151 +241,98 @@ const FilterBottomSheet = ({
     });
   };
 
-  // const handleClearFilters = () => {
-  //   setDropdownSelections({});
+  const handleClearFilters = () => {
+    setDropdownSelections({});
 
-  //   setPriceRange(defaultPriceRange);
-  //   setSliderLow(defaultPriceRange.min);
-  //   setSliderHigh(defaultPriceRange.max);
+    setPriceRange(defaultPriceRange);
+    setSliderLow(defaultPriceRange.min);
+    setSliderHigh(defaultPriceRange.max);
 
-  //   setDistanceLow(1);
-  //   setDistanceHigh(10);
+    setDistanceLow(1);
+    setDistanceHigh(10);
 
-  //   setIsPriceChanged(false); 
-  //   setIsDistanceChanged(false); 
+    setIsPriceChanged(false);
+    setIsDistanceChanged(false);
 
-  //   setIsKm(false);
-  //   setPostcode('');
-  //   setOtherInputs({});
-  //   setDateSelections({});
-  //   setShowDatePicker(false);
-  // };
-  
-    const handleClearFilters = () => {
-  setDropdownSelections({});
-
-  setPriceRange(defaultPriceRange);
-  setSliderLow(defaultPriceRange.min);
-  setSliderHigh(defaultPriceRange.max);
-
-  setDistanceLow(1);
-  setDistanceHigh(10);
-
-  setIsPriceChanged(false);
-  setIsDistanceChanged(false);
-
-  setIsKm(false);
-  setPostcode('');
-  setOtherInputs({});
-  setDateSelections({});
-  if(filters.length > 0){
-    setSelectedTab(filters[0].field_name)
-  }
-};
+    setIsKm(false);
+    setPostcode('');
+    setOtherInputs({});
+    setDateSelections({});
+    if (filters.length > 0) {
+      setSelectedTab(filters[0].field_name);
+    }
+  };
 
   const modelClose = () => {
     handleClose();
     onClose();
   };
 
-  // const handleClose = () => {
-  //   if (initialFilters?.filters?.length > 0) {
-  //     const savedDropdowns: Record<number, number[]> = {};
-  //     initialFilters.filters.forEach((f: any) => {
-  //       if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
-  //         savedDropdowns[f.id] = f.options;
-  //       }
-
-  //       if (
-  //         f.alias_name?.toLowerCase() === 'price' &&
-  //         Array.isArray(f.options)
-  //       ) {
-  //         const [min, max] = f.options;
-  //         setPriceRange({ min, max });
-  //         setSliderLow(min);
-  //         setSliderHigh(max);
-  //       }
-  //     });
-
-  //     setDropdownSelections(savedDropdowns);
-  //   } else {
-  //     setDropdownSelections({});
-  //     setPriceRange(defaultPriceRange);
-  //     setSliderLow(defaultPriceRange.min);
-  //     setSliderHigh(defaultPriceRange.max);
-  //     setPostcode('');
-  //   }
-  //   onClose();
-  // };
-
-  
-
   const handleClose = () => {
-  if (initialFilters?.filters?.length > 0) {
-    const savedDropdowns: Record<number, number[]> = {};
+    if (initialFilters?.filters?.length > 0) {
+      const savedDropdowns: Record<number, number[]> = {};
 
-    let appliedDistanceHigh: number | null = null;
+      let appliedDistanceHigh: number | null = null;
 
-    initialFilters.filters.forEach((f: any) => {
-      if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
-        savedDropdowns[f.id] = f.options;
+      initialFilters.filters.forEach((f: any) => {
+        if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
+          savedDropdowns[f.id] = f.options;
+        }
+
+        if (
+          f.field_type?.toLowerCase() === 'text' &&
+          f.alias_name?.toLowerCase().includes('postcode') &&
+          Array.isArray(f.options)
+        ) {
+          const [, max] = f.options;
+
+          appliedDistanceHigh = max;
+
+          setLastAppliedDistanceHigh(max);
+        }
+      });
+
+      setDropdownSelections(savedDropdowns);
+
+      if (appliedDistanceHigh !== null) {
+        setDistanceHigh(appliedDistanceHigh);
+        setIsDistanceChanged(appliedDistanceHigh !== 10);
+      } else {
+        setDistanceHigh(10);
+        setIsDistanceChanged(false);
+      }
+    } else {
+      setDropdownSelections({});
+      setPriceRange(defaultPriceRange);
+      setSliderLow(defaultPriceRange.min);
+      setSliderHigh(defaultPriceRange.max);
+
+      if (lastAppliedDistanceHigh !== null) {
+        setDistanceHigh(lastAppliedDistanceHigh);
+        setIsDistanceChanged(lastAppliedDistanceHigh !== 10);
+      } else {
+        setDistanceHigh(10);
+        setIsDistanceChanged(false);
       }
 
-      if (
-        f.field_type?.toLowerCase() === 'text' &&
-        f.alias_name?.toLowerCase().includes('postcode') &&
-        Array.isArray(f.options)
-      ) {
-        const [, max] = f.options;
-
-        appliedDistanceHigh = max;
-
-        setLastAppliedDistanceHigh(max);
-      }
-    });
-
-    setDropdownSelections(savedDropdowns);
-
-    if (appliedDistanceHigh !== null) {
-      setDistanceHigh(appliedDistanceHigh);
-      setIsDistanceChanged(appliedDistanceHigh !== 10);
-    } else {
-      setDistanceHigh(10);
-      setIsDistanceChanged(false);
-    }
-  } else {
-    setDropdownSelections({});
-    setPriceRange(defaultPriceRange);
-    setSliderLow(defaultPriceRange.min);
-    setSliderHigh(defaultPriceRange.max);
-
-    if (lastAppliedDistanceHigh !== null) {
-      setDistanceHigh(lastAppliedDistanceHigh);
-      setIsDistanceChanged(lastAppliedDistanceHigh !== 10);
-    } else {
-      setDistanceHigh(10);
-      setIsDistanceChanged(false);
+      setPostcode('');
     }
 
-    setPostcode('');
-  }
-
-  onClose();
-};
+    onClose();
+  };
   const SCREEN_WIDTH = Dimensions.get('window').width;
 
   const [dateSelections, setDateSelections] = useState<
     Record<number, { startDate?: Date; endDate?: Date }>
   >({});
-  
-    const hasChanges =
-  Object.keys(dropdownSelections).length > 0 ||
-  isPriceChanged ||
-  isDistanceChanged ||
-  Object.keys(dateSelections).length > 0 ||
-  Object.keys(otherInputs).length > 0 ||
-  postcode !== '';
 
+  const hasChanges =
+    Object.keys(dropdownSelections).length > 0 ||
+    isPriceChanged ||
+    isDistanceChanged ||
+    Object.keys(dateSelections).length > 0 ||
+    Object.keys(otherInputs).length > 0 ||
+    postcode !== '';
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -418,36 +356,18 @@ const FilterBottomSheet = ({
   const scrollRef = useRef<ScrollView>(null);
 
   const formatDistanceValue = (value: number) => {
-    // show 10 instead of 10.0
     return Number.isInteger(value) ? value.toString() : value.toFixed(1);
   };
 
-  // const updateDistance = (type: 'inc' | 'dec') => {
-  //   setDistanceHigh(prev => {
-  //     const step = isKm ? 0.1 : 0.1;
-
-  //     let newValue = type === 'inc' ? prev + step : prev - step;
-
-  //     newValue = parseFloat(newValue.toFixed(1));
-
-  //     if (newValue < 1 || newValue > 10) {
-  //       return prev;
-  //     }
-
-  //     return newValue;
-  //   });
-
-  //   setIsDistanceChanged(true);
-  // };
   const updateDistance = (type: 'inc' | 'dec') => {
     let newValue = distanceHigh;
-  
+
     if (type === 'inc') {
       newValue = Math.min(distanceHigh + 0.1, 10);
     } else {
       newValue = Math.max(distanceHigh - 0.1, 1);
     }
-  
+
     setDistanceHigh(parseFloat(newValue.toFixed(1)));
     setIsDistanceChanged(true);
   };
@@ -457,13 +377,7 @@ const FilterBottomSheet = ({
 
     if (currentFilter.field_type === 'dropdown') {
       return (
-//         <ScrollView
-//   style={{ flex: 1, paddingTop: 10 }}
-//   contentContainerStyle={{ paddingBottom: 180 }}
-//   keyboardShouldPersistTaps="handled"
-
-// >
-<View style={{ paddingTop: 10 }}>
+        <View style={{ paddingTop: 10 }}>
           {currentFilter.options.map((opt: any) => {
             const isMultiple = currentFilter.ismultilple;
             const selectedValues = dropdownSelections[currentFilter.id] || [];
@@ -492,7 +406,6 @@ const FilterBottomSheet = ({
                     toggleDropdownOption(currentFilter.id, opt.id, isMultiple)
                   }
                 >
-                  {/* ICON UI ONLY CHANGED */}
                   {isMultiple ? (
                     <View
                       style={{
@@ -554,58 +467,53 @@ const FilterBottomSheet = ({
                     {opt.option_name || opt.name}
                   </Text>
                 </TouchableOpacity>
-                {/* {isOtherOption && isSelected && ( */}
+
                 {isOtherOption &&
-  dropdownSelections[currentFilter.id]?.includes(opt.id) && (
-                  <TextInput
-                    style={[
-                      styles.login_container,
-                      styles.personalEmailID_TextInput,
-                      { marginBottom: 10, width: '100%' },
-                    ]}
-                    placeholder="Please specify"
-                    placeholderTextColor="#aaa"
-                    selectionColor={'#FFFFFF'}
-                    cursorColor={'#FFFFFF'}
-                    value={otherInputs[currentFilter.id] || ''}
-                    onFocus={() => {
-                      setTimeout(() => {
-                        scrollRef.current?.scrollToEnd({ animated: true });
-                      }, 300);
-                    }}
-                    onChangeText={text => {
-                      setOtherInputs(prev => ({
-                        ...prev,
-                        [currentFilter.id]: text,
-                      }));
-                    }}
-                  />
-                )}
+                  dropdownSelections[currentFilter.id]?.includes(opt.id) && (
+                    <TextInput
+                      style={[
+                        styles.login_container,
+                        styles.personalEmailID_TextInput,
+                        { marginBottom: 10, width: '100%' },
+                      ]}
+                      placeholder="Please specify"
+                      placeholderTextColor="#aaa"
+                      selectionColor={'#FFFFFF'}
+                      cursorColor={'#FFFFFF'}
+                      value={otherInputs[currentFilter.id] || ''}
+                      onFocus={() => {
+                        setTimeout(() => {
+                          scrollRef.current?.scrollToEnd({ animated: true });
+                        }, 300);
+                      }}
+                      onChangeText={text => {
+                        setOtherInputs(prev => ({
+                          ...prev,
+                          [currentFilter.id]: text,
+                        }));
+                      }}
+                    />
+                  )}
               </View>
             );
           })}
-        {/* </ScrollView> */}
         </View>
       );
     } else if (currentFilter.alias_name === 'price') {
       return (
-        <View style={{ zIndex: 999, position: 'relative',width: '100%',flex: 1 }}>
-        
-
+        <View
+          style={{ zIndex: 999, position: 'relative', width: '100%', flex: 1 }}
+        >
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
-            
             <View
               style={{
                 flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    width: '100%',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                width: '100%',
               }}
             >
-              {/* MIN INPUT */}
-              <View
-                style={{ width: '48%',}}
-              >
+              <View style={{ width: '48%' }}>
                 <Text
                   allowFontScaling={false}
                   style={[
@@ -619,7 +527,7 @@ const FilterBottomSheet = ({
                   style={[
                     styles.login_container,
                     styles.personalEmailID_TextInput,
-                    { width: '100%',minWidth: 0, },
+                    { width: '100%', minWidth: 0 },
                   ]}
                   keyboardType="numeric"
                   placeholder="Min"
@@ -638,7 +546,7 @@ const FilterBottomSheet = ({
                   }}
                 />
               </View>
-              <View style={{ width: '48%', }}>
+              <View style={{ width: '48%' }}>
                 <Text
                   allowFontScaling={false}
                   style={[
@@ -648,12 +556,12 @@ const FilterBottomSheet = ({
                 >
                   {t('max')}
                 </Text>
-                {/* MAX INPUT */}
+
                 <TextInput
                   style={[
                     styles.login_container,
                     styles.personalEmailID_TextInput,
-                    { width: '100%' ,minWidth: 0},
+                    { width: '100%', minWidth: 0 },
                   ]}
                   keyboardType="numeric"
                   placeholder="Max"
@@ -669,7 +577,6 @@ const FilterBottomSheet = ({
                       return;
                     }
 
-                    // Clamp within allowed range
                     const minLimit = sliderLow;
                     const maxLimit = currentFilter?.maxvalue ?? 100;
 
@@ -692,8 +599,7 @@ const FilterBottomSheet = ({
       const selected = dateSelections[currentFilter.id] || {};
 
       return (
-        <View style={{ paddingTop: 10,zIndex: 999, }}>
-          {/* START DATE */}
+        <View style={{ paddingTop: 10, zIndex: 999 }}>
           <TouchableOpacity
             style={[
               styles.login_container,
@@ -713,7 +619,6 @@ const FilterBottomSheet = ({
             </Text>
           </TouchableOpacity>
 
-          {/* END DATE */}
           <TouchableOpacity
             style={[
               styles.login_container,
@@ -738,20 +643,17 @@ const FilterBottomSheet = ({
       currentFilter.field_type?.toLowerCase() === 'text' &&
       currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
-
-
       return (
         <View style={{ paddingTop: 10 }}>
           <View style={styles.container}>
             <View
               style={{
-                 flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignContent: 'center',
               }}
             >
-              {/* 🔁 KM / Miles Toggle */}
               <Text
                 style={[
                   {
@@ -767,7 +669,6 @@ const FilterBottomSheet = ({
                 <View style={styles.toggleContainer}>
                   <TouchableOpacity
                     style={[styles.toggleBtn, !isKm && styles.active]}
-                    // onPress={() => setIsKm(false)}
                     onPress={() => {
                       setIsKm(false);
                     }}
@@ -783,7 +684,6 @@ const FilterBottomSheet = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.toggleBtn, isKm && styles.active]}
-                    // onPress={() => setIsKm(true)}
                     onPress={() => {
                       setIsKm(true);
                     }}
@@ -801,7 +701,6 @@ const FilterBottomSheet = ({
               </View>
             </View>
 
-            {/* 🎚 Multi Slider */}
             <View
               style={{
                 flexDirection: 'row',
@@ -811,25 +710,35 @@ const FilterBottomSheet = ({
                 marginTop: 16,
               }}
             >
-              <Text style={[styles.rangeText,{fontSize: 16, marginTop: 8,color: '#ffffff',
-                          
-                          fontFamily: 'Urbanist-SemiBold',}]}>1</Text>
-        
-                            {/* <MultiSlider
+              <Text
+                style={[
+                  styles.rangeText,
+                  {
+                    fontSize: 16,
+                    marginTop: 8,
+                    color: '#ffffff',
+
+                    fontFamily: 'Urbanist-SemiBold',
+                  },
+                ]}
+              >
+                1
+              </Text>
+
+              <MultiSlider
                 sliderLength={SCREEN_WIDTH / 2 - 34}
                 min={1}
-                max={10}
+                max={isDistanceChanged ? 10.1 : 10.0}
                 step={0.1}
                 values={[distanceHigh]}
                 onValuesChange={values => {
-                  const [value] = values;
-              
+                  let [value] = values;
+
                   const fixedValue = parseFloat(value.toFixed(1));
-              
+
                   setDistanceHigh(fixedValue);
-              
-                  // ✅ Filter active only when value changes
-                  setIsDistanceChanged(fixedValue !== 10);
+
+                  setIsDistanceChanged(true);
                 }}
                 allowOverlap={false}
                 snapped
@@ -848,7 +757,6 @@ const FilterBottomSheet = ({
                         zIndex: 9,
                         width: 58,
                         alignItems: 'center',
-                        boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
                       }}
                     >
                       <Text
@@ -859,12 +767,13 @@ const FilterBottomSheet = ({
                           fontFamily: 'Urbanist-SemiBold',
                         }}
                       >
-                        {isDistanceChanged
-                          ? formatDistanceValue(distanceHigh)
-                          : '∞'}{' '}
-                        {isDistanceChanged ? (isKm ? 'km' : 'mi') : ''}
+                        {!isDistanceChanged
+                          ? '∞'
+                          : `${formatDistanceValue(distanceHigh)} ${
+                              isKm ? 'km' : 'mi'
+                            }`}
                       </Text>
-              
+
                       <View
                         style={{
                           position: 'absolute',
@@ -878,7 +787,6 @@ const FilterBottomSheet = ({
                           borderLeftColor: 'transparent',
                           borderRightColor: 'transparent',
                           borderTopColor: 'rgba(220, 221, 228, 0.27)',
-                          boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
                         }}
                       />
                     </View>
@@ -893,110 +801,13 @@ const FilterBottomSheet = ({
                   backgroundColor: '#fff',
                   width: 4,
                 }}
-              /> */}
-              <MultiSlider
-  sliderLength={SCREEN_WIDTH / 2 - 34}
-  min={1}
-  max={isDistanceChanged? 10.1: 10.0}
-  step={0.1}
-  values={[distanceHigh]}
-  // onValuesChange={values => {
-  //   const [value] = values;
+              />
 
-  //   const fixedValue = parseFloat(value.toFixed(1));
-
-  //   setDistanceHigh(fixedValue);
-
-  //   // ✅ Once user slides, mark as changed
-  //   setIsDistanceChanged(true);
-                // }}
-onValuesChange={values => {
-  let [value] = values;
-
-  const fixedValue = parseFloat(value.toFixed(1));
-
-  setDistanceHigh(fixedValue);
-
-  setIsDistanceChanged(true);
-}}
-  allowOverlap={false}
-  snapped
-  enableLabel={true}
-  customLabel={props => {
-    return (
-      <View
-        style={{
-          position: 'absolute',
-          top: -20,
-          left: props.oneMarkerLeftPosition - 30,
-          backgroundColor: 'rgba(220, 221, 228, 0.27)',
-          paddingHorizontal: 8,
-          paddingVertical: 5,
-          borderRadius: 8,
-          zIndex: 9,
-          width: 58,
-          alignItems: 'center',
-        }}
-      >
-        <Text
-          allowFontScaling={false}
-          style={{
-            color: '#ffffff',
-            fontSize: 12,
-            fontFamily: 'Urbanist-SemiBold',
-          }}
-        >
-          {!isDistanceChanged
-            ? '∞'
-            : `${ formatDistanceValue(distanceHigh)} ${isKm ? 'km' : 'mi'}`}
-        </Text>
-
-        <View
-          style={{
-            position: 'absolute',
-            bottom: -8,
-            alignSelf: 'center',
-            width: 0,
-            height: 0,
-            borderLeftWidth: 6,
-            borderRightWidth: 6,
-            borderTopWidth: 8,
-            borderLeftColor: 'transparent',
-            borderRightColor: 'transparent',
-            borderTopColor: 'rgba(220, 221, 228, 0.27)',
-          }}
-        />
-      </View>
-    );
-  }}
-  selectedStyle={{ backgroundColor: '#fff' }}
-  unselectedStyle={{ backgroundColor: '#888' }}
-  trackStyle={{ height: 4, borderRadius: 2 }}
-  markerStyle={{
-    height: 20,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    width: 4,
-  }}
-/>
-              
-              {/* <Text style={styles.rangeText}>
-                              
-                                              {isDistanceChanged
-                ? formatDistanceValue(distanceHigh)
-                : '∞'}
-              </Text> */}
-              <Text style={[styles.rangeText,{width: 20,}]}>
-                {/* {lastAppliedPriceRange || isDistanceChanged ? '10' : '∞'} */}
-                                {/* {isDistanceChanged
-  ? formatDistanceValue(distanceHigh)
-  : '∞'} */}
-                {/* {distanceHigh >= 9.9 ? '10' : formatDistanceValue(distanceHigh)} */}
-
-                 {!isDistanceChanged
-            ? '∞'
-            : `${ formatDistanceValue(distanceHigh)}`}
-</Text>
+              <Text style={[styles.rangeText, { width: 20 }]}>
+                {!isDistanceChanged
+                  ? '∞'
+                  : `${formatDistanceValue(distanceHigh)}`}
+              </Text>
             </View>
             <View
               style={{
@@ -1024,29 +835,25 @@ onValuesChange={values => {
                     marginTop: 2,
                     backgroundColor: 'rgba(220, 221, 228, 0.2)',
                     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-                      
                   },
                 ]}
               >
-                         <Text
-                 allowFontScaling={false}
-                 style={[
-                   styles.rangeText,
-                   {
-                     marginBottom: 0,
-                     width: 40,
-                     fontSize: 12,
-                     color: '#FFFFFF',
-                   },
-                 ]}
-               >
-               {/* {lastAppliedPriceRange || isDistanceChanged
-                 ? formatDistanceValue(distanceHigh)
-                 : '∞'} */}
-                {!isDistanceChanged
-            ? '∞'
-            : `${ formatDistanceValue(distanceHigh)}`}
-               </Text>
+                <Text
+                  allowFontScaling={false}
+                  style={[
+                    styles.rangeText,
+                    {
+                      marginBottom: 0,
+                      width: 40,
+                      fontSize: 12,
+                      color: '#FFFFFF',
+                    },
+                  ]}
+                >
+                  {!isDistanceChanged
+                    ? '∞'
+                    : `${formatDistanceValue(distanceHigh)}`}
+                </Text>
               </View>
               <TouchableOpacity
                 onPress={() => {
@@ -1104,13 +911,6 @@ onValuesChange={values => {
               other_value: otherInputs[f.id] || '',
             }),
           };
-          // return {
-          //   id: f.id,
-          //   field_name: f.field_name,
-          //   field_type: f.field_type,
-          //   alias_name: f.alias_name,
-          //   options: dropdownSelections[f.id],
-          // };
         } else if (f.alias_name?.toLowerCase() === 'price' && isPriceChanged) {
           return {
             id: f.id,
@@ -1133,24 +933,20 @@ onValuesChange={values => {
               ],
             };
           }
-        }
-        
-        else if (
+        } else if (
           f.field_type?.toLowerCase() === 'text' &&
           f.alias_name?.toLowerCase().includes('postcode') &&
           isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
-            //const min = isKm ? distanceLow : parseFloat(kmToMiles(distanceLow).toFixed(1));
-            //const max = isKm ? distanceHigh : parseFloat(kmToMiles(distanceHigh).toFixed(1));
             const min = parseFloat(distanceLow.toFixed(isKm ? 1 : 1));
             const max = parseFloat(distanceHigh.toFixed(isKm ? 1 : 1));
             setLastAppliedPriceRange({
-  min: distanceLow,
-  max: distanceHigh,
-});
+              min: distanceLow,
+              max: distanceHigh,
+            });
 
-setLastAppliedDistanceHigh(distanceHigh);
+            setLastAppliedDistanceHigh(distanceHigh);
             return {
               id: f.id,
               field_name: f.field_name,
@@ -1178,8 +974,6 @@ setLastAppliedDistanceHigh(distanceHigh);
 
     onClose();
   };
-
-  
 
   const [search = '', setSearch] = useState('');
   return (
@@ -1265,12 +1059,11 @@ setLastAppliedDistanceHigh(distanceHigh);
                     {t('filters')}
                   </Text>
                   {hasChanges && (
-                  <TouchableOpacity onPress={handleClearFilters}>
-                    <Text allowFontScaling={false} style={styles.clearAll}>
-                      {t('clear_all')}
-                    </Text>
-                  </TouchableOpacity>
-
+                    <TouchableOpacity onPress={handleClearFilters}>
+                      <Text allowFontScaling={false} style={styles.clearAll}>
+                        {t('clear_all')}
+                      </Text>
+                    </TouchableOpacity>
                   )}
                 </View>
               </View>
@@ -1326,38 +1119,43 @@ setLastAppliedDistanceHigh(distanceHigh);
                 <KeyboardAvoidingView
                   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                   style={{ flex: 1 }}
-                 >
-                  <ScrollView
-                ref={scrollRef}
-                  style={styles.scrollview_style}
-                 contentContainerStyle={{ padding: 16, paddingBottom: 240,flexGrow: 1 }}
-                
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled"
                 >
-                  <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                    {selectedTab}
-                  </Text>
-                  {currentFilter?.id === 44 && currentFilter?.description ? (
+                  <ScrollView
+                    ref={scrollRef}
+                    style={styles.scrollview_style}
+                    contentContainerStyle={{
+                      padding: 16,
+                      paddingBottom: 240,
+                      flexGrow: 1,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                  >
                     <Text
                       allowFontScaling={false}
-                      style={{
-                        color: 'rgba(255,255,255,0.7)',
-                        fontFamily: 'Urbanist-medium',
-                        fontSize: 10,
-                        fontWeight: '400',
-                        fontStyle: 'normal',
-                      }}
+                      style={styles.filterHeadTitle}
                     >
-                      ({currentFilter.description} )
+                      {selectedTab}
                     </Text>
-                  ) : null}
-                  
-                  {renderRightContent()}
-                </ScrollView>
+                    {currentFilter?.id === 44 && currentFilter?.description ? (
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: 'rgba(255,255,255,0.7)',
+                          fontFamily: 'Urbanist-medium',
+                          fontSize: 10,
+                          fontWeight: '400',
+                          fontStyle: 'normal',
+                        }}
+                      >
+                        ({currentFilter.description} )
+                      </Text>
+                    ) : null}
+
+                    {renderRightContent()}
+                  </ScrollView>
                 </KeyboardAvoidingView>
               </View>
-              {/* Bottom buttons */}
               <View style={styles.bottomview}>
                 <FilterButton
                   title={t('cancel')}
@@ -1372,7 +1170,6 @@ setLastAppliedDistanceHigh(distanceHigh);
               </View>
               {showDatePicker && activeDateField && (
                 <View style={styles.datePickerContainer}>
-                  {/* HEADER */}
                   <View
                     style={{
                       flexDirection: 'row',
@@ -1398,7 +1195,6 @@ setLastAppliedDistanceHigh(distanceHigh);
 
                     <TouchableOpacity
                       onPress={() => {
-                        // Save selected date
                         const current =
                           dateSelections[activeDateField.param.id] || {};
 
@@ -1425,7 +1221,6 @@ setLastAppliedDistanceHigh(distanceHigh);
                     </TouchableOpacity>
                   </View>
 
-                  {/* DATE PICKER */}
                   <DateTimePicker
                     value={tempDate}
                     mode="date"
@@ -1451,7 +1246,6 @@ setLastAppliedDistanceHigh(distanceHigh);
 };
 
 const styles = StyleSheet.create({
-
   topRightBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -1470,7 +1264,6 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
   },
   container: {
-    // padding: 16,
     paddingTop: 16,
   },
 
@@ -1529,7 +1322,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   login_container: {
-    // width: '45%',
     width: '100%',
     height: 44,
     display: 'flex',
@@ -1549,7 +1341,6 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
   },
   personalEmailID_TextInput: {
-    // width: '45%',
     width: '100%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
