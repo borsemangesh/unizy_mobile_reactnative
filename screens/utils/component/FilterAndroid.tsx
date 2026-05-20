@@ -156,6 +156,7 @@ const FilterAndroid = ({
 
   const { t } = useTranslation();
   const modelClose = () => {
+    handleClose();
     onClose();
   };
 
@@ -334,24 +335,37 @@ const FilterAndroid = ({
     return Number.isInteger(value) ? value.toString() : value.toFixed(1);
   };
 
-  const updateDistance = (type: 'inc' | 'dec') => {
-    setDistanceHigh(prev => {
-      let step = 0.1;
+  // const updateDistance = (type: 'inc' | 'dec') => {
+  //   setDistanceHigh(prev => {
+  //     let step = 0.1;
 
-      let newValue = type === 'inc' ? prev + step : prev - step;
+  //     let newValue = type === 'inc' ? prev + step : prev - step;
 
-      // prevent going below 1
-      if (newValue < 1) return prev;
+  //     // prevent going below 1
+  //     if (newValue < 1) return prev;
 
-      // optional max limit
-      const max = 10;
-      if (newValue > max) return prev;
+  //     // optional max limit
+  //     const max = 10;
+  //     if (newValue > max) return prev;
 
-      return parseFloat(newValue.toFixed(1));
-    });
+  //     return parseFloat(newValue.toFixed(1));
+  //   });
 
-    setIsDistanceChanged(true);
-  };
+  //   setIsDistanceChanged(true);
+  // };
+
+const updateDistance = (type: 'inc' | 'dec') => {
+  let newValue = distanceHigh;
+
+  if (type === 'inc') {
+    newValue = Math.min(distanceHigh + 0.1, 10);
+  } else {
+    newValue = Math.max(distanceHigh - 0.1, 1);
+  }
+
+  setDistanceHigh(parseFloat(newValue.toFixed(1)));
+  setIsDistanceChanged(true);
+};
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -676,131 +690,32 @@ const FilterAndroid = ({
               }}
             >
               <Text style={styles.rangeText}>1</Text>
-              {/* <MultiSlider
-              sliderLength={SCREEN_WIDTH / 2 - 20}
-              min={1}
-              max={10}
-              step={isKm ? 0.1 : 0.1}
-              values={[distanceHigh]}
-              onValuesChange={values => {
-                const [value] = values;
 
-                const fixedValue = isKm
-                  ? parseFloat(value.toFixed(1)) // integer for KM
-                  : parseFloat(value.toFixed(1)); // 1 decimal for Miles
-
-                setDistanceHigh(fixedValue);
-                setIsDistanceChanged(true);
-              }}
-              allowOverlap={false}
-              snapped
-              selectedStyle={{ backgroundColor: '#fff' }}
-              unselectedStyle={{ backgroundColor: '#888' }}
-              trackStyle={{ height: 4, borderRadius: 2 }}
-              markerStyle={{
-                height: 20,
-                borderRadius: 12,
-                backgroundColor: '#fff',
-                width: 4,
-              }}
-              /> */}
-              {/* <MultiSlider
-                sliderLength={SCREEN_WIDTH / 2 - 34}
-                min={1}
-                max={10}
-                step={0.1}
-                values={[distanceHigh]}
-                onValuesChange={values => {
-                  const [value] = values;
-
-                  const fixedValue = parseFloat(value.toFixed(1));
-
-                  setDistanceHigh(fixedValue);
-                  setIsDistanceChanged(true);
-                }}
-                allowOverlap={false}
-                snapped
-                enableLabel={true}
-                customLabel={props => {
-                  return (
-                    <View
-                      style={{
-                        position: 'absolute',
-                        top: -20,
-                        left: props.oneMarkerLeftPosition - 30,
-                        backgroundColor: 'rgba(220, 221, 228, 0.27)',
-                        paddingHorizontal: 8,
-                        paddingVertical: 5,
-                        borderRadius: 8,
-                        zIndex: 9,
-                        width: 58,
-                        alignItems: 'center',
-                        boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-                      }}
-                    >
-                      <Text
-                        allowFontScaling={false}
-                        style={{
-                          color: '#ffffff',
-                          fontSize: 12,
-                          fontFamily: 'Urbanist-SemiBold',
-                        }}
-                      >
-                        {distanceHigh >= 10
-                          ? '∞'
-                          : isKm
-                          ? formatDistanceValue(distanceHigh)
-                          : formatDistanceValue(distanceHigh)}{' '}
-                        {isKm ? 'km' : 'mi'}
-                      </Text>
-
-                      <View
-                        style={{
-                          position: 'absolute',
-                          bottom: -8,
-                          alignSelf: 'center',
-                          width: 0,
-                          height: 0,
-                          borderLeftWidth: 6,
-                          borderRightWidth: 6,
-                          borderTopWidth: 8,
-                          borderLeftColor: 'transparent',
-                          borderRightColor: 'transparent',
-                          borderTopColor: 'rgba(220, 221, 228, 0.27)',
-                          boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-                        }}
-                      />
-                    </View>
-                  );
-                }}
-                selectedStyle={{ backgroundColor: '#fff' }}
-                unselectedStyle={{ backgroundColor: '#888' }}
-                trackStyle={{ height: 4, borderRadius: 2 }}
-                markerStyle={{
-                  height: 20,
-                  borderRadius: 12,
-                  backgroundColor: '#fff',
-                  width: 4,
-                }}
-              />
-               */}
-              
-              <MultiSlider
+<MultiSlider
   sliderLength={SCREEN_WIDTH / 2 - 34}
   min={1}
-  max={10}
+  max={isDistanceChanged? 10.1: 10.0}
   step={0.1}
   values={[distanceHigh]}
-  onValuesChange={values => {
-    const [value] = values;
+  // onValuesChange={values => {
+  //   const [value] = values;
 
-    const fixedValue = parseFloat(value.toFixed(1));
+  //   const fixedValue = parseFloat(value.toFixed(1));
 
-    setDistanceHigh(fixedValue);
+  //   setDistanceHigh(fixedValue);
 
-    // ✅ Filter active only when value changes
-    setIsDistanceChanged(fixedValue !== 10);
-  }}
+  //   // ✅ Once user slides, mark as changed
+  //   setIsDistanceChanged(true);
+                // }}
+onValuesChange={values => {
+  let [value] = values;
+
+  const fixedValue = parseFloat(value.toFixed(1));
+
+  setDistanceHigh(fixedValue);
+
+  setIsDistanceChanged(true);
+}}
   allowOverlap={false}
   snapped
   enableLabel={true}
@@ -818,7 +733,6 @@ const FilterAndroid = ({
           zIndex: 9,
           width: 58,
           alignItems: 'center',
-          boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
         }}
       >
         <Text
@@ -829,10 +743,9 @@ const FilterAndroid = ({
             fontFamily: 'Urbanist-SemiBold',
           }}
         >
-          {isDistanceChanged
-            ? formatDistanceValue(distanceHigh)
-            : '∞'}{' '}
-          {isDistanceChanged ? (isKm ? 'km' : 'mi') : ''}
+          {!isDistanceChanged
+            ? '∞'
+            : `${ formatDistanceValue(distanceHigh)} ${isKm ? 'km' : 'mi'}`}
         </Text>
 
         <View
@@ -848,7 +761,6 @@ const FilterAndroid = ({
             borderLeftColor: 'transparent',
             borderRightColor: 'transparent',
             borderTopColor: 'rgba(220, 221, 228, 0.27)',
-            boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
           }}
         />
       </View>
@@ -866,10 +778,9 @@ const FilterAndroid = ({
 />
 
 <Text style={styles.rangeText}>
-                {/* {lastAppliedPriceRange || isDistanceChanged ? '10' : '∞'} */}
-                                {isDistanceChanged
-  ? formatDistanceValue(distanceHigh)
-  : '∞'}
+                 {!isDistanceChanged
+            ? '∞'
+            : `${ formatDistanceValue(distanceHigh)}`}
 </Text>
             </View>
             <View
@@ -901,24 +812,6 @@ const FilterAndroid = ({
                   },
                 ]}
               >
-                {/* <Text
-                  allowFontScaling={false}
-                  style={[
-                    styles.rangeText,
-                    {
-                      marginBottom: 0,
-                      width: 40,
-                      fontSize: 12,
-                      color: '#FFFFFF',
-                    },
-                  ]}
-                >
-                  {distanceHigh >= 10
-                    ? '∞'
-                    : isKm
-                    ? formatDistanceValue(distanceHigh)
-                    : formatDistanceValue(distanceHigh)}
-                </Text> */}
                 <Text
   allowFontScaling={false}
   style={[
@@ -931,12 +824,13 @@ const FilterAndroid = ({
     },
   ]}
 >
-{/* {lastAppliedPriceRange || isDistanceChanged
+                  {/* {isDistanceChanged
   ? formatDistanceValue(distanceHigh)
   : '∞'} */}
-                  {isDistanceChanged
-  ? formatDistanceValue(distanceHigh)
-  : '∞'}
+                  {formatDistanceValue(distanceHigh)}
+                  {!isDistanceChanged
+            ? distanceHigh === 10 ? '10':'∞'
+            : `${ formatDistanceValue(distanceHigh)}`}
 </Text>
               </View>
               <TouchableOpacity
