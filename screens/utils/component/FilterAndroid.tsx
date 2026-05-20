@@ -824,12 +824,9 @@ onValuesChange={values => {
     },
   ]}
 >
-                  {/* {isDistanceChanged
-  ? formatDistanceValue(distanceHigh)
-  : '∞'} */}
-                  {formatDistanceValue(distanceHigh)}
+                  
                   {!isDistanceChanged
-            ? distanceHigh === 10 ? '10':'∞'
+            ? '∞'
             : `${ formatDistanceValue(distanceHigh)}`}
 </Text>
               </View>
