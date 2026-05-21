@@ -226,6 +226,8 @@ const PurchaseCard = React.memo(
       item?.category_id === 3 ||
       item?.category_id === 2 ||
       item?.category_id === 5;
+    
+    const showUnits = item?.category_id === 5 || item?.category_id === 2;
 
     const qtyLabel =
       item?.category_id === 3
@@ -289,11 +291,18 @@ const PurchaseCard = React.memo(
                   {item.price}
                 </Text>
                 {showQty && (
-                  <View style={styles.statusBox}>
-                    <Text allowFontScaling={false} style={styles.purchasedText}>
-                      {qtyLabel}
-                    </Text>
-                  </View>
+                  <>
+                    {!showUnits && (
+                      <View style={styles.statusBox}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.purchasedText}
+                        >
+                          {qtyLabel}
+                        </Text>
+                      </View>
+                    )}
+                  </>
                 )}
               </View>
             </View>
