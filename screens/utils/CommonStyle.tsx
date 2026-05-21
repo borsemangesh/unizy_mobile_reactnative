@@ -13,19 +13,19 @@ const COMMONSTYLE = StyleSheet.create({
     fontFamily: 'Urbanist-Regular',
   },
   FONTWEIGHT_400: {
-    fontWeight: '400'
+    fontWeight: '400',
   },
   FONTWEIGHT_500: {
-     fontWeight: 500,
+    fontWeight: 500,
   },
   FONTWEIGHT_600: {
-     fontWeight: 600,
+    fontWeight: 600,
   },
   COLOR_FFF: {
-    color: '#fff'
+    color: '#fff',
   },
 
-   FONT_12: {
+  FONT_12: {
     fontSize: 12,
   },
   FONT_14: {
@@ -47,10 +47,7 @@ const COMMONSTYLE = StyleSheet.create({
     fontSize: 24,
   },
 
-
   // AddScreen
-
-  
 
   headerContent: {
     position: 'absolute',
@@ -110,6 +107,23 @@ const COMMONSTYLE = StyleSheet.create({
     marginTop: 16,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
+  },
+  modelBlur: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
 

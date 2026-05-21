@@ -43,6 +43,7 @@ import CALENDER_ICON from '../../../assets/images/calendar_icon1.png';
     import DELETENEW_ICON from '../../../assets/images/delete_new.png';
 import { Switch } from 'react-native-gesture-handler';
 import { CommonConfirmModal } from '../../utils/component/Logout.component';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 
 
@@ -300,35 +301,6 @@ PAYMENT_ICON
       case 'app_version':
         break;
     }
-      //  if (isLogout) {
-      //       setShowConfirm(true);
-      //     } else if (isDelete) {
-      //       setIsPasswordVisible(false)
-      //       setPassword('')
-      //       setShowConfirm1(true);
-      //     }
-      //     else if (item.titleKey === 'my_orders') {
-      //         navigateToScreen('MyOrders');
-      //     }
-      //     else if (item.titleKey === 'reviews') {
-      //       navigateToScreen('MyReviews');
-      //     }
-      //     else if (item.titleKey === 'help_support') {
-      //       navigation.navigate('HelpSupport');
-      //     }
-
-      //     else if (item.titleKey === 'notifications') {
-      //         navigateToScreen('Notification');
-      //     }
-      //     else if (item.titleKey === 'payment_methods') {
-      //       openStripeOnboarding();
-      //     }
-      //     else if (item.titleKey === 'change_password') {
-      //       navigateToScreen('ChangePassword');
-      //     }
-      //     else {
-
-      //     }
   }
 
   const renderItem = ({ item }: any) => {
@@ -572,24 +544,17 @@ const handleLogout = async () => {
         imageSource={require('../../../assets/images/alert_logout.png')}
         loading={loading}
       />
-      {/* <Modal
-        visible={showConfirm}
+
+      <Modal
+        visible={showConfirm1}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowConfirm(false)}
+        onRequestClose={() => setShowConfirm1(false)}
       >
-        <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
-          <View style={styles.overlay}>
+        <TouchableWithoutFeedback onPress={() => setShowConfirm1(false)}>
+          <View style={COMMONSTYLE.overlay}>
             <BlurView
-              style={[
-                StyleSheet.absoluteFill,
-                {
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                },
-              ]}
+              style={[StyleSheet.absoluteFill, COMMONSTYLE.modelBlur]}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
@@ -601,24 +566,60 @@ const handleLogout = async () => {
               ]}
             />
 
-            <View style={styles.popupContainer}>
+            <View style={styles.popupContainer1}>
               <Image
-                source={require('../../../assets/images/alert_logout.png')}
+                source={require('../../../assets/images/profile_delete.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.mainheader}>
-                {t('confirm_logout')}
+                {t('delete_account')}
               </Text>
               <Text allowFontScaling={false} style={styles.subheader}>
-                {t('logout_message')}
+                {t('delete_message')}
               </Text>
+
+              <View style={styles.password_container}>
+                <TextInput
+                  allowFontScaling={false}
+                  style={styles.password_TextInput}
+                  placeholder={t('enter_password')}
+                  placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+                  value={password}
+                  maxLength={20}
+                  selectionColor="#F5F5F5"
+                  cursorColor={'#F5F5F5'}
+                  secureTextEntry={!isPasswordVisible}
+                  onChangeText={passwordText => setPassword(passwordText)}
+                />
+                <TouchableOpacity
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                >
+                  <Image
+                    source={
+                      isPasswordVisible
+                        ? require('../../../assets/images/eyeopen.png')
+                        : require('../../../assets/images/eyecross1.png')
+                    }
+                    style={[
+                      styles.eyeIcon,
+                      isPasswordVisible ? styles.eyeIcon : styles.eyeCross,
+                    ]}
+                  />
+                </TouchableOpacity>
+              </View>
 
               <TouchableOpacity
                 style={styles.loginButton}
                 onPress={async () => {
+                  if (!password?.trim()) {
+                    setShowConfirm1(false);
+                    showToast(t('PLEASE_FILL_ALL_REQUIRED_FIELDS'), 'error');
+                    return;
+                  }
                   try {
                     setLoading(true);
+                    const token = await AsyncStorage.getItem('userToken');
                     const deviceId = await DeviceInfo.getUniqueId();
                     const user_id = await AsyncStorage.getItem('userId');
 
@@ -626,14 +627,16 @@ const handleLogout = async () => {
                       device_type: Platform.OS === 'ios' ? 'ios' : 'android',
                       device_id: deviceId,
                       user_id: Number(user_id),
+                      password: password,
                     };
 
                     const response = await fetch(
-                      `${MAIN_URL.baseUrl}user/delete-fcm-token`,
+                      `${MAIN_URL.baseUrl}user/account-delete`,
                       {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
+                          Authorization: `Bearer ${token}`,
                         },
                         body: JSON.stringify(body),
                       },
@@ -641,15 +644,19 @@ const handleLogout = async () => {
 
                     const apiData = await response.json();
 
+                    console.log('delete API Response:', apiData);
+
                     if (apiData?.statusCode === 200) {
                       await AsyncStorage.setItem('userToken', '');
                       await AsyncStorage.setItem('userData', '');
                       await AsyncStorage.setItem('userId', '');
                       await AsyncStorage.setItem('twilio_convo_', '');
                       await AsyncStorage.setItem('twilio_msg_', '');
+                      setShowConfirm1(false);
 
                       try {
                         await resetTwilioClient();
+
                         await clearTwilioCache();
                         try {
                           const messaging =
@@ -682,224 +689,40 @@ const handleLogout = async () => {
                             name: 'SinglePage',
                             params: {
                               resetToLogin: true,
-                              logoutMessage: t(Constant.USER_LOGOUT),
+                              logoutMessage: t(Constant.USER_DELETE),
                             },
                           },
                         ],
                       });
-                      setShowConfirm(false);            
                     } else {
-                      showToast(t(Constant.LOGOUT_FAIL), 'error');
+                      setShowConfirm1(false);
+                      showToast(t(apiData?.message), 'error');
                     }
                   } catch (error) {
-                    console.log('Something went wrong. Try again!');
+                    // console.log("Something went wrong. Try again!");
                   } finally {
                     setLoading(false);
                   }
                 }}
               >
                 <Text allowFontScaling={false} style={styles.loginText}>
-                  {t('logout')}
+                  {t('yes_delete')}
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.loginButton1}
-                onPress={() => setShowConfirm(false)}
+                style={[
+                  styles.loginButton1,
+                  { marginTop: Platform.OS === 'ios' ? 10 : 10 },
+                ]}
+                onPress={() => setShowConfirm1(false)}
               >
                 <Text allowFontScaling={false} style={styles.loginText1}>
                   {t('cancel')}
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal> */}
-
-      <Modal
-        visible={showConfirm1}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowConfirm1(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShowConfirm1(false)}>
-          <View style={styles.overlay}>
-            <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
-              blurType="light"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
-              />
-
-              <View style={styles.popupContainer1}>
-                <Image
-                  source={require('../../../assets/images/profile_delete.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('delete_account')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.subheader}>
-                  {t('delete_message')}
-                </Text>
-
-                <View style={styles.password_container}>
-                  <TextInput
-                    allowFontScaling={false}
-                    style={styles.password_TextInput}
-                    placeholder={t('enter_password')}
-                    placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                    value={password}
-                    maxLength={20}
-                    selectionColor="#F5F5F5"
-                    cursorColor={'#F5F5F5'}
-                    secureTextEntry={!isPasswordVisible}
-                    onChangeText={passwordText => setPassword(passwordText)}
-                  />
-                  <TouchableOpacity
-                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                  >
-                    <Image
-                      source={
-                        isPasswordVisible
-                          ? require('../../../assets/images/eyeopen.png')
-                          : require('../../../assets/images/eyecross1.png')
-                      }
-                      style={[
-                        styles.eyeIcon,
-                        isPasswordVisible ? styles.eyeIcon : styles.eyeCross,
-                      ]}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={async () => {
-                    if (!password?.trim()) {
-                      setShowConfirm1(false);
-                      showToast(t('PLEASE_FILL_ALL_REQUIRED_FIELDS'), 'error');
-                      return;
-                    }
-                    try {
-                      setLoading(true);
-                      const token = await AsyncStorage.getItem('userToken');
-                      const deviceId = await DeviceInfo.getUniqueId();
-                      const user_id = await AsyncStorage.getItem('userId');
-
-                      const body = {
-                        device_type: Platform.OS === 'ios' ? 'ios' : 'android',
-                        device_id: deviceId,
-                        user_id: Number(user_id),
-                        password: password,
-                      };
-
-                      const response = await fetch(
-                        `${MAIN_URL.baseUrl}user/account-delete`,
-                        {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                          },
-                          body: JSON.stringify(body),
-                        },
-                      );
-
-                      const apiData = await response.json();
-
-                      console.log('delete API Response:', apiData);
-
-                      if (apiData?.statusCode === 200) {
-                        await AsyncStorage.setItem('userToken', '');
-                        await AsyncStorage.setItem('userData', '');
-                        await AsyncStorage.setItem('userId', '');
-                        await AsyncStorage.setItem('twilio_convo_', '');
-                        await AsyncStorage.setItem('twilio_msg_', '');
-                        setShowConfirm1(false);
-
-                        try {
-                          await resetTwilioClient();
-
-                          await clearTwilioCache();
-                          try {
-                            const messaging =
-                              require('@react-native-firebase/messaging').default;
-                            await messaging().deleteToken();
-                            if (__DEV__) {
-                            }
-                          } catch (fcmError) {
-                            console.warn(
-                              '⚠️ Error deleting FCM token:',
-                              fcmError,
-                            );
-                          }
-
-                          if (__DEV__) {
-                          }
-                        } catch (clearError) {
-                          console.warn(
-                            '⚠️ Error clearing Twilio data on logout:',
-                            clearError,
-                          );
-                        }
-
-                        await AsyncStorage.setItem('ISLOGIN', 'false');
-
-                        navigation.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: 'SinglePage',
-                              params: {
-                                resetToLogin: true,
-                                logoutMessage: t(Constant.USER_DELETE),
-                              },
-                            },
-                          ],
-                        });
-                      } else {
-                        setShowConfirm1(false);
-                        showToast(t(apiData?.message), 'error');
-                      }
-                    } catch (error) {
-                      // console.log("Something went wrong. Try again!");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('yes_delete')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[
-                    styles.loginButton1,
-                    { marginTop: Platform.OS === 'ios' ? 10 : 10 },
-                  ]}
-                  onPress={() => setShowConfirm1(false)}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -1049,19 +872,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-  },
-
-
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-      position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
   },
 
   editcard: {

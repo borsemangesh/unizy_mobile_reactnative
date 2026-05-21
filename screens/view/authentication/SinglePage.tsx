@@ -61,6 +61,7 @@ const { height } = Dimensions.get('window');
 import BACKGOUND_ANIMATION_ICON from '../../../assets/images/bganimationscreen.png';
 
 import SEARCH_ICON from '../../../assets/images/searchicon.png';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 
  
@@ -1821,7 +1822,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         </>
       ) : (
         <>
-         
           <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
             <LottieView
               source={require('../../../assets/animations/backgroundanimation3.json')}
@@ -3419,7 +3419,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                           onRequestClose={closePopup1}
                         >
                           <View style={Styles.profileoverlay}>
-                            <BlurView
+                            {/* <BlurView
                               style={{
                                 flex: 1,
                                 alignContent: 'center',
@@ -3434,70 +3434,76 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   ? 'rgba(0, 0, 0, 0.11)'
                                   : 'rgba(0, 0, 0, 0.5)'
                               }
-                            >
-                              <View
-                                style={[
-                                  StyleSheet.absoluteFill,
-                                  {
-                                    backgroundColor:
-                                      Platform.OS === 'ios'
-                                        ? 'rgba(0, 0, 0, 0.15)'
-                                        : 'rgba(0, 0, 0, 0.32)',
-                                  },
-                                ]}
-                              />
+                            > */}
+                            <BlurView
+                              style={[
+                                StyleSheet.absoluteFill,
+                                COMMONSTYLE.modelBlur,
+                              ]}
+                              blurType="light"
+                              blurAmount={10}
+                              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                            />
+                            <View
+                              style={[
+                                StyleSheet.absoluteFill,
+                                {
+                                  backgroundColor:
+                                    Platform.OS === 'ios'
+                                      ? 'rgba(0, 0, 0, 0.15)'
+                                      : 'rgba(0, 0, 0, 0.32)',
+                                },
+                              ]}
+                            />
 
-                              <View
-                                style={[
-                                  Styles.profilepopupContainer,
-                                  { width: width * 0.85 },
-                                ]}
+                            <View
+                              style={[
+                                Styles.profilepopupContainer,
+                                { width: width * 0.85 },
+                              ]}
+                            >
+                              <Image
+                                source={require('../../../assets/images/success_icon.png')}
+                                style={Styles.profilelogo1}
+                                resizeMode="contain"
+                              />
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.profiletermsText2}
                               >
-                                <Image
-                                  source={require('../../../assets/images/success_icon.png')}
-                                  style={Styles.profilelogo1}
-                                  resizeMode="contain"
-                                />
+                                {t('account_created_successfully')}
+                              </Text>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.profiletermsText1}
+                              >
+                                {t('welcome_to_unizy')}
+                              </Text>
+                              <TouchableOpacity
+                                style={Styles.profileloginButton}
+                                onPress={async () => {
+                                  closePopup1();
+                                  await AsyncStorage.setItem('ISLOGIN', 'true');
+                                  await AsyncStorage.setItem(
+                                    'ISONBOARDING',
+                                    'false',
+                                  );
+                                  navigation.replace('OnboardingScreen');
+                                  // navigation.replace('Dashboard', {
+                                  //   AddScreenBackactiveTab: 'Home',
+                                  //   isNavigate: true,
+                                  // });
+                                }}
+                              >
                                 <Text
                                   allowFontScaling={false}
-                                  style={Styles.profiletermsText2}
+                                  style={Styles.profileloginText}
                                 >
-                                  {t('account_created_successfully')}
+                                  {t('start_exploring')}
                                 </Text>
-                                <Text
-                                  allowFontScaling={false}
-                                  style={Styles.profiletermsText1}
-                                >
-                                  {t('welcome_to_unizy')}
-                                </Text>
-                                <TouchableOpacity
-                                  style={Styles.profileloginButton}
-                                  onPress={async () => {
-                                    closePopup1();
-                                    await AsyncStorage.setItem(
-                                      'ISLOGIN',
-                                      'true',
-                                    );
-                                    await AsyncStorage.setItem(
-                                      'ISONBOARDING',
-                                      'false',
-                                    );
-                                    navigation.replace('OnboardingScreen');
-                                    // navigation.replace('Dashboard', {
-                                    //   AddScreenBackactiveTab: 'Home',
-                                    //   isNavigate: true,
-                                    // });
-                                  }}
-                                >
-                                  <Text
-                                    allowFontScaling={false}
-                                    style={Styles.profileloginText}
-                                  >
-                                    {t('start_exploring')}
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-                            </BlurView>
+                              </TouchableOpacity>
+                            </View>
+                            {/* </BlurView> */}
                           </View>
                         </Modal>
                       </>
