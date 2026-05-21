@@ -518,13 +518,12 @@ const formatDate = (dateString?: string, t?: any) => {
 
 
   return (
-<ImageBackground
-                      source={BACK_ICON}
-                      style={{ flex: 1,width: '100%',
-                    height: '100%', }}
-                      resizeMode="cover"
-                    >
-    {/* <BackgroundWrapper> */}
+    <ImageBackground
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      {/* <BackgroundWrapper> */}
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -804,11 +803,9 @@ const formatDate = (dateString?: string, t?: any) => {
         animationType="fade"
         onRequestClose={() => setShowDeleteModal(false)}
       >
-        <TouchableWithoutFeedback
-          onPress={() => setShowDeleteModal(false)}
-        >
+        <TouchableWithoutFeedback onPress={() => setShowDeleteModal(false)}>
           <View style={styles.overlay}>
-            <BlurView
+            {/* <BlurView
               style={{
                 flex: 1,
                 alignContent: 'center',
@@ -820,53 +817,59 @@ const formatDate = (dateString?: string, t?: any) => {
               blurType="light"
               blurAmount={2}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
+            > */}
+            <BlurView
+              style={[StyleSheet.absoluteFill, styles.modelBlur]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+
+            <View style={styles.popupContainer}>
+              <Image
+                source={require('../../../assets/images/alerticon.png')}
+                style={styles.logo}
+                resizeMode="contain"
               />
+              <Text allowFontScaling={false} style={styles.mainheader1}>
+                {t('confirm_action')}
+              </Text>
+              <Text
+                allowFontScaling={false}
+                style={[styles.mainheader, { marginTop: 10 }]}
+              >
+                {t('cancel_order_message_action')}
+              </Text>
 
-              <View style={styles.popupContainer}>
-                <Image
-                  source={require('../../../assets/images/alerticon.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.mainheader1}>
-                  {t('confirm_action')}
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => {
+                  handleCancelOrder(orederId);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('yes_cancel')}
                 </Text>
-                <Text
-                  allowFontScaling={false}
-                  style={[styles.mainheader, { marginTop: 10 }]}
-                >
-                  {t('cancel_order_message_action')}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.loginButton1}
+                onPress={() => {
+                  setShowDeleteModal(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
                 </Text>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={() => {
-                    handleCancelOrder(orederId);
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('yes_cancel')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.loginButton1}
-                  onPress={() => {
-                    setShowDeleteModal(false);
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
+              </TouchableOpacity>
+            </View>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -874,7 +877,7 @@ const formatDate = (dateString?: string, t?: any) => {
       <NewCustomToastContainer />
       {renderRightContent()}
       {/* </BackgroundWrapper> */}
-      </ImageBackground>
+    </ImageBackground>
   );
 };
 
@@ -968,11 +971,22 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
 
-    overlay: {
+ overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  modelBlur: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
   },
 
   categoryTabsContainer: { },

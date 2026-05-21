@@ -726,7 +726,7 @@ const FilterBottomSheet = ({
               </Text>
 
               <MultiSlider
-                sliderLength={SCREEN_WIDTH / 2 - 34}
+                sliderLength={SCREEN_WIDTH / 2 - 40}
                 min={1}
                 max={isDistanceChanged ? 10.1 : 10.0}
                 step={0.1}
@@ -803,11 +803,21 @@ const FilterBottomSheet = ({
                 }}
               />
 
-              <Text style={[styles.rangeText, { width: 20 }]}>
-                {!isDistanceChanged
-                  ? '∞'
-                  : `${formatDistanceValue(distanceHigh)}`}
-              </Text>
+              <View
+                style={{
+                  width: 40,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  alignContent: 'center',
+                }}
+              >
+                <Text style={[styles.rangeText]}>
+                  {!isDistanceChanged
+                    ? '∞'
+                    : `${formatDistanceValue(distanceHigh)}`}
+                </Text>
+              </View>
             </View>
             <View
               style={{

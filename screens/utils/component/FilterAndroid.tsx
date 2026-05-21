@@ -664,10 +664,10 @@ const FilterAndroid = ({
                 marginTop: 16,
               }}
             >
-              <Text style={[styles.rangeText,{marginTop: 4}]}>1</Text>
+              <Text style={[styles.rangeText, { marginTop: 4 }]}>1</Text>
 
               <MultiSlider
-                sliderLength={SCREEN_WIDTH / 2 - 34}
+                sliderLength={SCREEN_WIDTH / 2 - 50}
                 min={1}
                 max={isDistanceChanged ? 10.1 : 10.0}
                 step={0.1}
@@ -744,11 +744,21 @@ const FilterAndroid = ({
                 }}
               />
 
-              <Text style={[styles.rangeText,{width: 20,marginTop: 4}]}>
-                {!isDistanceChanged
-                  ? '∞'
-                  : `${formatDistanceValue(distanceHigh)}`}
-              </Text>
+              <View
+                style={{
+                  width: 40,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  alignContent: 'center',
+                }}
+              >
+                <Text style={[styles.rangeText]}>
+                  {!isDistanceChanged
+                    ? '∞'
+                    : `${formatDistanceValue(distanceHigh)}`}
+                </Text>
+              </View>
             </View>
             <View
               style={{

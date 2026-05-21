@@ -80,7 +80,7 @@ interface TransactionItem {
   created_by: created_by;
 }
 
-interface created_by { 
+interface created_by {
   id: number;
   firstname: string;
   lastname: string;
@@ -179,7 +179,7 @@ const formatPurchaseSection = (section: any) => ({
     blocked_you: item.blocked_you,
     chat_with_seller: item.chat_with_seller,
     created_by: item.created_by,
-    profile: item.created_by.profile
+    profile: item.created_by.profile,
   })),
 });
 
@@ -279,7 +279,13 @@ const PurchaseCard = React.memo(
                 )}
               </View>
               <View style={styles.priceContainer}>
-                <Text allowFontScaling={false} style={[styles.price,{marginTop: showQty ||isAwaiting ? -6 : 0}]}>
+                <Text
+                  allowFontScaling={false}
+                  style={[
+                    styles.price,
+                    { marginTop: showQty || isAwaiting ? -6 : 0 },
+                  ]}
+                >
                   {item.price}
                 </Text>
                 {showQty && (
@@ -563,7 +569,7 @@ export default function TransactionHistoryScreen({
           languagecode: language_code || 'en',
         },
       });
-      console.log("TransactionURL: ", url);
+      console.log('TransactionURL: ', url);
 
       if (response.status === 401 || response.status === 403) {
         handleForceLogout();
@@ -599,7 +605,7 @@ export default function TransactionHistoryScreen({
   }, [selectedTab, handleForceLogout]);
 
   useEffect(() => {
-    setTransactions([]);   // ✅ Clear old data
+    setTransactions([]); // ✅ Clear old data
     fetchTransactions();
   }, [fetchTransactions]);
 
@@ -799,7 +805,8 @@ export default function TransactionHistoryScreen({
     [selectedTab, t],
   );
 
-  const renderItem = useCallback(({ item }: { item: TransactionItem }) => {
+  const renderItem = useCallback(
+    ({ item }: { item: TransactionItem }) => {
       if (selectedTab === TAB_PURCHASES) {
         return (
           <PurchaseCard
@@ -828,84 +835,84 @@ export default function TransactionHistoryScreen({
   );
 
   const ListHeaderComponent =
-  selectedTab === TAB_SALES && transactions.length > 0 ? (
-    <View style={styles.chargesCard}>
-      <View style={styles.salescard}>
-        <View>
-          <Image
-            source={ITEMBACKGROUND}
-            style={styles.imgcontainer}
-            resizeMode="cover"
-          />
-          <Image
-            source={TOTALEARNING_ICON}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        </View>
-        <View style={styles.overallEarningContainer}>
-          <Text style={styles.Overall_Earnings_value}>
-            {t('overall_earnings')}
-          </Text>
-          <Text style={styles.Overall_Earnings_title}>
-            {`£${Number(overallEarning).toFixed(2)}`}
-          </Text>
+    selectedTab === TAB_SALES && transactions.length > 0 ? (
+      <View style={styles.chargesCard}>
+        <View style={styles.salescard}>
+          <View>
+            <Image
+              source={ITEMBACKGROUND}
+              style={styles.imgcontainer}
+              resizeMode="cover"
+            />
+            <Image
+              source={TOTALEARNING_ICON}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+          <View style={styles.overallEarningContainer}>
+            <Text style={styles.Overall_Earnings_value}>
+              {t('overall_earnings')}
+            </Text>
+            <Text style={styles.Overall_Earnings_title}>
+              {`£${Number(overallEarning).toFixed(2)}`}
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
-  ) : null;
+    ) : null;
 
   // const ListEmptyComponent = loading && transactions.length === 0 ? (
   //   <View style={styles.loaderWrapper}>
   //     <Loader containerStyle={styles.loaderContainer} />
   //   </View>
   // ) : (
-    const ListEmptyComponent = !loading ? (
-      <View style={styles.emptyWrapper}>
-        <View
-          style={[
-            styles.emptyContainer,
-            {
-              height:
-                Platform.OS === 'ios'
-                  ? SCREEN_HEIGHT * 0.7
-                  : SCREEN_HEIGHT * 0.72,
-            },
-          ]}
-        >
-          <Image
-            source={NOPRODUCT}
-            style={styles.emptyImage}
-            resizeMode="contain"
-          />
-          <Text allowFontScaling={false} style={styles.emptyText}>
-            {t('no_transactions_found')}
-          </Text>
-        </View>
+  const ListEmptyComponent = !loading ? (
+    <View style={styles.emptyWrapper}>
+      <View
+        style={[
+          styles.emptyContainer,
+          {
+            height:
+              Platform.OS === 'ios'
+                ? SCREEN_HEIGHT * 0.7
+                : SCREEN_HEIGHT * 0.72,
+          },
+        ]}
+      >
+        <Image
+          source={NOPRODUCT}
+          style={styles.emptyImage}
+          resizeMode="contain"
+        />
+        <Text allowFontScaling={false} style={styles.emptyText}>
+          {t('no_transactions_found')}
+        </Text>
       </View>
-    ) : null;
-    // <View style={styles.emptyWrapper}>
-    //   <View
-    //     style={[
-    //       styles.emptyContainer,
-    //       {
-    //         height:
-    //           Platform.OS === 'ios'
-    //             ? SCREEN_HEIGHT * 0.7
-    //             : SCREEN_HEIGHT * 0.72,
-    //       },
-    //     ]}
-    //   >
-    //     <Image
-    //       source={NOPRODUCT}
-    //       style={styles.emptyImage}
-    //       resizeMode="contain"
-    //     />
-    //     <Text allowFontScaling={false} style={styles.emptyText}>
-    //       {t('no_transactions_found')}
-    //     </Text>
-    //   </View>
-    // </View>
+    </View>
+  ) : null;
+  // <View style={styles.emptyWrapper}>
+  //   <View
+  //     style={[
+  //       styles.emptyContainer,
+  //       {
+  //         height:
+  //           Platform.OS === 'ios'
+  //             ? SCREEN_HEIGHT * 0.7
+  //             : SCREEN_HEIGHT * 0.72,
+  //       },
+  //     ]}
+  //   >
+  //     <Image
+  //       source={NOPRODUCT}
+  //       style={styles.emptyImage}
+  //       resizeMode="contain"
+  //     />
+  //     <Text allowFontScaling={false} style={styles.emptyText}>
+  //       {t('no_transactions_found')}
+  //     </Text>
+  //   </View>
+  // </View>
   // );
 
   const listMarginBottom =
@@ -1006,50 +1013,56 @@ export default function TransactionHistoryScreen({
         <TouchableWithoutFeedback onPress={() => {}}>
           <View style={styles.overlay}>
             <BlurView
+              style={[StyleSheet.absoluteFill,styles.modelBlur]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            {/* <BlurView
               style={styles.blureView_style}
               blurType="light"
               blurAmount={2}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
+            > */}
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+            <View style={styles.popupContainer}>
+              <Image
+                source={require('../../../assets/images/alerticon.png')}
+                style={styles.logo}
+                resizeMode="contain"
               />
-              <View style={styles.popupContainer}>
-                <Image
-                  source={require('../../../assets/images/alerticon.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.mainheader1}>
-                  {t('confirm_action')}
+              <Text allowFontScaling={false} style={styles.mainheader1}>
+                {t('confirm_action')}
+              </Text>
+              <Text
+                allowFontScaling={false}
+                style={[styles.mainheader, { marginTop: 10 }]}
+              >
+                {t('cancel_order_message_action')}
+              </Text>
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => handleCancelOrder(orderId)}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('yes_cancel')}
                 </Text>
-                <Text
-                  allowFontScaling={false}
-                  style={[styles.mainheader, { marginTop: 10 }]}
-                >
-                  {t('cancel_order_message_action')}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.loginButton1}
+                onPress={() => setShowDeleteModal(false)}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
                 </Text>
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={() => handleCancelOrder(orderId)}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('yes_cancel')}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.loginButton1}
-                  onPress={() => setShowDeleteModal(false)}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
+              </TouchableOpacity>
+            </View>
+            {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -1204,14 +1217,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  blureView_style: {
-    flex: 1,
-    alignContent: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.30)',
-  },
+  // blureView_style: {
+  //   flex: 1,
+  //   alignContent: 'center',
+  //   justifyContent: 'center',
+  //   width: '100%',
+  //   alignItems: 'center',
+  //   backgroundColor: 'rgba(0, 0, 0, 0.30)',
+  // },
   purchasedText: {
     color: '#9CD6FF',
     fontWeight: '600',
@@ -1223,7 +1236,6 @@ const styles = StyleSheet.create({
     gap: 4,
     width: '100%',
     justifyContent: 'space-between',
-    
   },
   title: {
     width: '100%',
@@ -1404,6 +1416,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  modelBlur: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   loaderWrapper: {
     flex: 1,
