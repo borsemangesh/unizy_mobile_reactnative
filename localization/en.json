@@ -811,7 +811,7 @@
    "complete_orderotp_note":"To complete an order with OTP, please go to the My Listings screen. There you can enter the OTP, and the order will be marked as completed.",
    "ReviewAlreadyExist": "Review already exists.", 
    "ReviewSubmited": "Review Submitted Successfully",
-   "accommodation_fee":"Accommodation Fee"
- 
+   "accommodation_fee":"Accommodation Fee",
+  "fulfilled": "Fulfilled"
 
 }

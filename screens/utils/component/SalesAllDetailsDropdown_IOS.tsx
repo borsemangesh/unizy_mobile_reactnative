@@ -114,12 +114,12 @@ const SalesAllDetailsDropdown_IOS = ({
   const renderRightContent = () => {
     if (loading) {
       return (
-        <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>Loading...</Text>
+        <Text style={styles.nosalesdataText}>{t('loading')}</Text>
       );
     }
     if (salesData.length === 0) {
       return (
-        <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>{t('no_sales_data')}</Text>
+        <Text style={styles.nosalesdataText}>{t('no_sales_data')}</Text>
       );
     }
 
@@ -180,23 +180,13 @@ const SalesAllDetailsDropdown_IOS = ({
                 )}
                 <View style={{ gap: 4, flex: 0.5 }}>
                   <Text
-                    style={{
-                      color: 'rgb(255, 255, 255)',
-                      fontWeight: '600',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 14,
-                    }}
+                    style={[styles.firstnaemlastname,styles.FONTSIZE_14]}
                     allowFontScaling={false}
                   >
                     {buyer.firstname} {buyer.lastname}
                   </Text>
                   <Text
-                    style={{
-                      color: 'rgb(255, 255, 255)',
-                      fontWeight: '600',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 12,
-                    }}
+                    style={[styles.firstnaemlastname,styles.FONTSIZE_12]}
                     allowFontScaling={false}
                   >
                     {buyer.university_name}
@@ -208,25 +198,14 @@ const SalesAllDetailsDropdown_IOS = ({
                     <View style={styles.statusBox}>
                       <Text
                         allowFontScaling={false}
-                        style={{
-                          color: '#ABABFF',
-                          fontWeight: '600',
-                          fontSize: 12,
-                          fontFamily: 'Urbanist-SemiBold',
-                        }}
+                        style={styles.purchasedQuantityText}
                       >
                         x{buyer.purchased_quantity}
                       </Text>
                     </View>
 
                     <Text
-                      style={{
-                        color: 'rgb(255, 255, 255)',
-                        fontWeight: '600',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 14,
-                        marginLeft: 8, 
-                      }}
+                      style={styles.buyerAmountText}
                       allowFontScaling={false}
                     >
                       £ {parseFloat(buyer.amount).toFixed(2)}
@@ -249,7 +228,7 @@ const SalesAllDetailsDropdown_IOS = ({
             </View>
           ))
         ) : (
-          <Text allowFontScaling={false} style={{ color: 'white', textAlign: 'center', padding: 20 }}>
+          <Text allowFontScaling={false} style={styles.nosalesdataText}>
             {t('no_sales_data')}
           </Text>
         )}
@@ -288,7 +267,6 @@ const SalesAllDetailsDropdown_IOS = ({
                     bottom: 0, borderRadius: 30,
                     backgroundColor: 'rgba(119, 173, 255, 0.07)'
                   },
-
                 ]}
                 blurType="light"
                 blurAmount={6}
@@ -325,23 +303,13 @@ const SalesAllDetailsDropdown_IOS = ({
                 <View style={styles.cardconstinerdivider} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text
-                    style={{
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 12,
-                      fontWeight: '600',
-                      color: '#FFFFFF',
-                    }}
+                    style={styles.totalOrderText}
                     allowFontScaling={false}
                   >
                     {t('total_order')}: {salesData.length}
                   </Text>
                   <Text
-                    style={{
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 12,
-                      fontWeight: '600',
-                      color: '#FFFFFF',
-                    }}
+                    style={styles.totalOrderText}
                     allowFontScaling={false}
                   >
                     {t('total_earnings')}: £ {totalEarnings}
@@ -378,6 +346,41 @@ const SalesAllDetailsDropdown_IOS = ({
 };
 
 const styles = StyleSheet.create({
+  totalOrderText: {
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  buyerAmountText: {
+    color: 'rgb(255, 255, 255)',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  purchasedQuantityText: {
+    color: '#ABABFF',
+    fontWeight: '600',
+    fontSize: 12,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+  FONTSIZE_12: {
+    fontSize: 12,
+  },
+  FONTSIZE_14: {
+    fontSize: 14,
+  },
+  firstnaemlastname: {
+    color: 'rgb(255, 255, 255)',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+  },
+  nosalesdataText: {
+    color: 'white',
+    textAlign: 'center',
+    padding: 20,
+  },
   statusBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     paddingTop: 2,
@@ -397,13 +400,13 @@ const styles = StyleSheet.create({
     width: '100%',
     borderStyle: 'dashed',
     borderBottomWidth: 1,
-    backgroundColor: Platform.OS === 'ios' ? 'rgba(67, 170, 234, 0.09)' : 'none',
+    backgroundColor:
+      Platform.OS === 'ios' ? 'rgba(67, 170, 234, 0.09)' : 'none',
     height: 2,
     marginTop: 10,
     marginBottom: 10,
     borderColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
   },
   initialsCircle: {
     backgroundColor: 'rgba(63, 110, 251, 0.43)',
@@ -428,7 +431,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     letterSpacing: 1,
     fontFamily: 'Urbanist-SemiBold',
-    maxWidth:"80%"
+    maxWidth: '80%',
   },
   image: {
     width: 24,
@@ -438,7 +441,7 @@ const styles = StyleSheet.create({
     top: 11,
     right: 10,
     bottom: 10,
-    left: 10
+    left: 10,
   },
   imgcontainer: {
     width: 44,
@@ -462,7 +465,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    backgroundColor: 'rgba(31, 34, 136, 0.20)'
+    backgroundColor: 'rgba(31, 34, 136, 0.20)',
   },
   modelcontainer: {
     height: '80%',
