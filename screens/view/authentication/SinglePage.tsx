@@ -1660,13 +1660,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const handleAnimationFinish = () => {
     const checkLoginStatus = async () => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
-      if (Platform.OS == 'android') {
-        animRef.current?.reset();
-        animRef.current?.pause();
-      } else {
-        animRef.current?.reset();
-        // animRef.current?.pause();
-      }
+      // if (Platform.OS == 'android') {
+      //   animRef.current?.reset();
+      //   animRef.current?.pause();
+      // } else {
+      //   animRef.current?.reset();
+      //   // animRef.current?.pause();
+      // }
       if (flag === 'true') {
         navigation.reset({
           index: 0,
@@ -1852,21 +1852,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           {currentScreen === 'splashScreen' && (
             <>
               {/* <View style={Styles.ScreenLayout}> */}
-              {Platform.OS === 'ios' ? (
-                <LottieView
-                  ref={animRef}
-                  source={require('../../../assets/animations/animation_new.json')}
-                  autoPlay
-                  loop={false}
-                  resizeMode="contain"
-                  style={{ width, height }}
-                  onLayout={() => {
-                    animRef.current?.reset();
-                    animRef.current?.play();
-                  }}
-                  onAnimationFinish={handleAnimationFinish}
-                />
-              ) : (
+             
                 <LottieView
                   ref={animRef}
                   source={require('../../../assets/animations/animation_new.json')}
@@ -1876,7 +1862,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   style={{ width, height }}
                   onAnimationFinish={handleAnimationFinish}
                 />
-              )}
 
               {/* </View> */}
             </>
