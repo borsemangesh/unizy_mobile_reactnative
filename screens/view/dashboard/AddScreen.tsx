@@ -2580,15 +2580,6 @@ typingTimeout.current = setTimeout(async () => {
         <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
           <View style={styles.overlay}>
             <BlurView
-              // style={{
-              //   // flex: 1,
-              //   alignContent: 'center',
-              //   justifyContent: 'center',
-              //   width: '100%',
-              //   height: '100%',
-              //   backgroundColor: 'red',
-              //   alignItems: 'center',
-              // }}
                style={[
                   StyleSheet.absoluteFill,
                  {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
