@@ -76,14 +76,14 @@ export default function SearchListProductCard({
               'rgba(0, 1, 102, 0.024)' 
             ]}
             style={StyleSheet.absoluteFillObject}
-            useAngle={false} // radial
+            useAngle={false}
           />
           <TouchableOpacity onPress={applybookmark}>
             <Image
               source={
                 bookmark
-                  ? require("../../assets/images/favourite_filled.png") // bookmarked
-                  : require("../../assets/images/favourite.png") // not bookmarked
+                  ? require("../../assets/images/favourite_filled.png") 
+                  : require("../../assets/images/favourite.png")
               }
               style={styles.bookmarkIcon}
             />
@@ -132,17 +132,12 @@ export default function SearchListProductCard({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
     width: '96%',
     overflow: 'hidden',
     height: 'auto',
-
-    // marginBottom: 10,
     paddingBottom: 10,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
@@ -156,28 +151,23 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 15,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
     minHeight: 226
   },
   imageContainer: {
-    // width: 186,
     width: '100%',
     height: 200,
     position: 'relative',
     padding: (Platform.OS === 'ios' ? 0 : 6),
-    //paddingTop: (Platform.OS === 'ios' ? 0 : 6),
   },
   image: {
     width: '100%',
     height: '100%',
     padding: (Platform.OS === 'ios' ? 5 : 12),
-    //paddingTop:(Platform.OS === 'ios'? 5: 12),
     borderRadius: 12,
     alignSelf: 'center',
     resizeMode: 'cover',
@@ -219,35 +209,20 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  // bookmark: {
-  //   position: 'absolute',
-  //   top: 10,
-  //   right: 10,
-  //   borderRadius: 20,
-  //   padding: 6,
-  // },
   tag: {
     position: 'absolute',
-    //bottom: 5,
-    //right: 5,
-
     bottom: Platform.OS === 'ios' ? 8 : 10,
     right: Platform.OS === 'ios' ? 8 : 10,
-    //backgroundColor: 'transparent',
-    //backgroundColor: 'rgba(255,255,255,0.4)',
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
-
     borderRadius: 4,
     padding: 4,
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
     overflow: 'hidden',
-    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    alignSelf: 'flex-end',
     flexShrink: 1,
-    // position: 'absolute',
-
-    maxWidth: '80%',   // restrict width relative to parent
+    maxWidth: '80%',
     flexWrap: 'wrap',
   },
   tagText: {
@@ -257,16 +232,12 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'right',
     flexShrink: 1,
-    //flexWrap: 'wrap',
     width: '100%'
   },
   tagTopLeft: {
     position: 'absolute',
-    // top: 5,
-    // left: 5,
     top: Platform.OS === 'ios' ? 8 : 10,
     left: Platform.OS === 'ios' ? 8 : 10,
-    //backgroundColor: 'rgba(255,255,255,0.4)',
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     borderRadius: 4,
     padding: 4,
@@ -279,7 +250,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    //backgroundColor: '#fff',
     paddingHorizontal: 2,
   },
   title: {
@@ -301,6 +271,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-    // marginLeft: 4,
   },
 });
