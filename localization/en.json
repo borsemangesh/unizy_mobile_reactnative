@@ -812,6 +812,10 @@
    "ReviewAlreadyExist": "Review already exists.", 
    "ReviewSubmited": "Review Submitted Successfully",
    "accommodation_fee":"Accommodation Fee",
-  "fulfilled": "Fulfilled"
+  "fulfilled": "Fulfilled",
+  "whichever_lower_new": "is added to the item price. The total amount shown includes a payment processing fee of",
+    "whichever_lower_new_1": "per order and is the final price payable by the buyer.",
+    "whichever_lower_new_2": "includes a payment processing fee of",
+    "whichever_lower_new_3": "per order, calculated based on the selected quantity, and is the final price payable by the buyer."
 
 }
