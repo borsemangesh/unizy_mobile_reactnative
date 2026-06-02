@@ -627,7 +627,7 @@ console.log('commissionPrice', commissionPrice);
                 </View>
               )} */}
 
-                      {categoryId !== 4 && (
+        {categoryId !== 4 && (
   <View style={[styles.textbg, { marginBottom: 100 }]}>
     <Image
       source={require('../../../assets/images/info_icon.png')}
@@ -665,7 +665,9 @@ console.log('commissionPrice', commissionPrice);
           <Text style={styles.importantText}>
             )
           </Text>{' '}
-          {t('whichever_lower')}
+           {t('whichever_lower_new')} <Text style={styles.importantText1}>
+            {feePercentage}% + £{fixedFee.toFixed(2)}
+          </Text>{' '} {t('whichever_lower_new_3')}
         </Text>
       ) : (
         <Text

@@ -643,7 +643,7 @@ console.log('commissionPrice', commissionPrice);
               )}
             </View>
 
-            {categoryId !== 4 && (
+            {/* {categoryId !== 4 && (
               <View style={[styles.textbg]}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
@@ -671,6 +671,79 @@ console.log('commissionPrice', commissionPrice);
 
                     {' '}{t('whichever_lower')}
                   </Text>
+                </View>
+              </View>
+            )} */}
+                    {categoryId !== 4 && (
+              <View style={[styles.textbg, { marginBottom: 100 }]}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                />
+            
+                <View style={{ flex: 1 }}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.importantText1}
+                  >
+                    {t('important')}
+                  </Text>
+            
+                  {categoryId === 3 ? (
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText}
+                    >
+                      {t('a')}
+                      <Text style={styles.importantText1}>
+                        {' '}
+                        {Math.trunc(commission)}%
+                      </Text>{' '}
+                      {t('commission_or_maximum')}
+                      <Text style={styles.importantText}>
+                        {' '}(
+                      </Text>
+                      <Text style={styles.importantText}>
+                        {t('capped')}{' '}
+                      </Text>
+                      <Text style={styles.importantText1}>
+                        £{Math.trunc(maxCapPound)}
+                      </Text>
+                      <Text style={styles.importantText}>
+                        )
+                      </Text>{' '}
+                       {t('whichever_lower_new')} <Text style={styles.importantText1}>
+                        {feePercentage}% + £{fixedFee.toFixed(2)}
+                      </Text>{' '} {t('whichever_lower_new_3')}
+                    </Text>
+                  ) : (
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText}
+                    >
+                      {t('a')}
+                      <Text style={styles.importantText1}>
+                        {' '}
+                        {Math.trunc(commission)}%
+                      </Text>{' '}
+                      {t('commission_or_maximum')}
+                      <Text style={styles.importantText}>
+                        {' '}(
+                      </Text>
+                      <Text style={styles.importantText}>
+                        {t('capped')}{' '}
+                      </Text>
+                      <Text style={styles.importantText1}>
+                        £{Math.trunc(maxCapPound)}
+                      </Text>
+                      <Text style={styles.importantText}>
+                        )
+                      </Text>{' '}
+                      {t('whichever_lower_new')} <Text style={styles.importantText1}>
+                        {feePercentage}% + £{fixedFee.toFixed(2)}
+                      </Text>{' '} {t('whichever_lower_new_1')}
+                    </Text>
+                  )}
                 </View>
               </View>
             )}
@@ -959,7 +1032,81 @@ console.log('commissionPrice', commissionPrice);
           </View>
         </AnimatedReanimated.ScrollView >
 
-        {categoryId !== 4 && (
+
+                {categoryId !== 4 && (
+          <View style={[styles.textbg, { marginBottom: 100 }]}>
+            <Image
+              source={require('../../../assets/images/info_icon.png')}
+              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+            />
+        
+            <View style={{ flex: 1 }}>
+              <Text
+                allowFontScaling={false}
+                style={styles.importantText1}
+              >
+                {t('important')}
+              </Text>
+        
+              {categoryId === 3 ? (
+                <Text
+                  allowFontScaling={false}
+                  style={styles.importantText}
+                >
+                  {t('a')}
+                  <Text style={styles.importantText1}>
+                    {' '}
+                    {Math.trunc(commission)}%
+                  </Text>{' '}
+                  {t('commission_or_maximum')}
+                  <Text style={styles.importantText}>
+                    {' '}(
+                  </Text>
+                  <Text style={styles.importantText}>
+                    {t('capped')}{' '}
+                  </Text>
+                  <Text style={styles.importantText1}>
+                    £{Math.trunc(maxCapPound)}
+                  </Text>
+                  <Text style={styles.importantText}>
+                    )
+                  </Text>{' '}
+                   {t('whichever_lower_new')} <Text style={styles.importantText1}>
+                    {feePercentage}% + £{fixedFee.toFixed(2)}
+                  </Text>{' '} {t('whichever_lower_new_3')}
+                </Text>
+              ) : (
+                <Text
+                  allowFontScaling={false}
+                  style={styles.importantText}
+                >
+                  {t('a')}
+                  <Text style={styles.importantText1}>
+                    {' '}
+                    {Math.trunc(commission)}%
+                  </Text>{' '}
+                  {t('commission_or_maximum')}
+                  <Text style={styles.importantText}>
+                    {' '}(
+                  </Text>
+                  <Text style={styles.importantText}>
+                    {t('capped')}{' '}
+                  </Text>
+                  <Text style={styles.importantText1}>
+                    £{Math.trunc(maxCapPound)}
+                  </Text>
+                  <Text style={styles.importantText}>
+                    )
+                  </Text>{' '}
+                  {t('whichever_lower_new')} <Text style={styles.importantText1}>
+                    {feePercentage}% + £{fixedFee.toFixed(2)}
+                  </Text>{' '} {t('whichever_lower_new_1')}
+                </Text>
+              )}
+            </View>
+          </View>
+        )}
+        {/* {categoryId !== 4 && (
           <View style={[styles.textbg, { marginBottom: 100 }]}>
             <Image
               source={require('../../../assets/images/info_icon.png')}
@@ -989,7 +1136,7 @@ console.log('commissionPrice', commissionPrice);
               </Text>
             </View>
           </View>
-        )}
+        )} */}
 
         <View style={styles.bottomFixed}>
           <Button
