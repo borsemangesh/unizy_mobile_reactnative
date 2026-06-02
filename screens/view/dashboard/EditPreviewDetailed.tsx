@@ -105,6 +105,8 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     feature_fee: string | null;
     max_feature_cap: null;
     accommodation_amount: null;
+    feePrecentage?: number;
+    fixedFee?: number;
   }
 
   interface UserMeta {
@@ -398,7 +400,13 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
   const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
   const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
+  const feePercentage = Number(
+  userMeta?.category?.feePrecentage ?? 0,
+);
 
+  const fixedFee = Number(
+  userMeta?.category?.fixedFee ?? 0,
+);
   const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
   const calculatedPrice1 = priceValue1 + commissionAmount1;
   const maxAllowedPrice1 = priceValue1 + maxCap1;
@@ -704,7 +712,7 @@ const createPayload: any = {
 
         if (!apiIsFeaturedValue && isToggleOn) {
           navigation.navigate('PaymentScreen', {
-            amount: maxCap1,
+            amount:  maxCap1 + maxCap1 * (feePercentage / 100) + fixedFee,
             feature_id: 1,
             nav: 'add',
 
@@ -1269,7 +1277,7 @@ const createPayload: any = {
 
                
                 if (!apiIsFeaturedValue && isToggleOn) {
-                  return `${t('update')} for £${maxCap1.toFixed(2)}`;
+                  return `${t('update')} for £${maxCap1 + maxCap1 * (feePercentage / 100) + fixedFee}`;
                 }
                 return t('update');
               }

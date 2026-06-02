@@ -46,6 +46,8 @@ type CategoryDetailsType = {
   max_cappund: string;
   feature_fee: string;
   max_feature_cap: string;
+  feePrecentage: number;
+  fixedFee: number;
 };
 
 interface Category {
@@ -58,6 +60,9 @@ interface Category {
   max_cappund: string | null;
   feature_fee: string | null;
   max_feature_cap: null;
+  
+  feePrecentage?: number;
+  fixedFee?: number;
 }
 
 interface UserMeta {
@@ -176,13 +181,16 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
 
           if (parsedUserMeta.category) {
-            const { commission, max_cappund, feature_fee, max_feature_cap } =
+            const { commission, max_cappund, feature_fee, max_feature_cap, feePrecentage,
+  fixedFee, } =
               parsedUserMeta.category;
             setCategoryDetails({
               commission: commission ?? '0',
               max_cappund: max_cappund ?? '0',
               feature_fee: feature_fee ?? '0',
               max_feature_cap: max_feature_cap ?? '0',
+              feePrecentage: feePrecentage ?? 0,
+              fixedFee: fixedFee ?? 0,
             });
             // console.log('Category Details set:', { commission, max_cappund });
           } else {
@@ -234,6 +242,47 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   // const isFeatured =   storedForm?.[13]?.value === true ||storedForm?.[13]?.value === 'true';
 
+  // const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
+  // const imageArray = storedForm?.[6]?.value || [];
+  // const raw = getValueByAlias(storedForm, 'price') ?? '0';
+  // const priceValue = parseFloat(String(raw)) || 0;
+
+  // const commissionPercent = parseFloat(categoryDetails?.commission ?? '0');
+  // const maxCap = parseFloat(categoryDetails?.max_cappund ?? '0');
+
+  // const commissionAmount = priceValue * (commissionPercent / 100);
+  // const calculatedPrice = priceValue + commissionAmount;
+  // const maxAllowedPrice = priceValue + maxCap;
+  // const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+  //   2,
+  // );
+
+
+  // const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+  // const priceValue1 = parseFloat(String(raw1)) || 0;
+
+  // const commissionPercent1 = parseFloat(categoryDetails?.feature_fee ?? '0');
+  // const maxCap1 = parseFloat(categoryDetails?.max_feature_cap ?? '0');
+
+  // const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+  // const calculatedPrice1 = priceValue1 + commissionAmount1;
+  // const maxAllowedPrice1 = priceValue1 + maxCap1;
+  // const commissionPrice1 = +Math.min(
+  //   calculatedPrice1,
+  //   maxAllowedPrice1,
+  // ).toFixed(2);
+
+  // const priceText =
+  //   categoryId === 2
+  //     ? `£${commissionPrice}/${t('hr')}`
+  //     : categoryId === 4
+  //       ? `£${commissionPrice}/${t('week')}`
+  //       : categoryId === 5 ? `£${commissionPrice}/${t('session')}`
+  //         : `£${commissionPrice}`;
+
+  // const commission = parseFloat(categoryDetails?.commission ?? '0');
+  // const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
+
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   const imageArray = storedForm?.[6]?.value || [];
   const raw = getValueByAlias(storedForm, 'price') ?? '0';
@@ -242,13 +291,64 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const commissionPercent = parseFloat(categoryDetails?.commission ?? '0');
   const maxCap = parseFloat(categoryDetails?.max_cappund ?? '0');
 
-  const commissionAmount = priceValue * (commissionPercent / 100);
-  const calculatedPrice = priceValue + commissionAmount;
-  const maxAllowedPrice = priceValue + maxCap;
-  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+  // const commissionAmount = priceValue * (commissionPercent / 100);
+  // const calculatedPrice = priceValue + commissionAmount;
+  // const maxAllowedPrice = priceValue + maxCap;
+  // const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+  //   2,
+  // );
+
+
+
+// NEW
+const feePercentage = Number(categoryDetails?.feePrecentage ?? 0);
+
+const fixedFee = Number(
+  categoryDetails?.fixedFee ?? 0,
+);
+
+// Commission
+const commissionAmount =
+  priceValue * (commissionPercent / 100);
+
+// Apply cap
+const cappedCommission =
+    Math.min(commissionAmount, maxCap);
+   const calculatedPrice = priceValue + commissionAmount;
+
+// Price + commission
+const priceAfterCommission =
+  priceValue + cappedCommission;
+
+// Fee percentage on original price
+const feePercentageAmount =
+  priceAfterCommission * (feePercentage / 100);
+
+  // Final Price
+  let commissionPrice = 0;
+  if (categoryId !== 3) {
+    commissionPrice = Number(
+      (
+        priceAfterCommission +
+        feePercentageAmount +
+        fixedFee
+      ).toFixed(2),
+    );
+  } else {
+    const maxAllowedPrice = priceValue + maxCap;
+    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
     2,
   );
+  }
 
+  
+  console.log('priceValue', priceValue);
+console.log('commissionPercent', commissionPercent);
+console.log('maxCap', maxCap);
+console.log('feePercentage', feePercentage);
+console.log('fixedFee', fixedFee);
+console.log('commissionPrice', commissionPrice);
+  ///feature
 
   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue1 = parseFloat(String(raw1)) || 0;
@@ -259,21 +359,18 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
   const calculatedPrice1 = priceValue1 + commissionAmount1;
   const maxAllowedPrice1 = priceValue1 + maxCap1;
-  const commissionPrice1 = +Math.min(
-    calculatedPrice1,
-    maxAllowedPrice1,
-  ).toFixed(2);
+  const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
+  const commission = parseFloat(categoryDetails?.commission ?? '0');
+  const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
 
   const priceText =
     categoryId === 2
       ? `£${commissionPrice}/${t('hr')}`
       : categoryId === 4
-        ? `£${commissionPrice}/${t('week')}`
-        : categoryId === 5 ? `£${commissionPrice}/${t('session')}`
-          : `£${commissionPrice}`;
-
-  const commission = parseFloat(categoryDetails?.commission ?? '0');
-  const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
+      ? `£${priceValue}/${t('week')}`
+      : categoryId === 5
+      ? `£${commissionPrice}/${t('session')}`
+      : `£${commissionPrice}`;
 
   if (isFeatured) {
     return (
