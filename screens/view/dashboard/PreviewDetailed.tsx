@@ -92,6 +92,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     feature_fee: string | null;
     max_feature_cap: null;
     accommodation_amount: null;
+    feePrecentage?: number;
+    fixedFee?: number;
   }
 
   interface UserMeta {
@@ -338,7 +340,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       //   isSubmitting = false;
       // }
 
-      const amount = isFeatured ? finalPrice : accomodation_amount;
+      // const amount = isFeatured ? finalPrice : accomodation_amount;
+      const amount = isFeatured ? finalPrice + finalPrice * (feePercentage / 100) + fixedFee : accomodation_amount + accomodation_amount * (feePercentage / 100) + fixedFee;
+
 
       if (categoryid === 4 && amount > 0) {
         navigation.navigate('PaymentScreen', {
@@ -799,19 +803,68 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const priceValue = parseFloat(String(raw)) || 0;
 
   const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
-  const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
+  // const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
 
-  const commissionAmount = priceValue * (commissionPercent / 100);
+  // const commissionAmount = priceValue * (commissionPercent / 100);
+  // const calculatedPrice = priceValue + commissionAmount;
+  // const maxAllowedPrice = priceValue + maxCap;
+  // const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+  //   2,
+  // );
+
+
+
+const maxCap = parseFloat(
+  userMeta?.category?.max_cappund ?? '0',
+);
+
+// NEW
+const feePercentage = Number(
+  userMeta?.category?.feePrecentage ?? 0,
+);
+
+const fixedFee = Number(
+  userMeta?.category?.fixedFee ?? 0,
+);
+
+// Commission
+const commissionAmount =
+  priceValue * (commissionPercent / 100);
+
+// Apply cap
+const cappedCommission =
+    Math.min(commissionAmount, maxCap);
   const calculatedPrice = priceValue + commissionAmount;
-  const maxAllowedPrice = priceValue + maxCap;
-  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+
+// Price after commission
+const priceAfterCommission =
+  priceValue + cappedCommission;
+
+// Fee percentage
+const feePercentageAmount =
+  priceAfterCommission * (feePercentage / 100);
+
+  // Final amount
+  let commissionPrice = 0;
+  if (userMeta?.category?.id !== 3) {
+     commissionPrice = Number((
+    priceAfterCommission +
+    feePercentageAmount +
+    fixedFee
+  ).toFixed(2),
+);
+  } else { 
+ const maxAllowedPrice = priceValue + maxCap;
+    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
     2,
   );
+  }
+
   const priceText =
     userMeta?.category?.id === 2
       ? `£${commissionPrice}/${t('hr')}`
       : userMeta?.category?.id === 4
-      ? `£${commissionPrice}/${t('week')}`
+      ? `£${priceValue}/${t('week')}`
       : userMeta?.category?.id === 5
       ? `£${commissionPrice}/${t('session')}`
       : `£${commissionPrice}`;
@@ -1349,8 +1402,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 form?.['13']?.value === true || form?.['13']?.value === 'true';
 
               if (categoryid === 4) {
-                const amount = isFeatured ? finalPrice : accomodation_amount;
-
+                // const amount = isFeatured ? finalPrice : accomodation_amount;
+                 const amount = isFeatured ? finalPrice + finalPrice * (feePercentage / 100) + fixedFee : accomodation_amount + accomodation_amount * (feePercentage / 100) + fixedFee;
+ 
                 if (amount > 0) {
                   return `${t('list')} for £${amount.toFixed(2)}`;
                 }

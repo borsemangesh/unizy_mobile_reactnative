@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -9,15 +6,11 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   TextInput,
-  Switch,
   Alert,
   Modal,
   Animated,
   Dimensions,
-  Easing,
-  Keyboard,
   TouchableWithoutFeedback,
   StatusBar,
   BackHandler,
@@ -28,7 +21,6 @@ import ImageResizer from 'react-native-image-resizer';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
-// import { showToast } from '../../utils/toast';
 import ToggleButton from '../../utils/component/ToggleButton';
 import Button from '../../utils/component/Button';
 import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
@@ -37,7 +29,6 @@ import {
   showToast,
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
-// import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import {
   check,
   openSettings,
@@ -55,8 +46,6 @@ import {
 } from 'react-native-draggable-flatlist';
 
 import AnimatedReanimated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
   useAnimatedStyle,
   interpolate,
   interpolateColor,
@@ -151,13 +140,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const AnimatedNestableScroll =
     Animated.createAnimatedComponent(NestableScrollContainer);
-
-  // const scrollHandler = useAnimatedScrollHandler({
-  //   onScroll: event => {
-  //     'worklet';
-  //     scrollY.value = event.contentOffset.y;
-  //   },
-  // });
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
