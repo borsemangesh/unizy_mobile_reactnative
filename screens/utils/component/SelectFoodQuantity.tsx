@@ -29,6 +29,8 @@ interface SelectFoodQuantityProps {
   price?: number | string;
   totalcount: number
   continueToPay?: (amount: number) => void;
+  feePercentage?: number;
+  fixedFee?: number;
 }
 const SelectFoodQuantity = ({
   options,
@@ -40,15 +42,28 @@ const SelectFoodQuantity = ({
   selectedValues,
   price,
   totalcount,
-  continueToPay
+  continueToPay,
+   feePercentage = 0,
+  fixedFee = 0,
 }: SelectFoodQuantityProps) => {
 
   const screenHeight = Dimensions.get('window').height;
 
   const [count, setCount] = useState(1);
   const maxUnits = Number(totalcount);
+  // const unitPrice = Number(price ?? 0);
+  // const totalPrice = unitPrice * count;
   const unitPrice = Number(price ?? 0);
-  const totalPrice = unitPrice * count;
+
+const subtotal = unitPrice * count;
+
+const feeAmount =
+  subtotal * (Number(feePercentage) / 100);
+
+const totalPrice =
+  subtotal +
+  feeAmount +
+  Number(fixedFee);
   const { t } = useTranslation();
 
   const handleApply = async () => {

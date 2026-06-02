@@ -1263,6 +1263,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   [multiSelectModal.fieldId!]: { value: quantity },
                 }));
               }}
+              feePercentage={Number(
+    detail?.category?.feePrecentage ?? 0
+  )}
+  fixedFee={Number(
+    detail?.category?.fixedFee ?? 0
+  )}
             />
           ) : (
             <SelectFoodQuantity
@@ -1295,7 +1301,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   ...prev,
                   [multiSelectModal.fieldId!]: { value: quantity },
                 }));
-              }}
+                }}
+                feePercentage={Number(
+    detail?.category?.feePrecentage ?? 0
+  )}
+  fixedFee={Number(
+    detail?.category?.fixedFee ?? 0
+  )}
             />
           )}
 
