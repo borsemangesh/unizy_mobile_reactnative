@@ -48,6 +48,7 @@ import OnboardingScreen from './onboarding/OnboardingScreen';
 import MyRatings from './dashboard/MyRatings';
 import MyListingDetails from './dashboard/MyListingDetails';
 import SellerInfoHomeSearch from './dashboard/SellerInfo_HomeSearch';
+import Whatsapp_chatBoot from './dashboard/Whatsapp_chatBoot';
 
 const Stack = createNativeStackNavigator();
 
@@ -371,6 +372,15 @@ export const Navigation = () => {
         <Stack.Screen
           name="UserListing"
           component={UserListing}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+
+         <Stack.Screen
+          name="WhatAppChatBoat"
+          component={Whatsapp_chatBoot}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',
