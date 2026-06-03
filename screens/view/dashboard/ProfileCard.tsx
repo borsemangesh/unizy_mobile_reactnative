@@ -268,12 +268,12 @@ PAYMENT_ICON
     const message =
       'Hello';
   
-      // const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
-      //   message,
-      // )}`;
+      const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
+        message,
+      )}`;
   
-    const url =
-        `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    // const url =
+    //     `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
   
     try {
   
@@ -315,8 +315,8 @@ PAYMENT_ICON
         break;
       }
       case 'help_support': {
-        navigation.navigate('HelpSupport');
-        // openWhatsApp();
+        // navigation.navigate('HelpSupport');
+        openWhatsApp();
         break;
       }
       case 'notifications': {
