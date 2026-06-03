@@ -43,7 +43,7 @@ const openWhatsApp = async () => {
   const phoneNumber = '447949500991';
 
   const message =
-    'Hello Support 👋';
+    'Hello';
 
     const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
       message,
@@ -124,7 +124,7 @@ const openWhatsApp = async () => {
           />
         </View>
      
-       {/*  <Button title="Chat on WhatsApp" onPress={openWhatsApp} />*/}
+        <Button title="Chat on WhatsApp" onPress={openWhatsApp} />
      
 
         {loading && (
