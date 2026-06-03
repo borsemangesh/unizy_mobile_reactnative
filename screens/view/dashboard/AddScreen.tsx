@@ -64,8 +64,6 @@ import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
-
-
 import INFO_ICON from '../../../assets/images/info_icon.png';
 import DELETE_ICON from '../../../assets/images/delete.png';
 import FILEUPLOAD_ICON from '../../../assets/images/fileupload.png';
@@ -97,7 +95,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
   const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
-  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(
+    undefined,
+  );
   const [tempDate, setTempDate] = useState<Date>(new Date());
   const [popupData, setPopupData] = useState({
     title: '',
@@ -109,7 +109,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     param: any;
     type: 'start' | 'end';
   } | null>(null);
-
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -138,8 +137,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const scrollRef = useAnimatedRef<any>();
   const scrollY = useScrollViewOffset(scrollRef);
 
-  const AnimatedNestableScroll =
-    Animated.createAnimatedComponent(NestableScrollContainer);
+  const AnimatedNestableScroll = Animated.createAnimatedComponent(
+    NestableScrollContainer,
+  );
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
@@ -189,6 +189,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     max_cappund: string | null;
     feature_fee: string | null;
     max_feature_cap: null;
+    feePrecentage?: number;
+    fixedFee?: number;
   }
 
   interface UserMeta {
@@ -208,6 +210,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const { productId, productName } = route.params;
   const [accommodation_amount, setaccommodation_amount] = useState(0);
 
+  const [feePrecentage, setfeePrecentage] = useState(0);
+  const [fixedFee, setFixedFee] = useState(0);
 
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
@@ -218,26 +222,19 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [uri, setUri] = useState('');
 
-
-
-
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
-const isValidPostalCode = (code: string) => {
-  const cleaned = code.replace(/\s/g, '');
+  const isValidPostalCode = (code: string) => {
+    const cleaned = code.replace(/\s/g, '');
 
-  // UK format
-  const ukRegex = /^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/i;
+    // UK format
+    const ukRegex = /^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/i;
 
-  // India format
-  const indiaRegex = /^[1-9][0-9]{5}$/;
+    // India format
+    const indiaRegex = /^[1-9][0-9]{5}$/;
 
-  return ukRegex.test(cleaned) || indiaRegex.test(cleaned);
-};
-
-
-
-
+    return ukRegex.test(cleaned) || indiaRegex.test(cleaned);
+  };
 
   const renderImageItem = ({ item, drag, isActive }: any) => {
     return (
@@ -330,15 +327,14 @@ const isValidPostalCode = (code: string) => {
           (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
         const token = await AsyncStorage.getItem('userToken');
-        console.log(token)
+        console.log(token);
         if (!token) {
           // console.log('No token found');
           return;
         }
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
-        console.log(url)
-
+        console.log(url);
 
         const response = await fetch(url, {
           method: 'GET',
@@ -359,10 +355,20 @@ const isValidPostalCode = (code: string) => {
           if (json.metadata.category) {
             // Convert null or undefined to 0
             setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
-            setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
+            setMaxFeatureCap(
+              Number(json.metadata.category.max_feature_cap ?? '0'),
+            );
             setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
-            setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
-            setaccommodation_amount(Number(json.metadata.category.accommodation_amount ?? '0'));
+            setMaxFeatureCap(
+              Number(json.metadata.category.max_feature_cap ?? '0'),
+            );
+            setaccommodation_amount(
+              Number(json.metadata.category.accommodation_amount ?? '0'),
+            );
+            setfeePrecentage(
+              Number(json.metadata.category.feePrecentage ?? '0'),
+            );
+            setFixedFee(Number(json.metadata.category.fixedFee ?? '0'));
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -603,301 +609,187 @@ const isValidPostalCode = (code: string) => {
     return true;
   };
 
-  // const handlePreview = async () => {
-  //   try {
-  //     for (const field of fields) {
-  //       const { id, field_type } = field.param;
-  //       let value = formValues[id]?.value;
-
-  //       if (field_type.toLowerCase() === 'image') {
-  //         value = uploadedImages;
-  //       }
-
-  //       if (field.mandatory) {
-
-  //         if (field_type.toLowerCase() === 'date') {
-  //           const startDate = value?.startDate;
-  //           const endDate = value?.endDate;
-
-  //           if (!startDate || !endDate) {
-  //             showToast(
-  //               t('select_both_dates'),
-  //               'error',
-  //             );
-  //             return;
-  //           }
-  //         }
-
-
-  //         else if (
-  //           value === undefined ||
-  //           value === null ||
-  //           (typeof value === 'string' && value.trim() === '') ||
-  //           (Array.isArray(value) && value.length === 0)
-  //         ) {
-  //           if (field_type.toLowerCase() === 'image') {
-  //             showToast(
-  //               `${field.param.field_name} ${t(Constant.ARE_MAN)}`,
-  //               'error',
-  //             );
-  //           } else {
-  //             showToast(
-  //               `${field.param.field_name} ${t(Constant.IS_MAN)}`,
-  //               'error',
-  //             );
-  //           }
-  //           return;
-  //         }
-  //       }
-  //     }
-
-  //     let computedPrice: number | null = null;
-
-  //     if (productId === 2 || productId === 5) {
-  //       let priceFieldId: number | null = null;
-  //       let durationFieldId: number | null = null;
-
-  //       for (const f of fields) {
-  //         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-  //         if (f.param.alias_name === 'service_duration')
-  //           durationFieldId = f.param.id;
-  //       }
-
-  //       if (priceFieldId !== null && durationFieldId !== null) {
-  //         let rawPrice = formValues[priceFieldId]?.value || '0';
-
-  //         rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
-
-  //         const priceNumber = parseFloat(rawPrice);
-
-  //         if (isNaN(priceNumber) || priceNumber > 99999) {
-  //           showToast(`${t('price_limit')} £99,999`, 'error');
-  //           return;
-  //         }
-
-  //         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-
-  //         computedPrice = priceNumber * rawDuration;
-  //       }
-  //     }
-
-  //     const dataToStore: any = { ...formValues };
-  //     if (computedPrice !== null) {
-  //       for (const f of fields) {
-  //         if (f.param.alias_name === 'price') {
-  //           dataToStore[f.param.id] = {
-  //             value: computedPrice.toString(),
-  //             alias_name: 'price',
-  //           };
-  //         }
-  //       }
-  //     }
-
-  //     for (const field of fields) {
-  //       if (field.param.field_type.toLowerCase() === 'image') {
-  //         const uploadedForField = uploadedImages.map(img => ({
-  //           id: img.id,
-  //           uri: img.uri,
-  //           name: img.name,
-  //         }));
-
-  //         dataToStore[field.param.id] = {
-  //           value: uploadedForField,
-  //           alias_name: field.param.alias_name ?? null,
-  //         };
-  //       }
-
-  //       if (field.param.alias_name === 'price') {
-  //         const priceValue = parseFloat(dataToStore[field.param.id]?.value);
-  //         if (priceValue > 99999) {
-  //           showToast(`${t('price_limit')} £99,999`, 'error');
-  //           return;
-  //         }
-  //       }
-  //     }
-  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-  //     navigation.navigate('PreviewThumbnail');
-  //   } catch (error) {
-  //     showToast(t(Constant.DATA_NOT_SAVE), 'error');
-  //   }
-  // };
-
-
   const handlePreview = async () => {
-  try {
-    for (const field of fields) {
-      const { id, field_type } = field.param;
-      let value = formValues[id]?.value;
+    try {
+      for (const field of fields) {
+        const { id, field_type } = field.param;
+        let value = formValues[id]?.value;
 
-      if (field_type.toLowerCase() === 'image') {
-        value = uploadedImages;
-      }
+        if (field_type.toLowerCase() === 'image') {
+          value = uploadedImages;
+        }
 
-      if (field.mandatory) {
+        if (field.mandatory) {
+          if (field_type.toLowerCase() === 'date') {
+            const startDate = value?.startDate;
+            const endDate = value?.endDate;
 
-        if (field_type.toLowerCase() === 'date') {
-          const startDate = value?.startDate;
-          const endDate = value?.endDate;
+            if (!startDate || !endDate) {
+              showToast(t('select_both_dates'), 'error');
+              return;
+            }
+          }
 
-          if (!startDate || !endDate) {
-            showToast(t('select_both_dates'), 'error');
+          // Check for empty or invalid values
+          else if (
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            if (field_type.toLowerCase() === 'image') {
+              showToast(
+                `${field.param.field_name} ${t(Constant.ARE_MAN)}`,
+                'error',
+              );
+            } else {
+              showToast(
+                `${field.param.field_name} ${t(Constant.IS_MAN)}`,
+                'error',
+              );
+            }
+            return;
+          }
+
+          // Additional validation for 0 values
+          else if (
+            value === 0 ||
+            (typeof value === 'string' && value.trim() === '0')
+          ) {
+            showToast(
+              `${t('price_cannot_be_zero')} ${field.param.field_name} `,
+              'error',
+            );
+            return;
+          } else if (value < 0.5) {
+            showToast(`${t('price_must_be_at_least')}`, 'error');
             return;
           }
         }
 
+        // ✅ POSTCODE VALIDATION
+        if (field.param.alias_name?.toLowerCase() === 'postcode') {
+          const postcodeValue = formValues[field.param.id]?.value;
 
-        // Check for empty or invalid values
-        else if (
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0)
-        ) {
-          if (field_type.toLowerCase() === 'image') {
-            showToast(`${field.param.field_name} ${t(Constant.ARE_MAN)}`, 'error');
-          } else {
-            showToast(`${field.param.field_name} ${t(Constant.IS_MAN)}`, 'error');
+          const cityField = fields.find(
+            (f: any) => f.param?.alias_name?.toLowerCase() === 'city',
+          );
+
+          const selectedCityId = cityField
+            ? formValues[cityField.param.id]?.value
+            : null;
+
+          if (!postcodeValue || !selectedCityId) {
+            showToast(t('valid_city'), 'error');
+            return;
           }
-          return;
+
+          // 🔥 Call API again to verify
+          const location = await getCityFromPostalCode(postcodeValue);
+
+          if (!location || !location.city) {
+            showToast(t('valid_city'), 'error');
+            return;
+          }
+
+          const cityOptions = cityField?.param?.options || [];
+
+          const matchedOption = cityOptions.find((opt: any) => {
+            const option = opt.option_name?.toLowerCase() || '';
+            const input = location.city.toLowerCase();
+            return option.includes(input) || input.includes(option);
+          });
+
+          // ❌ No match OR mismatch
+          if (!matchedOption || matchedOption.id !== selectedCityId) {
+            showToast('Postal code does not match selected city', 'error');
+            return;
+          }
+        }
+      }
+
+      let computedPrice: number | null = null;
+
+      if (productId === 2 || productId === 5) {
+        let priceFieldId: number | null = null;
+        let durationFieldId: number | null = null;
+
+        for (const f of fields) {
+          if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+          if (f.param.alias_name === 'service_duration')
+            durationFieldId = f.param.id;
         }
 
-        // Additional validation for 0 values
-        else if (value === 0 || (typeof value === 'string' && value.trim() === '0' )) {
-          showToast(`${t('price_cannot_be_zero')} ${field.param.field_name} `, 'error');
-          return;
-        } else if (value < 0.5) {
-          showToast(`${t('price_must_be_at_least')}`, 'error');
-          return;
+        if (priceFieldId !== null && durationFieldId !== null) {
+          let rawPrice = formValues[priceFieldId]?.value || '0';
+
+          rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
+
+          const priceNumber = parseFloat(rawPrice);
+
+          if (isNaN(priceNumber) || priceNumber > 99999 || priceNumber === 0) {
+            showToast(`${t('price_limit')} £99,999`, 'error');
+            return;
+          }
+
+          const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+
+          computedPrice = priceNumber * rawDuration;
+
+          // Check if the computed price is zero
+          if (computedPrice === 0) {
+            showToast(t('price_cannot_be_zero'), 'error');
+            return;
+          }
+
+          if (computedPrice < 0.5) {
+            showToast(t('price_must_be_at_least'), 'error');
+            return;
+          }
         }
       }
 
-
-
-      // ✅ POSTCODE VALIDATION
-if (field.param.alias_name?.toLowerCase() === 'postcode') {
-  const postcodeValue = formValues[field.param.id]?.value;
-
-  const cityField = fields.find(
-    (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
-  );
-
-  const selectedCityId = cityField
-    ? formValues[cityField.param.id]?.value
-    : null;
-
-  if (!postcodeValue || !selectedCityId) {
-    showToast(t('valid_city'), 'error');
-    return;
-  }
-
-  // 🔥 Call API again to verify
-  const location = await getCityFromPostalCode(postcodeValue);
-
-  if (!location || !location.city) {
-    showToast(t('valid_city'), 'error');
-    return;
-  }
-
-  const cityOptions = cityField?.param?.options || [];
-
-  const matchedOption = cityOptions.find((opt: any) => {
-    const option = opt.option_name?.toLowerCase() || '';
-    const input = location.city.toLowerCase();
-    return option.includes(input) || input.includes(option);
-  });
-
-  // ❌ No match OR mismatch
-  if (!matchedOption || matchedOption.id !== selectedCityId) {
-    showToast('Postal code does not match selected city', 'error');
-    return;
-  }
-}
-
-
-
-    }
-
-    let computedPrice: number | null = null;
-
-    if (productId === 2 || productId === 5) {
-      let priceFieldId: number | null = null;
-      let durationFieldId: number | null = null;
-
-      for (const f of fields) {
-        if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-        if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
-      }
-
-      if (priceFieldId !== null && durationFieldId !== null) {
-        let rawPrice = formValues[priceFieldId]?.value || '0';
-
-        rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
-
-        const priceNumber = parseFloat(rawPrice);
-
-        if (isNaN(priceNumber) || priceNumber > 99999 || priceNumber === 0) {
-          showToast(`${t('price_limit')} £99,999`, 'error');
-          return;
-        }
-
-        const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-
-        computedPrice = priceNumber * rawDuration;
-
-        // Check if the computed price is zero
-        if (computedPrice === 0) {
-          showToast(t('price_cannot_be_zero'), 'error');
-          return;
-        }
-
-        if (computedPrice < 0.5) {
-          showToast(t('price_must_be_at_least'), 'error');
-          return;
+      const dataToStore: any = { ...formValues };
+      if (computedPrice !== null) {
+        for (const f of fields) {
+          if (f.param.alias_name === 'price') {
+            dataToStore[f.param.id] = {
+              value: computedPrice.toString(),
+              alias_name: 'price',
+            };
+          }
         }
       }
-    }
 
-    const dataToStore: any = { ...formValues };
-    if (computedPrice !== null) {
-      for (const f of fields) {
-        if (f.param.alias_name === 'price') {
-          dataToStore[f.param.id] = {
-            value: computedPrice.toString(),
-            alias_name: 'price',
+      for (const field of fields) {
+        if (field.param.field_type.toLowerCase() === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
+
+          dataToStore[field.param.id] = {
+            value: uploadedForField,
+            alias_name: field.param.alias_name ?? null,
           };
         }
-      }
-    }
 
-    for (const field of fields) {
-      if (field.param.field_type.toLowerCase() === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-
-        dataToStore[field.param.id] = {
-          value: uploadedForField,
-          alias_name: field.param.alias_name ?? null,
-        };
-      }
-
-      if (field.param.alias_name === 'price') {
-        const priceValue = parseFloat(dataToStore[field.param.id]?.value);
-        if (priceValue > 99999 || priceValue === 0) {
-          showToast(`${t('price_limit')} £99,999`, 'error');
-          return;
+        if (field.param.alias_name === 'price') {
+          const priceValue = parseFloat(dataToStore[field.param.id]?.value);
+          if (priceValue > 99999 || priceValue === 0) {
+            showToast(`${t('price_limit')} £99,999`, 'error');
+            return;
+          }
         }
       }
-    }
 
-    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-    navigation.navigate('PreviewThumbnail');
-  } catch (error) {
-    showToast(t(Constant.DATA_NOT_SAVE), 'error');
-  }
-};
+      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      navigation.navigate('PreviewThumbnail');
+    } catch (error) {
+      showToast(t(Constant.DATA_NOT_SAVE), 'error');
+    }
+  };
   const resizeIfNeeded = async (asset: any) => {
     const MAX_SIZE = MAX_SIZE_MB * 1024 * 1024;
 
@@ -936,36 +828,6 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
         {
           text: 'Camera',
           onPress: () => {
-            // launchCamera(
-            //   { mediaType: 'photo', cameraType: 'front', quality: 1 },
-            //   async response => {
-            //     if (response.didCancel) return;
-            //     if (response.assets && response.assets[0].uri) {
-            //       const asset = response.assets[0];
-            //       let uri = asset.uri!;
-            //       let name = asset.fileName || 'Image';
-            //       if (
-            //         asset.fileSize &&
-            //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-            //       ) {
-            //         const compressed = await ImageResizer.createResizedImage(
-            //           uri,
-            //           800,
-            //           800,
-            //           'JPEG',
-            //           80,
-            //         );
-            //         uri = compressed.uri;
-            //         name = compressed.name || name;
-            //       }
-
-            //       setUploadedImages(prev => [
-            //         ...prev,
-            //         { id: Date.now().toString(), uri, name },
-            //       ]);
-            //     }
-            //   },
-            // );
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 },
               async response => {
@@ -989,40 +851,14 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
 
             if (remainingSlots <= 0) {
               showToast(
-                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
+                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(
+                  Constant.IMAGE_ALLOWED,
+                )}`,
                 'error',
               );
               return;
             }
 
-            // launchImageLibrary(
-            //   {
-            //     mediaType: 'photo',
-            //     quality: 1,
-            //     selectionLimit: remainingSlots, // ✅ KEY FIX
-            //   },
-            //   response => {
-            //     if (response.didCancel) return;
-            //     if (!response.assets) return;
-
-            //     // Safety check (Android sometimes ignores selectionLimit)
-            //     if (response.assets.length > remainingSlots) {
-            //       showToast(
-            //         `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
-            //         'error',
-            //       );
-            //       return;
-            //     }
-
-            //     const images = response.assets.map(asset => ({
-            //       id: `${Date.now()}-${Math.random()}`,
-            //       uri: asset.uri!,
-            //       name: asset.fileName || 'Image',
-            //     }));
-
-            //     setUploadedImages(prev => [...prev, ...images]);
-            //   },
-            // );
             launchImageLibrary(
               {
                 mediaType: 'photo',
@@ -1055,7 +891,6 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
                 ]);
               },
             );
-
           },
         },
         { text: 'Cancel', style: 'cancel' },
@@ -1085,104 +920,59 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
 
   const [isCheckbox, setCheckBox] = useState(false);
 
-  // const getCityFromPostalCode = async (postalCode: string) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-  //       {
-  //         headers: {
-  //           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-  //           "Accept-Language": "en-US",
-  //         },
-  //       }
-  //     );
+  const ClickPostalCode = async (postalCode: any) => {
+    const location = await getCityFromPostalCode(postalCode);
 
-  //     const data = await response.json();
-  //     console.log("location data:", data);
-
-  //     if (!data || data.length === 0) return null;
-
-  //     const address = data[0].address;
-
-  //     return (
-  //       address.city ||            // US, some countries
-  //       address.town ||            // smaller towns
-  //       address.village ||         // villages
-  //       address.county ||          // India, UK (like Pune City)
-  //       address.state_district ||  // fallback
-  //       null
-  //     );
-  //   } catch (error) {
-  //     console.error(error);
-  //     return null;
-  //   }
-  // };
-
-    const ClickPostalCode = async (postalCode: any) => {
-  const location = await getCityFromPostalCode(postalCode);
-
-
-      if (!location){
-      // setUserMeta(prev => ({
-      //   ...prev,
-      //   city:   '',
-      //   latitude: 0,
-      //   longitude: 0,
-      // }));
+    if (!location) {
       return;
-    } 
-
-  // setUserMeta(prev => ({
-  //   ...prev,
-  //   city: location.city || '',
-  //   latitude: location.lat,
-  //   longitude: location.lon,
-  // }));
-};
+    }
+  };
 
   const getCityFromPostalCode = async (postalCode: string) => {
-  try {
-    postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
-    postalCode = postalCode.slice(0, -3) + ' ' + postalCode.slice(-3)
-    console.log("postalCode:", postalCode);
-    console.log("URL: ", `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`);
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-      {
-        headers: {
-          "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-          "Accept-Language": "en-US",
+    try {
+      postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
+      postalCode = postalCode.slice(0, -3) + ' ' + postalCode.slice(-3);
+      console.log('postalCode:', postalCode);
+      console.log(
+        'URL: ',
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+      );
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'MyAndroidApp/1.0 (contact@myapp.com)',
+            'Accept-Language': 'en-US',
+          },
         },
-      }
-    );
+      );
 
-    const data = await response.json();
-    console.log("location data:", data);
+      const data = await response.json();
+      console.log('location data:', data);
 
-    if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) return null;
 
-    const result = data[0];
-    const address = result.address;
+      const result = data[0];
+      const address = result.address;
 
-    const city =
-      address.city ||
-      address.town ||
-      address.village ||
-      address.county ||
-      address.state_district ||
-      null;
+      const city =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.county ||
+        address.state_district ||
+        null;
 
-    return {
-      city,
-      lat: parseFloat(result.lat),   // ✅ FIX
-      lon: parseFloat(result.lon),   // ✅ FIX
-    };
-
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
+      return {
+        city,
+        lat: parseFloat(result.lat), // ✅ FIX
+        lon: parseFloat(result.lon), // ✅ FIX
+      };
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
   const renderField = (field: any) => {
     const param = field?.param;
     if (!param) return null;
@@ -1205,7 +995,9 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
 
-        const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
+        const placeholderText = placeholder
+          ? placeholder
+          : `${t('enter')} ${field_name}`;
         const isPostcodeField = alias_name?.toLowerCase() === 'postcode';
 
         let rnKeyboardType:
@@ -1234,161 +1026,95 @@ if (field.param.alias_name?.toLowerCase() === 'postcode') {
             rnKeyboardType = 'default';
         }
 
+        const handlePostalCodeChange = (text: string) => {
+          const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 
-        // let typingTimeout: NodeJS.Timeout;
+          if (filteredText.length > 7) return;
 
+          handleValueChange(param.id, alias_name, filteredText);
 
-        // const handlePostalCodeChange = (text: string) => {
-        //   // Always update the postcode field value first
-        //   const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Only allow alphanumeric characters
+          const cityField = fields?.find(
+            (f: any) => f.param?.alias_name?.toLowerCase() === 'city',
+          );
 
-        //   if (filteredText.length > 7) return; // Limit the length of the postcode (adjust if necessary)
-        //   handleValueChange(param.id, alias_name, text);
+          if (!cityField) return;
 
-        //   const cityField = fields?.find(
-        //     (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
-        //   );
+          const stripped = filteredText.replace(/\s/g, '');
 
-        //   if (!cityField) return;
+          // Reset city if empty
+          if (stripped.length === 0) {
+            setFormValues((prev: any) => ({
+              ...prev,
+              [cityField.param.id]: {
+                ...prev[cityField.param.id],
+                value: null,
+              },
+            }));
+            return;
+          }
 
-        //   // If postcode is cleared, remove auto-selected city
-        //   const stripped = text.replace(/\s/g, '');
-        //   if (stripped.length === 0) {
-        //     setFormValues((prev: any) => ({
-        //       ...prev,
-        //       [cityField.param.id]: {
-        //         ...prev[cityField.param.id],
-        //         value: null,
-        //       },
-        //     }));
-        //     return;
-        //   }
+          // ❌ Invalid format
+          if (!isValidPostalCode(filteredText)) {
+            return; // don’t spam toast while typing
+          }
 
-        //   if (isPostcodeField) {
-        //     if (typingTimeout) clearTimeout(typingTimeout);
+          if (stripped.length < 5) return;
 
-        //     if (stripped.length < 7) return; // too short to be a valid postcode
+          if (typingTimeout.current) {
+            clearTimeout(typingTimeout.current);
+          }
 
-        //     typingTimeout = setTimeout(async () => {
-        //       const cityName = await getCityFromPostalCode(text.toLocaleUpperCase());
+          typingTimeout.current = setTimeout(async () => {
+            const cityName = await getCityFromPostalCode(filteredText);
 
-        //       if (cityName) {
-        //         const cityOptions = cityField.param?.options || [];
-        //         // const matchedOption = cityOptions.find(
-        //         //   (opt: any) =>
-        //         //     opt.option_name?.toLowerCase() === cityName?.toLowerCase()
-        //         // );
-        //         const matchedOption = cityOptions.find((opt: any) => {
-        //           const option = opt.option_name?.toLowerCase() || '';
-        //           const input = cityName.city?.toLowerCase() || '';
+            const cityOptions = cityField.param?.options || [];
 
-        //           return option.includes(input) || input.includes(option);
-        //         });
+            // ❌ NO CITY FROM API
+            if (!cityName) {
+              showToast(t('valid_city'), 'error');
 
-        //         if (matchedOption) {
-        //           // ✅ City found — auto-select silently
-        //           setFormValues((prev: any) => ({
-        //             ...prev,
-        //             [cityField.param.id]: {
-        //               ...prev[cityField.param.id],
-        //               value: matchedOption.id,
-        //             },
-        //           }));
-        //         }
-        //       }
-        //     }, 1000);
-        //   }
-        // };
+              setFormValues((prev: any) => ({
+                ...prev,
+                [cityField.param.id]: {
+                  ...prev[cityField.param.id],
+                  value: null,
+                },
+              }));
 
-const handlePostalCodeChange = (text: string) => {
-  const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+              return;
+            }
 
-  if (filteredText.length > 7) return;
+            const matchedOption = cityOptions.find((opt: any) => {
+              const option = opt.option_name?.toLowerCase() || '';
+              const input = cityName.city?.toLowerCase() || '';
+              return option.includes(input) || input.includes(option);
+            });
 
-  handleValueChange(param.id, alias_name, filteredText);
+            // ❌ CITY NOT MATCHED WITH DROPDOWN
+            if (!matchedOption) {
+              showToast(t('valid_city'), 'error');
 
-  const cityField = fields?.find(
-    (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
-  );
+              setFormValues((prev: any) => ({
+                ...prev,
+                [cityField.param.id]: {
+                  ...prev[cityField.param.id],
+                  value: null,
+                },
+              }));
 
-  if (!cityField) return;
+              return;
+            }
 
-  const stripped = filteredText.replace(/\s/g, '');
-
-  // Reset city if empty
-  if (stripped.length === 0) {
-    setFormValues((prev: any) => ({
-      ...prev,
-      [cityField.param.id]: {
-        ...prev[cityField.param.id],
-        value: null,
-      },
-    }));
-    return;
-  }
-
-  // ❌ Invalid format
-  if (!isValidPostalCode(filteredText)) {
-    return; // don’t spam toast while typing
-  }
-
-  if (stripped.length < 5) return;
-
-  if (typingTimeout.current) {
-    clearTimeout(typingTimeout.current);
-  }
-
-typingTimeout.current = setTimeout(async () => {
-  const cityName = await getCityFromPostalCode(filteredText);
-
-  const cityOptions = cityField.param?.options || [];
-
-  // ❌ NO CITY FROM API
-  if (!cityName) {
-    showToast(t('valid_city'), 'error');
-
-    setFormValues((prev: any) => ({
-      ...prev,
-      [cityField.param.id]: {
-        ...prev[cityField.param.id],
-        value: null,
-      },
-    }));
-
-    return;
-  }
-
-  const matchedOption = cityOptions.find((opt: any) => {
-    const option = opt.option_name?.toLowerCase() || '';
-    const input = cityName.city?.toLowerCase() || '';
-    return option.includes(input) || input.includes(option);
-  });
-
-  // ❌ CITY NOT MATCHED WITH DROPDOWN
-  if (!matchedOption) {
-    showToast(t('valid_city'), 'error');
-
-    setFormValues((prev: any) => ({
-      ...prev,
-      [cityField.param.id]: {
-        ...prev[cityField.param.id],
-        value: null,
-      },
-    }));
-
-    return;
-  }
-
-  // ✅ SUCCESS
-  setFormValues((prev: any) => ({
-    ...prev,
-    [cityField.param.id]: {
-      ...prev[cityField.param.id],
-      value: matchedOption.id,
-    },
-  }));
-}, 800);
-};
+            // ✅ SUCCESS
+            setFormValues((prev: any) => ({
+              ...prev,
+              [cityField.param.id]: {
+                ...prev[cityField.param.id],
+                value: matchedOption.id,
+              },
+            }));
+          }, 800);
+        };
 
         return (
           <View key={field.id} style={styles.productTextView}>
@@ -1447,7 +1173,6 @@ typingTimeout.current = setTimeout(async () => {
                       handleValueChange(param.id, alias_name, value);
                     }
                   }
-
                 }}
               />
 
@@ -1472,8 +1197,6 @@ typingTimeout.current = setTimeout(async () => {
             </View>
           </View>
         );
-
-
       }
 
       case 'multi-line-text': {
@@ -1483,8 +1206,9 @@ typingTimeout.current = setTimeout(async () => {
         //   alias_name?.toLowerCase() === 'price'
         //     ? `£ ${t('enter')} ${field_name}`
         //     : `${t('enter')} ${field_name}`;
-        const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
-
+        const placeholderText = placeholder
+          ? placeholder
+          : `${t('enter')} ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -1583,7 +1307,10 @@ typingTimeout.current = setTimeout(async () => {
 
               <Image
                 source={require('../../../assets/images/right.png')}
-                style={[styles.dropdownIcon, {marginRight: field?.info_icon ? 30 : 0 } ]}
+                style={[
+                  styles.dropdownIcon,
+                  { marginRight: field?.info_icon ? 30 : 0 },
+                ]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -1646,17 +1373,18 @@ typingTimeout.current = setTimeout(async () => {
                         />
                       </View>
                     </TouchableOpacity>
-                    
-             
                   </View>
                 ))}
               {field?.info_icon && (
                 <TouchableOpacity
-                  style={[styles.iconWrapper, {
-                    right: 12,
-  top: -45,        // ✅ anchor from top
-  height: 40, 
-                  } ]}
+                  style={[
+                    styles.iconWrapper,
+                    {
+                      right: 12,
+                      top: -45, // ✅ anchor from top
+                      height: 40,
+                    },
+                  ]}
                   activeOpacity={0.7}
                   onPress={() => {
                     setPopupData({
@@ -1704,18 +1432,20 @@ typingTimeout.current = setTimeout(async () => {
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
-              <View style={{
-                backgroundColor:
-                  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-                borderRadius: 12,
-                borderWidth: 0.4,
-                borderColor: '#ffffff33',
-                marginTop: 10,
-              }}>
+              <View
+                style={{
+                  backgroundColor:
+                    'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                  boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+                  borderRadius: 12,
+                  borderWidth: 0.4,
+                  borderColor: '#ffffff33',
+                  marginTop: 10,
+                }}
+              >
                 <NestableDraggableFlatList<UploadedImage>
                   data={uploadedImages}
-                  keyExtractor={(item) => item.id}
+                  keyExtractor={item => item.id}
                   renderItem={renderImageItem}
                   autoscrollSpeed={30}
                   onDragEnd={({ data }) => setUploadedImages(data)}
@@ -1735,7 +1465,6 @@ typingTimeout.current = setTimeout(async () => {
           </View>
         );
       }
-
 
       case 'date': {
         const { param } = field;
@@ -1806,7 +1535,6 @@ typingTimeout.current = setTimeout(async () => {
         );
       }
 
-
       case 'boolean':
         return (
           <View key={field.id} style={styles.featurecard}>
@@ -1831,132 +1559,88 @@ typingTimeout.current = setTimeout(async () => {
               <View style={{ flex: 1 }}>
                 {productId !== 4 ? (
                   <>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText1}
+                    >
                       {t('important')}
                     </Text>
 
                     <Text allowFontScaling={false} style={styles.importantText}>
                       {t('featured_listing_note_1')}{' '}
-                      <Text allowFontScaling={false} style={styles.importantText1}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
                         {Math.trunc(featureFee)}%
                       </Text>{' '}
                       {t('featured_listing_fee_percentage')}{' '}
-
-                      <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                      <Text allowFontScaling={false} style={styles.importantText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        (
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
                         {t('capped')}{' '}
                       </Text>
-                      <Text allowFontScaling={false} style={styles.importantText1}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
                         £{Math.trunc(maxFeatureCap)}
                       </Text>
-                      <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        )
+                      </Text>{' '}
                       {t('featured_listing_fee_cap')}
                     </Text>
                   </>
                 ) : (
                   <View>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText1}
+                    >
                       {t('important')}
                     </Text>
 
                     <Text allowFontScaling={false} style={styles.importantText}>
                       {t('featured_listing_note_homesearch')}{' '}
-                      <Text allowFontScaling={false} style={styles.importantText1}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
                         £{Math.trunc(maxFeatureCap)}
                       </Text>{' '}
                       {t('featured_listing_note_homesearch1')}
-
-                      <Text allowFontScaling={false} style={styles.importantText}></Text>
-                      <Text allowFontScaling={false} style={styles.importantText}>
-
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.importantText1} />
-
-                      {/* <Text allowFontScaling={false} style={styles.importantText}></Text>{' '} */}
-                      {/* {t('featured_listing_fee_cap')} */}
+                      {t('accoumdationnote_new1')} {feePrecentage}% + £
+                      {fixedFee.toFixed(2)} {t('accoumdationnote_new2')}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      ></Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      ></Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      />
                     </Text>
                   </View>
                 )}
               </View>
-
             </View>
           </View>
         );
-
-      // case 'boolean':
-      //   return (
-      //     <View key={field.id} style={styles.featurecard}>
-      //       <View style={styles.featuredRow}>
-      //         <View style={{ width: '80%' }}>
-      //           {renderLabel1(field.param.field_name, field.mandatory)}
-      //         </View>
-      //         <ToggleButton
-      //           value={!!formValues[field.param.id]?.value}
-      //           onValueChange={val =>
-      //             handleValueChange(field.param.id, field.param.alias_name, val)
-      //           }
-      //         />
-      //       </View>
-
-      //       {/* Only for NON-4 products */}
-      //       {productId === 4 ? (
-      //         <View style={styles.textbg}>
-      //           <Image
-      //             source={require('../../../assets/images/info_icon.png')}
-      //             style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-      //           />
-      //           <View style={{ flex: 1 }}>
-      //             <Text allowFontScaling={false} style={styles.importantText1}>
-      //               {t('important')}
-      //             </Text>
-
-      //             <Text allowFontScaling={false} style={styles.importantText}>
-      //               {t('featured_listing_note_homesearch')}{' '}
-      //               <Text style={styles.importantText1}>
-                   
-      //                 £{featureFee > maxFeatureCap ? Math.trunc(maxFeatureCap) : `${Math.trunc(featureFee)}%`}
-      //               </Text>{' '}
-      //               {t('featured_listing_note_homesearch1')}
-      //               {/* <Text style={styles.importantText1}>
-      //                 £{Math.trunc(maxFeatureCap)}
-      //               </Text> */}
-                    
-      //             </Text>
-      //           </View>
-      //         </View>
-      //       ) : (
-      //            <View style={styles.textbg}>
-      //           <Image
-      //             source={require('../../../assets/images/info_icon.png')}
-      //             style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-      //             />
-      //              <View style={{ flex: 1 }}>
-      //           <Text allowFontScaling={false} style={styles.importantText1}>
-      //             {t('important')}
-      //           </Text>
-
-      //           <Text allowFontScaling={false} style={styles.importantText}>
-      //             {t('fixed_commission')}{' '}
-      //             <Text allowFontScaling={false} style={styles.importantText1}>
-      //               £{Math.trunc(accommodation_amount)}
-      //             </Text>{' '}
-      //             {t('featured_listing_fee_percentage')}
-
-      //             <Text allowFontScaling={false} style={styles.importantText}></Text>
-      //             <Text allowFontScaling={false} style={styles.importantText}>
-
-      //             </Text>
-      //             <Text allowFontScaling={false} style={styles.importantText1} />
-
-      //             <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
-      //             {t('featured_listing_fee_cap')}
-      //               </Text>
-      //               </View>
-      //         </View>
-      //       )}
-      //     </View>
-      //   );
-
       default:
         return null;
     }
@@ -1966,16 +1650,13 @@ typingTimeout.current = setTimeout(async () => {
     (f: any) => f?.param?.field_type?.toLowerCase() === 'boolean',
   );
 
-
-
   return (
     // <BackgroundWrapper>
     <ImageBackground
-              source={BACK_ICON}
-              style={{ flex: 1,width: '100%',
-            height: '100%', }}
-              resizeMode="cover"
-            >
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2077,7 +1758,6 @@ typingTimeout.current = setTimeout(async () => {
           </TouchableOpacity>
 
           <View style={{ width: 300 }}>
-
             <Text
               allowFontScaling={false}
               style={styles.unizyText}
@@ -2101,7 +1781,7 @@ typingTimeout.current = setTimeout(async () => {
           </View>
 
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={() => {}}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -2160,7 +1840,7 @@ typingTimeout.current = setTimeout(async () => {
         ) : (
           <View
             style={{ flex: 1 }}
-          //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
             <KeyboardAvoidingView
               style={{ flex: 1 }}
@@ -2176,10 +1856,16 @@ typingTimeout.current = setTimeout(async () => {
                 // onScroll={scrollHandler}
                 contentContainerStyle={[
                   styles.scrollContainer,
-                  { paddingBottom: Platform.OS === 'ios' ? height * 0.11 : height * 0.11 }, // 0.05% of screen height
-                  { paddingBottom: Platform.OS === 'ios' ? height * 0.11 : height * 0.11 }, // 0.05% of screen height
-                ]}>
-
+                  {
+                    paddingBottom:
+                      Platform.OS === 'ios' ? height * 0.11 : height * 0.11,
+                  }, // 0.05% of screen height
+                  {
+                    paddingBottom:
+                      Platform.OS === 'ios' ? height * 0.11 : height * 0.11,
+                  }, // 0.05% of screen height
+                ]}
+              >
                 <View style={styles.userRow}>
                   <View
                     style={{
@@ -2211,7 +1897,8 @@ typingTimeout.current = setTimeout(async () => {
                   <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
                       {userMeta
-                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                        ? `${userMeta.firstname ?? ''} ${
+                            userMeta.lastname ?? ''
                           }`.trim()
                         : 'Alan Walker'}
                     </Text>
@@ -2239,8 +1926,7 @@ typingTimeout.current = setTimeout(async () => {
                         <View
                           style={{
                             flexDirection: 'row',
-                            alignItems
-                              : 'center',
+                            alignItems: 'center',
                             gap: 3,
                           }}
                         >
@@ -2248,7 +1934,10 @@ typingTimeout.current = setTimeout(async () => {
                             source={require('../../../assets/images/calendar_icon1.png')}
                             style={{ height: 20, width: 20 }}
                           />
-                          <Text allowFontScaling={false} style={styles.dateText}>
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.dateText}
+                          >
                             {getCurrentDate(t)}
                           </Text>
                         </View>
@@ -2286,59 +1975,54 @@ typingTimeout.current = setTimeout(async () => {
                         }
                       })()}
                     </Text>
-
-                    {/* {fields
-                      .filter(
-                        (f: any) =>
-                          f?.param?.field_type?.toLowerCase() !== 'boolean',
-                      )
-                      .map((field: any) => renderField(field))} */}
-
                     {fields
                       .filter((f: any) => {
                         const isBoolean =
                           f?.param?.field_type?.toLowerCase() === 'boolean';
-
-                        // If productId === 4 → don't filter boolean
                         if (productId === 4) return true;
-
-                        // For others → remove boolean
                         return !isBoolean;
                       })
                       .map((field: any) => renderField(field))}
                   </Animated.View>
                 </View>
-
-                {/* {featuredField && <View>{renderField(featuredField)}</View>} */}
                 {productId !== 4 && featuredField && (
                   <View>{renderField(featuredField)}</View>
                 )}
 
-                 {productId === 4 && (
-                      <View style={[styles.textbg, { marginTop: 12 }]}>
-                        <Image
-                          source={INFO_ICON}
-                          style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-                        />
-                        <View style={{ flex: 1 }}>
-                          <Text allowFontScaling={false} style={styles.importantText1}>
-                            {t('important')}
-                          </Text>
+                {productId === 4 && (
+                  <View style={[styles.textbg, { marginTop: 12 }]}>
+                    <Image
+                      source={INFO_ICON}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        marginRight: 8,
+                        marginTop: 2,
+                      }}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText1}
+                      >
+                        {t('important')}
+                      </Text>
 
-                          <Text allowFontScaling={false} style={styles.importantText}>
-                            {t('fixed_commission')}{' '}
-                            <Text style={styles.importantText1}>
-                              £{accommodation_amount} 
-                            </Text>{' '}
-                            {t('acc_message')}
-                          </Text>
-                        </View>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.importantText}
+                      >
+                        {t('fixed_commission')}{' '}
+                        <Text style={styles.importantText1}>
+                          £{accommodation_amount}
+                        </Text>{' '}
+                        {t('acc_message')} {t('accoumdationnote_new1')}{' '}
+                        {feePrecentage}% + £{fixedFee.toFixed(2)}{' '}
+                        {t('accoumdationnote_new2')}
+                      </Text>
                     </View>
-                )} 
-
-
-
-                {/* </AnimatedReanimated.ScrollView> */}
+                  </View>
+                )}
               </NestableScrollContainer>
             </KeyboardAvoidingView>
           </View>
@@ -2375,7 +2059,12 @@ typingTimeout.current = setTimeout(async () => {
                     setActiveDateField(null);
                   }}
                 >
-                  <Text allowFontScaling={false} style={{ color: '#999', fontSize: 16 }}>Cancel</Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={{ color: '#999', fontSize: 16 }}
+                  >
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -2387,12 +2076,12 @@ typingTimeout.current = setTimeout(async () => {
                       handleValueChange(
                         activeDateField.param.id,
                         activeDateField.param.alias_name ??
-                        activeDateField.param.field_name,
+                          activeDateField.param.field_name,
                         {
                           startDate: tempDate,
                           endDate:
                             currentValue.endDate &&
-                              dayjs(currentValue.endDate).isBefore(tempDate)
+                            dayjs(currentValue.endDate).isBefore(tempDate)
                               ? null
                               : currentValue.endDate,
                         },
@@ -2401,7 +2090,7 @@ typingTimeout.current = setTimeout(async () => {
                       handleValueChange(
                         activeDateField.param.id,
                         activeDateField.param.alias_name ??
-                        activeDateField.param.field_name,
+                          activeDateField.param.field_name,
                         {
                           startDate: currentValue.startDate,
                           endDate: tempDate,
@@ -2413,20 +2102,23 @@ typingTimeout.current = setTimeout(async () => {
                     setActiveDateField(null);
                   }}
                 >
-                  <Text allowFontScaling={false} style={{ color: '#007AFF', fontSize: 16 }}>Done</Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={{ color: '#007AFF', fontSize: 16 }}
+                  >
+                    Done
+                  </Text>
                 </TouchableOpacity>
               </View>
-
-              {/* DATE PICKER */}
               <DateTimePicker
                 value={tempDate}
                 mode="date"
                 display="spinner"
-                themeVariant='light'
+                themeVariant="light"
                 minimumDate={
                   activeDateField.type === 'end'
                     ? formValues[activeDateField.param.id]?.value?.startDate ??
-                    new Date()
+                      new Date()
                     : new Date()
                 }
                 onChange={(event, selectedDate) => {
@@ -2448,7 +2140,7 @@ typingTimeout.current = setTimeout(async () => {
           minimumDate={
             activeDateField.type === 'end'
               ? formValues[activeDateField.param.id]?.value?.startDate ??
-              new Date()
+                new Date()
               : new Date()
           }
           onChange={(event, selectedDate) => {
@@ -2466,12 +2158,12 @@ typingTimeout.current = setTimeout(async () => {
                 handleValueChange(
                   activeDateField.param.id,
                   activeDateField.param.alias_name ??
-                  activeDateField.param.field_name,
+                    activeDateField.param.field_name,
                   {
                     startDate: selectedDate,
                     endDate:
                       currentValue.endDate &&
-                        dayjs(currentValue.endDate).isBefore(selectedDate)
+                      dayjs(currentValue.endDate).isBefore(selectedDate)
                         ? null
                         : currentValue.endDate,
                   },
@@ -2480,7 +2172,7 @@ typingTimeout.current = setTimeout(async () => {
                 handleValueChange(
                   activeDateField.param.id,
                   activeDateField.param.alias_name ??
-                  activeDateField.param.field_name,
+                    activeDateField.param.field_name,
                   {
                     startDate: currentValue.startDate,
                     endDate: selectedDate,
@@ -2488,70 +2180,67 @@ typingTimeout.current = setTimeout(async () => {
                 );
               }
             }
-
             setDatePickerVisible(false);
             setActiveDateField(null);
           }}
         />
       )}
 
-
-
-
-
       <Modal
         visible={showThumnail}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
             <BlurView
-              // style={styles.blurStyle}
-               style={[
-                  StyleSheet.absoluteFill,
-                 {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                ]}
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                ]}
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+              ]}
+            />
+
+            <View style={styles.popupContainer}>
+              <Image
+                source={{ uri: uri }}
+                style={{
+                  width: '100%',
+                  height: 300,
+                  paddingLeft: 3,
+                  paddingEnd: 3,
+                }}
+                resizeMode="contain"
               />
 
-              <View style={styles.popupContainer}>
-                <Image
-                  source={{ uri: uri }}
-                  style={{
-                    width: '100%',
-                    height: 300,
-                    paddingLeft: 3,
-                    paddingEnd: 3,
-                  }}
-                  resizeMode="contain"
-                />
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={() => {
-                    setShowThumnail(false);
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('close')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            {/* </BlurView> */}
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => {
+                  setShowThumnail(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('close')}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
 
       <Modal
         visible={showpopup}
@@ -2562,42 +2251,45 @@ typingTimeout.current = setTimeout(async () => {
         <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
           <View style={styles.overlay}>
             <BlurView
-               style={[
-                  StyleSheet.absoluteFill,
-                 {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                ]}
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
-              />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
 
-              <View style={styles.popupContainer}>
-                <Text allowFontScaling={false} style={styles.popupMainHeader}>
-                  {popupData.title}
+            <View style={styles.popupContainer}>
+              <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                {popupData.title}
+              </Text>
+              <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                {popupData.message}
+              </Text>
+
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => {
+                  setshowpopup(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('close')}
                 </Text>
-                <Text allowFontScaling={false} style={styles.popupSubHeader}>
-                  {popupData.message}
-                </Text>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={() => {
-                    setshowpopup(false);
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('close')}
-                  </Text>
-                </TouchableOpacity>
-
-              </View>
-            {/* </BlurView> */}
+              </TouchableOpacity>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -2608,32 +2300,21 @@ typingTimeout.current = setTimeout(async () => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            // title={`${t('select')} ${t(
-            //   multiSelectModal?.fieldLabel || 'category',
-            // )}`}
             title={multiSelectModal.placeholder}
-            // subtitle={
-            //   multiSelectModal?.ismultilple
-            //     ? `${t('pick_all')} ${pluralizeLabel(
-            //       multiSelectModal?.fieldLabel || 'category',
-            //     )} ${t('best_describe')}`
-            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
-            //     } ${t('that_fit_your_listing')}`
-            // }
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'category',
-                )} ${t('best_describe')}`
-                : ` ${multiSelectModal?.placeholder || 'category'
-                } ${t('that_fit_your_listing')}`
+                    multiSelectModal?.fieldLabel || 'category',
+                  )} ${t('best_describe')}`
+                : ` ${multiSelectModal?.placeholder || 'category'} ${t(
+                    'that_fit_your_listing',
+                  )}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
             otherTextValue={formValues[multiSelectModal.fieldId!]?.otherText}
-
             onSelect={(data: any) => {
               setFormValues((prev: any) => ({
                 ...prev,
@@ -2651,34 +2332,21 @@ typingTimeout.current = setTimeout(async () => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            // title={`${t('select')} ${t(
-            //   multiSelectModal?.fieldLabel || 'category',
-            // )}`}
-
             title={multiSelectModal.placeholder}
-            // subtitle={
-            //   multiSelectModal?.ismultilple
-            //     ? `${t('pick_all')} ${pluralizeLabel(
-            //       multiSelectModal?.fieldLabel || 'category',
-            //     )} ${t('best_describe')}`
-            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
-            //     } ${t('that_fit_your_listing')}`
-            // }
-
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'category',
-                )} ${t('best_describe')}`
-                : ` ${multiSelectModal?.placeholder || 'category'
-                } ${t('that_fit_your_listing')}`
+                    multiSelectModal?.fieldLabel || 'category',
+                  )} ${t('best_describe')}`
+                : ` ${multiSelectModal?.placeholder || 'category'} ${t(
+                    'that_fit_your_listing',
+                  )}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
             otherTextValue={formValues[multiSelectModal.fieldId!]?.otherText}
-
             onSelect={(data: any) => {
               setFormValues((prev: any) => ({
                 ...prev,
@@ -2692,31 +2360,18 @@ typingTimeout.current = setTimeout(async () => {
         </>
       )}
 
-      <NewCustomToastContainer /> 
-      {/* </BackgroundWrapper> */}
-      </ImageBackground>
+      <NewCustomToastContainer />
+    </ImageBackground>
   );
 };
 
 export default AddScreen;
 
 const styles = StyleSheet.create({
-  // blurStyle: {
-  //   flex: 1,
-  //   alignContent: 'center',
-  //   justifyContent: 'center',
-  //   width: '100%',
-  //   alignItems: 'center',
-  // },
-
   inputWrapper: {
     position: 'relative',
     justifyContent: 'center',
   },
-
-  // inputWithIcon: {
-  //   paddingRight: 40, // space for icon inside input
-  // },
 
   iconWrapper: {
     position: 'absolute',
@@ -2730,7 +2385,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
- 
+
   popupMainHeader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
@@ -2748,7 +2403,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
-
 
   categoryTagContainer: {
     flexDirection: 'row',
@@ -2769,7 +2423,6 @@ const styles = StyleSheet.create({
   },
 
   categoryTagText: {
-   
     flexShrink: 1,
     maxWidth: '90%',
     ...COMMONSTYLE.FONT_14,
@@ -2793,7 +2446,7 @@ const styles = StyleSheet.create({
   calendarIcon: {
     width: 18,
     height: 18,
-    tintColor: '#fff', // remove if icon already white
+    tintColor: '#fff',
   },
   overlay: {
     flex: 1,
@@ -2856,7 +2509,7 @@ const styles = StyleSheet.create({
   backButtonContainer: {
     zIndex: 11,
   },
- 
+
   blurButtonWrapper_none: {
     width: 48,
     height: 48,
@@ -2890,7 +2543,7 @@ const styles = StyleSheet.create({
     tintColor: '#FFF',
   },
   dropdowncard: {
-    flex: 1, // ⬅️ Add this
+    flex: 1,
     minHeight: 40,
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -2922,8 +2575,6 @@ const styles = StyleSheet.create({
 
   scrollContainer: {
     paddingHorizontal: 16,
-    // paddingBottom: 80,
-    // paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
   userRow: {
@@ -3000,15 +2651,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
-  imagelistcard: {
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-    // borderRadius: 12,
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff33',
-    // marginTop: 10,
-  },
+  imagelistcard: {},
 
   productdetailstext: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -3118,7 +2761,7 @@ const styles = StyleSheet.create({
     ...COMMONSTYLE.FONTWEIGHT_500,
     color: '#FFFFFF',
   },
-  
+
   login_container: {
     display: 'flex',
     height: 40,
@@ -3178,7 +2821,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    // height: Platform.OS === 'ios' ? 547 : 300,
     paddingVertical: Platform.OS === 'ios' ? 0 : 40,
   },
 });
