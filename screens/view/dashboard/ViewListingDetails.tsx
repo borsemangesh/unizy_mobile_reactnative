@@ -741,7 +741,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         {t('sold_for')}:
                       </Text>
                       <Text allowFontScaling={false} style={styles.status}>
-                        £{buyer.price}
+                        £{buyer.originalprice}
                       </Text>
                     </View>
 
