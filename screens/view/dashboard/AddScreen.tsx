@@ -68,6 +68,7 @@ import INFO_ICON from '../../../assets/images/info_icon.png';
 import DELETE_ICON from '../../../assets/images/delete.png';
 import FILEUPLOAD_ICON from '../../../assets/images/fileupload.png';
 import BACK_ICON from '../../../assets/images/backimg.png';
+import CustomModal from '../../utils/component/CustomModal.modal';
 
 type AddScreenContentProps = {
   navigation: any;
@@ -2242,7 +2243,51 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      <Modal
+      <CustomModal visible={showpopup} onClose={() => setshowpopup(false)}>
+        
+            <BlurView
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+
+            <View style={styles.popupContainer}>
+              <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                {popupData.title}
+              </Text>
+              <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                {popupData.message}
+              </Text>
+
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => {
+                  setshowpopup(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('close')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+     </CustomModal>
+
+      {/* <Modal
         visible={showpopup}
         transparent
         animationType="fade"
@@ -2292,7 +2337,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             </View>
           </View>
         </TouchableWithoutFeedback>
-      </Modal>
+      </Modal> */}
+
+    
 
       {Platform.OS === 'android' ? (
         <>

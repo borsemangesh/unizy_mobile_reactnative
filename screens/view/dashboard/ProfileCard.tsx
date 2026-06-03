@@ -14,6 +14,8 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Pressable,
+  Linking,
+  Alert,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
@@ -259,6 +261,46 @@ PAYMENT_ICON
     }
   }
 
+  const openWhatsApp = async () => {
+  
+    const phoneNumber = '447949500991';
+  
+    const message =
+      'Hello';
+  
+      // const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
+      //   message,
+      // )}`;
+  
+    const url =
+        `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  
+    try {
+  
+      const supported =
+        await Linking.canOpenURL(url);
+  
+      if (supported) {
+  
+        await Linking.openURL(url);
+  
+      } else {
+  
+        Alert.alert(
+          'WhatsApp not installed'
+        );
+      }
+  
+    } catch (error) {
+  
+      console.log(error);
+  
+      Alert.alert(
+        'Error opening WhatsApp'
+      );
+    }
+  };
+
   const handleItem = (item: any) => {
       const isLogout = item.titleKey === 'logout';
     const isDelete = item.titleKey === 'delete_account';
@@ -274,6 +316,7 @@ PAYMENT_ICON
       }
       case 'help_support': {
         navigation.navigate('HelpSupport');
+        // openWhatsApp();
         break;
       }
       case 'notifications': {
