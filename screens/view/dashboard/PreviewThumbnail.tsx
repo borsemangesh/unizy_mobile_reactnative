@@ -294,10 +294,10 @@ console.log('commissionPrice', commissionPrice);
     categoryId === 2
       ? `£${commissionPrice}/${t('hr')}`
       : categoryId === 4
-      ? `£${priceValue}/${t('week')}`
+      ? `£${priceValue.toFixed(2)}/${t('week')}`
       : categoryId === 5
-      ? `£${commissionPrice}/${t('session')}`
-      : `£${commissionPrice}`;
+      ? `£${commissionPrice.toFixed(2)}/${t('session')}`
+      : `£${commissionPrice.toFixed(2)}`;
 
   if (isFeatured) {
     return (

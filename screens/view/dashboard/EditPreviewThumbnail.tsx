@@ -303,9 +303,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 // NEW
 const feePercentage = Number(categoryDetails?.feePrecentage ?? 0);
 
-const fixedFee = Number(
-  categoryDetails?.fixedFee ?? 0,
-);
+const fixedFee = Number(categoryDetails?.fixedFee ?? 0);
 
 // Commission
 const commissionAmount =
@@ -365,12 +363,12 @@ console.log('commissionPrice', commissionPrice);
 
   const priceText =
     categoryId === 2
-      ? `£${commissionPrice}/${t('hr')}`
+      ? `£${commissionPrice.toFixed(2)}/${t('hr')}`
       : categoryId === 4
-      ? `£${priceValue}/${t('week')}`
+      ? `£${priceValue.toFixed(2)}/${t('week')}`
       : categoryId === 5
-      ? `£${commissionPrice}/${t('session')}`
-      : `£${commissionPrice}`;
+      ? `£${commissionPrice.toFixed(2)}/${t('session')}`
+      : `£${commissionPrice.toFixed(2)}`;
 
   if (isFeatured) {
     return (

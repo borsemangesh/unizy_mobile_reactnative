@@ -386,27 +386,27 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   const priceValue = parseFloat(String(raw)) || 0;
 
   const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
-  const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
+  // const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
 
-  const commissionAmount = priceValue * (commissionPercent / 100);
-  const calculatedPrice = priceValue + commissionAmount;
-  const maxAllowedPrice = priceValue + maxCap;
-  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
-    2,
-  );
+  // const commissionAmount = priceValue * (commissionPercent / 100);
+  // const calculatedPrice = priceValue + commissionAmount;
+  // const maxAllowedPrice = priceValue + maxCap;
+  // const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+  //   2,
+  // );
 
   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue1 = parseFloat(String(raw1)) || 0;
 
   const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
   const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
-  const feePercentage = Number(
-  userMeta?.category?.feePrecentage ?? 0,
-);
+//   const feePercentage = Number(
+//   userMeta?.category?.feePrecentage ?? 0,
+// );
 
-  const fixedFee = Number(
-  userMeta?.category?.fixedFee ?? 0,
-);
+//   const fixedFee = Number(
+//   userMeta?.category?.fixedFee ?? 0,
+// );
   const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
   const calculatedPrice1 = priceValue1 + commissionAmount1;
   const maxAllowedPrice1 = priceValue1 + maxCap1;
@@ -416,14 +416,94 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   ).toFixed(2);
   const diff1 = commissionPrice1 - priceValue1;
 
-  const priceText =
-    userMeta?.category?.id === 2
-      ? `£${commissionPrice}/${t('hr')}`
-      : userMeta?.category?.id === 4
-      ? `£${commissionPrice}/${t('week')}`
-      : userMeta?.category?.id === 5
-      ? `£${commissionPrice}/${t('session')}`
-      : `£${commissionPrice}`;
+
+  
+const maxCap = parseFloat(
+  userMeta?.category?.max_cappund ?? '0',
+);
+
+// NEW
+const feePercentage = Number(
+  userMeta?.category?.feePrecentage ?? 0,
+);
+
+const fixedFee = Number(
+  userMeta?.category?.fixedFee ?? 0,
+);
+
+// Commission
+const commissionAmount =
+  priceValue * (commissionPercent / 100);
+
+// Apply cap
+const cappedCommission =
+    Math.min(commissionAmount, maxCap);
+  const calculatedPrice = priceValue + commissionAmount;
+
+// Price after commission
+const priceAfterCommission =
+  priceValue + cappedCommission;
+
+// Fee percentage
+const feePercentageAmount =
+  priceAfterCommission * (feePercentage / 100);
+
+    let commissionPrice = 0;
+  if (userMeta?.category?.id !== 3) {
+     commissionPrice = Number((
+    priceAfterCommission +
+    feePercentageAmount +
+    fixedFee
+  ).toFixed(2),
+);
+  } else {
+    
+     const maxAllowedPrice = priceValue + maxCap;
+    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+  }
+
+  const formattedCommissionPrice =
+  commissionPrice.toFixed(2);
+
+const priceText =
+  userMeta?.category?.id === 2
+    ? `£${formattedCommissionPrice}/${t('hr')}`
+    : userMeta?.category?.id === 4
+    ? `£${priceValue.toFixed(2)}/${t('week')}`
+    : userMeta?.category?.id === 5
+    ? `£${formattedCommissionPrice}/${t('session')}`
+    : `£${formattedCommissionPrice}`;
+  // const priceText =
+  //   userMeta?.category?.id === 2
+  //     ? `£${commissionPrice}/${t('hr')}`
+  //     : userMeta?.category?.id === 4
+  //     ? `£${priceValue}/${t('week')}`
+  //     : userMeta?.category?.id === 5
+  //     ? `£${commissionPrice}/${t('session')}`
+  //     : `£${commissionPrice}`;
+//  const maxAllowedPrice = priceValue + maxCap;
+//     commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+//     2,
+//   );
+//   }
+
+
+//     const priceText =
+//     userMeta?.category?.id === 2
+//       ? `£${commissionPrice}/${t('hr')}`
+//       : userMeta?.category?.id === 4
+//       ? `£${priceValue}/${t('week')}`
+//       : userMeta?.category?.id === 5
+//       ? `£${commissionPrice}/${t('session')}`
+//       : `£${commissionPrice}`;
+//   // const priceText =
+//   //   userMeta?.category?.id === 2
+//   //     ? `£${commissionPrice}/${t('hr')}`
+//   //     : userMeta?.category?.id === 4
+//   //     ? `£${commissionPrice}/${t('week')}`
+//   //     : userMeta?.category?.id === 5
+//   //     ? `£${commissionPrice}/${t('session')}`
+//   //     : `£${commissionPrice}`;
 
   const form =
     typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;

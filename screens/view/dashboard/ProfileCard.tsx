@@ -261,45 +261,21 @@ PAYMENT_ICON
     }
   }
 
-  const openWhatsApp = async () => {
-  
-    const phoneNumber = '447949500991';
-  
-    const message =
-      'Hello';
-  
-      const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
-        message,
-      )}`;
-  
-    // const url =
-    //     `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-  
-    try {
-  
-      const supported =
-        await Linking.canOpenURL(url);
-  
-      if (supported) {
-  
-        await Linking.openURL(url);
-  
-      } else {
-  
-        Alert.alert(
-          'WhatsApp not installed'
-        );
-      }
-  
-    } catch (error) {
-  
-      console.log(error);
-  
-      Alert.alert(
-        'Error opening WhatsApp'
-      );
-    }
-  };
+const openWhatsApp = async () => {
+  const phoneNumber = '447949500991';
+  const message = 'Hello';
+
+  const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+    message,
+  )}`;
+
+  try {
+    await Linking.openURL(url);
+  } catch (error) {
+    console.log(error);
+    Alert.alert('Error opening WhatsApp');
+  }
+};
 
   const handleItem = (item: any) => {
       const isLogout = item.titleKey === 'logout';

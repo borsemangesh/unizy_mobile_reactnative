@@ -855,19 +855,28 @@ const feePercentageAmount =
 );
   } else { 
  const maxAllowedPrice = priceValue + maxCap;
-    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
-    2,
-  );
+    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
   }
 
-  const priceText =
-    userMeta?.category?.id === 2
-      ? `£${commissionPrice}/${t('hr')}`
-      : userMeta?.category?.id === 4
-      ? `£${priceValue}/${t('week')}`
-      : userMeta?.category?.id === 5
-      ? `£${commissionPrice}/${t('session')}`
-      : `£${commissionPrice}`;
+  const formattedCommissionPrice =
+  commissionPrice.toFixed(2);
+
+const priceText =
+  userMeta?.category?.id === 2
+    ? `£${formattedCommissionPrice}/${t('hr')}`
+    : userMeta?.category?.id === 4
+    ? `£${priceValue.toFixed(2)}/${t('week')}`
+    : userMeta?.category?.id === 5
+    ? `£${formattedCommissionPrice}/${t('session')}`
+    : `£${formattedCommissionPrice}`;
+  // const priceText =
+  //   userMeta?.category?.id === 2
+  //     ? `£${commissionPrice}/${t('hr')}`
+  //     : userMeta?.category?.id === 4
+  //     ? `£${priceValue}/${t('week')}`
+  //     : userMeta?.category?.id === 5
+  //     ? `£${commissionPrice}/${t('session')}`
+  //     : `£${commissionPrice}`;
 
   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue1 = parseFloat(String(raw1)) || 0;
