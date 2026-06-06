@@ -817,7 +817,7 @@
   "whichever_lower_new_other": "is added to the item price.The total amount shown includes a payment processing fee of ",
   "whichever_lower_new_1": "and is the final price payable by the buyer.",
   "whichever_lower_new_2": "includes a payment processing fee of",
-  "whichever_lower_new_3": ". The final amount payable by the buyer will be calculated based on the selected quantity.",
+  "whichever_lower_new_3": ".The final amount payable by the buyer will be calculated based on the selected quantity.",
   "accoumdationnote_new1":"A payment processing fee of",
   "accoumdationnote_new2":"will also be added to the total amount payable."
 }
