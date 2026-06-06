@@ -1758,7 +1758,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <View style={{ width: 300 }}>
+          <View style={{ width: Dimensions.get('screen').width * 0.6 }}>
             <Text
               allowFontScaling={false}
               style={styles.unizyText}

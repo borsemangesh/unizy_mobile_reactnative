@@ -333,10 +333,17 @@ const feePercentageAmount =
       ).toFixed(2),
     );
   } else {
-    const maxAllowedPrice = priceValue + maxCap;
-    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
-    2,
-  );
+  //   const maxAllowedPrice = priceValue + maxCap;
+  //   commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+  //   2,
+    // );
+     commissionPrice = Number(
+      (
+        priceAfterCommission +
+        feePercentageAmount +
+        fixedFee
+      ).toFixed(2),
+    );
   }
 
   
@@ -496,6 +503,7 @@ console.log('commissionPrice', commissionPrice);
               justifyContent: 'center',
               paddingTop: Platform.OS === 'ios' ? 100 : 100,
               paddingBottom: Platform.OS === 'ios' ? 140 : 130
+
             }}
             onScroll={scrollHandler}
           >
@@ -673,7 +681,7 @@ console.log('commissionPrice', commissionPrice);
               </View>
             )} */}
                     {categoryId !== 4 && (
-              <View style={[styles.textbg, { marginBottom: 100 }]}>
+              <View style={[styles.textbg, {marginBottom:30}]}>
                 <Image
                   source={require('../../../assets/images/info_icon.png')}
                   style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -737,7 +745,7 @@ console.log('commissionPrice', commissionPrice);
                       <Text style={styles.importantText}>
                         )
                       </Text>{' '}
-                      {t('whichever_lower_new')} <Text style={styles.importantText1}>
+                      {t('whichever_lower_new_other')} <Text style={styles.importantText1}>
                         {feePercentage}% + £{fixedFee.toFixed(2)}
                       </Text>{' '} {t('whichever_lower_new_1')}
                     </Text>
@@ -883,7 +891,11 @@ console.log('commissionPrice', commissionPrice);
             alignItems: 'center',
             justifyContent: 'center',
             paddingTop: Platform.OS === 'ios' ? 100 : 100,
-            paddingBottom: 100,
+            // paddingBottom: 100,
+             paddingBottom:
+                            Platform.OS === 'ios'
+                              ? Dimensions.get('window').scale - 60
+                              : Dimensions.get('window').scale - 60,
           }}
           onScroll={scrollHandler}
         >
@@ -1032,7 +1044,7 @@ console.log('commissionPrice', commissionPrice);
 
 
                 {categoryId !== 4 && (
-          <View style={[styles.textbg, { marginBottom: 100 }]}>
+          <View style={[styles.textbg, {marginBottom:80}]}>
             <Image
               source={require('../../../assets/images/info_icon.png')}
               style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -1096,7 +1108,7 @@ console.log('commissionPrice', commissionPrice);
                   <Text style={styles.importantText}>
                     )
                   </Text>{' '}
-                  {t('whichever_lower_new')} <Text style={styles.importantText1}>
+                  {t('whichever_lower_new_other')} <Text style={styles.importantText1}>
                     {feePercentage}% + £{fixedFee.toFixed(2)}
                   </Text>{' '} {t('whichever_lower_new_1')}
                 </Text>

@@ -458,8 +458,14 @@ const feePercentageAmount =
 );
   } else {
     
-     const maxAllowedPrice = priceValue + maxCap;
-    commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+    //  const maxAllowedPrice = priceValue + maxCap;
+    // commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+     commissionPrice = Number((
+    priceAfterCommission +
+    feePercentageAmount +
+    fixedFee
+  ).toFixed(2),
+);
   }
 
   const formattedCommissionPrice =
