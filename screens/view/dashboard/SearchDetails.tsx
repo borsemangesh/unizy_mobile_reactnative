@@ -1242,7 +1242,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               totalcount={detail?.remaining_quantity}
               options={quantityOptions}
               visible={multiSelectModal.visible}
-              price={Number(detail?.price)}
+              price={Number(detail?.pricewithplatform_commission)}
               title={t('choose_quantity')}
               subtitle={t('select_units')}
               selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -1275,7 +1275,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               totalcount={detail?.remaining_quantity}
               options={quantityOptions}
               visible={multiSelectModal.visible}
-              price={Number(detail?.price)}
+              price={Number(detail?.pricewithplatform_commission)}
               title={t('choose_quantity')}
               subtitle={t('select_units')}
               selectedValues={formValues[multiSelectModal.fieldId!]?.value}
