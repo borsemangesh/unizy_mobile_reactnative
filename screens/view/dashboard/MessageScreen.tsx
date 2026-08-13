@@ -456,7 +456,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                 currentUserIdList: chat.current_user_id,
                 conversationSid: chat.twilio_conversation_sid,
                 source: 'chatList',
-                unreadCount: chat.unreadcount, 
+                unreadCount: chat.unreadcount,
+                getrestriction_applied: chat.restriction_applied
               });
             }}
           >

@@ -62,6 +62,7 @@ type RouteParams = {
   };
   userConvName: string;
   currentUserIdList: number;
+  getrestriction_applied: boolean,
 
   sellerData: {
     featureId: number;
@@ -182,6 +183,7 @@ const MessagesIndividualScreen = ({
     source,
     conversationSid,
     unreadCount,
+    getrestriction_applied
   } = route.params;
 
   const chatUser = source === 'sellerPage' ? sellerData : members;
@@ -218,6 +220,8 @@ const MessagesIndividualScreen = ({
   const viewportHeightRef = useRef(0);
   const scrollY = useSharedValue(0);
   const { t } = useTranslation();
+
+  const [restriction_applied ,setREstriction_applied ]= useState(true);
 
   const [otherLastReadIndex, setOtherLastReadIndex] = useState<number | null>(
     null,
@@ -368,10 +372,16 @@ const MessagesIndividualScreen = ({
   const applyChatRestrictions = (text: string): string => {
     let filtered = text;
 
-    filtered = filterNumbersAndNumberWords(filtered);
+    const restrictionFlag =
+      source === 'sellerPage'
+        ? restriction_applied
+        : getrestriction_applied;
 
-    filtered = filterEmailAndLinks(filtered);
+    if (restrictionFlag) {
+      filtered = filterNumbersAndNumberWords(filtered);
 
+      filtered = filterEmailAndLinks(filtered);
+    }
     return filtered;
   };
 
@@ -479,6 +489,7 @@ const MessagesIndividualScreen = ({
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        console.log("AUTH_TOKEN_API:",`${MAIN_URL.baseUrl}twilio/auth-token`)
   
         if (!response.ok) return;
   
@@ -588,6 +599,8 @@ const MessagesIndividualScreen = ({
             apiData = await res.json();
             if (res.ok && apiData.data?.conv_name)
               convName = apiData.data.conv_name;
+            console.log("apiData.data.restriction_applied", apiData.data.restriction_applied);
+            setREstriction_applied(apiData.data.restriction_applied);
 
             if (!apiData.data) {
               setInitialLoading(false);
