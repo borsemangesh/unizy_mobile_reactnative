@@ -375,7 +375,7 @@ const MessagesIndividualScreen = ({
     const restrictionFlag =
       source === 'sellerPage'
         ? restriction_applied
-        : getrestriction_applied;
+        : setREstriction_applied(getrestriction_applied);
 
     if (restrictionFlag) {
       filtered = filterNumbersAndNumberWords(filtered);

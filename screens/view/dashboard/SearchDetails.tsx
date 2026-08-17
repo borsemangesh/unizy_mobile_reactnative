@@ -1126,8 +1126,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                                 id: detail.createdby.id,
                                 isblocked: detail.blocked_you,
                                 blocked_you: detail.blocked_by,
+                                
                               },
                               source: 'sellerPage',
+                              getrestriction_applied: detail.restriction_applied
                             });
                           } else {
                             setShowPopup(true);

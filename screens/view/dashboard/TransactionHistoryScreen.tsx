@@ -78,6 +78,7 @@ interface TransactionItem {
   blocked_you: boolean;
   chat_with_seller: boolean;
   created_by: created_by;
+  restriction_applied: boolean;
 }
 
 interface created_by {
@@ -777,6 +778,7 @@ export default function TransactionHistoryScreen({
             blocked_you: item.blocked_you,
           },
           source: 'sellerPage',
+            getrestriction_applied: item.restriction_applied
         });
       }
     },
