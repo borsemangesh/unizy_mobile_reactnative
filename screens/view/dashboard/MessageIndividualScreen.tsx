@@ -277,9 +277,8 @@ const MessagesIndividualScreen = ({
   const filterEmailAndLinks = (text: string): string => {
   let filtered = text;
 
-  // const emailRegex =
-  //   /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
-  const emailRegex = /\S+@\S+\.\S+/i;
+  const emailRegex =
+    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
 
   const urlRegex =
     /((https?:\/\/|www\.)[^\s]+)/i;
@@ -293,7 +292,7 @@ const MessagesIndividualScreen = ({
     domainRegex.test(filtered)
   ) {
     Keyboard.dismiss();
-    // showToast(t('email_error'), 'error');
+    showToast(t('email_error'), 'error');
   }
 
   // Now remove globally
@@ -357,21 +356,22 @@ const MessagesIndividualScreen = ({
       'billion',
       'trillion',
     ];
-    Keyboard.dismiss();
-    if (restriction_applied && numberWords.fill(text)) {
-      
-  // showToast(t('contact_info_not_allowed'), 'error');
-
-}
 
     const numberWordsPattern = new RegExp(
       `\\b(${numberWords.join('|')})\\b`,
       'gi',
     );
 
+    if (numberWordsPattern.test(text)) {
+  Keyboard.dismiss();
+  showToast(t('email_error'),'error');
+  return '';
+}
+
     filtered = filtered.replace(numberWordsPattern, '');
 
     filtered = filtered.replace(/\s{2,}/g, ' ').trim();
+    
 
     return filtered;
   };
@@ -381,16 +381,13 @@ const MessagesIndividualScreen = ({
 
     const restrictionFlag =
       source === 'sellerPage'
-        ? restriction_applied :
+        ? restriction_applied:
         getrestriction_applied;
 
     if (restrictionFlag) {
-       Keyboard.dismiss();
       filtered = filterNumbersAndNumberWords(filtered);
 
       filtered = filterEmailAndLinks(filtered);
-      Keyboard.dismiss();
-    showToast(t('email_error'), 'error');
     }
     return filtered;
   };
