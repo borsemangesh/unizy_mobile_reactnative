@@ -777,8 +777,7 @@ export default function TransactionHistoryScreen({
             isblocked: item.isblocked,
             blocked_you: item.blocked_you,
           },
-          source: 'sellerPage',
-            getrestriction_applied: item.restriction_applied
+          source: 'sellerPage'
         });
       }
     },
