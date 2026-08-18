@@ -277,8 +277,9 @@ const MessagesIndividualScreen = ({
   const filterEmailAndLinks = (text: string): string => {
   let filtered = text;
 
-  const emailRegex =
-    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
+  // const emailRegex =
+  //   /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
+  const emailRegex = /\S+@\S+\.\S+/i;
 
   const urlRegex =
     /((https?:\/\/|www\.)[^\s]+)/i;
@@ -356,6 +357,10 @@ const MessagesIndividualScreen = ({
       'billion',
       'trillion',
     ];
+    if (restriction_applied && numberWords.fill(text)) {
+  showToast(t('contact_info_not_allowed'), 'error');
+
+}
 
     const numberWordsPattern = new RegExp(
       `\\b(${numberWords.join('|')})\\b`,
