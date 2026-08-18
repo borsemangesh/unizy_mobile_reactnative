@@ -293,7 +293,7 @@ const MessagesIndividualScreen = ({
     domainRegex.test(filtered)
   ) {
     Keyboard.dismiss();
-    showToast(t('email_error'), 'error');
+    // showToast(t('email_error'), 'error');
   }
 
   // Now remove globally
@@ -357,8 +357,10 @@ const MessagesIndividualScreen = ({
       'billion',
       'trillion',
     ];
+    Keyboard.dismiss();
     if (restriction_applied && numberWords.fill(text)) {
-  showToast(t('contact_info_not_allowed'), 'error');
+      
+  // showToast(t('contact_info_not_allowed'), 'error');
 
 }
 
@@ -383,9 +385,12 @@ const MessagesIndividualScreen = ({
         getrestriction_applied;
 
     if (restrictionFlag) {
+       Keyboard.dismiss();
       filtered = filterNumbersAndNumberWords(filtered);
 
       filtered = filterEmailAndLinks(filtered);
+      Keyboard.dismiss();
+    showToast(t('email_error'), 'error');
     }
     return filtered;
   };
