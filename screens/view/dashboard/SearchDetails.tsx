@@ -1129,7 +1129,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                                 
                               },
                               source: 'sellerPage',
-                              getrestriction_applied: detail.restriction_applied
+                              getrestriction_applied: false
                             });
                           } else {
                             setShowPopup(true);
