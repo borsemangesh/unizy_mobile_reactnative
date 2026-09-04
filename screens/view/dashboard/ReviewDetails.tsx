@@ -563,13 +563,15 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                       marginBottom: 4,
                     }}
                   >
-                    {averageRating}
+                    {/* {averageRating} */}
+                     {averageRating === 0 ? '-' : averageRating}
                   </Text>
 
                   <StarRating rating={averageRating} starSize={24} />
 
                   <Text allowFontScaling={false} style={styles.reviewcount}>
-                    {totalReviews} {t('reviews')}
+                    {/* {totalReviews} {t('reviews')} */}
+{totalReviews === 0 ? '-' : totalReviews}
                   </Text>
                 </View>
 
@@ -589,7 +591,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                       }}
                     />
                     <Text allowFontScaling={false} style={styles.subrating}>
-                      {averageRating} ({totalReviews})
+                       {averageRating === 0 ? '-' : averageRating} ({totalReviews})
                     </Text>
                   </View>
                 </View>
