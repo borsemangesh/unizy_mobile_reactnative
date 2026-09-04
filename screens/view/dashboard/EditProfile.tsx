@@ -1187,6 +1187,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
       cropperCircleOverlay: true,
       compressImageQuality: 0.8,
       mediaType: 'photo',
+      useFrontCamera: true
     })
       .then(image => {
         console.log('CROPPED IMAGE:', image);

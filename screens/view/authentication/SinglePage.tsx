@@ -1561,6 +1561,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         cropperCircleOverlay: true,
         compressImageQuality: 0.8,
         mediaType: 'photo',
+        useFrontCamera: true,
       });
 
       const imageUri =
