@@ -106,7 +106,7 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
             {reviewer_name}
           </Text>
 
-          <View style={styles.starsRow}>
+          {/* <View style={styles.starsRow}>
             {Array.from({ length: 5 }).map((_, i) => (
               <Image
                 key={i}
@@ -114,7 +114,23 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
                 style={styles.star}
               />
             ))}
-          </View>
+          </View> */}
+          <View style={styles.starsRow}>
+  {rating === '-' ? (
+    <Text allowFontScaling={false} style={styles.noRatingText}>
+      -
+    </Text>
+  ) : (
+    Array.from({ length: 5 }).map((_, i) => (
+      <Image
+        key={i}
+        source={i < Number(rating) ? fullStar : emptyStar}
+        style={styles.star}
+      />
+    ))
+  )}
+</View>
+
         </View>
 
         {reviewText ? (
@@ -130,6 +146,12 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
 export default ReviewDetailCard;
 
 const styles = StyleSheet.create({
+  noRatingText: {
+  color: '#FFFFFFE0',
+  fontSize: 18,
+  fontFamily: 'Urbanist-SemiBold',
+  fontWeight: '600',
+},
   cardconstinerdivider: {
 
     display: 'flex',

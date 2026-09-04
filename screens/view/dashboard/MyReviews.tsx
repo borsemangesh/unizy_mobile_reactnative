@@ -924,13 +924,14 @@ const initialTab = route?.params?.activeTab ?? 'Given Reviews';
                         marginBottom: 4,
                       }}
                     >
-                      {averageRating}
+                      {/* {averageRating} */}
+                      {averageRating === 0 ? '-' : averageRating}
                     </Text>
 
                     <StarRating rating={averageRating} starSize={24} />
 
                     <Text allowFontScaling={false} style={styles.reviewcount}>
-                      {totalReviews} {t('reviews')}
+                       {totalReviews === 0 ? '-' : totalReviews} {t('reviews')}
                     </Text>
                   </View>
 
@@ -952,7 +953,8 @@ const initialTab = route?.params?.activeTab ?? 'Given Reviews';
                         }}
                       />
                       <Text allowFontScaling={false} style={styles.subrating}>
-                        {averageRating} ({totalReviews})
+                        {/* {averageRating} ({totalReviews}) */}
+                        {averageRating === 0 ? '-' : averageRating} ({totalReviews === 0 ? '-' : totalReviews})
                       </Text>
                     </View>
                   </View>
