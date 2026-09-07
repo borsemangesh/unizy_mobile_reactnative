@@ -197,7 +197,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
                       },
                     ]}
                   >
-                    {reviews}
+                    {reviews === '0.0'?'-.-': reviews }
                   </Text>
                 </View>
             </View>

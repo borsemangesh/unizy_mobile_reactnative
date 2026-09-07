@@ -1428,6 +1428,7 @@ const createPayload: any = {
                 flex: 1,
                 alignContent: 'center',
                 justifyContent: 'center',
+                alignSelf: 'center',
                 width: '100%',
                 alignItems: 'center',
               }}
@@ -1819,6 +1820,9 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
+     alignContent: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
 
     backgroundColor: 'rgba(255,255,255,0.15)',
   },

@@ -2618,13 +2618,20 @@ const handlePreview = async (latestFormValues: any) => {
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
             title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //       multiSelectModal?.fieldLabel || 'category',
+            //     )} ${t('best_describe')}`
+            //     : ` ${multiSelectModal?.placeholder || 'category'
+            //     } ${t('that_fit_your_listing')}`
+            // }
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'category',
-                )} ${t('best_describe')}`
-                : ` ${multiSelectModal?.placeholder || 'category'
-                } ${t('that_fit_your_listing')}`
+                ? `${t('please_select_all_that_apply')}`
+                : `${t(
+                    'please_select_one_of_the_following',
+                  )}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -2658,13 +2665,20 @@ const handlePreview = async (latestFormValues: any) => {
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
             title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //       multiSelectModal?.fieldLabel || 'category',
+            //     )} ${t('best_describe')}`
+            //     : ` ${multiSelectModal?.placeholder || 'category'
+            //     } ${t('that_fit_your_listing')}`
+            // }
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'category',
-                )} ${t('best_describe')}`
-                : ` ${multiSelectModal?.placeholder || 'category'
-                } ${t('that_fit_your_listing')}`
+                ? `${t('please_select_all_that_apply')}`
+                : `${t(
+                    'please_select_one_of_the_following',
+                  )}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>

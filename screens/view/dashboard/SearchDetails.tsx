@@ -1098,7 +1098,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.chattext}
                           >
-                            {detail?.avg_rating}
+                            {detail?.avg_rating === '0.0'? '-.-': detail?.avg_rating }
                           </Text>
                         </TouchableOpacity>
                       </View>

@@ -919,8 +919,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     </Text>
   );
 
-  const [isCheckbox, setCheckBox] = useState(false);
-
   const ClickPostalCode = async (postalCode: any) => {
     const location = await getCityFromPostalCode(postalCode);
 
@@ -2285,61 +2283,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 </Text>
               </TouchableOpacity>
             </View>
-     </CustomModal>
-
-      {/* <Modal
-        visible={showpopup}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setshowpopup(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
-          <View style={styles.overlay}>
-            <BlurView
-              style={[
-                StyleSheet.absoluteFill,
-                {
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                },
-              ]}
-              blurType="light"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            />
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
-
-            <View style={styles.popupContainer}>
-              <Text allowFontScaling={false} style={styles.popupMainHeader}>
-                {popupData.title}
-              </Text>
-              <Text allowFontScaling={false} style={styles.popupSubHeader}>
-                {popupData.message}
-              </Text>
-
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={() => {
-                  setshowpopup(false);
-                }}
-              >
-                <Text allowFontScaling={false} style={styles.loginText}>
-                  {t('close')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal> */}
-
-    
+     </CustomModal>    
 
       {Platform.OS === 'android' ? (
         <>
@@ -2348,13 +2292,21 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
             title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //         multiSelectModal?.fieldLabel || 'category',
+            //       )} ${t('best_describe')}`
+            //     : ` ${multiSelectModal?.placeholder || 'category'} ${t(
+            //         'that_fit_your_listing',
+            //       )}`
+            // }
+
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'category',
-                  )} ${t('best_describe')}`
-                : ` ${multiSelectModal?.placeholder || 'category'} ${t(
-                    'that_fit_your_listing',
+                ? `${t('please_select_all_that_apply')}`
+                : `${t(
+                    'please_select_one_of_the_following',
                   )}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -2380,13 +2332,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
             title={multiSelectModal.placeholder}
-            subtitle={
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //         multiSelectModal?.fieldLabel || 'category',
+            //       )} ${t('best_describe')}`
+            //     : ` ${multiSelectModal?.placeholder || 'category'} ${t(
+            //         'that_fit_your_listing',
+            //       )}`
+            // }
+             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'category',
-                  )} ${t('best_describe')}`
-                : ` ${multiSelectModal?.placeholder || 'category'} ${t(
-                    'that_fit_your_listing',
+                ? `${t('please_select_all_that_apply')}`
+                : `${t(
+                    'please_select_one_of_the_following',
                   )}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
