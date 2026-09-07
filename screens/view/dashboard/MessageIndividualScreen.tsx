@@ -1404,7 +1404,7 @@ const MessagesIndividualScreen = ({
       !scrollToShortContentRef.current
     ) {
       scrollToShortContentRef.current = true;
-      isShortContentLockedRef.current = true;
+      isShortContentLockedRef.current = false;
       const timeoutId = setTimeout(() => {
         if (
           flatListRef.current &&
@@ -1870,13 +1870,17 @@ const MessagesIndividualScreen = ({
               keyExtractor={(item, index) =>
                 item.sid || item.data?.sid || `item-${index}`
               }
-              maintainVisibleContentPosition={
-                Platform.OS === 'ios' && isContentShort
-                  ? undefined
-                  : {
-                    minIndexForVisible: 1,
-                  }
-              }
+              // maintainVisibleContentPosition={
+              //   Platform.OS === 'ios' && isContentShort
+              //     ? undefined
+              //     : {
+              //       minIndexForVisible: 1,
+              //     }
+              // }
+              maintainVisibleContentPosition={{
+  minIndexForVisible: 1,
+}}
+
               onScroll={event => {
                 const offsetY = event.nativeEvent.contentOffset.y;
                 const isAtBottom = offsetY <= 10;
@@ -1952,7 +1956,7 @@ const MessagesIndividualScreen = ({
                         });
                       });
                     } else if (newIsContentShort && keyboardVisible) {
-                      isShortContentLockedRef.current = true;
+                      isShortContentLockedRef.current = false;
                     }
                   }, 200);
                 }
@@ -2043,7 +2047,7 @@ const MessagesIndividualScreen = ({
                     paddingTop: 80,
                     paddingBottom: 120,
                     flexGrow: 1,
-                    justifyContent: 'flex-end',
+                    justifyContent: 'flex-start',
                   };
                 }
 
@@ -2056,7 +2060,7 @@ const MessagesIndividualScreen = ({
                       10
                       : 120,
                   paddingTop: keyboardVisible ? 80 : 105,
-                  justifyContent: 'flex-end',
+                  justifyContent: 'flex-start',
                 };
               }, [
                 contentContainerStyle,
