@@ -394,6 +394,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
 
     backgroundColor: 'rgba(255,255,255,0.15)',
+               alignContent: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
   },
 
   loginText: {

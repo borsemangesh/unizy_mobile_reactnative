@@ -961,6 +961,9 @@ export const Styles = StyleSheet.create({
     backgroundColor: 'rgba(253, 253, 253, 0.07)',
     boxShadow:
       'rgba(255, 2550, 255, 0.1) inset -0.90px 0px 1px 0px,',
+           alignContent: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
   },
 
   logo: {
