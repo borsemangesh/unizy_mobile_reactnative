@@ -261,19 +261,40 @@ PAYMENT_ICON
     }
   }
 
+// const openWhatsApp = async () => {
+//   const phoneNumber = '447949500991';
+//   const message = 'Hello';
+
+//   const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+//     message,
+//   )}`;
+
+//   try {
+//     await Linking.openURL(url);
+//   } catch (error) {
+//     console.log(error);
+//     Alert.alert('Error opening WhatsApp');
+//   }
+// };
+
 const openWhatsApp = async () => {
   const phoneNumber = '447949500991';
   const message = 'Hello';
 
-  const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+  const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
     message,
   )}`;
 
   try {
-    await Linking.openURL(url);
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert('WhatsApp is not installed');
+    }
   } catch (error) {
-    console.log(error);
-    Alert.alert('Error opening WhatsApp');
+    console.log('WhatsApp Error:', error);
   }
 };
 

@@ -62,7 +62,7 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>api.unizy.app</key>
+			<key>35.154.226.12</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
@@ -91,6 +91,11 @@
 
 	<key>RCTNewArchEnabled</key>
 	<true/>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+	</array>
 
 	<!-- ✅ FORCE LIGHT MODE (FIXES iOS CURSOR COLOR ISSUE) -->
 	<key>UIUserInterfaceStyle</key>
