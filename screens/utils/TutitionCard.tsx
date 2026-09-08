@@ -546,8 +546,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
+    // width: screenWidth * 0.85,
+    // height: (Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35),
+    // height: '100%',
+     height: '103%',
     width: screenWidth * 0.85,
-    height: (Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35),
     marginHorizontal: 8,
     borderRadius: 34,
     shadowColor: '#000',

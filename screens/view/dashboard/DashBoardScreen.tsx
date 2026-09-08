@@ -1540,8 +1540,8 @@ const styles = StyleSheet.create({
   // Featured
   featuredHeader: {
     paddingHorizontal: 20,
-    paddingTop: SW * 0.01,
-    paddingBottom: SW * 0.01,
+    paddingTop: SW * 0.02,
+    paddingBottom: SW * 0.02,
   },
   featuredText: {
     color: '#FFF',
@@ -1553,7 +1553,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 6,
     paddingBottom: 20,
-    height: 380,
+    // height: 380,
+    height: '80%',
+    // backgroundColor: 'red'
   },
   featuredCard: { paddingBottom: 12 },
   emptyWrapper: {
