@@ -83,6 +83,7 @@ import INFO_ICON from '../../../assets/images/info_icon.png';
 import ALERT_ICON from '../../../assets/images/alerticon.png';
 import PRODUCTION_ICON from '../../../assets/images/producticon.png';
 import NOPRODUCT_ICON from '../../../assets/images/noproduct.png';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 // ─── Static tab config (defined once, outside component) ───────────────────────
 const TABS = [
@@ -1592,7 +1593,19 @@ const verifyAppVersion = async () => {
     }
   }}
 >
-  <View style={styles.overlay}>
+  <View style={COMMONSTYLE.overlay}>
+    <BlurView
+              style={[StyleSheet.absoluteFill, COMMONSTYLE.modelBlur]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+             <View
+                          style={[
+                            StyleSheet.absoluteFill,
+                            { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                          ]}
+                        />
     <View style={styles.popupContainer}>
       <Image
         source={ALERT_ICON}
@@ -1604,7 +1617,7 @@ const verifyAppVersion = async () => {
         allowFontScaling={false}
         style={styles.popupMainHeader}
       >
-        {isForceUpdate ? 'Update Required' : 'Update Available'}
+        {isForceUpdate ? t('update_required') : t('update_available')}
       </Text>
 
       <Text
@@ -1612,8 +1625,8 @@ const verifyAppVersion = async () => {
         style={styles.popupSubHeader}
       >
         {isForceUpdate
-          ? 'A new version of UniZy is available. Please update the app to continue.'
-          : 'A new version of UniZy is available. You can update now or continue using the app.'}
+          ? t("newVerstion1")
+          : t("newVerstion2")}
       </Text>
 
       <TouchableOpacity
@@ -1635,7 +1648,7 @@ const verifyAppVersion = async () => {
           allowFontScaling={false}
           style={styles.popupButtonText}
         >
-          Update Now
+          {t("update_now")}
         </Text>
       </TouchableOpacity>
 

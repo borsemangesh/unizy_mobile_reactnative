@@ -823,6 +823,11 @@
   "contact_info_not_allowed": "contact info not allowed",
   "please_select_one_of_the_following": "Please select one of the following",
   "please_select_all_that_apply": "Please select all that apply",
-  "feedback_form": "Feedback"
+  "feedback_form": "Feedback",
+  "update_required":"Update Required",
+  "update_available":"Update Available",
+  "newVerstion1": "A new version of UniZy is available. Please update the app to continue.",
+  "newVerstion2":"A new version of UniZy is available. You can update now or continue using the app.",
+  "update_now":"Update Now"
 
 }
