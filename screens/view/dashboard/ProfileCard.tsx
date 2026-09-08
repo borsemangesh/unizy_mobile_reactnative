@@ -38,6 +38,7 @@ import { IMAGE_URLS } from '../../utils/Style';
     import NOTIFY_ICON from '../../../assets/images/notify.png';
     import CHANGEPASSWORD_ICON from '../../../assets/images/change_password.png';
     import HELP_ICON from '../../../assets/images/helpicon.png';
+    import FEEDBACK from '../../../assets/images/feedback.png';
     import LOGOUT_ICON from '../../../assets/images/logout.png';
     import VERSION_ICON from '../../../assets/images/versionicon.png';
     import NEXTARROW_ICON from '../../../assets/images/nextarrow.png';
@@ -46,6 +47,8 @@ import CALENDER_ICON from '../../../assets/images/calendar_icon1.png';
 import { Switch } from 'react-native-gesture-handler';
 import { CommonConfirmModal } from '../../utils/component/Logout.component';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import Whatsapp_chatBoot from './Whatsapp_chatBoot';
+import { User } from '@twilio/conversations';
 
 
 
@@ -57,6 +60,7 @@ const cardData = [
   { id: '5', titleKey: 'change_password', image: CHANGEPASSWORD_ICON },
   { id: '6', titleKey: 'delete_account', image: DELETENEW_ICON },
   { id: '7', titleKey: 'help_support', image: HELP_ICON},
+  { id: '10', titleKey: 'feedback_form', image: FEEDBACK},
   { id: '8', titleKey: 'logout', image: LOGOUT_ICON},
   { id: '9', titleKey: 'app_version', image: VERSION_ICON },
   
@@ -81,6 +85,8 @@ PAYMENT_ICON
     email?: string | null;
     university_name?: string | null;
     city?: string | null;
+    feedback_form_url?: string |null;
+    whatsapp_number?: string | null;
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
@@ -154,6 +160,8 @@ PAYMENT_ICON
             email: user.email ?? null,
             university_name: user.university_name ?? null,
             city: user.city ?? null,
+            feedback_form_url: user.feedback_form_url ?? null,
+            whatsapp_number: user.whatsapp_number ?? null
           });
 
         } else {
@@ -278,10 +286,10 @@ PAYMENT_ICON
 // };
 
 const openWhatsApp = async () => {
-  const phoneNumber = '447949500991';
+  // const phoneNumber = '447949500991';
   const message = 'Hello';
 
-  const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
+  const url = `whatsapp://send?phone=${userMeta?.whatsapp_number}&text=${encodeURIComponent(
     message,
   )}`;
 
@@ -337,6 +345,22 @@ const openWhatsApp = async () => {
         setPassword('')
         setShowConfirm1(true);
         break;
+      }
+      case 'feedback_form': {
+        // const url = userMeta?.feedback_form_url;
+        // Linking.openURL(url)
+        const url = userMeta?.feedback_form_url;
+
+        if (!url) {
+          console.log('Feedback form URL is not available');
+          return;
+        }
+
+        try {
+          Linking.openURL(url);
+        } catch (error) {
+          console.error('Failed to open feedback form:', error);
+        }
       }
       case 'app_version':
         break;

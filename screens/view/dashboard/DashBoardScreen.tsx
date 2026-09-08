@@ -26,6 +26,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   useWindowDimensions,
+  Linking,
 } from 'react-native';
 
 import AnimatedReanimated, {
@@ -110,6 +111,13 @@ type RootStackParamList = {
   };
 };
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
+
+const APP_STORE_URL =
+  'https://apps.apple.com/app/idcom.org.unizy';
+
+const PLAY_STORE_URL =
+  'https://play.google.com/store/apps/details?id=com.unizy';
+
 
 // ─── ProductItem (pure component, no re-render unless props change) ────────────
 const ProductItem = React.memo(
@@ -422,6 +430,44 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollY = useSharedValue(0);
 
+
+const forceLogoutAndUpdate = useCallback(async () => {
+  try {
+    await AsyncStorage.multiRemove([
+      'userToken',
+      'bookmarkedIds',
+      'categories',
+    ]);
+  } catch (error) {
+    console.log('Logout storage error:', error);
+  }
+
+  const storeUrl =
+    Platform.OS === 'ios'
+      ? APP_STORE_URL
+      : PLAY_STORE_URL;
+
+  try {
+    await Linking.openURL(storeUrl);
+  } catch (error) {
+    console.log('Unable to open store:', error);
+  }
+
+  navigation.reset({
+    index: 0,
+    routes: [
+      {
+        name: 'SinglePage',
+        params: {
+          resetToLogin: true,
+        },
+      },
+    ],
+  });
+}, [navigation]);
+
+
+
   // ── Fetch categories ──
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
@@ -509,6 +555,10 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
   );
 
   // ── Send device token ──
+const [isVersionChecking, setIsVersionChecking] = useState(true);
+const [showUpdateModal, setShowUpdateModal] = useState(false);
+const [isForceUpdate, setIsForceUpdate] = useState(false);
+
   useEffect(() => {
     const sendDeviceTokenToServer = async () => {
       try {
@@ -532,8 +582,141 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
         console.error('Error sending token:', error);
       }
     };
+  let isMounted = true;
+
+  const compareVersions = (current: string, server: string): number => {
+  const toParts = (v: string) =>
+    String(v)
+      .trim()
+      .replace(/[^0-9.]/g, '')
+      .split('.')
+      .filter(Boolean)
+      .map(n => parseInt(n, 10) || 0);
+
+  const a = toParts(current);
+  const b = toParts(server);
+  const len = Math.max(a.length, b.length);
+
+  for (let i = 0; i < len; i++) {
+    const left = a[i] ?? 0;
+    const right = b[i] ?? 0;
+    if (left > right) return 1; // current newer
+    if (left < right) return -1; // current older
+  }
+  return 0; // same
+};
+
+const verifyAppVersion = async () => {
+  try {
+    const currentVersion = String(DeviceInfo.getVersion()).trim();
+
+    const response = await fetch(
+      `${MAIN_URL.baseUrl}user/app-version`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      },
+    );
+
+    const result = await response.json();
+
+    console.log('================================');
+    console.log('Platform:', Platform.OS);
+    console.log('Current App Version:', currentVersion);
+    console.log('App Version API Response:', result);
+    console.log('================================');
+
+    if (!response.ok || result?.statusCode !== 200) {
+      if (isMounted) setIsVersionChecking(false);
+      return;
+    }
+
+    const platformConfig =
+      Platform.OS === 'ios'
+        ? result?.data?.app_version?.ios
+        : result?.data?.app_version?.android;
+
+    console.log('Platform Config:', platformConfig);
+
+    if (!platformConfig) {
+      console.log('Platform config not found');
+      if (isMounted) setIsVersionChecking(false);
+      return;
+    }
+
+    const serverVersion = String(platformConfig?.version ?? '').trim();
+
+    const forceUpdate =
+      platformConfig?.force_update === true ||
+      platformConfig?.force_update === 'true' ||
+      platformConfig?.force_update === 1 ||
+      platformConfig?.force_update === '1';
+
+    console.log('Current Version:', currentVersion);
+    console.log('Server Version:', serverVersion);
+    console.log('Force Update:', forceUpdate);
+
+    if (!serverVersion) {
+      if (isMounted) setIsVersionChecking(false);
+      return;
+    }
+
+    const cmp = compareVersions(currentVersion, serverVersion);
+    const isOutdated = cmp < 0; // current < server
+
+    console.log('Version compare result:', cmp, 'Outdated:', isOutdated);
+
+    if (isOutdated) {
+      if (isMounted) {
+        setIsForceUpdate(forceUpdate);
+        setShowUpdateModal(true);
+        setIsVersionChecking(false);
+      }
+      return;
+    }
+
+    console.log('App version is up to date');
+
+    if (isMounted) setIsVersionChecking(false);
+  } catch (error) {
+    console.log('Version check error:', error);
+    if (isMounted) setIsVersionChecking(false);
+  }
+};
+  verifyAppVersion();
+
     sendDeviceTokenToServer();
+  return () => {
+    isMounted = false;
+  };
   }, []);
+
+
+
+
+
+//   useEffect(() => {
+//   let isMounted = true;
+
+//   const verifyAppVersion = async () => {
+//     const isVersionValid = await checkAppVersion();
+
+//     if (!isMounted) return;
+
+//     if (!isVersionValid) {
+//       await forceLogoutAndUpdate();
+//     }
+//   };
+
+//   verifyAppVersion();
+
+//   return () => {
+//     isMounted = false;
+//   };
+// }, [checkAppVersion, forceLogoutAndUpdate]);
+
 
   // ── Entrance animation ──
   useEffect(() => {
@@ -1348,6 +1531,135 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
         </Animated.View>
       </View>
 
+{/* <Modal
+  visible={isForceUpdate}
+  transparent
+  animationType="fade"
+>
+  <View style={styles.overlay}>
+    <View style={styles.popupContainer}>
+      <Image
+        source={ALERT_ICON}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
+      <Text
+        allowFontScaling={false}
+        style={styles.popupMainHeader}
+      >
+        Update Required
+      </Text>
+
+      <Text
+        allowFontScaling={false}
+        style={styles.popupSubHeader}
+      >
+        A new version of UniZy is available.
+        Please update the app to continue.
+      </Text>
+
+      <TouchableOpacity
+        style={styles.popupButton}
+        onPress={async () => {
+          const storeUrl =
+            Platform.OS === 'ios'
+              ? APP_STORE_URL
+              : PLAY_STORE_URL;
+
+          await Linking.openURL(storeUrl);
+        }}
+      >
+        <Text
+          allowFontScaling={false}
+          style={styles.popupButtonText}
+        >
+          Update Now
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal> */}
+
+<Modal
+  visible={showUpdateModal}
+  transparent
+  animationType="fade"
+  onRequestClose={() => {
+    // Only allow dismiss when update is optional
+    if (!isForceUpdate) {
+      setShowUpdateModal(false);
+    }
+  }}
+>
+  <View style={styles.overlay}>
+    <View style={styles.popupContainer}>
+      <Image
+        source={ALERT_ICON}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
+      <Text
+        allowFontScaling={false}
+        style={styles.popupMainHeader}
+      >
+        {isForceUpdate ? 'Update Required' : 'Update Available'}
+      </Text>
+
+      <Text
+        allowFontScaling={false}
+        style={styles.popupSubHeader}
+      >
+        {isForceUpdate
+          ? 'A new version of UniZy is available. Please update the app to continue.'
+          : 'A new version of UniZy is available. You can update now or continue using the app.'}
+      </Text>
+
+      <TouchableOpacity
+        style={styles.popupButton}
+        onPress={async () => {
+          const storeUrl =
+            Platform.OS === 'ios'
+              ? APP_STORE_URL
+              : PLAY_STORE_URL;
+
+          try {
+            await Linking.openURL(storeUrl);
+          } catch (error) {
+            console.log('Unable to open store:', error);
+          }
+        }}
+      >
+        <Text
+          allowFontScaling={false}
+          style={styles.popupButtonText}
+        >
+          Update Now
+        </Text>
+      </TouchableOpacity>
+
+      {!isForceUpdate && (
+        <TouchableOpacity
+          style={styles.laterButton}
+          onPress={() => {
+            setShowUpdateModal(false);
+          }}
+        >
+          <Text
+            allowFontScaling={false}
+            style={styles.laterButtonText}
+          >
+            Ask Me Later
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  </View>
+</Modal>
+
+
+
       <ShortCustomToastContainer />
       <NewCustomToastContainer />
     </ImageBackground>
@@ -1360,6 +1672,32 @@ export default DashBoardScreen;
 const { width: SW, height: SH } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  laterButton: {
+  marginTop: 15,
+  paddingVertical: 10,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+laterButtonText: {
+  color: '#FFFFFF',
+  fontSize: 15,
+  fontWeight: '500',
+  textDecorationLine: 'underline',
+},
+
+  askLaterButton: {
+  marginTop: 14,
+  paddingVertical: 10,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+askLaterText: {
+  color: '#fff',
+  fontSize: 15,
+  fontWeight: '500',
+},
   flex1: { flex: 1 },
   profileFull: { flex: 1, height: '100%' },
   background: { flex: 1, width: '100%', height: '100%' },

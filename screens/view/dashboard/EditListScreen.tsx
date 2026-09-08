@@ -777,7 +777,7 @@ const handlePreview = async (latestFormValues: any) => {
           text: 'Camera',
           onPress: () => {
             launchCamera(
-              { mediaType: 'photo', cameraType: 'front', quality: 1 },
+              { mediaType: 'photo', cameraType: 'back', quality: 1 },
               async response => {
                 if (response.didCancel || !response.assets?.length) return;
 
