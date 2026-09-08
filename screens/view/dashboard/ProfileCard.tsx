@@ -87,6 +87,16 @@ PAYMENT_ICON
     city?: string | null;
     feedback_form_url?: string |null;
     whatsapp_number?: string | null;
+     app_version?: {
+    ios?: {
+      version: number;
+      force_update: boolean;
+    };
+    android?: {
+      version: number;
+      force_update: boolean;
+    };
+  };
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
@@ -161,9 +171,15 @@ PAYMENT_ICON
             university_name: user.university_name ?? null,
             city: user.city ?? null,
             feedback_form_url: user.feedback_form_url ?? null,
-            whatsapp_number: user.whatsapp_number ?? null
+            whatsapp_number: user.whatsapp_number ?? null,
+            app_version: user.app_version ?? null,
+            
           });
-
+const appVersion =
+  Platform.OS === 'ios'
+    ? userMeta?.app_version?.ios?.version
+    : userMeta?.app_version?.android?.version;
+    const APP_VERSION = `v${appVersion ?? '1.0.0'}`;
         } else {
           console.warn('Failed to fetch user profile:', data?.message || response.status);
         }
@@ -395,7 +411,9 @@ const openWhatsApp = async () => {
       </TouchableOpacity>
     );
   };
-  const APP_VERSION = 'v1.0.0';
+  const APP_VERSION =   Platform.OS === 'ios'
+    ? "v"+userMeta?.app_version?.ios?.version
+    : "v"+userMeta?.app_version?.android?.version;;
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
