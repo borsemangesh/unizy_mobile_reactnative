@@ -1532,55 +1532,6 @@ const verifyAppVersion = async () => {
         </Animated.View>
       </View>
 
-{/* <Modal
-  visible={isForceUpdate}
-  transparent
-  animationType="fade"
->
-  <View style={styles.overlay}>
-    <View style={styles.popupContainer}>
-      <Image
-        source={ALERT_ICON}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <Text
-        allowFontScaling={false}
-        style={styles.popupMainHeader}
-      >
-        Update Required
-      </Text>
-
-      <Text
-        allowFontScaling={false}
-        style={styles.popupSubHeader}
-      >
-        A new version of UniZy is available.
-        Please update the app to continue.
-      </Text>
-
-      <TouchableOpacity
-        style={styles.popupButton}
-        onPress={async () => {
-          const storeUrl =
-            Platform.OS === 'ios'
-              ? APP_STORE_URL
-              : PLAY_STORE_URL;
-
-          await Linking.openURL(storeUrl);
-        }}
-      >
-        <Text
-          allowFontScaling={false}
-          style={styles.popupButtonText}
-        >
-          Update Now
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal> */}
 
 <Modal
   visible={showUpdateModal}
