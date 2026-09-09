@@ -1075,13 +1075,35 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             //   purchase: detail?.ispurchased,
                             //   seller_id: detail?.createdby?.id ?? 1,
                             // });
-                            navigation.navigate('MyReviews', {
+                            // navigation.navigate('MyReviews', {
+                            //   catagory_id: detail?.category_id,
+                            //   id: detail?.id,
+                            //   purchase: false,
+                            //   seller_id: detail?.createdby?.id || 1,
+                            //   activeTab: 'Received Reviews',
+                            // });
+                            navigation.navigate('UserReviews', {
                               catagory_id: detail?.category_id,
                               id: detail?.id,
                               purchase: false,
                               seller_id: detail?.createdby?.id || 1,
                               activeTab: 'Received Reviews',
+
+                              members: {
+                                blocked_you: detail?.blocked_you ?? false,
+                                firstname: detail?.createdby?.firstname ?? '',
+                                id: detail?.createdby?.id,
+                                isactive: true,
+                                isblocked: detail?.blocked_by ?? false,
+                                lastname: detail?.createdby?.lastname ?? '',
+                                profile: detail?.createdby?.profile ?? '',
+                                university: {
+                                  id: detail?.university?.id,
+                                  name: detail?.university?.name ?? '',
+                                },
+                              },
                             });
+
                           }}
                           style={{
                             flexDirection: 'row',
