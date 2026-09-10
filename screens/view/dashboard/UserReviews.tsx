@@ -10,6 +10,7 @@ import {
   StatusBar,
   ScrollView,
   Dimensions,
+  useWindowDimensions,
 
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -101,8 +102,7 @@ type RouteParams = {
 
 
 const UserReviews = ({ navigation }: UserReviewsProps) => {
-
-
+  const { width, height } = useWindowDimensions();
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
   const { members } = route.params;
 

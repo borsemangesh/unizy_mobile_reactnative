@@ -135,7 +135,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [initialEmail, setInitialEmail] = useState(''); // store original email
   const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
 
-  const screenHeight = Dimensions.get('window').height;
+  
   const [slideUp1] = useState(new Animated.Value(0));
 
   const scrollY = useSharedValue(0);
@@ -1382,8 +1382,8 @@ const getCityFromPostalCode = async (postalCode: string) => {
               {
                 paddingBottom:
                   Platform.OS === 'ios'
-                    ? screenHeight * 0.12
-                    : screenHeight * 0.1,
+                    ? height * 0.12
+                    : height * 0.1,
               },
             ]}
           >
@@ -2427,10 +2427,10 @@ const styles = StyleSheet.create({
   },
  
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
-    //top: 7,
+    // top: 17,
   },
 
   fullScreenContainer: {
