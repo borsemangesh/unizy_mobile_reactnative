@@ -13,6 +13,7 @@ import {
   ScrollView,
   Dimensions,
   BackHandler,
+  useWindowDimensions,
 } from 'react-native';
 
 import Animated, {
@@ -38,6 +39,7 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
 import BACKICON_ICON from '../../../assets/images/back.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -78,6 +80,8 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BLUR_ANMOUNT = 10;
 
 const MyListing = ({ navigation }: MyListingProps) => {
+   const { width, height } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   // const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [page, setPage] = useState(1);
@@ -431,7 +435,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
             />
           </MaskedView>
         </Animated.View>
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               console.log('MYLISTSTACK', navigation.getState());

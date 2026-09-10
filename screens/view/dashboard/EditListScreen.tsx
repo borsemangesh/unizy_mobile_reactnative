@@ -14,6 +14,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -65,6 +66,7 @@ import uploadIcon1 from'../../../assets/images/fileupload.png';
 import BACK_ICON from '../../../assets/images/backimg.png';
 import CALENDER_ICON from '../../../assets/images/calendar_icon1.png';
 import INFO_ICON from '../../../assets/images/info_icon.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type EditListScreenContentProps = {
   navigation: any;
@@ -75,6 +77,8 @@ type RootStackParamList = {
 type AddScreenRouteProp = RouteProp<RootStackParamList, 'EditListScreen'>;
 
 const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
+     const { width } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -1952,7 +1956,10 @@ const handlePreview = async (latestFormValues: any) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01 ,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();

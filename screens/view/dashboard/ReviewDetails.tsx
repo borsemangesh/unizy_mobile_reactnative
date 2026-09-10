@@ -12,6 +12,7 @@ import {
   StatusBar,
   ScrollView,
   Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -40,6 +41,7 @@ import i18n from '../../../localization/i18n';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -58,6 +60,8 @@ type RootStackParamList = {
 type ReviewDetailsRouteProp = RouteProp<RootStackParamList, 'ReviewDetails'>;
 
 const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
+     const { width,height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const route = useRoute<ReviewDetailsRouteProp>();
   const { t } = useTranslation();
   const { category_id } = route.params;
@@ -68,7 +72,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
-  const { height } = Dimensions.get('window');
+
 
   const seller_id = route.params?.seller_id || 64;
   console.log('Received seller_id:', seller_id);
@@ -360,7 +364,10 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();

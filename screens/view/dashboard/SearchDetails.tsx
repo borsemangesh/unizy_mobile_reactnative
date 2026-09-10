@@ -15,6 +15,7 @@ import {
   BackHandler,
   ImageSourcePropType,
   Linking,
+  useWindowDimensions,
 } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -54,6 +55,7 @@ import React from 'react';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -94,6 +96,8 @@ type Param = {
 //   );
 // };
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
+     const { width } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [showPopup, setShowPopup] = useState(false);
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -656,7 +660,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             </MaskedView>
           </AnimatedReanimated.View>
 
-          <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+       <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01 ,
+              },]} pointerEvents="box-none">
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {

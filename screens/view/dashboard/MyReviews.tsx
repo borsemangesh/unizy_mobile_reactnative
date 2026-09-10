@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Pressable,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -112,6 +113,8 @@ type User = {
 };
 
 const MyReviews = ({ navigation }: MyReviewsProps) => {
+     const { width, height } = useWindowDimensions();
+   
 
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
@@ -126,7 +129,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
   const { t } = useTranslation();
-  const { height } = Dimensions.get('window');
+
   const isEmpty = featurelist.length === 0;
     const route = useRoute<RouteProp<{ params: MyReviewsRouteParams }, 'params'>>();
 const initialTab = route?.params?.activeTab ?? 'Given Reviews';
@@ -531,7 +534,10 @@ const initialTab = route?.params?.activeTab ?? 'Given Reviews';
           </MaskedView>
         </Animated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() =>
               

@@ -19,6 +19,7 @@ import {
   StatusBar,
   Dimensions,
   Animated,
+  useWindowDimensions,
 } from 'react-native';
 
 import AnimatedReanimated, {
@@ -57,6 +58,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 type EditProfileProps = {
@@ -77,6 +79,8 @@ interface UserMeta {
 }
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
+     const { width, height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
   const [username1, setUsername1] = useState<string>('');
@@ -1291,7 +1295,10 @@ const getCityFromPostalCode = async (postalCode: string) => {
         </AnimatedReanimated.View>
 
         {/* Header Content */}
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01 ,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.reset({

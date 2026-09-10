@@ -12,6 +12,7 @@ import {
   ImageSourcePropType,
   Dimensions,
   BackHandler,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -42,6 +43,7 @@ import { useTranslation } from 'react-i18next';
 
 import COMMONSTYLE from '../../utils/CommonStyle';
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type CreatedBy = {
   id: number;
@@ -95,6 +97,9 @@ type SearchPageRouteProp = RouteProp<RootStackParamList, 'SearchPage'>;
 const mylistings = require('../../../assets/images/filter_icon.png');
 
 const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
+
+     const { width, height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const route = useRoute<SearchPageRouteProp>();
@@ -512,7 +517,10 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       <View style={styles.fullScreenContainer}>
        
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.replace('Dashboard', {

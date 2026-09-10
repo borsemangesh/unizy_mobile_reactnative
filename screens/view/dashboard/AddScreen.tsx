@@ -15,6 +15,7 @@ import {
   StatusBar,
   BackHandler,
   KeyboardAvoidingView,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -69,6 +70,7 @@ import DELETE_ICON from '../../../assets/images/delete.png';
 import FILEUPLOAD_ICON from '../../../assets/images/fileupload.png';
 import BACK_ICON from '../../../assets/images/backimg.png';
 import CustomModal from '../../utils/component/CustomModal.modal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AddScreenContentProps = {
   navigation: any;
@@ -86,6 +88,8 @@ type ImageFile = {
 };
 
 const AddScreen = ({ navigation }: AddScreenContentProps) => {
+     const { width } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1698,7 +1702,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.replace('Dashboard', {

@@ -481,7 +481,10 @@ const UserListing = ({ navigation }: UserListingProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}

@@ -12,6 +12,7 @@ import {
   Keyboard,
   Modal,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from 'react-native';
 
 import AnimatedReanimated, {
@@ -50,6 +51,7 @@ import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
 import COMMONSTYLE from '../../utils/CommonStyle';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type changePasswordProps = {
   navigation: any;
@@ -62,6 +64,8 @@ interface UserMeta {
 }
 
 const ChangePassword = ({ navigation }: changePasswordProps) => {
+     const { width, height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [userMeta, setUserMeta] = useState<UserMeta>({
     current_password: '',
     new_password: '',
@@ -334,7 +338,10 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         </View> */}
 
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01 ,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               console.log('navigation.goBack()');

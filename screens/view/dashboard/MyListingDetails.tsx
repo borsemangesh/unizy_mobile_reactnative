@@ -11,6 +11,7 @@ import {
   FlatList,
   StatusBar,
   BackHandler,
+  useWindowDimensions,
 } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -45,6 +46,7 @@ import React from 'react';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 type MyListingDetailsProps = {
@@ -77,6 +79,8 @@ type Param = {
 };
 
 const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
+     const { width, height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [showPopup, setShowPopup] = useState(false);
   const [showPopup1, setShowPopup1] = useState(false);
   const route = useRoute();
@@ -94,7 +98,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   const [famount, setfamout] = useState(0);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
-  const { height } = Dimensions.get('window');
   const [slideUp1] = useState(new Animated.Value(0));
 
   const [isImageViewVisible, setImageViewVisible] = useState(false);
@@ -585,7 +588,10 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
             </MaskedView>
           </AnimatedReanimated.View>
 
-          <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+          <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {

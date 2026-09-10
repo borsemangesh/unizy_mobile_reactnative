@@ -57,6 +57,7 @@ import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
 import NOPRODUCT_ICON from '../../../assets/images/noproduct.png';
 import SUCCESS_ICON from '../../../assets/images/success_icon.png';
 import PROFILE_DELETE_ICON from '../../../assets/images/profile_delete.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -64,6 +65,8 @@ type AccountDetailsProps = {
 
 
 const AccountDetails = ({ navigation }: AccountDetailsProps) => {
+     
+      const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const scrollY = useSharedValue(0);
 
@@ -672,7 +675,10 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01 ,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => handleBackPress()}

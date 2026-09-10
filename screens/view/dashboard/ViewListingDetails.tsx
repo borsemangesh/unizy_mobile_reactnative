@@ -14,6 +14,7 @@ import {
   Keyboard,
   StatusBar,
   Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -43,11 +44,14 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
 import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type ListingDetailsProps = {
   navigation: any;
 };
 const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
+     const { width } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
@@ -344,7 +348,10 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             />
           </MaskedView>
         </AnimatedReanimated.View>
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top + height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}

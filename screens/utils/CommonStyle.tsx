@@ -1,7 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
 
-
-
 const COMMONSTYLE = StyleSheet.create({
   FONTFAMILY_MEDIUM: {
     fontFamily: 'Urbanist-Medium',
@@ -51,7 +49,8 @@ const COMMONSTYLE = StyleSheet.create({
 
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
+    // top: Platform.OS === 'ios' ? 60 : 40,
+  
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -60,6 +59,7 @@ const COMMONSTYLE = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     justifyContent: 'space-between',
+              
   },
 
   blurButtonWrapper: {

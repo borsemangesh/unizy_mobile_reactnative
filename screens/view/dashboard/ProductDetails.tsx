@@ -14,6 +14,7 @@ import {
   Pressable,
   Dimensions,
   BackHandler,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -94,8 +95,11 @@ type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 import mylistings from '../../../assets/images/filter_icon.png';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
+     const { width, height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const route = useRoute<ProductDetailsRouteProp>();
@@ -597,7 +601,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() =>
               navigation.replace('Dashboard', {

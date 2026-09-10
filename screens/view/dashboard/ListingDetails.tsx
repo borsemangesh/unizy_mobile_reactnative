@@ -13,6 +13,7 @@ import {
   Keyboard,
   StatusBar,
   Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,6 +47,7 @@ import BACK_ICON from '../../../assets/images/backimg.png';
 
 import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
 import ALERT_ICON from '../../../assets/images/alerticon.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 type ListingDetailsProps = {
@@ -55,6 +57,9 @@ type ListingDetailsProps = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
+
+     const { width, height } = useWindowDimensions();
+      const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
@@ -76,7 +81,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { height } = Dimensions.get('window');
+
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [price, setprice] = useState('');
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -430,7 +435,10 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             />
           </MaskedView>
         </AnimatedReanimated.View>
-        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
+        <View style={[COMMONSTYLE.headerContent,{
+
+                paddingTop: insets.top+ height * 0.01 ,
+              },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
