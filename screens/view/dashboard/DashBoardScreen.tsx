@@ -1865,7 +1865,7 @@ const styles = StyleSheet.create({
   },
   featuredHeader: {
     paddingHorizontal: '4.5%',
-    paddingTop: hp(1),
+    paddingTop: hp(0.91),
     paddingBottom: hp(0.8),
   },
   featuredText: {
