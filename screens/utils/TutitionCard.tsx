@@ -171,8 +171,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: wp(84),
-    height: '100%',
+    width: wp(86),
+    height: '99%',
     marginRight: wp(3),
     borderRadius: wp(8),
     shadowColor: '#000',
