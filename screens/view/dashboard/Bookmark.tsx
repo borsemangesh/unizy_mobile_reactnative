@@ -707,7 +707,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: (Platform.OS === 'ios' ? 120 : 100),
+              paddingTop: (Platform.OS === 'ios' ? 129 : 100),
               paddingBottom: isEmpty
                 ? 10
                 : Platform.select({
