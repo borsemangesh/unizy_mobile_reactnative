@@ -1829,7 +1829,7 @@ const styles = StyleSheet.create({
   cardText: {
     color: '#FFF',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: wp(4),
+    fontSize: wp(4.1),
     fontWeight: '600',
   },
 
@@ -1866,7 +1866,7 @@ const styles = StyleSheet.create({
   featuredHeader: {
     paddingHorizontal: '4.5%',
     paddingTop: hp(0.91),
-    paddingBottom: hp(0.8),
+    paddingBottom: hp(2),
   },
   featuredText: {
     color: '#FFF',
