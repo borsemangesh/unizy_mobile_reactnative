@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     // marginTop: 9,
     // marginLeft: 2
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
+    top: (Platform.OS === 'ios' ? 70 : 40),
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',

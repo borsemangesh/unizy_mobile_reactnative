@@ -815,7 +815,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: Platform.OS === 'ios' ? 120 : 100,
+              paddingTop: Platform.OS === 'ios' ? 130 : 100,
               paddingBottom: featurelist.length === 0 ? 10 : 40,
               flexGrow: 1,
             },

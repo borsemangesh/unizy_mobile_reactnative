@@ -820,7 +820,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               },
             ]}
           >
-            <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
+            <View style={{ marginTop: Platform.OS === 'ios' ? 30 : 0 }}>
               {renderImage()}
 
               <View style={{ flex: 1, padding: 16 }}>

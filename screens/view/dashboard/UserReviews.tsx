@@ -637,7 +637,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingTop: (Platform.OS === 'ios'? 126 : 100),
               paddingBottom: isEmpty
                 ? 10                      
                 : Platform.select({
