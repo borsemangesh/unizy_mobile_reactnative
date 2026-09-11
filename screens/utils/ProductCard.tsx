@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: wp(8),
     shadowColor: '#000',
     shadowOpacity: 0.15,
+     marginTop: wp(0.2),
     shadowRadius: 8,
     borderWidth: 0.5,
     overflow: 'hidden',

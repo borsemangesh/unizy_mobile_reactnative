@@ -136,6 +136,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     max_cappund: string | null;
     feature_fee: string | null;
     max_feature_cap: null;
+    min_listing_price: number;
   }
 
   interface UserMeta {
@@ -158,7 +159,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const { height } = Dimensions.get('window');
   const MAX_IMAGES = 5;
   const [slideUp1] = useState(new Animated.Value(0));
-
+  const [min_listing_price, setminListingPrice] = useState(0);
   // const AnimatedNestableScroll =
   // Animated.createAnimatedComponent(NestableScrollContainer);
 
@@ -240,6 +241,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
             setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
             setaccommodation_amount(Number(json.metadata.category.accommodation_amount ?? '0'));
+            setminListingPrice(Number(json.metadata.category.min_listing_price ?? '0'))
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -586,8 +588,8 @@ const handlePreview = async (latestFormValues: any) => {
         } else if (value === 0 || (typeof value === 'string' && value.trim() === '0')) {
           showToast(`${t('price_cannot_be_zero')} ${field.param.field_name} `, 'error');
           return;
-        } else if (value < 0.5) {
-            showToast(`${t('price_must_be_at_least')} ${field.param.field_name} `, 'error');
+        } else if (value < min_listing_price) {
+            showToast(`${t('price_must_be_at_least')}${min_listing_price} ${field.param.field_name} `, 'error');
             return;
         }
       }

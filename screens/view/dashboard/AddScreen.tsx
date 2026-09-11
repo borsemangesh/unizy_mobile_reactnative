@@ -196,6 +196,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     max_feature_cap: null;
     feePrecentage?: number;
     fixedFee?: number;
+    min_listing_price: number;
   }
 
   interface UserMeta {
@@ -217,6 +218,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [feePrecentage, setfeePrecentage] = useState(0);
   const [fixedFee, setFixedFee] = useState(0);
+  const [min_listing_price, setminListingPrice] = useState(0);
 
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
@@ -374,6 +376,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               Number(json.metadata.category.feePrecentage ?? '0'),
             );
             setFixedFee(Number(json.metadata.category.fixedFee ?? '0'));
+            setminListingPrice(Number(json.metadata.category.min_listing_price ?? '0'))
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -666,8 +669,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               'error',
             );
             return;
-          } else if (value < 0.5) {
-            showToast(`${t('price_must_be_at_least')}`, 'error');
+          } else if (value < min_listing_price) {
+            showToast(`${t('price_must_be_at_least')} ${min_listing_price}`, 'error');
             return;
           }
         }
@@ -747,8 +750,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             return;
           }
 
-          if (computedPrice < 0.5) {
-            showToast(t('price_must_be_at_least'), 'error');
+          if (computedPrice < min_listing_price) {
+            // showToast(t('price_must_be_at_least') , 'error');
+            showToast(`${t('price_must_be_at_least')}${min_listing_price} `)
             return;
           }
         }

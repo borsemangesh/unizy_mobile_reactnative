@@ -53,9 +53,13 @@ const FilterBottomSheet = ({
     Record<number, number[]>
   >({});
 
+  // const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  // const [sliderLow, setSliderLow] = useState(priceRange.min);
+  // const [sliderHigh, setSliderHigh] = useState(priceRange.max);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
-  const [sliderLow, setSliderLow] = useState(priceRange.min);
-  const [sliderHigh, setSliderHigh] = useState(priceRange.max);
+const [sliderLow, setSliderLow] = useState<number | ''>(priceRange.min);
+const [sliderHigh, setSliderHigh] = useState<number | ''>(priceRange.max);
+
 
   const [defaultPriceRange, setDefaultPriceRange] = useState({
     min: 0,
@@ -540,13 +544,23 @@ const FilterBottomSheet = ({
                   cursorColor={'#FFFFFF'}
                   value={String(sliderLow)}
                   onChangeText={text => {
-                    const cleaned = text.replace(/[^0-9]/g, '');
-                    const value = cleaned === '' ? 0 : parseInt(cleaned, 10);
+    const cleaned = text.replace(/[^0-9]/g, '');
 
-                    setSliderLow(value);
-                    setPriceRange({ min: value, max: sliderHigh });
-                    setIsPriceChanged(true);
-                  }}
+    if (cleaned === '') {
+      setSliderLow('');
+      setIsPriceChanged(true);
+      return;
+    }
+
+    const value = parseInt(cleaned, 10);
+
+    setSliderLow(value);
+    setPriceRange({
+      min: value,
+      max: sliderHigh === '' ? 0 : sliderHigh,
+    });
+    setIsPriceChanged(true);
+  }}
                 />
               </View>
               <View style={{ width: '48%' }}>
@@ -573,13 +587,23 @@ const FilterBottomSheet = ({
                   placeholderTextColor="#aaa"
                   value={String(sliderHigh)}
                   onChangeText={text => {
-                    const cleaned = text.replace(/[^0-9]/g, '');
-                    const value = cleaned === '' ? 0 : parseInt(cleaned, 10);
+    const cleaned = text.replace(/[^0-9]/g, '');
 
-                    setSliderHigh(value);
-                    setPriceRange({ min: sliderLow, max: value });
-                    setIsPriceChanged(true);
-                  }}
+    if (cleaned === '') {
+      setSliderHigh('');
+      setIsPriceChanged(true);
+      return;
+    }
+
+    const value = parseInt(cleaned, 10);
+
+    setSliderHigh(value);
+    setPriceRange({
+      min: sliderLow === '' ? 0 : sliderLow,
+      max: value,
+    });
+    setIsPriceChanged(true);
+  }}
                 />
               </View>
             </View>
@@ -887,43 +911,51 @@ const FilterBottomSheet = ({
     new Map(filters.map(f => [f.id, f])).values(),
   );
 
-  const validatePriceRange = () => {
-    if (!isPriceChanged) return true;
+const validatePriceRange = () => {
+  if (!isPriceChanged) return true;
 
-    const priceFilter = filters.find(
-      f => f.alias_name?.toLowerCase() === 'price',
+  const priceFilter = filters.find(
+    f => f.alias_name?.toLowerCase() === 'price',
+  );
+
+  const minLimit = priceFilter?.minvalue ?? 0;
+  const maxLimit = priceFilter?.maxvalue ?? 10000;
+
+  // Check empty values first
+  if (sliderLow === '') {
+    showToast('Please enter a Min price', 'error');
+    return false;
+  }
+
+  if (sliderHigh === '') {
+    showToast('Please enter a Max price', 'error');
+    return false;
+  }
+
+  const minValue = sliderLow;
+  const maxValue = sliderHigh;
+
+  if (minValue > maxValue) {
+    showToast('Min price cannot be greater than Max price', 'error');
+    return false;
+  }
+
+  if (maxValue > maxLimit) {
+    showToast(
+      `Max price must be between ${minValue} and ${maxLimit}`,
+      'error',
     );
-    const minValue = sliderLow;
-    const maxValue = sliderHigh;
-    const minLimit = priceFilter?.minvalue ?? 0;
-    const maxLimit = priceFilter?.maxvalue ?? 100;
+    return false;
+  }
 
-    // Same rules previously applied in Min / Max TextInput onChangeText
-    if (minValue > maxValue) {
-      showToast('Min price cannot be greater than Max price', 'error');
-      return false;
-    }
+  if (minValue < minLimit) {
+    showToast(`Min price cannot be less than ${minLimit}`, 'error');
+    return false;
+  }
 
-    if (isNaN(maxValue)) {
-      showToast('Please enter a valid Max price', 'error');
-      return false;
-    }
+  return true;
+};
 
-    if (maxValue < minValue || maxValue > maxLimit) {
-      showToast(
-        `Max price must be between ${minValue} and ${maxLimit}`,
-        'error',
-      );
-      return false;
-    }
-
-    if (minValue < minLimit) {
-      showToast(`Min price cannot be less than ${minLimit}`, 'error');
-      return false;
-    }
-
-    return true;
-  };
 
   const handleApply = () => {
     if (!validatePriceRange()) return;

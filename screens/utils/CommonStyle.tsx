@@ -61,6 +61,25 @@ const COMMONSTYLE = StyleSheet.create({
     justifyContent: 'space-between',
               
   },
+  //  headerContent: {
+  //   // position: 'absolute',
+  //   // // top: Platform.OS === 'ios' ? 60 : 40,
+  
+  //   width: '100%',
+  //   flexDirection: 'row',
+  //   // alignItems: 'center',
+  //   // paddingHorizontal: 16,
+  //   zIndex: 11,
+  //   alignSelf: 'center',
+  //   pointerEvents: 'box-none',
+  //   justifyContent: 'space-between',
+  //       // flexDirection: 'column',
+  //       alignItems: 'center',
+  //       // gap: hp(1.9),
+  //       paddingHorizontal: '4.5%',
+              
+  // },
+
 
   blurButtonWrapper: {
     width: 48,

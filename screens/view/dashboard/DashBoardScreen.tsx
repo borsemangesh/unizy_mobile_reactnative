@@ -1468,7 +1468,7 @@ const verifyAppVersion = async () => {
         <Animated.View
           style={[
             styles.bottomTabContainer,
-            { position: 'absolute', bottom: 0 },
+            { position: 'absolute', bottom:0 },
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >
@@ -1686,7 +1686,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'column',
     alignItems: 'center',
-    gap: hp(1.4),
+    gap: hp(1.9),
     paddingHorizontal: '4.5%',
     paddingBottom: hp(0.5),
   },
@@ -1781,7 +1781,7 @@ const styles = StyleSheet.create({
   },
   // ~3% screen-width gutter between the two columns
   categoryHalfLeft: {
-    marginRight: wp(3),
+    marginRight: wp(2.3),
   },
   categoryPagedItem: {
     marginBottom: hp(1.2),
@@ -1802,7 +1802,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: '100%',
-    height: hp(6.5),
+    height: hp(7.6),
     flexDirection: 'row',
     borderRadius: wp(4.2),
     paddingHorizontal: wp(3.5),
@@ -2011,11 +2011,11 @@ const styles = StyleSheet.create({
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
-    marginBottom: hp(2.5),
+    width: '92%',
+    marginBottom: hp(4),
     borderRadius: 50,
     alignSelf: 'center',
-    padding: wp(0.5),
+    padding: wp(0.1),
     borderWidth: 0.4,
     backgroundColor: 'rgba(0,23,128,0.49)',
     borderTopColor: '#ffffff2e',
@@ -2025,7 +2025,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     zIndex: 100,
   },
-  bubbleRow: { height: hp(5.8), position: 'absolute', left: 0, right: 0 },
+  bubbleRow: { height: hp(5.8), position: 'absolute', top: 2,left: 2, right: 20,padding: 2 },
   bubble: {
     height: '100%',
     backgroundColor: 'rgba(255,255,255,0.16)',

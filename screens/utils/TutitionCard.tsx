@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     height: '99%',
     marginRight: wp(3),
     borderRadius: wp(8),
+    marginTop: wp(0.2),
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
