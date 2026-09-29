@@ -520,7 +520,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
           </TouchableOpacity>
           <View style={{width: 280}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {members.firstname} {t('reviews')}
+            {`${members.firstname}'s ${t('reviews')}`}
           </Text>
           </View>
 

@@ -86,7 +86,7 @@ export default function TutitionCard({
                 style={[{ width: '220%', height: '220%', resizeMode: 'cover' }]}
                 resizeMode="cover"
               />
-              <Text allowFontScaling={false} style={styles.rightText}>
+              <Text allowFontScaling={false}  style={styles.rightText}>
                 {infoTitle}
               </Text>
               <View style={styles.bookmark}>
@@ -127,7 +127,7 @@ export default function TutitionCard({
         </View>
 
         <View style={styles.infoRow}>
-          <Text allowFontScaling={false} style={styles.title}>
+          <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>
             {title}
           </Text>
           <View style={styles.priceRow}>

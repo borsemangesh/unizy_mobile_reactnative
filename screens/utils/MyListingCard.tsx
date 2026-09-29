@@ -106,7 +106,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
             <Text
               allowFontScaling={false}
               style={[COMMONSTYLE.FONTFAMILY_SEMIBOLD, styles.title]}
-              numberOfLines={2}
+              numberOfLines={1}
             >
               {infoTitle}
             </Text>

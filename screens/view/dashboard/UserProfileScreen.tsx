@@ -142,18 +142,18 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   const cardData = [
     {
       id: '1',
-      title: `${userList?.firstname || ''} ${t('reviews')}`,
+      title: `${userList?.firstname || ''}'s ${t('reviews')}`,
       image: require('../../../assets/images/ok.png'),
     },
     {
       id: '2',
-      title: `${userList?.firstname || ''} ${t('listings')}`,
+      title: `${userList?.firstname || ''}'s ${t('listings')}`,
       image: require('../../../assets/images/mylistingicon.png'),
     },
 
     {
       id: '3',
-      title: `${t('block')} ${userList?.firstname || ''} `,
+      title: `${t('block')} ${userList?.firstname || ''}'s`,
       image: require('../../../assets/images/block_icon.png'),
     },
   ];
@@ -211,7 +211,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
 
             <Text allowFontScaling={false} style={styles.nameText}>
-              {userList?.firstname || ''} {userList?.lastname || ''}
+              {`${userList?.firstname || ''}'s ${userList?.lastname || ''}`}
             </Text>
             <Text allowFontScaling={false} style={styles.subText}>
               {userList?.university_name

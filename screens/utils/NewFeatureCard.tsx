@@ -66,7 +66,7 @@ export default function NewProductCard({ tag, infoTitle, inforTitlePrice, rating
         </View>
       </View>
       <View style={styles.infoRow}>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>{infoTitle}</Text>
 
         <View
           style={{
@@ -85,12 +85,12 @@ export default function NewProductCard({ tag, infoTitle, inforTitlePrice, rating
               gap: 4,
             }}
           >
-            <Image
+            {/* <Image
               source={require('../../assets/images/staricon.png')}
               style={styles.image1}
-            />
+            /> */}
 
-            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+            {/* <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text> */}
           </View>
         </View>
       </View>

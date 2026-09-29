@@ -665,7 +665,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                     <View style={{ width: '88%' }}>
                       <Text
-                        numberOfLines={2}
+                        numberOfLines={1}
                         allowFontScaling={false}
                         style={styles.productlebleHeader}
                       >

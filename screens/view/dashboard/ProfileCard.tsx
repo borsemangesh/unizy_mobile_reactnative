@@ -411,9 +411,10 @@ const openWhatsApp = async () => {
       </TouchableOpacity>
     );
   };
-  const APP_VERSION =   Platform.OS === 'ios'
-    ? "v"+userMeta?.app_version?.ios?.version
-    : "v"+userMeta?.app_version?.android?.version;;
+  // const APP_VERSION =   Platform.OS === 'ios'
+  //   ? "v"+userMeta?.app_version?.ios?.version
+  //   : "v"+userMeta?.app_version?.android?.version;;
+  const APP_VERSION = DeviceInfo.getVersion();
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';

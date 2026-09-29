@@ -53,7 +53,7 @@ export default function PreviewCard({ tag, infoTitle, inforTitlePrice, rating, p
         </View>
       </View>
       <View style={styles.infoRow}>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>{infoTitle}</Text>
 
         <View
           style={{
@@ -72,12 +72,12 @@ export default function PreviewCard({ tag, infoTitle, inforTitlePrice, rating, p
               gap: 4,
             }}
           >
-            <Image
+            {/* <Image
               source={require('../../assets/images/staricon.png')}
               style={styles.image1}
             />
 
-            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text> */}
           </View>
         </View>
       </View>
