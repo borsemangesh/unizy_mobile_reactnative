@@ -126,16 +126,16 @@ export default function NewTutitionCard({
           </View>
         </View>
         <View style={[styles.infoRow]}>
-          <Text allowFontScaling={false} style={styles.title}>{title}</Text>
+          <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>{title}</Text>
           <View style={styles.priceRow}>
             <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-            <View style={styles.ratingRow}>
+            {/* <View style={styles.ratingRow}>
               <Image
                 source={require('../../assets/images/staricon.png')}
                 style={styles.starIcon}
               />
               <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </View>

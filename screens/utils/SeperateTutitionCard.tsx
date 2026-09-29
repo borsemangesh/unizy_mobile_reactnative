@@ -119,7 +119,7 @@ export default function SeperateTutionCard({
       </View>
 
       <View style={styles.infoRow}>
-        <Text allowFontScaling={false} style={styles.title}>
+        <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>
           {infoTitle}
         </Text>
 
@@ -130,7 +130,7 @@ export default function SeperateTutionCard({
             justifyContent: 'space-between',
           }}
         >
-          <Text allowFontScaling={false} style={styles.price}>
+          <Text allowFontScaling={false}  style={styles.price}>
             {inforTitlePrice}
           </Text>
 
@@ -142,13 +142,13 @@ export default function SeperateTutionCard({
               gap: 4,
             }}
           >
-            <Image
+            {/* <Image
               source={require('../../assets/images/staricon.png')}
               style={styles.image1}
             />
             <Text allowFontScaling={false} style={styles.ratingText}>
               {rating}
-            </Text>
+            </Text> */}
           </View>
         </View>
       </View>
