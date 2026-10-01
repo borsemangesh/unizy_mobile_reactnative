@@ -107,7 +107,7 @@ export default function SearchTutionCard({
 
 
       <View style={styles.infoRow}>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>{infoTitle}</Text>
 
         <View
           style={{
