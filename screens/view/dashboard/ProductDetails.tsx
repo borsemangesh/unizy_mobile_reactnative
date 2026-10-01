@@ -976,10 +976,25 @@ const styles = StyleSheet.create({
     width: 24,
   },
   searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
+    // fontSize: 17,
+    // color: '#fff',
+    // fontFamily: 'Urbanist-Medium',
+    // fontWeight: 500,
+    flex: 1,
+  height: 48,
+  paddingVertical: 0,
+  paddingHorizontal: 0,
+  margin: 0,
+
+  fontSize: 17,
+  lineHeight: 22,
+
+  color: '#fff',
+  fontFamily: 'Urbanist-Medium',
+
+  // Android
+  includeFontPadding: false,
+  textAlignVertical: 'center',
   },
   listContainer: {
     marginLeft: 8,
