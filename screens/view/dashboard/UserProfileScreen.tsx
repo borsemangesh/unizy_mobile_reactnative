@@ -153,7 +153,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
     {
       id: '3',
-      title: `${t('block')} ${userList?.firstname || ''}'s`,
+      title: `${t('block')} ${userList?.firstname || ''}`,
       image: require('../../../assets/images/block_icon.png'),
     },
   ];
@@ -211,7 +211,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
 
             <Text allowFontScaling={false} style={styles.nameText}>
-              {`${userList?.firstname || ''}'s ${userList?.lastname || ''}`}
+              {`${userList?.firstname || ''} ${userList?.lastname || ''}`}
             </Text>
             <Text allowFontScaling={false} style={styles.subText}>
               {userList?.university_name

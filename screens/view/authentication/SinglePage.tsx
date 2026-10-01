@@ -2619,7 +2619,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 Styles.personalEmailID_TextInput,
                                 { paddingTop: Platform.OS === 'ios' ? 0 : 10 },
                               ]}
-                              placeholder={"UK "+ t('postal_code')}
+                              placeholder={"UK "+ t('postal_code')+"*"}
                               cursorColor={'#FFFFFF'}
                               selectionColor={'#FFFFFF'}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"

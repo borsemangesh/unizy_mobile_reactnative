@@ -62,7 +62,7 @@ const cardData = [
   { id: '7', titleKey: 'help_support', image: HELP_ICON},
   { id: '10', titleKey: 'feedback_form', image: FEEDBACK},
   { id: '8', titleKey: 'logout', image: LOGOUT_ICON},
-  { id: '9', titleKey: 'app_version', image: VERSION_ICON },
+  // { id: '9', titleKey: 'app_version', image: VERSION_ICON },
   
 ];
 
