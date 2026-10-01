@@ -953,7 +953,7 @@ const styles = StyleSheet.create({
     marginTop: (Platform.OS === 'ios' ? 5 : 0),
     height: 50,
     gap: (Platform.OS === 'ios' ? 8 : 0),
-    width: '84%',
+    width: '83%',
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
@@ -981,9 +981,11 @@ const styles = StyleSheet.create({
     // fontFamily: 'Urbanist-Medium',
     // fontWeight: 500,
     flex: 1,
-  height: 48,
+    height: 48,
+  width: '80%',
   paddingVertical: 0,
-  paddingHorizontal: 0,
+    paddingHorizontal: 0,
+  paddingEnd: 15,
   margin: 0,
 
   fontSize: 17,
