@@ -119,7 +119,7 @@ export default function SearchTutionCard({
           }}
         >
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-          {rating !== '0.0' && (
+          {/* {rating !== '0.0' && (
 
             <View
               style={{
@@ -136,7 +136,7 @@ export default function SearchTutionCard({
 
               <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
             </View>
-          )}
+          )} */}
         </View>
       </View>
 

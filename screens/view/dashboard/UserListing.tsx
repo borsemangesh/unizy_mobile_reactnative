@@ -539,7 +539,8 @@ const UserListing = ({ navigation }: UserListingProps) => {
 
           <View style={{width:300}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {members.firstname} {t('listings')}
+            {/* {members.firstname} {t('listings')} */}
+            {`${members.firstname}'s ${t('reviews')}`}
           </Text>
           </View>
           <TouchableOpacity
