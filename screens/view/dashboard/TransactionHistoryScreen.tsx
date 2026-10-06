@@ -264,7 +264,7 @@ const PurchaseCard = React.memo(
                 <Text
                   numberOfLines={1}
                   allowFontScaling={false}
-                  style={[styles.itemTitle, { width: '60%' }]}
+                  style={[styles.itemTitle, { width: '67%' }]}
                 >
                   {item.title}
                 </Text>
