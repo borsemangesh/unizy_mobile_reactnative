@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
@@ -96,6 +95,7 @@ import mylistings from '../../../assets/images/filter_icon.png';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { wp, hp } from '../../utils/component/responsive';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
      const { width, height } = useWindowDimensions();
@@ -601,118 +601,107 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={[COMMONSTYLE.headerContent,{
-
-                paddingTop: insets.top+ height * 0.01,
-              },]} pointerEvents="box-none">
-          <TouchableOpacity
-            onPress={() =>
-              navigation.replace('Dashboard', {
-                AddScreenBackactiveTab: 'Home',
-                isNavigate: false,
-              })
-            }
-            style={styles.backButtonContainer}
-            activeOpacity={0.7}
-          >
-            <Animated.View
-              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
+        {/* Header matches DashBoardScreen: title row + search bar at same Y start */}
+        <View
+          style={[
+            styles.header,
+            {
+              paddingTop: insets.top + height * 0.01,
+            },
+          ]}
+        >
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Home',
+                  isNavigate: false,
+                })
+              }
+              style={styles.backButtonContainer}
+              activeOpacity={0.7}
             >
               <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 30],
-                      [1, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,
-                  })),
-                ]}
-              />
-
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 50],
-                      [0, 1],
-                      'clamp',
-                    ),
-                  })),
-                ]}
+                style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
               >
-                <BlurView
-                  style={StyleSheet.absoluteFill}
-                  blurType="light"
-                  blurAmount={10}
-                  reducedTransparencyFallbackColor="transparent"
+                <Animated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 30],
+                        [1, 0],
+                        'clamp',
+                      ),
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: 40,
+                    })),
+                  ]}
+                />
+
+                <Animated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 50],
+                        [0, 1],
+                        'clamp',
+                      ),
+                    })),
+                  ]}
+                >
+                  <BlurView
+                    style={StyleSheet.absoluteFill}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="transparent"
+                  />
+                </Animated.View>
+
+                <Animated.Image
+                  source={require('../../../assets/images/back.png')}
+                  style={[{ height: wp(5.8), width: wp(5.8) }, animatedIconStyle]}
                 />
               </Animated.View>
-
-              <Animated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 }, animatedIconStyle]}
-              />
-            </Animated.View>
-          </TouchableOpacity>
-          <View style={{ width: 280 }}>
+            </TouchableOpacity>
             <Text
               allowFontScaling={false}
               numberOfLines={2}
               style={styles.unizyText}
             >{`${category_name}`}</Text>
+            <View style={styles.headerSpacer} />
           </View>
-          <TouchableOpacity
-            style={[styles.backButtonContainer]}
-            // activeOpacity={0}
-          >
-            <Animated.View style={[styles.blurButtonWrapper_none]}>
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 0],
-                      [0, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'transparent',
-                    borderRadius: 40,
-                  })),
-                  { display: 'none' },
-                ]}
-              />
 
-              {/* Blur view fades in as scroll increases */}
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 0],
-                      [0, 0],
-                      'clamp',
-                    ),
-                  })),
-                  { display: 'none' },
-                ]}
-              ></Animated.View>
-
-              {/* Back Icon */}
-              <Animated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25, display: 'none' }]}
+          <View style={styles.searchRow}>
+            <Pressable
+              style={styles.search_container}
+              onPress={() => inputRef.current?.focus()}
+            >
+              <Image source={searchIcon} style={styles.searchIcon} />
+              <TextInput
+                selectionColor="#fff"
+                cursorColor="#fff"
+                ref={inputRef}
+                allowFontScaling={false}
+                style={styles.searchBar}
+                placeholder={t('search')}
+                placeholderTextColor="#ccc"
+                onChangeText={text => {
+                  setSearch(text);
+                  debouncedSearch(text);
+                }}
+                value={search}
               />
-            </Animated.View>
-          </TouchableOpacity>
+            </Pressable>
+            <TouchableOpacity onPress={() => clickfilter()}>
+              <View style={styles.MylistingsBackground}>
+                <Image source={mylistings} style={styles.iconSmall} />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Animated.FlatList
@@ -724,45 +713,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.5}
-          ListHeaderComponent={
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                paddingHorizontal: 8,
-                marginTop: Platform.OS == 'ios' ? 0 : 4,
-              }}
-            >
-              <Pressable
-                style={styles.search_container}
-                onPress={() => inputRef.current?.focus()}
-              >
-                <Image source={searchIcon} style={styles.searchIcon} />
-                <TextInput
-                  selectionColor="#F5F5F5"
-                  cursorColor="#F5F5F5"
-                  ref={inputRef}
-                  allowFontScaling={false}
-                  style={styles.searchBar}
-                  placeholder={t('search')}
-                  placeholderTextColor="#ccc"
-                  onChangeText={text => {
-                    setSearch(text);
-                    debouncedSearch(text);
-                  }}
-                  value={search}
-                />
-              </Pressable>
-
-              <View>
-                <TouchableOpacity onPress={() => clickfilter()}>
-                  <View style={styles.MylistingsBackground}>
-                    <Image source={mylistings} style={styles.iconSmall} />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          }
           ListFooterComponent={
             isLoading && featurelist.length > 0 ? (
               <View style={{ paddingVertical: 20, alignItems: 'center' }}>
@@ -815,22 +765,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: Platform.OS === 'ios' ? 130 : 100,
+              paddingTop: hp(1.2),
               paddingBottom: featurelist.length === 0 ? 10 : 40,
               flexGrow: 1,
             },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
-          // onEndReached={() => {
-          //   if (!onEndReachedCalledDuringMomentum.current) {
-          //     handleEndReached();
-          //     onEndReachedCalledDuringMomentum.current = true;
-          //   }
-          // }}
-          // onMomentumScrollBegin={() => {
-          //   onEndReachedCalledDuringMomentum.current = false;
-          // }}
         />
       </View>
 
@@ -931,36 +872,58 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  search_container: {
 
-    display: 'flex',
+  // Matches DashBoardScreen header so search bar starts at the same Y
+  header: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: hp(1.9),
+    paddingHorizontal: '4.5%',
+    paddingBottom: hp(0.5),
+    zIndex: 11,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  headerSpacer: {
+    height: wp(12),
+    width: wp(12),
+  },
+  searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
+    gap: wp(2),
+  },
+
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: wp(5),
+    textAlign: 'center',
+    fontWeight: '600',
+    flex: 1,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+  search_container: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
     borderRadius: 50,
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    paddingVertical: 4,
-    padding: (Platform.OS === 'ios' ? 12 : 0),
-    marginTop: (Platform.OS === 'ios' ? 5 : 0),
-    height: 50,
-    gap: (Platform.OS === 'ios' ? 8 : 0),
-    width: '83%',
+    paddingHorizontal: '3.5%',
+    height: hp(5.5),
+    gap: wp(2),
+    borderWidth: 0.4,
     borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.10) 100%)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -968,72 +931,49 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
   searchIcon: {
-
-    padding: (Platform.OS === 'ios' ? 0 : 5),
-    marginLeft: (Platform.OS === 'ios' ? 0 : 10),
-    marginRight: (Platform.OS === 'ios' ? 0 : 6),
-    height: 24,
-    width: 24,
+    height: wp(5.2),
+    width: wp(5.2),
   },
   searchBar: {
-    // fontSize: 17,
-    // color: '#fff',
-    // fontFamily: 'Urbanist-Medium',
-    // fontWeight: 500,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: '500',
+    fontSize: wp(4.2),
+    color: '#fff',
     flex: 1,
-    height: 48,
-  width: '80%',
-  paddingVertical: 0,
-    paddingHorizontal: 0,
-  paddingEnd: 15,
-  margin: 0,
-
-  fontSize: 17,
-  lineHeight: 22,
-
-  color: '#fff',
-  fontFamily: 'Urbanist-Medium',
-
-  // Android
-  includeFontPadding: false,
-  textAlignVertical: 'center',
+    height: '100%',
+    paddingVertical: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   listContainer: {
-    marginLeft: 8,
-    marginRight: 5,
-    paddingTop: 10,
-    gap: 16
+    paddingHorizontal: '4.5%',
+    gap: 16,
   },
 
   itemContainer: {
     flex: 1,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
 
   MylistingsBackground: {
-    height: 48,
-    width: 48,
-
+    height: wp(12),
+    width: wp(12),
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    marginTop: (Platform.OS === 'ios' ? 6 : 0),
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
   },
-  iconSmall: {
-    width: 24,
-    height: 24,
-  },
+  iconSmall: { width: wp(5.8), height: wp(5.8) },
 });

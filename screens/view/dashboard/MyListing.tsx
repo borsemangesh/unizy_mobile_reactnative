@@ -40,6 +40,7 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 import BACK_ICON from '../../../assets/images/backimg.png';
 import BACKICON_ICON from '../../../assets/images/back.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { wp, hp } from '../../utils/component/responsive';
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -435,98 +436,123 @@ const MyListing = ({ navigation }: MyListingProps) => {
             />
           </MaskedView>
         </Animated.View>
-        <View style={[COMMONSTYLE.headerContent,{
-
-                paddingTop: insets.top + height * 0.01,
-              },]} pointerEvents="box-none">
-          <TouchableOpacity
-            onPress={() => {
-              console.log('MYLISTSTACK', navigation.getState());
-              if (
-                navigation.getState().routes[navigation.getState().index]
-                  .name === 'MyListing'
-              ) {
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Home',
-                  isNavigate: false,
-                });
-              }
-            }}
-            style={styles.backButtonContainer}
-            activeOpacity={0.7}
-          >
-            <Animated.View
-              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
+        {/* Header matches DashBoardScreen: title row + category tabs at search-bar Y */}
+        <View
+          style={[
+            styles.header,
+            {
+              paddingTop: insets.top + height * 0.01,
+            },
+          ]}
+        >
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('MYLISTSTACK', navigation.getState());
+                if (
+                  navigation.getState().routes[navigation.getState().index]
+                    .name === 'MyListing'
+                ) {
+                  navigation.replace('Dashboard', {
+                    AddScreenBackactiveTab: 'Home',
+                    isNavigate: false,
+                  });
+                }
+              }}
+              style={styles.backButtonContainer}
+              activeOpacity={0.7}
             >
               <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 30],
-                      [1, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,
-                  })),
-                ]}
-              />
-
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 50],
-                      [0, 1],
-                      'clamp',
-                    ),
-                  })),
-                ]}
+                style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
               >
-                <BlurView
-                  style={StyleSheet.absoluteFill}
-                  blurType="light"
-                  blurAmount={BLUR_ANMOUNT}
-                  reducedTransparencyFallbackColor="transparent"
+                <Animated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 30],
+                        [1, 0],
+                        'clamp',
+                      ),
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: 40,
+                    })),
+                  ]}
+                />
+
+                <Animated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 50],
+                        [0, 1],
+                        'clamp',
+                      ),
+                    })),
+                  ]}
+                >
+                  <BlurView
+                    style={StyleSheet.absoluteFill}
+                    blurType="light"
+                    blurAmount={BLUR_ANMOUNT}
+                    reducedTransparencyFallbackColor="transparent"
+                  />
+                </Animated.View>
+
+                <Animated.Image
+                  source={BACKICON_ICON}
+                  style={[styles.BACKICON_ICON_STYLE, animatedIconStyle]}
                 />
               </Animated.View>
-
-              <Animated.Image
-                source={BACKICON_ICON}
-                style={[styles.BACKICON_ICON_STYLE, animatedIconStyle]}
-              />
-            </Animated.View>
-          </TouchableOpacity>
-          <View style={styles.width_280}>
+            </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.unizyText}>
               {t('My_Listings')}
             </Text>
+            <View style={styles.headerSpacer} />
           </View>
-          <TouchableOpacity
-            style={[styles.backButtonContainer]}
-            // activeOpacity={0}
-          >
-            <Animated.View style={[styles.blurButtonWrapper_none]}>
-              {/* Blur view fades in as scroll increases */}
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  animatedBlurStyle_none,
-                  { display: 'none' },
-                ]}
-              />
-              {/* Back Icon */}
-              <Animated.Image
-                source={BACKICON_ICON}
-                style={[styles.BACKICON_ICON_STYLE, { display: 'none' }]}
-              />
-            </Animated.View>
-          </TouchableOpacity>
+
+          <View style={styles.categoryTabsContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoryTabsScrollContent}
+              nestedScrollEnabled={true}
+            >
+              {categories.map((cat, index) => {
+                const isSelected = selectedCategory.name === cat.name;
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => setSelectedCategory(cat)}
+                    activeOpacity={0.7}
+                  >
+                    <SquircleView
+                      style={isSelected ? styles.tabcard : styles.tabcard1}
+                      squircleParams={{
+                        cornerSmoothing: 1,
+                        cornerRadius: 10,
+                        fillColor: isSelected
+                          ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                          : 'rgba(255, 255, 255, 0.06)',
+                      }}
+                    >
+                      <Text
+                        allowFontScaling={false}
+                        style={isSelected ? styles.tabtext : styles.othertext}
+                      >
+                        {cat.name}
+                      </Text>
+                    </SquircleView>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
         </View>
+
         <View style={styles.flatListContainer}>
           <Animated.FlatList
             data={featurelist}
@@ -535,61 +561,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
             nestedScrollEnabled={false}
             renderItem={renderItem}
             keyExtractor={item => item.id.toString()}
-            ListHeaderComponent={
-              <View
-                style={[
-                  styles.categoryTabsContainer,
-                  {
-                    marginHorizontal: -30,
-                    paddingHorizontal: 30,
-                    overflow: 'visible',
-                  },
-                ]}
-                pointerEvents="box-none"
-              >
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.categoryTabsScrollContent}
-                  nestedScrollEnabled={true}
-                >
-                  {categories.map((cat, index) => {
-                    const isSelected = selectedCategory.name === cat.name;
-                    return (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => setSelectedCategory(cat)}
-                        activeOpacity={0.7}
-                      >
-                        <SquircleView
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                          squircleParams={{
-                            cornerSmoothing: 1,
-                            cornerRadius: 10,
-                            fillColor: isSelected
-                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                              : 'rgba(255, 255, 255, 0.06)',
-                          }}
-                        >
-                          <Text
-                            allowFontScaling={false}
-                            style={
-                              isSelected ? styles.tabtext : styles.othertext
-                            }
-                          >
-                            {cat.name}
-                          </Text>
-                        </SquircleView>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-              </View>
-            }
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: Platform.OS === 'ios' ? 127 : 100,
+                paddingTop: hp(1.2),
                 paddingBottom: isEmpty
                   ? 10
                   : Platform.select({
@@ -670,6 +645,27 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
+
+  // Matches DashBoardScreen header so category tabs start at search-bar Y
+  header: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: hp(1.9),
+    paddingHorizontal: '4.5%',
+    paddingBottom: hp(0.5),
+    zIndex: 11,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  headerSpacer: {
+    height: wp(12),
+    width: wp(12),
+  },
+
   width_280: { width: 280 },
   BACK_ICON_STYLE: {
     flex: 1,
@@ -678,19 +674,22 @@ const styles = StyleSheet.create({
   },
 
   BACKICON_ICON_STYLE: {
-    height: 24,
-    width: 24,
+    height: wp(5.8),
+    width: wp(5.8),
   },
   flatListContainer: {
     flex: 1,
     overflow: 'hidden',
   },
-  categoryTabsContainer: {},
+  categoryTabsContainer: {
+    alignSelf: 'stretch',
+    width: '100%',
+  },
   categoryTabsScrollContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    padding: 8,
+    gap: 0,
+    paddingVertical: 0,
   },
   blurButtonWrapper_none: {
     width: 48,
@@ -772,11 +771,11 @@ const styles = StyleSheet.create({
 
   unizyText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: wp(5),
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
+    flex: 1,
   },
 
   listContainer: {
