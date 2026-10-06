@@ -327,7 +327,9 @@ const SalesAllDetailsDropdown = ({
                   <View style={styles.imgcontainer}>
                     <Image source={{ uri: SalesImageUrl }} style={styles.image} resizeMode="cover" />
                   </View>
-                  <Text allowFontScaling={false} style={styles.salesTitle}>{dropDowntitle}</Text>
+                  <Text allowFontScaling={false} numberOfLines={1} style={styles.salesTitle}>
+                    {dropDowntitle}
+                  </Text>
                 </View>
 
                 <View style={styles.cardconstinerdivider} />

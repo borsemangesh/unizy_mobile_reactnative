@@ -262,7 +262,7 @@ const PurchaseCard = React.memo(
             <View style={{ flex: 1, gap: 4 }}>
               <View style={styles.title}>
                 <Text
-                  numberOfLines={2}
+                  numberOfLines={1}
                   allowFontScaling={false}
                   style={[styles.itemTitle, { width: '60%' }]}
                 >
@@ -392,7 +392,7 @@ const SalesCard = React.memo(({ item, onAllDetails, t }: SalesCardProps) => (
           />
         </View>
         <View style={{ width: 160 }}>
-          <Text numberOfLines={2} style={styles.salesTitle}>
+          <Text numberOfLines={1} style={styles.salesTitle}>
             {item.title.length > 24
               ? `${item.title.substring(0, 24)}...`
               : item.title}
@@ -464,11 +464,11 @@ const ChargesCard = React.memo(
             </View>
             <View style={{ width: 160 }}>
               <Text
-                numberOfLines={2}
+                numberOfLines={1}
                 allowFontScaling={false}
                 style={styles.chargesTitle}
               >
-                {item.title}
+                {item.title} 
               </Text>
             </View>
           </View>

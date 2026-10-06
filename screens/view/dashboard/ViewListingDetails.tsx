@@ -474,7 +474,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       },
                     ]}
                   >
-                  {data?.list?.avg_rating || '0.0'}
+                {/* {data?.list?.avg_rating || '0.0'} */}
+                {data?.list?.avg_rating ==='0.0' ? '-.-' :data?.list?.avg_rating}
                   </Text>
             </AnimatedReanimated.View>
           </TouchableOpacity>

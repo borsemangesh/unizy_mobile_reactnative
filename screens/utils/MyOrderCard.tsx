@@ -130,7 +130,7 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
       <View style={styles.row}>
         {renderProfileSection()}
         <View style={styles.details}>
-          <Text allowFontScaling={false} style={styles.title}>
+          <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>
             {infoTitle}
           </Text>
 
