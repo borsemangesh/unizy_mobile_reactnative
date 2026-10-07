@@ -1866,7 +1866,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     //paddingHorizontal: 20,
     paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 120 : 100,
+    paddingTop: Platform.OS === 'ios' ? 130 : 100,
     paddingHorizontal: 16,
   },
   bottomview: {

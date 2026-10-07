@@ -441,7 +441,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
               },]} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
-              console.log('MYLISTSTACK', navigation.getState());
               if (
                 navigation.getState().routes[navigation.getState().index]
                   .name === 'MyListing'

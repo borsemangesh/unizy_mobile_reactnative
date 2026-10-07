@@ -750,7 +750,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
               },
             ]}
           >
-            <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
+            <View style={{ marginTop: Platform.OS === 'ios' ? 20 : 0 }}>
               {renderImage()}
 
               <View style={{ flex: 1, padding: 16 }}>
