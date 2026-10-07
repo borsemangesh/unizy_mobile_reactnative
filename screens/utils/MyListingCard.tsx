@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   imageContainer: {
     width: 72,

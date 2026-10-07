@@ -286,7 +286,7 @@ const PurchaseCard = React.memo(
                   allowFontScaling={false}
                   style={[
                     styles.price,
-                    { marginTop: showQty || isAwaiting ? -6 : 0 },
+                    { marginTop: showQty || isAwaiting ? -3 : 0 },
                   ]}
                 >
                   {item.price}
@@ -1601,7 +1601,7 @@ const styles = StyleSheet.create({
   },
   salesTitle: {
     fontWeight: '600',
-    fontSize: 17,
+    fontSize: 16,
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     marginTop: 2,
@@ -1624,7 +1624,7 @@ const styles = StyleSheet.create({
   chargesTitle: {
     fontWeight: '700',
     fontSize: 16,
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.88)',
     marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',
   },
