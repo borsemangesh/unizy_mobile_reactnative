@@ -1100,7 +1100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 42,
-    marginBottom: Platform.OS === 'ios' ? 15 : 15,
+    marginBottom: Platform.OS === 'ios' ? 10 : 10,
     borderRadius: 50,
     alignSelf: 'center',
     borderWidth: 0.4,
@@ -1115,7 +1115,7 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 50,
     boxSizing: 'border-box',
     zIndex: 100,
-    marginTop: 120,
+    marginTop: 130,
   },
   bubble: {
     height: 38,
