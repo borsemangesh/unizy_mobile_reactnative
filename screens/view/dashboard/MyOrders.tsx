@@ -413,7 +413,7 @@ const formatDate = (dateString?: string, t?: any) => {
         : require('../../../assets/images/drone.png');
 
     const displayPrice =
-      item?.amount != null ? `£${item.amount}` : '$0.00';
+      item?.amount != null ? `${item.amount}` : '$0.00';
     const displayTitle = item?.featurelist?.title ?? 'Title';
 
     let isPurchase;
@@ -428,7 +428,16 @@ const formatDate = (dateString?: string, t?: any) => {
       <View style={styles.itemContainer}>
         <MyOrderCard
           infoTitle={displayTitle}
-          inforTitlePrice={displayPrice}
+          // inforTitlePrice={displayPrice}
+          inforTitlePrice={
+           item?.featurelist?.category_id === 2
+                  ? `£${displayPrice}/${t('hr')}`
+                  : item?.featurelist?.category_id === 4
+                  ? `£${displayPrice}/${t('week')}`
+                  : item?.featurelist?.category_id === 5
+                  ? `£${displayPrice}/${t('session')}`
+                  : `£${displayPrice}`
+              }
           productImage={productImage}
           shareid={item.featurelist?.id}
           date={displayDate}

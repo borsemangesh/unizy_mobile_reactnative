@@ -678,7 +678,15 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         allowFontScaling={false}
                         style={styles.productlableprice}
                       >
-                        £{data?.list?.price}
+                          {/* £{data?.list?.price} */}
+                          {data?.list?.category_id === 2
+                            ? `£${data?.list?.price}/${t('hr')}`
+                            : data?.list?.category_id === 4
+                              ? `£${data?.list?.price}/${t('week')}`
+                              : data?.list?.category_id === 5
+                                ? `£${data?.list?.price}/${t('session')}`
+                                : `£${data?.list?.price}`
+                          }
                       </Text>
                       <Text allowFontScaling={false} style={styles.datetlable}>
                         {formatDateWithDash(data?.list?.created_at, t)}

@@ -308,7 +308,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
           <MyListingCard
             tag={item.createdby?.university_name || 'University of Warwick'}
             infoTitle={displayTitle}
-            inforTitlePrice={`£ ${displayPrice}`}
+            // inforTitlePrice={`£ ${displayPrice}`}
+            inforTitlePrice={
+                item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`
+              }
             rating={displayDate}
             productImage={productImage}
             topRightText={item.isactive ? t('active') : t('inactive')}

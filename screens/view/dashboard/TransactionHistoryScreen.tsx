@@ -289,7 +289,14 @@ const PurchaseCard = React.memo(
                     { marginTop: showQty || isAwaiting ? -3 : 0 },
                   ]}
                 >
-                  {item.price}
+                  {/* {item.price} */}
+                  {item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`}
                 </Text>
                 {showQty && (
                   <>
