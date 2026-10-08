@@ -1151,7 +1151,16 @@ const verifyAppVersion = async () => {
                   <ProductCard
                     tag={item.university?.name || 'University of Warwick'}
                     infoTitle={item.title}
-                    inforTitlePrice={`£ ${item.price}`}
+                    // inforTitlePrice={`£ ${item.price}`}
+                       inforTitlePrice={
+                item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`
+              }
                     rating={item.avg_rating}
                     productImage={{ uri: item.thumbnail }}
                     onBookmarkPress={() => handleBookmarkPress(item.id)}

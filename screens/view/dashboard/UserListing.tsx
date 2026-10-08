@@ -403,7 +403,16 @@ const UserListing = ({ navigation }: UserListingProps) => {
             <SearchTutionCard
               tag={feature.createdby.university_name || 'University'}
               infoTitle={feature.feature_title}
-              inforTitlePrice={`£ ${feature.price}`}
+              // inforTitlePrice={`£ ${feature.price}`}
+                    inforTitlePrice={
+                item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`
+              }
               rating={item.avg_rating}
               productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
               bookmark={isBookmarked}
@@ -416,7 +425,16 @@ const UserListing = ({ navigation }: UserListingProps) => {
             <SearchListProductCard
               tag={feature.createdby.university_name || 'University'}
               infoTitle={feature.feature_title}
-              inforTitlePrice={`£ ${feature.price}`}
+              // inforTitlePrice={`£ ${feature.price}`}
+                    inforTitlePrice={
+                item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`
+              }
               rating={item.avg_rating}
               productImage={productImage ?? require('../../../assets/images/drone.png')}
               bookmark={isBookmarked}
@@ -540,7 +558,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
           <View style={{width:300}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {/* {members.firstname} {t('listings')} */}
-            {`${members.firstname}'s ${t('reviews')}`}
+            {`${members.firstname}'s ${t('listings')}`}
           </Text>
           </View>
           <TouchableOpacity
