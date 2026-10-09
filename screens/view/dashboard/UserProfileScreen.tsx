@@ -388,8 +388,8 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
                 <Text allowFontScaling={false} style={styles.mainheader}>
                   
                   {/* {isBlocked ? t('unblock_user') : t('block_user')} */}
-                  {isBlocked ? `${t('unblock')} ${userList?.firstname || ''}`
-                    : `${t('block')} ${userList?.firstname || ''}`}
+                {isBlocked   ? `${t('unblock')} ${userList?.firstname || ''}`
+                              : `${t('block')} ${userList?.firstname || ''}`}
                 </Text>
                 <Text allowFontScaling={false} style={styles.subheader}>
                   {/* {t('block_msg')} */}
