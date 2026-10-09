@@ -267,11 +267,6 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
       image: require('../../../assets/images/mylistingicon.png'),
     },
 
-    // {
-    //   id: '3',
-    //   title: `${t('block')} ${userList?.firstname || ''}`,
-    //   image: require('../../../assets/images/block_icon.png'),
-    // },
     {
     id: '3',
     title: isBlocked
@@ -282,12 +277,6 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   },
   ];
 
-//   const filteredCardData = cardData.filter(item => {
-//   if (members?.isblocked && item.id === '3') {
-//     return false; // hide block option
-//   }
-//   return true;
-  // });
   const filteredCardData = cardData;
   return (
       <ImageBackground
@@ -398,7 +387,9 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
                 />
                 <Text allowFontScaling={false} style={styles.mainheader}>
                   
-                  {isBlocked ? t('unblock_user') : t('block_user')}
+                  {/* {isBlocked ? t('unblock_user') : t('block_user')} */}
+                  {isBlocked ? `${t('unblock')} ${userList?.firstname || ''}`
+                    : `${t('block')} ${userList?.firstname || ''}`}
                 </Text>
                 <Text allowFontScaling={false} style={styles.subheader}>
                   {/* {t('block_msg')} */}
@@ -619,19 +610,6 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
-
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '6%' : 40,
-    // width: Platform.OS === 'ios' ? 393 : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: 9,
-    // marginLeft: 2
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 70 : 40),
     width: '100%',

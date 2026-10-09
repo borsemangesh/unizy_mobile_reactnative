@@ -835,6 +835,7 @@
   "unblock_info_user": "This chat is no longer restricted and you can now send and receive messages.",
   "unblock_msg_user": "Are you sure you want to unblock this user? They will be able to contact you again.",
   "unblock_msg_user_admin": "This chat is no longer restricted and you can now send and receive messages.",
-  "unblock": "Unblock"
+  "unblock": "Unblock",
+  "block" : "Block"
 
 }
