@@ -21,6 +21,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { getKnownBlockedStatus } from './UserProfileScreen';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -204,7 +205,17 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         },
       });
       const json = await res.json();
-      setDetail(json.data);
+      const nextDetail = json.data;
+      const sellerId =
+        nextDetail?.createdby?.id ??
+        nextDetail?.createdby?.user_id ??
+        nextDetail?.created_by;
+      const knownBlocked = getKnownBlockedStatus(sellerId);
+      setDetail(
+        !nextDetail || knownBlocked === undefined
+          ? nextDetail
+          : { ...nextDetail, blocked_you: knownBlocked },
+      );
 
       if (res.status === 401 || res.status === 403) {
         handleForceLogout();
@@ -632,7 +643,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     isactive: true,
     lastname: detail?.createdby?.lastname ?? '',
     firstname: detail?.createdby?.firstname ?? '',
-    isblocked: detail?.blocked_you ?? false,
+    isblocked: getKnownBlockedStatus(sellerId) ?? detail?.blocked_you ?? false,
     university: {
       id: detail?.university?.id,
       name: detail?.university?.name ?? '',

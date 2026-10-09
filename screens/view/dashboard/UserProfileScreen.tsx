@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, Image, ImageBackground, Modal, Platform, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../utils/component/Loader';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
@@ -12,6 +12,34 @@ import { BlurView } from '@react-native-community/blur';
 const arrowIcon = require('../../../assets/images/nextarrow.png');
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+
+const blockedStatusByUserId = new Map<string, boolean>();
+const blockedStatusListeners = new Set<
+  (userId: string, blocked: boolean) => void
+>();
+
+export const getKnownBlockedStatus = (userId?: string | number | null) => {
+  if (userId === undefined || userId === null || userId === '') return undefined;
+  return blockedStatusByUserId.get(String(userId));
+};
+
+export const publishBlockedStatus = (
+  userId: string | number,
+  blocked: boolean,
+) => {
+  const key = String(userId);
+  blockedStatusByUserId.set(key, blocked);
+  blockedStatusListeners.forEach(listener => listener(key, blocked));
+};
+
+const subscribeBlockedStatus = (
+  listener: (userId: string, blocked: boolean) => void,
+) => {
+  blockedStatusListeners.add(listener);
+  return () => {
+    blockedStatusListeners.delete(listener);
+  };
+};
 
 
 type RouteParams = {
@@ -35,6 +63,8 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
   const { members, source } = route.params;
+  const membersRef = useRef(members);
+  membersRef.current = members;
   const [messageText, setMessageText] = useState('');
   const [userList, setUserList] = useState<any>(null);
   const { t } = useTranslation();
@@ -42,14 +72,41 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const isTruthyFlag = (value: unknown) =>
     value === true || value === 1 || value === '1' || value === 'true';
-  const [isBlocked, setIsBlocked] = useState(
-    isTruthyFlag(members?.isblocked)
-  );
+  const profileUserId = members?.id ?? members?.user_id;
+  const [isBlocked, setIsBlocked] = useState(() => {
+    const known = getKnownBlockedStatus(profileUserId);
+    return known ?? isTruthyFlag(members?.isblocked);
+  });
+  const hasProfileRef = useRef(false);
 
   const resolveBlockedUserId = (profile?: any) =>
-    profile?.id ?? profile?.user_id ?? members?.id ?? members?.user_id;
+    profile?.id ?? profile?.user_id ?? membersRef.current?.id ?? membersRef.current?.user_id;
 
   const leaveAfterBlockChange = () => {
+    const state = navigation.getState?.();
+    const routes = state?.routes ?? [];
+    const currentIndex = typeof state?.index === 'number' ? state.index : routes.length - 1;
+    let searchDetailsBelow = -1;
+
+    for (let index = currentIndex - 1; index >= 0; index -= 1) {
+      if (routes[index]?.name === 'SearchDetails') {
+        searchDetailsBelow = index;
+        break;
+      }
+    }
+
+    if (source === 'searchDetails' && searchDetailsBelow >= 0) {
+      const between = routes.slice(searchDetailsBelow + 1, currentIndex);
+      const onlyProfiles = between.every(
+        (stackRoute: { name?: string }) => stackRoute?.name === 'UserProfileScreen',
+      );
+      const popCount = currentIndex - searchDetailsBelow;
+      if (onlyProfiles && popCount > 0 && typeof navigation.pop === 'function') {
+        navigation.pop(popCount);
+        return;
+      }
+    }
+
     if (source === 'searchDetails' && navigation.canGoBack()) {
       navigation.goBack();
       return;
@@ -70,61 +127,108 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   };
 
   useEffect(() => {
-    const fetchUserChatData = async (query: string = "") => {
-      try {
-        setLoading(true)
-        setIsBlocked(isTruthyFlag(members?.isblocked));
-        const token = await AsyncStorage.getItem('userToken');
-        const userId = await AsyncStorage.getItem('userId');
+    if (profileUserId === undefined || profileUserId === null) return;
 
-        console.log(token)
+    return subscribeBlockedStatus((userId, blocked) => {
+      if (userId !== String(profileUserId)) return;
+      setIsBlocked(blocked);
+      const current = membersRef.current;
+      if (!current || isTruthyFlag(current.isblocked) === blocked) return;
+      navigation.setParams({
+        members: {
+          ...current,
+          isblocked: blocked,
+        },
+      });
+    });
+  }, [navigation, profileUserId]);
 
-        if (!token || !userId) {
-          console.warn('Missing token or user ID in AsyncStorage');
-          return;
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+
+      const fetchUserChatData = async () => {
+        const statusBeforeFetch = getKnownBlockedStatus(profileUserId);
+        if (statusBeforeFetch !== undefined) {
+          setIsBlocked(statusBeforeFetch);
         }
 
-        const profileUserId = members?.id ?? members?.user_id;
-        if (!profileUserId) {
-          showToast('Unable to load this profile', 'error');
-          return;
+        try {
+          if (!hasProfileRef.current) {
+            setLoading(true);
+          }
+          const token = await AsyncStorage.getItem('userToken');
+          const userId = await AsyncStorage.getItem('userId');
+
+          console.log(token)
+
+          if (!token || !userId) {
+            console.warn('Missing token or user ID in AsyncStorage');
+            return;
+          }
+
+          if (!profileUserId) {
+            showToast('Unable to load this profile', 'error');
+            return;
+          }
+
+          const url = `${MAIN_URL.baseUrl}user/info?user_id=${profileUserId}`;
+
+          console.log(url)
+
+
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const data = await response.json();
+          if (cancelled) return;
+          if (!response.ok) {
+            console.warn('Token fetch failed:', data.message);
+            return;
+          }
+
+          const UserData = data.data;
+          const apiBlocked = UserData?.isblocked ?? UserData?.is_blocked;
+          const statusAfterFetch = getKnownBlockedStatus(profileUserId);
+          if (statusAfterFetch !== statusBeforeFetch && statusAfterFetch !== undefined) {
+            setIsBlocked(statusAfterFetch);
+          } else if (apiBlocked !== undefined && apiBlocked !== null) {
+            const resolved = isTruthyFlag(apiBlocked);
+            if (statusBeforeFetch === undefined || statusBeforeFetch === resolved) {
+              publishBlockedStatus(profileUserId, resolved);
+            } else {
+              setIsBlocked(statusBeforeFetch);
+            }
+          } else if (statusAfterFetch !== undefined) {
+            setIsBlocked(statusAfterFetch);
+          } else {
+            setIsBlocked(isTruthyFlag(membersRef.current?.isblocked));
+          }
+          hasProfileRef.current = true;
+          setUserList(UserData);
+        } catch (error) {
+          if (!cancelled) {
+            console.error('Chat setup failed:', error);
+          }
         }
-
-        const url = `${MAIN_URL.baseUrl}user/info?user_id=${profileUserId}`;
-
-        console.log(url)
-
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const data = await response.json();
-        if (!response.ok) {
-          console.warn('Token fetch failed:', data.message);
-          return;
+        finally {
+          if (!cancelled) {
+            setLoading(false)
+          }
         }
+      };
 
-        const UserData = data.data;
-        setIsBlocked(
-          isTruthyFlag(UserData?.isblocked ?? UserData?.is_blocked ?? members?.isblocked)
-        );
-        setUserList(UserData);
-      } catch (error) {
-        setLoading(false)
-        console.error('Chat setup failed:', error);
-      }
-      finally {
-        setLoading(false)
-      }
-    };
-
-    fetchUserChatData();
-  }, [members?.id, members?.user_id]);
+      fetchUserChatData();
+      return () => {
+        cancelled = true;
+      };
+    }, [profileUserId])
+  );
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -213,6 +317,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
     const apiData = await response.json();
 
     if (response.ok && apiData?.statusCode === 200) {
+      publishBlockedStatus(blockedUserId, false);
       setIsBlocked(false);
       showToast(
         t(apiData?.message || 'User unblocked successfully'),
@@ -464,6 +569,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
                       if (response.ok && apiData?.statusCode === 200) {
                          setShowConfirm(false);
+                        publishBlockedStatus(blockedUserId, true);
                         setIsBlocked(true);
                         showToast(t(backendMsg), "success");
                         leaveAfterBlockChange();
