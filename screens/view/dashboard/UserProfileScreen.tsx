@@ -241,7 +241,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         allowFontScaling={false}
         style={[
           styles.cardText,
-          isBlockUser && { color: isBlocked ? '#06FF63E0' : '#FF8282E0' },
+          isBlockUser && { color: isBlocked ? 'rgba(255,255,255,0.88)' : '#FF8282E0' },
         ]}
       >
         {item.title}
