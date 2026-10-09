@@ -20,7 +20,7 @@ import {
 } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -175,47 +175,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        setLoading(true);
-        const language_code =
-          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
-
-        const token = await AsyncStorage.getItem('userToken');
-        console.log(token);
-
-        if (!token) return;
-        const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
-
-        console.log(url1);
-
-        const res = await fetch(url1, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            languagecode: language_code,
-          },
-        });
-        const json = await res.json();
-        setDetail(json.data);
-
-        if (res.status === 401 || res.status === 403) {
-          handleForceLogout();
-          return;
-        }
-
-        if (json.statusCode === 401 || json.statusCode === 403) {
-          handleForceLogout();
-          return;
-        }
-      } catch (error) {
-        console.error('Error fetching details:', error);
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+  const fetchDetails = async () => {
     const handleForceLogout = async () => {
       await AsyncStorage.clear();
       navigation.reset({
@@ -223,8 +183,51 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
       });
     };
-    fetchDetails();
-  }, [id]);
+
+    try {
+      setLoading(true);
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
+
+      const token = await AsyncStorage.getItem('userToken');
+      console.log(token);
+
+      if (!token) return;
+      const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
+
+      console.log(url1);
+
+      const res = await fetch(url1, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          languagecode: language_code,
+        },
+      });
+      const json = await res.json();
+      setDetail(json.data);
+
+      if (res.status === 401 || res.status === 403) {
+        handleForceLogout();
+        return;
+      }
+
+      if (json.statusCode === 401 || json.statusCode === 403) {
+        handleForceLogout();
+        return;
+      }
+    } catch (error) {
+      console.error('Error fetching details:', error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchDetails();
+    }, [id]),
+  );
 
   const onScroll = (event: any) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
@@ -611,23 +614,36 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   // };
 
   const handleSellerProfilePress = () => {
+  // Match the chat-with-seller payload. Listing `blocked_you` is the
+  // "I blocked this seller" flag (`isblocked`) used by UserProfileScreen.
+  const sellerId =
+    detail?.createdby?.id ??
+    detail?.createdby?.user_id ??
+    detail?.created_by;
+
+  if (!sellerId) {
+    showToast('Unable to open this profile', 'error');
+    return;
+  }
+
   const member = {
-    id: detail?.createdby?.id,
+    id: sellerId,
     profile: detail?.createdby?.profile ?? null,
     isactive: true,
     lastname: detail?.createdby?.lastname ?? '',
     firstname: detail?.createdby?.firstname ?? '',
-    isblocked: detail?.blocked_by ?? false,
+    isblocked: detail?.blocked_you ?? false,
     university: {
       id: detail?.university?.id,
       name: detail?.university?.name ?? '',
     },
-    blocked_you: detail?.blocked_you ?? false,
+    blocked_you: detail?.blocked_by ?? false,
   };
 
   navigation.navigate('UserProfileScreen', {
     animation: 'none',
     members: member,
+    source: 'searchDetails',
   });
 };
 

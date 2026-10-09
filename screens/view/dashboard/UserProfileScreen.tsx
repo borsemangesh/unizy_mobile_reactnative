@@ -15,11 +15,12 @@ import BACK_ICON from '../../../assets/images/backimg.png';
 
 
 type RouteParams = {
-  source?: 'chatList' | 'sellerPage';
+  source?: 'chatList' | 'sellerPage' | 'searchDetails';
   members: {
     firstname: string;
     lastname: string;
     id: number;
+    user_id?: number;
     profile: string | null;
     isblocked: boolean
     university: { id: number, name: string };
@@ -33,21 +34,46 @@ type UserProfileScreenProps = {
 const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-  const { members } = route.params;
+  const { members, source } = route.params;
   const [messageText, setMessageText] = useState('');
   const [userList, setUserList] = useState<any>(null);
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  // const [isBlocked, setIsBlocked] = useState(false);
+  const isTruthyFlag = (value: unknown) =>
+    value === true || value === 1 || value === '1' || value === 'true';
   const [isBlocked, setIsBlocked] = useState(
-  Boolean(members?.isblocked)
-);
+    isTruthyFlag(members?.isblocked)
+  );
+
+  const resolveBlockedUserId = (profile?: any) =>
+    profile?.id ?? profile?.user_id ?? members?.id ?? members?.user_id;
+
+  const leaveAfterBlockChange = () => {
+    if (source === 'searchDetails' && navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'Dashboard',
+          params: {
+            AddScreenBackactiveTab: 'Bookmark',
+            isNavigate: false,
+          },
+        },
+      ],
+    });
+  };
 
   useEffect(() => {
     const fetchUserChatData = async (query: string = "") => {
       try {
         setLoading(true)
+        setIsBlocked(isTruthyFlag(members?.isblocked));
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
@@ -58,7 +84,13 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
           return;
         }
 
-        const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
+        const profileUserId = members?.id ?? members?.user_id;
+        if (!profileUserId) {
+          showToast('Unable to load this profile', 'error');
+          return;
+        }
+
+        const url = `${MAIN_URL.baseUrl}user/info?user_id=${profileUserId}`;
 
         console.log(url)
 
@@ -78,7 +110,9 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         }
 
         const UserData = data.data;
-        setIsBlocked(Boolean(UserData?.isblocked ?? members?.isblocked));
+        setIsBlocked(
+          isTruthyFlag(UserData?.isblocked ?? UserData?.is_blocked ?? members?.isblocked)
+        );
         setUserList(UserData);
       } catch (error) {
         setLoading(false)
@@ -90,7 +124,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
     };
 
     fetchUserChatData();
-  }, []);
+  }, [members?.id, members?.user_id]);
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -154,8 +188,14 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
       return;
     }
 
+    const blockedUserId = resolveBlockedUserId(userList);
+    if (!blockedUserId) {
+      showToast('Unable to unblock this user', 'error');
+      return;
+    }
+
     const body = {
-      blockedUserId: userList.id,
+      blockedUserId,
     };
 
     const response = await fetch(
@@ -174,24 +214,11 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
     if (response.ok && apiData?.statusCode === 200) {
       setIsBlocked(false);
-      members.isblocked = false;
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'Dashboard',
-              params: {
-                AddScreenBackactiveTab: 'Bookmark',
-                isNavigate: false,
-              },
-            },
-          ],
-        });
-
       showToast(
         t(apiData?.message || 'User unblocked successfully'),
         'success'
       );
+      leaveAfterBlockChange();
     } else {
       showToast(
         t(apiData?.message || 'Failed to unblock user'),
@@ -406,10 +433,17 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
                       return;
                     } else{
                     try {
+                      setLoading(true);
                       const token = await AsyncStorage.getItem('userToken');
+                      const blockedUserId = resolveBlockedUserId(userList);
+
+                      if (!token || !blockedUserId) {
+                        showToast('Unable to block this user', 'error');
+                        return;
+                      }
 
                       const body = {
-                        blockedUserId: userList.id,
+                        blockedUserId,
                       };
 
                       console.log("📤 Sending block-user request:", body);
@@ -428,30 +462,24 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
                       console.log("📥 Backend Response JSON:", apiData);
 
-                      if (apiData?.statusCode === 200) {
+                      if (response.ok && apiData?.statusCode === 200) {
                          setShowConfirm(false);
                         setIsBlocked(true);
-                        members.isblocked = true;
                         showToast(t(backendMsg), "success");
-
-                        navigation.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: 'Dashboard',
-                              params: {
-                                AddScreenBackactiveTab: 'Bookmark',
-                                isNavigate: false,
-                              },
-                            },
-                          ],
-                        });
+                        leaveAfterBlockChange();
                       } else {
-                        //showToast(t(Constant.LOGOUT_FAIL), 'error');
+                        showToast(
+                          t(apiData?.message || 'Failed to block user'),
+                          'error'
+                        );
                       }
 
                     } catch (error) {
                       console.log("Something went wrong. Try again!");
+                      showToast('Something went wrong. Please try again.', 'error');
+                      }
+                      finally {
+                        setLoading(false);
                       }
                       }
                   }}
