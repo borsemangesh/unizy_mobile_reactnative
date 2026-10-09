@@ -1645,6 +1645,7 @@ const MessagesIndividualScreen = ({
               </View>
               <TouchableOpacity
                 onPress={() => {
+                  console.log('Navigating to UserProfileScreen with members: '+source, source == 'chatList' ? members : sellerData);
                   navigation.navigate('UserProfileScreen', {
                     animation: 'none',
                     members: source == 'chatList' ? members : sellerData,

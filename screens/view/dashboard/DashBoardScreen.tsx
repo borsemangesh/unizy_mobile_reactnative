@@ -114,12 +114,10 @@ type RootStackParamList = {
 };
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 
-const APP_STORE_URL =
-  'https://apps.apple.com/app/idcom.org.unizy';
+const APP_STORE_URL = 'https://apps.apple.com/app/idcom.org.unizy';
 
 const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=com.unizy';
-
 
 // ─── ProductItem (pure component, no re-render unless props change) ────────────
 const ProductItem = React.memo(
@@ -434,43 +432,37 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollY = useSharedValue(0);
 
+  const forceLogoutAndUpdate = useCallback(async () => {
+    try {
+      await AsyncStorage.multiRemove([
+        'userToken',
+        'bookmarkedIds',
+        'categories',
+      ]);
+    } catch (error) {
+      console.log('Logout storage error:', error);
+    }
 
-const forceLogoutAndUpdate = useCallback(async () => {
-  try {
-    await AsyncStorage.multiRemove([
-      'userToken',
-      'bookmarkedIds',
-      'categories',
-    ]);
-  } catch (error) {
-    console.log('Logout storage error:', error);
-  }
+    const storeUrl = Platform.OS === 'ios' ? APP_STORE_URL : PLAY_STORE_URL;
 
-  const storeUrl =
-    Platform.OS === 'ios'
-      ? APP_STORE_URL
-      : PLAY_STORE_URL;
+    try {
+      await Linking.openURL(storeUrl);
+    } catch (error) {
+      console.log('Unable to open store:', error);
+    }
 
-  try {
-    await Linking.openURL(storeUrl);
-  } catch (error) {
-    console.log('Unable to open store:', error);
-  }
-
-  navigation.reset({
-    index: 0,
-    routes: [
-      {
-        name: 'SinglePage',
-        params: {
-          resetToLogin: true,
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'SinglePage',
+          params: {
+            resetToLogin: true,
+          },
         },
-      },
-    ],
-  });
-}, [navigation]);
-
-
+      ],
+    });
+  }, [navigation]);
 
   // ── Fetch categories ──
   useEffect(() => {
@@ -501,9 +493,7 @@ const forceLogoutAndUpdate = useCallback(async () => {
             id: cat.id,
             name: cat.name,
             description: cat.description,
-            icon: cat.logo
-              ? { uri: cat.logo }
-              : PRODUCTION_ICON,
+            icon: cat.logo ? { uri: cat.logo } : PRODUCTION_ICON,
           }));
         await AsyncStorage.setItem(
           'categories',
@@ -559,9 +549,9 @@ const forceLogoutAndUpdate = useCallback(async () => {
   );
 
   // ── Send device token ──
-const [isVersionChecking, setIsVersionChecking] = useState(true);
-const [showUpdateModal, setShowUpdateModal] = useState(false);
-const [isForceUpdate, setIsForceUpdate] = useState(false);
+  const [isVersionChecking, setIsVersionChecking] = useState(true);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [isForceUpdate, setIsForceUpdate] = useState(false);
 
   useEffect(() => {
     const sendDeviceTokenToServer = async () => {
@@ -586,141 +576,133 @@ const [isForceUpdate, setIsForceUpdate] = useState(false);
         console.error('Error sending token:', error);
       }
     };
-  let isMounted = true;
+    let isMounted = true;
 
-  const compareVersions = (current: string, server: string): number => {
-  const toParts = (v: string) =>
-    String(v)
-      .trim()
-      .replace(/[^0-9.]/g, '')
-      .split('.')
-      .filter(Boolean)
-      .map(n => parseInt(n, 10) || 0);
+    const compareVersions = (current: string, server: string): number => {
+      const toParts = (v: string) =>
+        String(v)
+          .trim()
+          .replace(/[^0-9.]/g, '')
+          .split('.')
+          .filter(Boolean)
+          .map(n => parseInt(n, 10) || 0);
 
-  const a = toParts(current);
-  const b = toParts(server);
-  const len = Math.max(a.length, b.length);
+      const a = toParts(current);
+      const b = toParts(server);
+      const len = Math.max(a.length, b.length);
 
-  for (let i = 0; i < len; i++) {
-    const left = a[i] ?? 0;
-    const right = b[i] ?? 0;
-    if (left > right) return 1; // current newer
-    if (left < right) return -1; // current older
-  }
-  return 0; // same
-};
-
-const verifyAppVersion = async () => {
-  try {
-    const currentVersion = String(DeviceInfo.getVersion()).trim();
-
-    const response = await fetch(
-      `${MAIN_URL.baseUrl}user/app-version`,
-      {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-      },
-    );
-
-    const result = await response.json();
-
-    console.log('================================');
-    console.log('Platform:', Platform.OS);
-    console.log('Current App Version:', currentVersion);
-    console.log('App Version API Response:', result);
-    console.log('================================');
-
-    if (!response.ok || result?.statusCode !== 200) {
-      if (isMounted) setIsVersionChecking(false);
-      return;
-    }
-
-    const platformConfig =
-      Platform.OS === 'ios'
-        ? result?.data?.app_version?.ios
-        : result?.data?.app_version?.android;
-
-    console.log('Platform Config:', platformConfig);
-
-    if (!platformConfig) {
-      console.log('Platform config not found');
-      if (isMounted) setIsVersionChecking(false);
-      return;
-    }
-
-    const serverVersion = String(platformConfig?.version ?? '').trim();
-
-    const forceUpdate =
-      platformConfig?.force_update === true ||
-      platformConfig?.force_update === 'true' ||
-      platformConfig?.force_update === 1 ||
-      platformConfig?.force_update === '1';
-
-    console.log('Current Version:', currentVersion);
-    console.log('Server Version:', serverVersion);
-    console.log('Force Update:', forceUpdate);
-
-    if (!serverVersion) {
-      if (isMounted) setIsVersionChecking(false);
-      return;
-    }
-
-    const cmp = compareVersions(currentVersion, serverVersion);
-    const isOutdated = cmp < 0; // current < server
-
-    console.log('Version compare result:', cmp, 'Outdated:', isOutdated);
-
-    if (isOutdated) {
-      if (isMounted) {
-        setIsForceUpdate(forceUpdate);
-        setShowUpdateModal(true);
-        setIsVersionChecking(false);
+      for (let i = 0; i < len; i++) {
+        const left = a[i] ?? 0;
+        const right = b[i] ?? 0;
+        if (left > right) return 1; // current newer
+        if (left < right) return -1; // current older
       }
-      return;
-    }
+      return 0; // same
+    };
 
-    console.log('App version is up to date');
+    const verifyAppVersion = async () => {
+      try {
+        const currentVersion = String(DeviceInfo.getVersion()).trim();
 
-    if (isMounted) setIsVersionChecking(false);
-  } catch (error) {
-    console.log('Version check error:', error);
-    if (isMounted) setIsVersionChecking(false);
-  }
-};
-  verifyAppVersion();
+        const response = await fetch(`${MAIN_URL.baseUrl}user/app-version`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+
+        const result = await response.json();
+
+        console.log('================================');
+        console.log('Platform:', Platform.OS);
+        console.log('Current App Version:', currentVersion);
+        console.log('App Version API Response:', result);
+        console.log('================================');
+
+        if (!response.ok || result?.statusCode !== 200) {
+          if (isMounted) setIsVersionChecking(false);
+          return;
+        }
+
+        const platformConfig =
+          Platform.OS === 'ios'
+            ? result?.data?.app_version?.ios
+            : result?.data?.app_version?.android;
+
+        console.log('Platform Config:', platformConfig);
+
+        if (!platformConfig) {
+          console.log('Platform config not found');
+          if (isMounted) setIsVersionChecking(false);
+          return;
+        }
+
+        const serverVersion = String(platformConfig?.version ?? '').trim();
+
+        const forceUpdate =
+          platformConfig?.force_update === true ||
+          platformConfig?.force_update === 'true' ||
+          platformConfig?.force_update === 1 ||
+          platformConfig?.force_update === '1';
+
+        console.log('Current Version:', currentVersion);
+        console.log('Server Version:', serverVersion);
+        console.log('Force Update:', forceUpdate);
+
+        if (!serverVersion) {
+          if (isMounted) setIsVersionChecking(false);
+          return;
+        }
+
+        const cmp = compareVersions(currentVersion, serverVersion);
+        const isOutdated = cmp < 0; // current < server
+
+        console.log('Version compare result:', cmp, 'Outdated:', isOutdated);
+
+        if (isOutdated) {
+          if (isMounted) {
+            setIsForceUpdate(forceUpdate);
+            setShowUpdateModal(true);
+            setIsVersionChecking(false);
+          }
+          return;
+        }
+
+        console.log('App version is up to date');
+
+        if (isMounted) setIsVersionChecking(false);
+      } catch (error) {
+        console.log('Version check error:', error);
+        if (isMounted) setIsVersionChecking(false);
+      }
+    };
+    verifyAppVersion();
 
     sendDeviceTokenToServer();
-  return () => {
-    isMounted = false;
-  };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+  //   useEffect(() => {
+  //   let isMounted = true;
 
+  //   const verifyAppVersion = async () => {
+  //     const isVersionValid = await checkAppVersion();
 
+  //     if (!isMounted) return;
 
+  //     if (!isVersionValid) {
+  //       await forceLogoutAndUpdate();
+  //     }
+  //   };
 
-//   useEffect(() => {
-//   let isMounted = true;
+  //   verifyAppVersion();
 
-//   const verifyAppVersion = async () => {
-//     const isVersionValid = await checkAppVersion();
-
-//     if (!isMounted) return;
-
-//     if (!isVersionValid) {
-//       await forceLogoutAndUpdate();
-//     }
-//   };
-
-//   verifyAppVersion();
-
-//   return () => {
-//     isMounted = false;
-//   };
-// }, [checkAppVersion, forceLogoutAndUpdate]);
-
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [checkAppVersion, forceLogoutAndUpdate]);
 
   // ── Entrance animation ──
   useEffect(() => {
@@ -1127,14 +1109,14 @@ const verifyAppVersion = async () => {
                     }`}
                     // inforTitlePrice={`£ ${item.price}`}
                     inforTitlePrice={
-                item.category_id === 2
-                  ? `£${item.price}/${t('hr')}`
-                  : item.category_id === 4
-                  ? `£${item.price}/${t('week')}`
-                  : item.category_id === 5
-                  ? `£${item.price}/${t('session')}`
-                  : `£${item.price}`
-              }
+                      item.category_id === 2
+                        ? `£${item.price}/${t('hr')}`
+                        : item.category_id === 4
+                        ? `£${item.price}/${t('week')}`
+                        : item.category_id === 5
+                        ? `£${item.price}/${t('session')}`
+                        : `£${item.price}`
+                    }
                     rating={item.avg_rating}
                     productImage={{ uri: item.createdby?.profile }}
                     onBookmarkPress={() => handleBookmarkPress(item.id)}
@@ -1152,15 +1134,15 @@ const verifyAppVersion = async () => {
                     tag={item.university?.name || 'University of Warwick'}
                     infoTitle={item.title}
                     // inforTitlePrice={`£ ${item.price}`}
-                       inforTitlePrice={
-                item.category_id === 2
-                  ? `£${item.price}/${t('hr')}`
-                  : item.category_id === 4
-                  ? `£${item.price}/${t('week')}`
-                  : item.category_id === 5
-                  ? `£${item.price}/${t('session')}`
-                  : `£${item.price}`
-              }
+                    inforTitlePrice={
+                      item.category_id === 2
+                        ? `£${item.price}/${t('hr')}`
+                        : item.category_id === 4
+                        ? `£${item.price}/${t('week')}`
+                        : item.category_id === 5
+                        ? `£${item.price}/${t('session')}`
+                        : `£${item.price}`
+                    }
                     rating={item.avg_rating}
                     productImage={{ uri: item.thumbnail }}
                     onBookmarkPress={() => handleBookmarkPress(item.id)}
@@ -1268,7 +1250,6 @@ const verifyAppVersion = async () => {
             style={[
               styles.header,
               {
-
                 paddingTop: insets.top + height * 0.01,
               },
             ]}
@@ -1300,10 +1281,7 @@ const verifyAppVersion = async () => {
                 { transform: [{ translateY: searchBartranslateY }] },
               ]}
             >
-              <Image
-                source={SEARCHICON}
-                style={styles.searchIcon}
-              />
+              <Image source={SEARCHICON} style={styles.searchIcon} />
               <TextInput
                 selectionColor="#fff"
                 cursorColor="#fff"
@@ -1385,14 +1363,17 @@ const verifyAppVersion = async () => {
               {activeTab === 'Home' ? (
                 homeContent
               ) : activeTab === 'Add' ? (
-                <AddScreenContent navigation={navigation} products={products}  onSetActiveTab={setActiveTab} />
+                <AddScreenContent
+                  navigation={navigation}
+                  products={products}
+                  onSetActiveTab={setActiveTab}
+                />
               ) : null}
             </>
           )}
         </KeyboardAvoidingView>
 
         {activeTab === 'Search' && isSalesActive && (
-
           <View
             style={[
               styles.textbg,
@@ -1405,88 +1386,83 @@ const verifyAppVersion = async () => {
               },
             ]}
           >
-           {Platform.OS === 'ios' ? (
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { borderRadius: 10, backgroundColor: 'transparent' },
-              ]}
-            >
-              <BlurView
-                style={[StyleSheet.absoluteFill,styles.iosBlur]}
-                blurType="light"
-                blurAmount={1.4}
-                reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.56)"
-                overlayColor="rgba(15, 21 ,131,0.8)"
-              >
-                <View
-                  style={{
-                    opacity: Platform.OS === 'ios' ? 0.6 : 0,
-                    backgroundColor: 'rgba(0, 3, 65, 0.98)',
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: 10,
-                  }}
-                ></View>
-              </BlurView>
-            </View>
-          ) : (
-            <>
+            {Platform.OS === 'ios' ? (
               <View
                 style={[
                   StyleSheet.absoluteFill,
-                  { borderRadius: 25, backgroundColor: 'transparent' },
+                  { borderRadius: 10, backgroundColor: 'transparent' },
                 ]}
               >
                 <BlurView
-                  style={[
-                    StyleSheet.absoluteFill,
-                    {
-                      borderRadius: 25,
-                      backgroundColor: 'transparent',
-                      overflow: 'hidden',
-                    },
-                  ]}
+                  style={[StyleSheet.absoluteFill, styles.iosBlur]}
                   blurType="light"
-                  blurAmount={1.3}
-                  reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.05)"
-                  overlayColor="rgba(15, 21, 131, 0.05)"
+                  blurAmount={1.4}
+                  reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.56)"
+                  overlayColor="rgba(15, 21 ,131,0.8)"
                 >
                   <View
                     style={{
-                      // opacity: Platform.OS === 'ios' ? 0.4 : 0,
-                      // backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                      opacity: Platform.OS === 'ios' ? 0.6 : 0,
+                      backgroundColor: 'rgba(0, 3, 65, 0.98)',
                       width: '100%',
                       height: '100%',
-                      borderRadius: 25,
+                      borderRadius: 10,
                     }}
                   ></View>
                 </BlurView>
               </View>
-            </>
-          )}
+            ) : (
+              <>
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { borderRadius: 25, backgroundColor: 'transparent' },
+                  ]}
+                >
+                  <BlurView
+                    style={[
+                      StyleSheet.absoluteFill,
+                      {
+                        borderRadius: 25,
+                        backgroundColor: 'transparent',
+                        overflow: 'hidden',
+                      },
+                    ]}
+                    blurType="light"
+                    blurAmount={1.3}
+                    reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.05)"
+                    overlayColor="rgba(15, 21, 131, 0.05)"
+                  >
+                    <View
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 25,
+                      }}
+                    ></View>
+                  </BlurView>
+                </View>
+              </>
+            )}
 
-          <Image
-            source={INFO_ICON}
-              style={styles.infoIcon}
-          />
-          <View style={{ flex: 1 }}>
-            <Text allowFontScaling={false} style={styles.importantText1}>
-              {t('note')}
-            </Text>
+            <Image source={INFO_ICON} style={styles.infoIcon} />
+            <View style={{ flex: 1 }}>
+              <Text allowFontScaling={false} style={styles.importantText1}>
+                {t('note')}
+              </Text>
 
-            <Text allowFontScaling={false} style={styles.importantText}>
-              {t('complete_orderotp_note')}{' '}
-            </Text>
+              <Text allowFontScaling={false} style={styles.importantText}>
+                {t('complete_orderotp_note')}{' '}
+              </Text>
+            </View>
           </View>
-        </View>
         )}
 
         {/* ── Bottom tab bar ── */}
         <Animated.View
           style={[
             styles.bottomTabContainer,
-            { position: 'absolute', bottom:0 },
+            { position: 'absolute', bottom: 0 },
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >
@@ -1516,146 +1492,78 @@ const verifyAppVersion = async () => {
         </Animated.View>
       </View>
 
-{/* <Modal
-  visible={isForceUpdate}
-  transparent
-  animationType="fade"
->
-  <View style={styles.overlay}>
-    <View style={styles.popupContainer}>
-      <Image
-        source={ALERT_ICON}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <Text
-        allowFontScaling={false}
-        style={styles.popupMainHeader}
-      >
-        Update Required
-      </Text>
-
-      <Text
-        allowFontScaling={false}
-        style={styles.popupSubHeader}
-      >
-        A new version of UniZy is available.
-        Please update the app to continue.
-      </Text>
-
-      <TouchableOpacity
-        style={styles.popupButton}
-        onPress={async () => {
-          const storeUrl =
-            Platform.OS === 'ios'
-              ? APP_STORE_URL
-              : PLAY_STORE_URL;
-
-          await Linking.openURL(storeUrl);
-        }}
-      >
-        <Text
-          allowFontScaling={false}
-          style={styles.popupButtonText}
-        >
-          Update Now
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal> */}
-
-<Modal
-  visible={showUpdateModal}
-  transparent
-  animationType="fade"
-  onRequestClose={() => {
-    // Only allow dismiss when update is optional
-    if (!isForceUpdate) {
-      setShowUpdateModal(false);
-    }
-  }}
->
-  <View style={COMMONSTYLE.overlay}>
-    <BlurView
-              style={[StyleSheet.absoluteFill, COMMONSTYLE.modelBlur]}
-              blurType="light"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            />
-             <View
-                          style={[
-                            StyleSheet.absoluteFill,
-                            { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                          ]}
-                        />
-    <View style={styles.popupContainer}>
-      <Image
-        source={ALERT_ICON}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <Text
-        allowFontScaling={false}
-        style={styles.popupMainHeader}
-      >
-        {isForceUpdate ? t('update_required') : t('update_available')}
-      </Text>
-
-      <Text
-        allowFontScaling={false}
-        style={styles.popupSubHeader}
-      >
-        {isForceUpdate
-          ? t("newVerstion1")
-          : t("newVerstion2")}
-      </Text>
-
-      <TouchableOpacity
-        style={styles.popupButton}
-        onPress={async () => {
-          const storeUrl =
-            Platform.OS === 'ios'
-              ? APP_STORE_URL
-              : PLAY_STORE_URL;
-
-          try {
-            await Linking.openURL(storeUrl);
-          } catch (error) {
-            console.log('Unable to open store:', error);
+      <Modal
+        visible={showUpdateModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          // Only allow dismiss when update is optional
+          if (!isForceUpdate) {
+            setShowUpdateModal(false);
           }
         }}
       >
-        <Text
-          allowFontScaling={false}
-          style={styles.popupButtonText}
-        >
-          {t("update_now")}
-        </Text>
-      </TouchableOpacity>
+        <View style={COMMONSTYLE.overlay}>
+          <BlurView
+            style={[StyleSheet.absoluteFill, COMMONSTYLE.modelBlur]}
+            blurType="light"
+            blurAmount={10}
+            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+          />
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+            ]}
+          />
+          <View style={styles.popupContainer}>
+            <Image
+              source={ALERT_ICON}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
-      {!isForceUpdate && (
-        <TouchableOpacity
-          style={styles.laterButton}
-          onPress={() => {
-            setShowUpdateModal(false);
-          }}
-        >
-          <Text
-            allowFontScaling={false}
-            style={styles.laterButtonText}
-          >
-            Ask Me Later
-          </Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  </View>
-</Modal>
+            <Text allowFontScaling={false} style={styles.popupMainHeader}>
+              {isForceUpdate ? t('update_required') : t('update_available')}
+            </Text>
 
+            <Text allowFontScaling={false} style={styles.popupSubHeader}>
+              {isForceUpdate ? t('newVerstion1') : t('newVerstion2')}
+            </Text>
 
+            <TouchableOpacity
+              style={styles.popupButton}
+              onPress={async () => {
+                const storeUrl =
+                  Platform.OS === 'ios' ? APP_STORE_URL : PLAY_STORE_URL;
+
+                try {
+                  await Linking.openURL(storeUrl);
+                } catch (error) {
+                  console.log('Unable to open store:', error);
+                }
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.popupButtonText}>
+                {t('update_now')}
+              </Text>
+            </TouchableOpacity>
+
+            {!isForceUpdate && (
+              <TouchableOpacity
+                style={styles.laterButton}
+                onPress={() => {
+                  setShowUpdateModal(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.laterButtonText}>
+                  Ask Me Later
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </Modal>
 
       <ShortCustomToastContainer />
       <NewCustomToastContainer />
@@ -1681,19 +1589,6 @@ const styles = StyleSheet.create({
     fontSize: wp(3.85),
     fontWeight: '500',
     textDecorationLine: 'underline',
-  },
-
-  askLaterButton: {
-    marginTop: hp(1.65),
-    paddingVertical: hp(1.2),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  askLaterText: {
-    color: '#fff',
-    fontSize: wp(3.85),
-    fontWeight: '500',
   },
   flex1: { flex: 1 },
   profileFull: { flex: 1, height: '100%' },
@@ -1857,9 +1752,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: '4.5%',
     alignItems: 'flex-start',
   },
-  categoryRightCol: {
-    flex: 1,
-  },
   stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -1894,7 +1786,7 @@ const styles = StyleSheet.create({
   },
   featuredList: {
     flex: 1,
-    marginBottom: hp(0.6)
+    marginBottom: hp(0.6),
   },
   featuredScroll: {
     paddingHorizontal: '4.5%',
@@ -2043,7 +1935,14 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     zIndex: 100,
   },
-  bubbleRow: { height: hp(5.8), position: 'absolute', top: 2,left: 2, right: 20,padding: 2 },
+  bubbleRow: {
+    height: hp(5.8),
+    position: 'absolute',
+    top: 2,
+    left: 2,
+    right: 20,
+    padding: 2,
+  },
   bubble: {
     height: '100%',
     backgroundColor: 'rgba(255,255,255,0.16)',

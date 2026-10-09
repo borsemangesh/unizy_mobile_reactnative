@@ -16,6 +16,7 @@ import {
   ImageSourcePropType,
   Linking,
   useWindowDimensions,
+  Pressable,
 } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -85,7 +86,6 @@ type Param = {
   param_value: ParamValue;
 };
 
-
 // const openMapWithPostalCode = (lat:string, lng: string ) => {
 //   // const url = `https://www.google.com/maps/search/?api=1&query=${postalCode}`;
 
@@ -96,8 +96,8 @@ type Param = {
 //   );
 // };
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
-     const { width } = useWindowDimensions();
-      const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const [showPopup, setShowPopup] = useState(false);
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -300,7 +300,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
   const handlePay = (overrideAmount?: number) => {
     if (detail?.category?.id === 3 && overrideAmount === undefined) {
-      setMultiSelectModal((prev:any) => ({ ...prev, visible: true }));
+      setMultiSelectModal((prev: any) => ({ ...prev, visible: true }));
       return;
     }
 
@@ -320,8 +320,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const fallbackImage = require('../../../assets/images/drone.png');
 
     if (detail?.profileshowinview) {
-      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
-        }`.toUpperCase();
+      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${
+        detail?.createdby?.lastname?.[0] ?? ''
+      }`.toUpperCase();
 
       return (
         <ImageBackground
@@ -391,7 +392,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            keyExtractor={(_:any, index:any) => index.toString()}
+            keyExtractor={(_: any, index: any) => index.toString()}
             onScroll={onScroll}
             scrollEventThrottle={16}
             renderItem={({ item, index }) => {
@@ -491,7 +492,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
       let updatedBookmarks;
       if (isCurrentlyBookmarked) {
-        updatedBookmarks = bookmarkedIds.filter((id: number )=> id !== productId);
+        updatedBookmarks = bookmarkedIds.filter(
+          (id: number) => id !== productId,
+        );
       } else {
         updatedBookmarks = [...bookmarkedIds, productId];
       }
@@ -600,11 +603,33 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     ];
   }, [detail]);
 
-  // useEffect(() => {
-  //   previewImages.forEach((image: any) => {
-  //     FastImage.preload([{ uri: image.uri }]);
+  // const handleSellerProfilePress = () => {
+  //   navigation.navigate('UserProfileScreen', {
+  //     animation: 'none',
+  //     members: source == 'chatList' ? members : sellerData,
   //   });
-  // }, [previewImages]);
+  // };
+
+  const handleSellerProfilePress = () => {
+  const member = {
+    id: detail?.createdby?.id,
+    profile: detail?.createdby?.profile ?? null,
+    isactive: true,
+    lastname: detail?.createdby?.lastname ?? '',
+    firstname: detail?.createdby?.firstname ?? '',
+    isblocked: detail?.blocked_by ?? false,
+    university: {
+      id: detail?.university?.id,
+      name: detail?.university?.name ?? '',
+    },
+    blocked_you: detail?.blocked_you ?? false,
+  };
+
+  navigation.navigate('UserProfileScreen', {
+    animation: 'none',
+    members: member,
+  });
+};
 
   return (
     <>
@@ -660,10 +685,15 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             </MaskedView>
           </AnimatedReanimated.View>
 
-       <View style={[COMMONSTYLE.headerContent,{
-
-                paddingTop: insets.top+ height * 0.01 ,
-              },]} pointerEvents="box-none">
+          <View
+            style={[
+              COMMONSTYLE.headerContent,
+              {
+                paddingTop: insets.top + height * 0.01,
+              },
+            ]}
+            pointerEvents="box-none"
+          >
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {
@@ -1027,24 +1057,26 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </Text>
 
                     <View style={{ flexDirection: 'row', marginBottom: 4 }}>
-                      {detail?.createdby?.profile ? (
-                        <Image
-                          source={{ uri: detail.createdby.profile }}
-                          style={styles.avatar}
-                        />
-                      ) : (
-                        <View style={COMMONSTYLE.initialsCircle}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.initialsText}
-                          >
-                            {getInitials(
-                              detail?.createdby?.firstname ?? 'Alan',
-                              detail?.createdby?.lastname ?? 'Walker',
-                            )}
-                          </Text>
-                        </View>
-                      )}
+                      <Pressable onPress={handleSellerProfilePress}>
+                        {detail?.createdby?.profile ? (
+                          <Image
+                            source={{ uri: detail.createdby.profile }}
+                            style={styles.avatar}
+                          />
+                        ) : (
+                          <View style={COMMONSTYLE.initialsCircle}>
+                            <Text
+                              allowFontScaling={false}
+                              style={styles.initialsText}
+                            >
+                              {getInitials(
+                                detail?.createdby?.firstname ?? 'Alan',
+                                detail?.createdby?.lastname ?? 'Walker',
+                              )}
+                            </Text>
+                          </View>
+                        )}
+                      </Pressable>
 
                       <View style={{ width: '80%', gap: 0 }}>
                         <Text allowFontScaling={false} style={styles.userName}>
@@ -1110,7 +1142,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                                 },
                               },
                             });
-
                           }}
                           style={{
                             flexDirection: 'row',
@@ -1127,7 +1158,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.chattext}
                           >
-                            {detail?.avg_rating === '0.0'? '-.-': detail?.avg_rating }
+                            {detail?.avg_rating === '0.0'
+                              ? '-.-'
+                              : detail?.avg_rating}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -1155,10 +1188,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                                 id: detail.createdby.id,
                                 isblocked: detail.blocked_you,
                                 blocked_you: detail.blocked_by,
-                                
                               },
                               source: 'sellerPage',
-                              getrestriction_applied: false
+                              getrestriction_applied: false,
                             });
                           } else {
                             setShowPopup(true);
@@ -1294,12 +1326,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   [multiSelectModal.fieldId!]: { value: quantity },
                 }));
               }}
-              feePercentage={Number(
-    detail?.category?.feePrecentage ?? 0
-  )}
-  fixedFee={Number(
-    detail?.category?.fixedFee ?? 0
-  )}
+              feePercentage={Number(detail?.category?.feePrecentage ?? 0)}
+              fixedFee={Number(detail?.category?.fixedFee ?? 0)}
             />
           ) : (
             <SelectFoodQuantity
@@ -1332,13 +1360,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   ...prev,
                   [multiSelectModal.fieldId!]: { value: quantity },
                 }));
-                }}
-                feePercentage={Number(
-    detail?.category?.feePrecentage ?? 0
-  )}
-  fixedFee={Number(
-    detail?.category?.fixedFee ?? 0
-  )}
+              }}
+              feePercentage={Number(detail?.category?.feePrecentage ?? 0)}
+              fixedFee={Number(detail?.category?.fixedFee ?? 0)}
             />
           )}
 
@@ -1567,56 +1591,6 @@ const ImageViewerModal = React.memo(
     onChangeIndex,
   }: ImageViewerModalProps) => {
     return (
-
-      // <ImageViewing
-      //   images={images}
-      //   imageIndex={index} 
-      //   visible={visible}
-      //   backgroundColor="black"
-      //   animationType="fade"
-      //   swipeToCloseEnabled
-      //   doubleTapToZoomEnabled
-      //   onRequestClose={onClose}
-      //   renderImage={({
-      //     source,
-      //     style,
-      //   }: {
-      //     source: ImageSourcePropType;
-      //     style: any;
-      //   }) => (
-      //      <Image
-      //       source={source}
-      //       style={style}
-      //       resizeMode="contain"
-      //     />
-      //   )}
-      //   FooterComponent={({ imageIndex }) => (
-      //     <View
-      //       style={{
-      //         position: 'absolute',
-      //         bottom: 30,
-      //         width: '100%',
-      //         alignItems: 'center',
-      //       }}
-      //     >
-      //       <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-      //         {images.map((_: any, i: any) => (
-      //           <View
-      //             key={i}
-      //             style={{
-      //               width: 8,
-      //               height: 8,
-      //               borderRadius: 4,
-      //               marginHorizontal: 4,
-      //               backgroundColor:
-      //                 i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
-      //             }}
-      //           />
-      //         ))}
-      //       </View>
-      //     </View>
-      //   )}
-      // />
       <ImageViewing
         images={images}
         imageIndex={index}
@@ -1645,9 +1619,7 @@ const ImageViewerModal = React.memo(
                     borderRadius: 4,
                     marginHorizontal: 4,
                     backgroundColor:
-                      i === imageIndex
-                        ? '#FFFFFF'
-                        : 'rgba(255,255,255,0.4)',
+                      i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
                   }}
                 />
               ))}
@@ -1655,13 +1627,11 @@ const ImageViewerModal = React.memo(
           </View>
         )}
       />
-
     );
   },
 );
 
 const styles = StyleSheet.create({
-
   textbg: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -1746,11 +1716,10 @@ const styles = StyleSheet.create({
     zIndex: 11,
   },
 
-
   fullScreenContainer: {
     flex: 1,
   },
- 
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -1822,7 +1791,6 @@ const styles = StyleSheet.create({
     gap: 6,
     zIndex: 10,
   },
-
 
   activeStepCircle: {
     width: 12,
@@ -1906,7 +1874,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-  
+
   logo: {
     width: 64,
     height: 64,
@@ -2104,7 +2072,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 6,
   },
-  
 });
 
 export default SearchDetails;

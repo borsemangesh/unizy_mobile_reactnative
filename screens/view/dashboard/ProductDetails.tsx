@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
@@ -18,7 +17,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 const bgImage = require('../../../assets/images/backimg.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
@@ -40,7 +39,10 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import FilterAndroid from '../../utils/component/FilterAndroid';
-import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/ShortCustomToastManager';
+import {
+  ShortCustomToastContainer,
+  shortshowToast,
+} from '../../utils/component/ShortCustomToastManager';
 
 import COMMONSTYLE from '../../utils/CommonStyle';
 type CreatedBy = {
@@ -61,9 +63,9 @@ type CreatedBy = {
   role_id: number;
 };
 type university = {
-  id: number,
-  name: string
-}
+  id: number;
+  name: string;
+};
 
 type Feature = {
   avg_rating: string;
@@ -77,10 +79,10 @@ type Feature = {
   title: string;
   price: number;
   thumbnail: string;
-  profileshowinview: boolean
+  profileshowinview: boolean;
   createdby: CreatedBy;
   university: university;
-  isbookmarked: boolean
+  isbookmarked: boolean;
 };
 
 type ProductDetailsProps = {
@@ -88,7 +90,7 @@ type ProductDetailsProps = {
 };
 
 type RootStackParamList = {
-  ProductDetails: { category_id: number, category_name: string };
+  ProductDetails: { category_id: number; category_name: string };
 };
 
 type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
@@ -98,8 +100,8 @@ import BACK_ICON from '../../../assets/images/backimg.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
-     const { width, height } = useWindowDimensions();
-      const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const route = useRoute<ProductDetailsRouteProp>();
@@ -114,7 +116,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
   const inputRef = useRef<TextInput>(null);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
-
 
   const scrollY = useSharedValue(0);
 
@@ -165,8 +166,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-
-
   const [appliedFilter, setAppliedFilter] = useState<any | null>(null);
 
   useEffect(() => {
@@ -182,13 +181,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       navigation.replace('Dashboard', {
         AddScreenBackactiveTab: 'Home',
         isNavigate: false,
-      })
+      });
       return true;
     };
 
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
 
     return () => backHandler.remove();
@@ -200,7 +199,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
     // setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
   };
 
-  function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
+  function debounce<T extends (...args: any[]) => void>(
+    func: T,
+    delay: number,
+  ) {
     let timeout: ReturnType<typeof setTimeout>;
     return (...args: Parameters<T>) => {
       clearTimeout(timeout);
@@ -212,25 +214,24 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       setPage(1);
       setHasMore(true);
       displayListOfProduct(1, text);
-    }, 350)
+    }, 350),
   ).current;
 
   useFocusEffect(
     useCallback(() => {
       if (appliedFilter) {
-
         return;
       }
       setPage(1);
       setHasMore(true);
       setFeaturelist([]);
       displayListOfProduct(1, search, true);
-    }, [appliedFilter])
+    }, [appliedFilter]),
   );
   const displayListOfProduct = async (
     pageNum = 1,
     searchText = search,
-    isInitialLoad = false
+    isInitialLoad = false,
   ) => {
     if ((isLoading && !isInitialLoad) || !hasMore) return;
 
@@ -252,11 +253,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
-      console.log("URL: ", url);
-      console.log("Token: ", token);
-      console.log("Body: ",JSON.stringify(body))
+      console.log('URL: ', url);
+      console.log('Token: ', token);
+      console.log('Body: ', JSON.stringify(body));
 
       if (!token) {
         if (isInitialLoad) setInitialLoading(false);
@@ -269,7 +271,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: JSON.stringify(body),
       });
@@ -282,7 +284,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         if (pageNum === 1) {
           setFeaturelist(newFeatures);
         } else {
-          setFeaturelist((prev) => [...prev, ...newFeatures]);
+          setFeaturelist(prev => [...prev, ...newFeatures]);
         }
 
         setHasMore(newFeatures.length === 20);
@@ -314,8 +316,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         prevList.map(item =>
           item.id === productId
             ? { ...item, isbookmarked: !item.isbookmarked }
-            : item
-        )
+            : item,
+        ),
       );
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
@@ -330,12 +332,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         body: JSON.stringify({ feature_id: productId }),
       });
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
 
-      shortshowToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
-
+      shortshowToast(
+        t(data.message),
+        data.statusCode === 200 ? 'success' : 'error',
+      );
     } catch (error) {
       console.error('Bookmark error:', error);
 
@@ -343,17 +348,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         prevList.map(item =>
           item.id === productId
             ? { ...item, isbookmarked: !item.isbookmarked }
-            : item
-        )
+            : item,
+        ),
       );
     }
   };
 
-
-  const filteredFeatures: Feature[] = featurelist.filter((item) =>
-    item.title?.toLowerCase().includes(search.toLowerCase())
+  const filteredFeatures: Feature[] = featurelist.filter(item =>
+    item.title?.toLowerCase().includes(search.toLowerCase()),
   );
-
 
   const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     const isLastOddItem =
@@ -369,7 +372,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         productImage = { uri: item.createdby.profile };
       } else {
         showInitials = true;
-        initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
+        initials = `${item.createdby?.firstname?.[0] ?? ''}${
+          item.createdby?.lastname?.[0] ?? ''
+        }`;
       }
     } else {
       if (item.thumbnail) {
@@ -382,15 +387,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       <View
         style={[
           styles.itemContainer,
-          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+          {
+            flex: isLastOddItem ? 0.5 : 0.5,
+            marginRight: isLastOddItem ? 0.5 : 0.5,
+          },
         ]}
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('SearchDetails', { id: item.id, name: category_name }, { animation: 'none' })
-          }
-
-          }
+            navigation.navigate(
+              'SearchDetails',
+              { id: item.id, name: category_name },
+              { animation: 'none' },
+            );
+          }}
           style={{ flex: 1 }}
         >
           {item.profileshowinview ? (
@@ -409,7 +419,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
               rating={item.avg_rating}
               showInitials={showInitials}
               initialsName={initials.toUpperCase()}
-              productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
+              productImage={
+                item.createdby?.profile
+                  ? { uri: item.createdby.profile }
+                  : undefined
+              }
               bookmark={item.isbookmarked}
               isfeature={item.isfeatured}
               applybookmark={() => handleBookmarkPress(item.id)}
@@ -428,7 +442,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                   : `£${item.price}`
               }
               rating={item.avg_rating}
-              productImage={productImage ?? require('../../../assets/images/drone.png')}
+              productImage={
+                productImage ?? require('../../../assets/images/drone.png')
+              }
               bookmark={item.isbookmarked}
               isfeature={item.isfeatured}
               applybookmark={() => handleBookmarkPress(item.id)}
@@ -440,14 +456,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   };
 
   const handleFilterApply = async (filterBody: any) => {
-
     try {
       setAppliedFilter(filterBody);
       setIsLoading(true);
       setFeaturelist([]);
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-      console.log("Token: ",token);
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
+      console.log('Token: ', token);
 
       if (!token) return;
 
@@ -460,25 +476,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       console.log('newFilterBody', newFilterBody);
 
-
       setAppliedFilter(newFilterBody);
 
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-      console.log("url1: ",url);
-
+      console.log('url1: ', url);
 
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: JSON.stringify(newFilterBody),
       });
 
       const jsonResponse = await response.json();
-
 
       if (jsonResponse.statusCode === 200) {
         const filteredFeatures = jsonResponse.data.features;
@@ -498,7 +511,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
 
@@ -510,19 +524,17 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: JSON.stringify(nextFilterBody),
       });
 
       const jsonResponse = await response.json();
-
 
       if (jsonResponse.statusCode === 200) {
         const moreFeatures = jsonResponse.data.features || [];
@@ -540,14 +552,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const onEndReachedCalledDuringMomentum = useRef(false);
   const handleEndReached = useCallback(() => {
     if (isLoading || !hasMore) return;
-  
+
     if (appliedFilter) {
       loadMoreFilteredResults();
     } else {
       displayListOfProduct(page, search);
     }
   }, [isLoading, hasMore, appliedFilter, search, page]);
-
 
   const isEmpty = featurelist.length === 0;
 
@@ -601,10 +612,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={[COMMONSTYLE.headerContent,{
-
-                paddingTop: insets.top+ height * 0.01,
-              },]} pointerEvents="box-none">
+        <View
+          style={[
+            COMMONSTYLE.headerContent,
+            {
+              paddingTop: insets.top + height * 0.01,
+            },
+          ]}
+          pointerEvents="box-none"
+        >
           <TouchableOpacity
             onPress={() =>
               navigation.replace('Dashboard', {
@@ -870,7 +886,6 @@ export default ProductDetails;
 
 const styles = StyleSheet.create({
   blurButtonWrapper_none: {
-
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -901,8 +916,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginTop: (Platform.OS === 'ios' ? 0 : 16),
-    marginBottom:16
+    marginTop: Platform.OS === 'ios' ? 0 : 16,
+    marginBottom: 16,
   },
 
   emptyContainer: {
@@ -926,12 +941,12 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600
+    fontWeight: 600,
   },
   fullScreenContainer: {
     flex: 1,
   },
-  
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -939,23 +954,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   search_container: {
-
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
     borderRadius: 50,
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
-    padding: (Platform.OS === 'ios' ? 12 : 0),
-    marginTop: (Platform.OS === 'ios' ? 5 : 0),
+    padding: Platform.OS === 'ios' ? 12 : 0,
+    marginTop: Platform.OS === 'ios' ? 5 : 0,
     height: 50,
-    gap: (Platform.OS === 'ios' ? 8 : 0),
+    gap: Platform.OS === 'ios' ? 8 : 0,
     width: '83%',
     borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',
@@ -968,46 +980,41 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
   searchIcon: {
-
-    padding: (Platform.OS === 'ios' ? 0 : 5),
-    marginLeft: (Platform.OS === 'ios' ? 0 : 10),
-    marginRight: (Platform.OS === 'ios' ? 0 : 6),
+    padding: Platform.OS === 'ios' ? 0 : 5,
+    marginLeft: Platform.OS === 'ios' ? 0 : 10,
+    marginRight: Platform.OS === 'ios' ? 0 : 6,
     height: 24,
     width: 24,
   },
   searchBar: {
-    // fontSize: 17,
-    // color: '#fff',
-    // fontFamily: 'Urbanist-Medium',
-    // fontWeight: 500,
     flex: 1,
     height: 48,
-  width: '80%',
-  paddingVertical: 0,
+    width: '80%',
+    paddingVertical: 0,
     paddingHorizontal: 0,
-  paddingEnd: 15,
-  margin: 0,
+    paddingEnd: 15,
+    margin: 0,
 
-  fontSize: 17,
-  lineHeight: 22,
+    fontSize: 17,
+    lineHeight: 22,
 
-  color: '#fff',
-  fontFamily: 'Urbanist-Medium',
+    color: '#fff',
+    fontFamily: 'Urbanist-Medium',
 
-  // Android
-  includeFontPadding: false,
-  textAlignVertical: 'center',
+    // Android
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   listContainer: {
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,
-    gap: 16
+    gap: 16,
   },
 
   itemContainer: {
     flex: 1,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
 
   MylistingsBackground: {
@@ -1017,10 +1024,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    marginTop: (Platform.OS === 'ios' ? 6 : 0),
+    marginTop: Platform.OS === 'ios' ? 6 : 0,
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',

@@ -39,6 +39,10 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  // const [isBlocked, setIsBlocked] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(
+  Boolean(members?.isblocked)
+);
 
   useEffect(() => {
     const fetchUserChatData = async (query: string = "") => {
@@ -74,6 +78,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         }
 
         const UserData = data.data;
+        setIsBlocked(Boolean(UserData?.isblocked ?? members?.isblocked));
         setUserList(UserData);
       } catch (error) {
         setLoading(false)
@@ -93,50 +98,161 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
     return (f + l) || '?';
   };
 
-  const renderItem = ({ item }: any) => {
-    const isBlockUser = item.id === '3';  // <-- add this
-    const isLogout = item.id.toLowerCase() === 'logout';
+  // const renderItem = ({ item }: any) => {
+  //   const isBlockUser = item.id === '3';  // <-- add this
+  //   const isLogout = item.id.toLowerCase() === 'logout';
 
-    return (
-      <TouchableOpacity
-        style={styles.cardContainer}
-        onPress={async () => {
-          if (item.id === '2') {
-            navigation.navigate('UserListing', {
-              animation: 'none',
-              members: members,
-              source: 'chatList',
-            });
-          } else if (item.id === '1') {
-            navigation.navigate('UserReviews', {
-              animation: 'none',
-              members: members,
-              source: 'chatList',
-            });
-          } else if (item.id === '3') {
+  //   return (
+  //     <TouchableOpacity
+  //       style={styles.cardContainer}
+  //       onPress={async () => {
+  //         if (item.id === '2') {
+  //           navigation.navigate('UserListing', {
+  //             animation: 'none',
+  //             members: members,
+  //             source: 'chatList',
+  //           });
+  //         } else if (item.id === '1') {
+  //           navigation.navigate('UserReviews', {
+  //             animation: 'none',
+  //             members: members,
+  //             source: 'chatList',
+  //           });
+  //         } else if (item.id === '3') {
+  //           setShowConfirm(true);
+  //         }
+  //       }}
+  //     >
+  //       <Image source={item.image} style={styles.cardImage} />
+
+  //       <Text
+  //         allowFontScaling={false}
+  //         style={[
+  //           styles.cardText,
+  //           (isLogout || isBlockUser) && { color: '#FF8282E0' }, // <-- red color
+  //         ]}
+  //       >
+  //         {item.title}
+  //       </Text>
+
+  //       {/* Hide arrow ONLY for id 3 */}
+  //       {!isBlockUser && (
+  //         <Image source={arrowIcon} style={styles.cardImage} />
+  //       )}
+  //     </TouchableOpacity>
+  //   );
+  // };
+
+  const handleUnblockUser = async () => {
+  try {
+    setLoading(true);
+
+    const token = await AsyncStorage.getItem('userToken');
+
+    if (!token) {
+      showToast('Authentication token missing', 'error');
+      return;
+    }
+
+    const body = {
+      blockedUserId: userList.id,
+    };
+
+    const response = await fetch(
+      `${MAIN_URL.baseUrl}user/unblock-user`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const apiData = await response.json();
+
+    if (response.ok && apiData?.statusCode === 200) {
+      setIsBlocked(false);
+      members.isblocked = false;
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+              params: {
+                AddScreenBackactiveTab: 'Bookmark',
+                isNavigate: false,
+              },
+            },
+          ],
+        });
+
+      showToast(
+        t(apiData?.message || 'User unblocked successfully'),
+        'success'
+      );
+    } else {
+      showToast(
+        t(apiData?.message || 'Failed to unblock user'),
+        'error'
+      );
+    }
+  } catch (error) {
+    console.error('Unblock user failed:', error);
+    showToast('Something went wrong. Please try again.', 'error');
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const renderItem = ({ item }: any) => {
+  const isBlockUser = item.id === '3';
+
+  return (
+    <TouchableOpacity
+      style={styles.cardContainer}
+      onPress={() => {
+        if (item.id === '2') {
+          navigation.navigate('UserListing', {
+            animation: 'none',
+            members: members,
+            source: 'chatList',
+          });
+        } else if (item.id === '1') {
+          navigation.navigate('UserReviews', {
+            animation: 'none',
+            members: members,
+            source: 'chatList',
+          });
+        } else if (item.id === '3') {
+          if (isBlocked) {
+            setShowConfirm(true);
+            // handleUnblockUser();
+          } else {
             setShowConfirm(true);
           }
-        }}
+        }
+      }}
+    >
+      <Image source={item.image} style={styles.cardImage} />
+
+      <Text
+        allowFontScaling={false}
+        style={[
+          styles.cardText,
+          isBlockUser && { color: isBlocked ? '#06FF63E0' : '#FF8282E0' },
+        ]}
       >
-        <Image source={item.image} style={styles.cardImage} />
+        {item.title}
+      </Text>
 
-        <Text
-          allowFontScaling={false}
-          style={[
-            styles.cardText,
-            (isLogout || isBlockUser) && { color: '#FF8282E0' }, // <-- red color
-          ]}
-        >
-          {item.title}
-        </Text>
-
-        {/* Hide arrow ONLY for id 3 */}
-        {!isBlockUser && (
-          <Image source={arrowIcon} style={styles.cardImage} />
-        )}
-      </TouchableOpacity>
-    );
-  };
+      {!isBlockUser && (
+        <Image source={arrowIcon} style={styles.cardImage} />
+      )}
+    </TouchableOpacity>
+  );
+};
 
 
   const cardData = [
@@ -151,19 +267,28 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
       image: require('../../../assets/images/mylistingicon.png'),
     },
 
+    // {
+    //   id: '3',
+    //   title: `${t('block')} ${userList?.firstname || ''}`,
+    //   image: require('../../../assets/images/block_icon.png'),
+    // },
     {
-      id: '3',
-      title: `${t('block')} ${userList?.firstname || ''}`,
-      image: require('../../../assets/images/block_icon.png'),
-    },
+    id: '3',
+    title: isBlocked
+      ? `${t('unblock')} ${userList?.firstname || ''}`
+      : `${t('block')} ${userList?.firstname || ''}`,
+    image: isBlocked
+      ? require('../../../assets/images/unblock_icon.png') : require('../../../assets/images/block_icon.png'),
+  },
   ];
 
-  const filteredCardData = cardData.filter(item => {
-  if (members?.isblocked && item.id === '3') {
-    return false; // hide block option
-  }
-  return true;
-});
+//   const filteredCardData = cardData.filter(item => {
+//   if (members?.isblocked && item.id === '3') {
+//     return false; // hide block option
+//   }
+//   return true;
+  // });
+  const filteredCardData = cardData;
   return (
       <ImageBackground
              source={BACK_ICON}
@@ -267,27 +392,33 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
               <View style={styles.popupContainer}>
                 <Image
-                  source={require('../../../assets/images/block_user.png')}
+                  source={ isBlocked ? require('../../../assets/images/unblock_user.png') : require('../../../assets/images/block_user.png')}
                   style={styles.logo}
                   resizeMode="contain"
                 />
                 <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('block_user')}
+                  
+                  {isBlocked ? t('unblock_user') : t('block_user')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.subheader}>
-                  {t('block_msg')}
+                  {/* {t('block_msg')} */}
+                  {isBlocked ? t('unblock_msg') : t('block_msg')}
                 </Text>
 
 
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
+                    if(isBlocked) {
+                      handleUnblockUser();
+                      setShowConfirm(false);
+                      return;
+                    } else{
                     try {
                       const token = await AsyncStorage.getItem('userToken');
 
                       const body = {
                         blockedUserId: userList.id,
-                        //user_id: Number(user_id),
                       };
 
                       console.log("📤 Sending block-user request:", body);
@@ -307,7 +438,9 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
                       console.log("📥 Backend Response JSON:", apiData);
 
                       if (apiData?.statusCode === 200) {
-                        setShowConfirm(false);
+                         setShowConfirm(false);
+                        setIsBlocked(true);
+                        members.isblocked = true;
                         showToast(t(backendMsg), "success");
 
                         navigation.reset({
@@ -328,7 +461,8 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
                     } catch (error) {
                       console.log("Something went wrong. Try again!");
-                    }
+                      }
+                      }
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>

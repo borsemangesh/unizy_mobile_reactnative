@@ -828,6 +828,13 @@
   "update_available":"Update Available",
   "newVerstion1": "A new version of UniZy is available. Please update the app to continue.",
   "newVerstion2":"A new version of UniZy is available. You can update now or continue using the app.",
-  "update_now":"Update Now"
+  "update_now":"Update Now",
+  "unblock_user": "Unblock User",
+  "unblock_msg": "Are you sure you want to unblock this user? They will be able to contact you again.",
+  "unblock_info": "This chat is unblocked. You can now send and receive messages.",
+  "unblock_info_user": "This chat is no longer restricted and you can now send and receive messages.",
+  "unblock_msg_user": "Are you sure you want to unblock this user? They will be able to contact you again.",
+  "unblock_msg_user_admin": "This chat is no longer restricted and you can now send and receive messages.",
+  "unblock": "Unblock"
 
 }

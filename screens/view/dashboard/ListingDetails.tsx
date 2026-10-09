@@ -49,7 +49,6 @@ import SELLECTFILE_ICON from '../../../assets/images/sellerfile.png';
 import ALERT_ICON from '../../../assets/images/alerticon.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-
 type ListingDetailsProps = {
   navigation: any;
 };
@@ -57,9 +56,8 @@ type ListingDetailsProps = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
-
-     const { width, height } = useWindowDimensions();
-      const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
@@ -89,7 +87,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
   const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
-      const [showOnboardingPopup, setShowOnboardingPopup] = useState(false);
+  const [showOnboardingPopup, setShowOnboardingPopup] = useState(false);
 
   const scrollY = useSharedValue(0);
 
@@ -140,28 +138,27 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const fetchDetails = useCallback(async () => {
     try {
-
       const token = await AsyncStorage.getItem('userToken');
-      console.log(token)
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      console.log(token);
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       if (!token) return;
       const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
 
-      console.log(url)
-
+      console.log(url);
 
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
       });
 
       const result = await response.json();
 
-      console.log("RESULT: ", result);
+      console.log('RESULT: ', result);
       if (response.ok) {
         setData(result.data);
       } else {
@@ -181,17 +178,18 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const handleDeactivate = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       if (!token) return;
 
       const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
-      console.log("DEACTIVE:", url2);
+      console.log('DEACTIVE:', url2);
       const response = await fetch(url2, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: JSON.stringify({
           product_id: shareid,
@@ -200,7 +198,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       });
 
       const data1 = await response.json();
-
 
       if (data1.message) {
         showToast(
@@ -243,9 +240,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       if (!token) {
-
         setLoading(false);
         return;
       }
@@ -259,13 +256,13 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         orderid: selectedOrderId,
       };
 
-      console.log("URL_OTP",url, createPayload)
+      console.log('URL_OTP', url, createPayload);
       const res = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: JSON.stringify(createPayload),
       });
@@ -314,8 +311,18 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     // ---------- Month translation ----------
     const monthIndex = date.getMonth(); // 0–11
     const monthKeys = [
-      'jan', 'feb', 'mar', 'apr', 'may', 'jun',
-      'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -323,30 +330,29 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     return `${day}${suffix} ${monthShort} ${year}`;
   };
 
-      const checkOnboardingStatus = useCallback(async () => {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) return false;
-        try {
-          const response = await fetch(
-            `${MAIN_URL.baseUrl}transaction/account-detail`,
-            {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: 'application/json',
-              },
-            },
-          );
-          const result = await response.json();
-          if (response.ok && result?.statusCode === 200) {
-            return result.data?.stripeAccount?.isboardcomplete === true;
-          }
-          return false;
-        } catch {
-          return false;
-        }
-      }, []);
-
+  const checkOnboardingStatus = useCallback(async () => {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return false;
+    try {
+      const response = await fetch(
+        `${MAIN_URL.baseUrl}transaction/account-detail`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+      const result = await response.json();
+      if (response.ok && result?.statusCode === 200) {
+        return result.data?.stripeAccount?.isboardcomplete === true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }, []);
 
   const handleProductPress = useCallback(
     async (buyer: any) => {
@@ -384,16 +390,13 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     navigation.navigate('AccountDeatils');
   }, [navigation]);
 
-
-
   return (
     // <BackgroundWrapper>
     <ImageBackground
-              source={BACK_ICON}
-              style={{ flex: 1,width: '100%',
-            height: '100%', }}
-              resizeMode="cover"
-            >
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -435,10 +438,15 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             />
           </MaskedView>
         </AnimatedReanimated.View>
-        <View style={[COMMONSTYLE.headerContent,{
-
-                paddingTop: insets.top+ height * 0.01 ,
-              },]} pointerEvents="box-none">
+        <View
+          style={[
+            COMMONSTYLE.headerContent,
+            {
+              paddingTop: insets.top + height * 0.01,
+            },
+          ]}
+          pointerEvents="box-none"
+        >
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -500,7 +508,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('MyRatings', {
-                shareid
+                shareid,
               });
             }}
             style={styles.backButtonContainer}
@@ -549,11 +557,14 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/staricon.png')}
-                style={[{
-                  width: 10,
-                  height: 10,
-                  tintColor: 'rgba(140, 225, 255, 0.9)',
-                }, animatedIconStyle]}
+                style={[
+                  {
+                    width: 10,
+                    height: 10,
+                    tintColor: 'rgba(140, 225, 255, 0.9)',
+                  },
+                  animatedIconStyle,
+                ]}
               />
               <Text
                 allowFontScaling={false}
@@ -565,7 +576,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 ]}
               >
                 {/* {data?.list?.avg_rating || '-.-'} */}
-                {data?.list?.avg_rating ==='0.0' ? '-.-' :data?.list?.avg_rating}
+                {data?.list?.avg_rating === '0.0'
+                  ? '-.-'
+                  : data?.list?.avg_rating}
               </Text>
             </AnimatedReanimated.View>
           </TouchableOpacity>
@@ -598,8 +611,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 width: '100%',
               }}
             >
-
-
               <View
                 style={[
                   styles.card,
@@ -609,7 +620,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 <View style={{ flexDirection: 'row' }}>
                   {(() => {
                     const categoryName = data?.list?.category?.id || 0;
-                    const isProfileCategory = categoryName === 2 || categoryName === 5;
+                    const isProfileCategory =
+                      categoryName === 2 || categoryName === 5;
                     const profilePhoto = data?.list?.createdby?.profile;
                     const firstName = data?.list?.createdby?.firstname;
                     const lastName = data?.list?.createdby?.lastname;
@@ -662,7 +674,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }
                   })()}
                   <View style={{ marginLeft: 10, gap: 8 }}>
-
                     <View style={{ width: '88%' }}>
                       <Text
                         numberOfLines={1}
@@ -678,15 +689,14 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         allowFontScaling={false}
                         style={styles.productlableprice}
                       >
-                          {/* £{data?.list?.price} */}
-                          {data?.list?.category_id === 2
-                            ? `£${data?.list?.price}/${t('hr')}`
-                            : data?.list?.category_id === 4
-                              ? `£${data?.list?.price}/${t('week')}`
-                              : data?.list?.category_id === 5
-                                ? `£${data?.list?.price}/${t('session')}`
-                                : `£${data?.list?.price}`
-                          }
+                        {/* £{data?.list?.price} */}
+                        {data?.list?.category_id === 2
+                          ? `£${data?.list?.price}/${t('hr')}`
+                          : data?.list?.category_id === 4
+                          ? `£${data?.list?.price}/${t('week')}`
+                          : data?.list?.category_id === 5
+                          ? `£${data?.list?.price}/${t('session')}`
+                          : `£${data?.list?.price}`}
                       </Text>
                       <Text allowFontScaling={false} style={styles.datetlable}>
                         {formatDateWithDash(data?.list?.created_at, t)}
@@ -733,7 +743,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       {data?.list?.remaining_quantity}
                     </Text>
                   </View>
-
                 )}
                 <TouchableOpacity
                   onPress={() => {
@@ -741,7 +750,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       id: shareid,
                     });
                   }}
-                  style={{ alignContent: 'center', alignSelf: 'center', justifyContent: 'center' }}
+                  style={{
+                    alignContent: 'center',
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                  }}
                 >
                   <Text
                     allowFontScaling={false}
@@ -750,14 +763,13 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       fontFamily: 'Urbanist-SemiBold',
                       fontSize: 12,
                       marginTop: 0,
-                      alignContent: "center",
+                      alignContent: 'center',
                       textDecorationLine: 'underline',
                     }}
                   >
                     {t('view_listing')}
                   </Text>
                 </TouchableOpacity>
-
               </View>
 
               {/* <View style={styles.carddivider} /> */}
@@ -774,9 +786,10 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 4,
-                        justifyContent: buyer.otpverified || buyer.is_cancelled
-                          ? 'space-between'
-                          : 'flex-start',
+                        justifyContent:
+                          buyer.otpverified || buyer.is_cancelled
+                            ? 'space-between'
+                            : 'flex-start',
                       }}
                     >
                       <View
@@ -950,7 +963,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                           }}
                           //onPress={() => setShowPopup1(true)}
                           onPress={() => {
-                           handleProductPress(buyer);
+                            handleProductPress(buyer);
                           }}
                         >
                           <Text allowFontScaling={false} style={styles.status1}>
@@ -959,21 +972,15 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         </TouchableOpacity>
                       </View>
                     )}
-
-                  
                   </View>
                 ))}
             </View>
           )}
         </AnimatedReanimated.ScrollView>
 
-
         {data?.list?.admin_action ? (
           <View style={[styles.bottomview, { justifyContent: 'center' }]}>
-            <TouchableOpacity
-              onPress={() => {
-              }}
-            >
+            <TouchableOpacity onPress={() => {}}>
               <View style={styles.reportButtonCard}>
                 <Image
                   source={require('../../../assets/images/report.png')}
@@ -993,20 +1000,45 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               </View>
             </TouchableOpacity>
           </View>
+        ) : data?.list?.category_id === 3 &&
+          data?.list?.remaining_quantity > 0 &&
+          data?.list?.isactive &&
+          data?.list?.ispurchased === true ? (
+          <View style={[styles.bottomview, { justifyContent: 'center' }]}>
+            <ButtonNew
+              title={t('Deactivate')}
+              textStyle={[styles.cancelText, { width: '100%' }]}
+              buttonStyle={{
+                width: '100%',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.23)',
+                backgroundColor:
+                  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.10) 100%)',
+                borderColor: '#ffffff47',
+                boxSizing: 'border-box',
+              }}
+              onPress={() => {
+                if (data?.list?.isactive) {
+                  setShowConfirm(true);
+                } else {
+                  handleDeactivate();
+                }
+              }}
+            />
+          </View>
         ) : (
-          data?.list?.category_id === 3 &&
-            data?.list?.remaining_quantity > 0 &&
-            data?.list?.isactive &&
-            data?.list?.ispurchased === true ? (
-            <View style={[styles.bottomview, { justifyContent: 'center' }]}>
+          (!data?.list?.ispurchased ||
+            data?.list?.isactive ||
+            data?.list?.category_id === 2 ||
+            data?.list?.category_id === 5) && (
+            <View style={styles.bottomview}>
               <ButtonNew
-                title={t('Deactivate')}
+                title={data?.list?.isactive ? t('Deactivate') : t('Activate')}
                 textStyle={[styles.cancelText, { width: '100%' }]}
                 buttonStyle={{
-                  width: '100%',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.23)',
+                  width: '49%',
+                  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
                   backgroundColor:
-                    'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.10) 100%)',
+                    'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
                   borderColor: '#ffffff47',
                   boxSizing: 'border-box',
                 }}
@@ -1018,67 +1050,42 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   }
                 }}
               />
+
+              <ButtonNew
+                title={t('Edit_Listing')}
+                textStyle={{
+                  color: '#000000',
+                  fontFamily: 'Urbanist-Regular',
+                  fontSize: 16,
+                  fontWeight: '500',
+                  letterSpacing: 0.17,
+                  lineHeight: 22,
+                }}
+                buttonStyle={{ width: '49%', backgroundColor: '#ffffffa7' }}
+                onPress={() => {
+                  if (!data?.list?.isactive) {
+                    showToast(t('unable_edit'), 'error');
+                    return;
+                  }
+
+                  const params = {
+                    productId: catagory_id,
+                    productName: catagory_name,
+                    shareid: shareid,
+                  };
+
+                  Platform.OS === 'ios'
+                    ? navigation.navigate('EditListScreen', params, {
+                        animation: 'none',
+                      })
+                    : navigation.replace('EditListScreen', params, {
+                        animation: 'none',
+                      });
+                }}
+              />
             </View>
-          ) : (
-                (!data?.list?.ispurchased ||
-                  data?.list?.isactive ||
-              data?.list?.category_id === 2 ||
-              data?.list?.category_id === 5) && (
-              <View style={styles.bottomview}>
-                <ButtonNew
-                  title={data?.list?.isactive ? t('Deactivate') : t('Activate')}
-                  textStyle={[styles.cancelText, { width: '100%' }]}
-                  buttonStyle={{
-                    width: '49%',
-                    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                    borderColor: '#ffffff47',
-                    boxSizing: 'border-box',
-                  }}
-                  onPress={() => {
-                    if (data?.list?.isactive) {
-                      setShowConfirm(true);
-                    } else {
-                      handleDeactivate();
-                    }
-                  }}
-                />
-
-                <ButtonNew
-                  title={t('Edit_Listing')}
-                  textStyle={{
-                    color: '#000000',
-                    fontFamily: 'Urbanist-Regular',
-                    fontSize: 16,
-                    fontWeight: '500',
-                    letterSpacing: 0.17,
-                    lineHeight: 22,
-                  }}
-                  buttonStyle={{ width: '49%', backgroundColor: '#ffffffa7' }}
-                  onPress={() => {
-                    if (!data?.list?.isactive) {
-                      showToast(t('unable_edit'), 'error');
-                      return;
-                    }
-
-                    const params = {
-                      productId: catagory_id,
-                      productName: catagory_name,
-                      shareid: shareid,
-                    };
-
-                    Platform.OS === 'ios'
-                      ? navigation.navigate('EditListScreen', params, { animation: 'none' })
-                      : navigation.replace('EditListScreen', params, { animation: 'none' });
-                  }}
-                />
-              </View>
-            )
           )
         )}
-
-
 
         <Modal
           visible={showPopup1}
@@ -1100,111 +1107,116 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 blurAmount={10}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               > */}
-               <BlurView
-                          //   style={{
-                          //     flex: 1,
-                          //     alignContent: 'center',
-                          //     justifyContent: 'center',
-                          //     width: '100%',
-                          //     alignItems: 'center',
-                          //   }}
-                          //   blurType="light"
-                          //   blurAmount={10}
-                          //   reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                            // >
-                             style={[
-                                              StyleSheet.absoluteFill,
-                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                            ]}
-                                          blurType="light"
-                                          blurAmount={10}
-                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                        />
-                <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                  ]}
-                />
+              <BlurView
+                //   style={{
+                //     flex: 1,
+                //     alignContent: 'center',
+                //     justifyContent: 'center',
+                //     width: '100%',
+                //     alignItems: 'center',
+                //   }}
+                //   blurType="light"
+                //   blurAmount={10}
+                //   reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                // >
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              />
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
 
-                {loading && (
-                  <View style={styles.fullLoader}>
-                    <Loader />
-                  </View>
-                )}
-
-                <View style={styles.popupContainer}>
-                  <Text allowFontScaling={false} style={styles.mainheader}>
-                    {t('Enter_Delivery_OTP')}
-                  </Text>
-
-                  <Text allowFontScaling={false} style={styles.subheader}>
-                    {t('please_enter_6digit_otp')}
-                  </Text>
-
-                  <View style={styles.otpContainer}>
-                    {[0, 1, 2, 3, 4, 5].map((_, index) => (
-                      <TextInput
-                        selectionColor={'#F5F5F5'}
-                        cursorColor='#F5F5F5'
-                        value={otp[index]}
-                        key={index}
-                        ref={ref => {
-                          inputs.current[index] = ref;
-                        }}
-                        style={styles.otpBox}
-                        keyboardType="number-pad"
-                        maxLength={1}
-                        onChangeText={text => {
-                          const digit = text.replace(/[^0-9]/g, '');
-                          handleChange(digit, index);
-                        }}
-                        returnKeyType="next"
-                        textAlign="center"
-                        secureTextEntry={true}
-                        onKeyPress={({ nativeEvent }) => {
-                          if (nativeEvent.key === 'Backspace') {
-                            // If current box has value, clear it
-                            if (otp[index] !== '') {
-                              const newOtp = [...otp];
-                              newOtp[index] = '';
-                              setOtp(newOtp);
-                              return;
-                            }
-
-                            if (index > 0) {
-                              inputs.current[index - 1]?.focus();
-
-                              const newOtp = [...otp];
-                              newOtp[index - 1] = '';
-                              setOtp(newOtp);
-                            }
-                          }
-                        }}
-                      />
-                    ))}
-                  </View>
-
-                  <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={otpverify}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText}>
-                      {t('verify')}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.loginButton1}
-                    onPress={() => {
-                      setShowPopup1(false);
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText1}>
-                      {t('cancel')}
-                    </Text>
-                  </TouchableOpacity>
+              {loading && (
+                <View style={styles.fullLoader}>
+                  <Loader />
                 </View>
+              )}
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('Enter_Delivery_OTP')}
+                </Text>
+
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  {t('please_enter_6digit_otp')}
+                </Text>
+
+                <View style={styles.otpContainer}>
+                  {[0, 1, 2, 3, 4, 5].map((_, index) => (
+                    <TextInput
+                      selectionColor={'#F5F5F5'}
+                      cursorColor="#F5F5F5"
+                      value={otp[index]}
+                      key={index}
+                      ref={ref => {
+                        inputs.current[index] = ref;
+                      }}
+                      style={styles.otpBox}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      onChangeText={text => {
+                        const digit = text.replace(/[^0-9]/g, '');
+                        handleChange(digit, index);
+                      }}
+                      returnKeyType="next"
+                      textAlign="center"
+                      secureTextEntry={true}
+                      onKeyPress={({ nativeEvent }) => {
+                        if (nativeEvent.key === 'Backspace') {
+                          // If current box has value, clear it
+                          if (otp[index] !== '') {
+                            const newOtp = [...otp];
+                            newOtp[index] = '';
+                            setOtp(newOtp);
+                            return;
+                          }
+
+                          if (index > 0) {
+                            inputs.current[index - 1]?.focus();
+
+                            const newOtp = [...otp];
+                            newOtp[index - 1] = '';
+                            setOtp(newOtp);
+                          }
+                        }
+                      }}
+                    />
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={otpverify}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('verify')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => {
+                    setShowPopup1(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
@@ -1234,60 +1246,66 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 blurAmount={1000}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               > */}
-               <BlurView
-               style={[
-                                              StyleSheet.absoluteFill,
-                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                            ]}
-                                          blurType="light"
-                                          blurAmount={10}
-                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                        />
-                <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                  ]}
+              <BlurView
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              />
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/success_icon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
                 />
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('order_fulfilled')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.subheader1}>
+                  {t('Delivery_Verified')}
+                </Text>
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.subheader1, { marginTop: 0 }]}
+                >
+                  {t('The_payment_of')} £{price}{' '}
+                  {t('has_been_transferred_to_your_account')}
+                </Text>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    navigation.replace('MyListing');
 
-                <View style={styles.popupContainer}>
-                  <Image
-                    source={require('../../../assets/images/success_icon.png')}
-                    style={styles.logo}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.mainheader}>
-                    {t('order_fulfilled')}
+                    navigation.reset({
+                      index: 0,
+                      routes: [
+                        {
+                          name: 'MyListing',
+                        },
+                      ],
+                    });
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('done')}
                   </Text>
-                  <Text allowFontScaling={false} style={styles.subheader1}>
-                    {t('Delivery_Verified')}
-                  </Text>
-                  <Text
-                    allowFontScaling={false}
-                    style={[styles.subheader1, { marginTop: 0 }]}
-                  >
-                    {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={() => {
-                      navigation.replace('MyListing');
-
-                      navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: 'MyListing',
-                          },
-                        ],
-                      });
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText}>
-                      {t('done')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
+              </View>
               {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
@@ -1313,62 +1331,66 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 blurAmount={10}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               > */}
-               <BlurView
-               style={[
-                                              StyleSheet.absoluteFill,
-                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                            ]}
-                                          blurType="light"
-                                          blurAmount={10}
-                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                        />
-                <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                  ]}
+              <BlurView
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              />
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/alerticon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
                 />
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('Deactivate_Listing')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  {t('deactivate_listing')}
+                </Text>
 
-                <View style={styles.popupContainer}>
-                  <Image
-                    source={require('../../../assets/images/alerticon.png')}
-                    style={styles.logo}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.mainheader}>
-                    {t('Deactivate_Listing')}
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    await handleDeactivate();
+                    setShowConfirm(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('Deactivate')}
                   </Text>
-                  <Text allowFontScaling={false} style={styles.subheader}>
-                    {t('deactivate_listing')}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => setShowConfirm(false)}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
                   </Text>
-
-                  <TouchableOpacity
-                    style={styles.loginButton}
-                    onPress={async () => {
-                      await handleDeactivate();
-                      setShowConfirm(false);
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText}>
-                      {t('Deactivate')}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.loginButton1}
-                    onPress={() => setShowConfirm(false)}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText1}>
-                      {t('cancel')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
+              </View>
               {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
 
-        
         <Modal
           visible={showOnboardingPopup}
           transparent
@@ -1380,56 +1402,59 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           >
             <View style={styles.overlay}>
               <BlurView
-               style={[
-                                              StyleSheet.absoluteFill,
-                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                            ]}
-                                          blurType="light"
-                                          blurAmount={10}
-                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                        />
-                <View style={[StyleSheet.absoluteFill, styles.overlayDark]} />
-                <View style={styles.popupContainer}>
-                  <Image
-                    source={ALERT_ICON}
-                    style={styles.logo}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.popupMainHeader}>
-                    {t('complete_payment_method')}
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.popupSubHeader}>
-                    {t('complete_onboarding')}
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.popupButton}
-                    onPress={handleGoToPayment}
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              />
+              <View style={[StyleSheet.absoluteFill, styles.overlayDark]} />
+              <View style={styles.popupContainer}>
+                <Image
+                  source={ALERT_ICON}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                  {t('complete_payment_method')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                  {t('complete_onboarding')}
+                </Text>
+                <TouchableOpacity
+                  style={styles.popupButton}
+                  onPress={handleGoToPayment}
+                >
+                  <Text
+                    numberOfLines={2}
+                    allowFontScaling={false}
+                    style={styles.popupButtonText}
                   >
-                    <Text
-                      numberOfLines={2}
-                      allowFontScaling={false}
-                      style={styles.popupButtonText}
-                    >
-                      {t('go_payments')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                    {t('go_payments')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               {/* </BlurView> */}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
-
-
       </View>
       <NewCustomToastContainer />
-   
-    {/* // </BackgroundWrapper> */}
-     </ImageBackground>
+
+      {/* // </BackgroundWrapper> */}
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-    popupButtonText: {
+  popupButtonText: {
     color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -1438,7 +1463,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
-    popupButton: {
+  popupButton: {
     width: '100%',
     height: 55,
     justifyContent: 'center',
@@ -1641,24 +1666,20 @@ const styles = StyleSheet.create({
   // },
 
   otpBox: {
-  width: Platform.OS === 'ios'
-    ? SCREEN_WIDTH * 0.1
-    : SCREEN_WIDTH  * 0.1 ,
+    width: Platform.OS === 'ios' ? SCREEN_WIDTH * 0.1 : SCREEN_WIDTH * 0.1,
 
-  height: Platform.OS === 'ios'
-    ? SCREEN_WIDTH * 0.12
-      : SCREEN_WIDTH * 0.10,
-  borderRadius: 12,
-  paddingVertical: 8,
-  textAlign: 'center',
-  fontSize: 18,
-  color: '#fff',
-  fontWeight: '600',
-  borderWidth: 1,
-  borderColor: '#ffffff2c',
-  elevation: 0,
-  backgroundColor: 'rgba(255,255,255,0.12)',
-},
+    height: Platform.OS === 'ios' ? SCREEN_WIDTH * 0.12 : SCREEN_WIDTH * 0.1,
+    borderRadius: 12,
+    paddingVertical: 8,
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: '600',
+    borderWidth: 1,
+    borderColor: '#ffffff2c',
+    elevation: 0,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+  },
 
   mainheader: {
     color: 'rgba(255, 255, 255, 0.80)',
