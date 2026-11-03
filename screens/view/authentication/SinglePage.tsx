@@ -2101,6 +2101,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                     style={{ zIndex: 1000 }}
                     onPress={() => {
                       translateY.setValue(-100);
+                      setSearch('');
                       setSelected(null);
                       setCurrentScreen('language');
                     }}
