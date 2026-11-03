@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignSelf: "center",
     position: "relative",
+    overflow: "hidden",
+    ...(Platform.OS === 'ios' && { shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }),
     ...(Platform.OS === 'android' && { overflow: 'hidden' })
   },
   toastText: {

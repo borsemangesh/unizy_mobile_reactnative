@@ -219,6 +219,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     })();
   }, []);
 
+  const noResultShown = useRef(false);
+
   const filteredLanguages = languages
     .map(lang => ({
       id: lang.id,
@@ -227,12 +229,19 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       flag: lang.logo || require('../../../assets/images/english.png'),
     }))
     .filter(lang =>
-      (lang.name || '').toLowerCase().includes(search.toLowerCase()),
+      (lang.name || '').toLowerCase().includes(search.trim().toLowerCase()),
     );
 
   useEffect(() => {
-    if (search.trim() !== '' && filteredLanguages.length === 0) {
-      showToast(t(Constant.NO_RESULT_FOUND), 'error');
+    const trimmedSearch = search.trim();
+
+    if (trimmedSearch !== '' && filteredLanguages.length === 0) {
+      if (!noResultShown.current) {
+        showToast(t(Constant.NO_RESULT_FOUND), 'error');
+        noResultShown.current = true;
+      }
+    } else {
+      noResultShown.current = false;
     }
   }, [search, filteredLanguages]);
 
