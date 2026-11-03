@@ -2004,6 +2004,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       //placeholderTextColor="#ccc"
                       placeholderTextColor="rgba(255, 255, 255, 0.72)"
                       onChangeText={setSearch}
+                      maxLength={50}
                       value={search}
                     />
                   </View>
