@@ -221,29 +221,58 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const noResultShown = useRef(false);
 
-  const filteredLanguages = languages
-    .map(lang => ({
-      id: lang.id,
-      code: lang.iso_code.trim(),
-      name: lang.language_name,
-      flag: lang.logo || require('../../../assets/images/english.png'),
-    }))
-    .filter(lang =>
-      (lang.name || '').toLowerCase().includes(search.trim().toLowerCase()),
-    );
+  // const filteredLanguages = languages
+  //   .map(lang => ({
+  //     id: lang.id,
+  //     code: lang.iso_code.trim(),
+  //     name: lang.language_name,
+  //     flag: lang.logo || require('../../../assets/images/english.png'),
+  //   }))
+  //   .filter(lang =>
+  //     (lang.name || '').toLowerCase().includes(search.trim().toLowerCase()),
+  //   );
 
-  useEffect(() => {
-    const trimmedSearch = search.trim();
 
-    if (trimmedSearch !== '' && filteredLanguages.length === 0) {
-      if (!noResultShown.current) {
-        showToast(t(Constant.NO_RESULT_FOUND), 'error');
-        noResultShown.current = true;
-      }
-    } else {
-      noResultShown.current = false;
+
+  // useEffect(() => {
+  //   const trimmedSearch = search.trim();
+
+  //   if (trimmedSearch !== '' && filteredLanguages.length === 0) {
+  //     if (!noResultShown.current) {
+  //       showToast("No results found.", 'error');
+  //       noResultShown.current = true;
+  //     }
+  //   } else {
+  //     noResultShown.current = false;
+  //   }
+  // }, [search, filteredLanguages]);
+
+  const normalizedSearch = search
+  .replace(/\s+/g, ' ')
+  .trim()
+  .toLowerCase();
+
+const filteredLanguages = languages
+  .map(lang => ({
+    id: lang.id,
+    code: lang.iso_code.trim(),
+    name: lang.language_name,
+    flag: lang.logo || require('../../../assets/images/english.png'),
+  }))
+  .filter(lang =>
+    (lang.name || '').toLowerCase().includes(normalizedSearch),
+  );
+
+useEffect(() => {
+  if (normalizedSearch !== '' && filteredLanguages.length === 0) {
+    if (!noResultShown.current) {
+      showToast('No results found.', 'error');
+      noResultShown.current = true;
     }
-  }, [search, filteredLanguages]);
+  } else {
+    noResultShown.current = false;
+  }
+}, [normalizedSearch, filteredLanguages.length]);
 
   const handleLanguageSelect = async (item: Language) => {
     try {
@@ -2003,7 +2032,12 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       cursorColor={'#F5F5F5'}
                       //placeholderTextColor="#ccc"
                       placeholderTextColor="rgba(255, 255, 255, 0.72)"
-                      onChangeText={setSearch}
+                      // onChangeText={setSearch}
+                     onChangeText={text => {
+                        const cleanedText = text.replace(/\.\s*$/, '');
+                        const finalText = cleanedText.replace(/\s{2,}/g, ' ');
+                        setSearch(finalText);
+                      }}
                       maxLength={50}
                       value={search}
                     />
