@@ -63,6 +63,22 @@ import BACKGOUND_ANIMATION_ICON from '../../../assets/images/bganimationscreen.p
 import SEARCH_ICON from '../../../assets/images/searchicon.png';
 import COMMONSTYLE from '../../utils/CommonStyle';
 
+const SQUAD_CODE_SUFFIX = '❤UniZy';
+
+const buildSquadCode = (raw: string) => {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return '';
+  }
+  if (
+    trimmed.endsWith(SQUAD_CODE_SUFFIX) ||
+    trimmed.endsWith('❤️UniZy')
+  ) {
+    return trimmed;
+  }
+  return `${trimmed}${SQUAD_CODE_SUFFIX}`;
+};
+
 
  
 
@@ -356,6 +372,13 @@ useEffect(() => {
   const [signUpusername, setsignUpUsername] = useState('');
   const [signUppassword, setsignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [squadCode, setSquadCode] = useState('');
+  const [squadStatus, setSquadStatus] = useState<'idle' | 'valid' | 'invalid'>(
+    'idle',
+  );
+  const [referrerName, setReferrerName] = useState('');
+  const squadRequestId = useRef(0);
+  const squadDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [signUperror, setsignUpError] = useState('');
   const [issignUpPasswordVisible, setsignUpIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -881,6 +904,88 @@ useEffect(() => {
     }).start(() => {});
   };
 
+  const clearSquadFeedback = () => {
+    setSquadStatus('idle');
+    setReferrerName('');
+  };
+
+  const validateSquadCode = async (raw: string, requestId: number) => {
+    const code = buildSquadCode(raw);
+    if (!code) {
+      if (requestId === squadRequestId.current) {
+        clearSquadFeedback();
+      }
+      return;
+    }
+
+    try {
+      const url =
+        MAIN_URL.baseUrl +
+        'squad/validate-code?code=' +
+        encodeURIComponent(code);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (requestId !== squadRequestId.current) {
+        return;
+      }
+
+      if (response.status === 200) {
+        const data = await response.json();
+        const firstNameValue = data?.data?.firstName ?? '';
+        const lastNameValue = data?.data?.lastName ?? '';
+        setReferrerName(`${firstNameValue} ${lastNameValue}`.trim());
+        setSquadStatus('valid');
+        return;
+      }
+
+      if (response.status === 404) {
+        setReferrerName('');
+        setSquadStatus('invalid');
+        return;
+      }
+
+      clearSquadFeedback();
+    } catch {
+      if (requestId !== squadRequestId.current) {
+        return;
+      }
+      clearSquadFeedback();
+    }
+  };
+
+  const onSquadCodeChange = (text: string) => {
+    setSquadCode(text);
+    clearSquadFeedback();
+    squadRequestId.current += 1;
+    const requestId = squadRequestId.current;
+
+    if (squadDebounceRef.current) {
+      clearTimeout(squadDebounceRef.current);
+      squadDebounceRef.current = null;
+    }
+
+    if (!text.trim()) {
+      return;
+    }
+
+    squadDebounceRef.current = setTimeout(() => {
+      validateSquadCode(text, requestId);
+    }, 600);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (squadDebounceRef.current) {
+        clearTimeout(squadDebounceRef.current);
+      }
+    };
+  }, []);
+
   const handleSendOTP = async () => {
     setOtp(['', '', '', '']);
 
@@ -929,7 +1034,16 @@ useEffect(() => {
       return;
     }
 
+    if (squadCode.trim() && squadStatus === 'idle') {
+      if (squadDebounceRef.current) {
+        clearTimeout(squadDebounceRef.current);
+        squadDebounceRef.current = null;
+      }
+      validateSquadCode(squadCode, squadRequestId.current);
+    }
+
     try {
+      const trimmedSquadCode = squadCode.trim();
       const body = {
         firstname: firstName,
         lastname: lastName,
@@ -940,6 +1054,7 @@ useEffect(() => {
         city: userMeta.city,
         latitude: userMeta.latitude,
         longitude: userMeta.longitude,
+        squad_code: trimmedSquadCode ? buildSquadCode(trimmedSquadCode) : null,
       };
 
       const url = MAIN_URL.baseUrl + 'user/user-signup';
@@ -2846,6 +2961,79 @@ useEffect(() => {
                             </TouchableOpacity>
                           </View>
 
+                          <View
+                            style={[
+                              Styles.password_container,
+                              Styles.squadCodeContainer,
+                            ]}
+                          >
+                            <TextInput
+                              allowFontScaling={false}
+                              style={Styles.squadCodeInput}
+                              placeholder={t('referred_squad_code')}
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={squadCode}
+                              maxLength={120}
+                              cursorColor={'#F5F5F5'}
+                              selectionColor="white"
+                              autoCapitalize="none"
+                              autoCorrect={false}
+                              autoComplete="off"
+                              onChangeText={onSquadCodeChange}
+                            />
+                            <View style={Styles.squadSuffixRow}>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.squadSuffixHeart}
+                              >
+                                ❤
+                              </Text>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.squadSuffixLabel}
+                              >
+                                UniZy
+                              </Text>
+                              {squadStatus === 'valid' && (
+                                <View style={Styles.squadStatusValid}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={Styles.squadStatusMark}
+                                  >
+                                    ✓
+                                  </Text>
+                                </View>
+                              )}
+                              {squadStatus === 'invalid' && (
+                                <View style={Styles.squadStatusInvalid}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={Styles.squadStatusMark}
+                                  >
+                                    ✕
+                                  </Text>
+                                </View>
+                              )}
+                            </View>
+                          </View>
+
+                          {squadStatus === 'valid' && !!referrerName && (
+                            <Text
+                              allowFontScaling={false}
+                              style={Styles.squadHintValid}
+                            >
+                              {t('referred_by')} ({referrerName})
+                            </Text>
+                          )}
+                          {squadStatus === 'invalid' && (
+                            <Text
+                              allowFontScaling={false}
+                              style={Styles.squadHintInvalid}
+                            >
+                              {t('invalid_squad_code')}
+                            </Text>
+                          )}
+
                           <TouchableOpacity
                             disabled={loading}
                             onPress={() => {
@@ -2900,6 +3088,13 @@ useEffect(() => {
                                   setPostalCode('');
                                   setsignUpUsername('');
                                   setsignUpPassword('');
+                                  setSquadCode('');
+                                  clearSquadFeedback();
+                                  squadRequestId.current += 1;
+                                  if (squadDebounceRef.current) {
+                                    clearTimeout(squadDebounceRef.current);
+                                    squadDebounceRef.current = null;
+                                  }
                                   setsignUpIsPasswordVisible(false);
                                   setIsConfirmPasswordVisible(false);
                                 }
