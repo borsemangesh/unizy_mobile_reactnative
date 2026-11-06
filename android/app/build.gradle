@@ -10,7 +10,7 @@ react {
     autolinkLibrariesWithApp()
 }
 
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
@@ -24,8 +24,8 @@ android {
         applicationId "com.unizy"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.7"
+        versionCode 8
+        versionName "1.8"
     }
     signingConfigs {
         debug {
@@ -46,17 +46,11 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            // signingConfig signingConfigs.debug
-            // minifyEnabled enableProguardInReleaseBuilds
-            // proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-
-
             buildConfigField "boolean", "LOG_ENABLED", "true"
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             ndk.debugSymbolLevel = 'FULL'
         }
     }
