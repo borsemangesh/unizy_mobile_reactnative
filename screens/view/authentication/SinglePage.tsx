@@ -1774,6 +1774,24 @@ useEffect(() => {
   };
 
   const insets = useSafeAreaInsets();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, () =>
+      setKeyboardVisible(true),
+    );
+    const hideSub = Keyboard.addListener(hideEvent, () =>
+      setKeyboardVisible(false),
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const uploadImage = async (uri: string) => {
     setLoading(true);
@@ -3830,108 +3848,101 @@ useEffect(() => {
                     </View>
                   )}
               </View>
-
-              {((currentScreen === 'login' &&
-                currentScreenIninner === 'login') ||
-                currentScreenIninner === 'signup') && (
-                <Animated.View
-                  style={[
-                    Styles.mainTemsAndConditions,
-                    (currentScreenIninner === 'login' ||
-                      currentScreenIninner === 'signup') && {
-                      transform: [{ translateY: slideUp }],
-                    },
-                  ]}
-                >
-                  <View
-                    style={{
-                      paddingHorizontal: 16,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                      }}
-                    >
-                      {currentScreenIninner === 'signup' && (
-                        <>
-                          <TouchableOpacity
-                            onPress={() => setIsChecked(!isChecked)} // ✅ toggle
-                            style={{ marginRight: 5 }}
-                          >
-                            {isChecked ? (
-                              // ✅ Checked state: show image
-                              <Image
-                                source={require('../../../assets/images/tickicon.png')}
-                                style={{ height: 20, width: 20 }}
-                                resizeMode="contain"
-                              />
-                            ) : (
-                              // ✅ Unchecked state: show empty box
-                              <View
-                                style={{
-                                  height: 20,
-                                  width: 20,
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  borderColor: '#fff',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  backgroundColor: 'transparent',
-                                }}
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </>
-                      )}
-
-                      {/* ✅ Centered text */}
-                      <Text
-                        allowFontScaling={false}
-                        style={[
-                          Styles.bycountuningAgreementText,
-                          { textAlign: 'center' },
-                        ]}
-                      >
-                        {t('by_continuing_agree') + ' '}
-                        <Text
-                          allowFontScaling={false}
-                          style={[
-                            Styles.teamsandConditionText,
-                            { textDecorationLine: 'underline' },
-                          ]}
-                          onPress={() =>
-                            navigation.navigate('TeamsAndCondition')
-                          }
-                        >
-                          {t('terms_and_conditions')}
-                        </Text>
-
-                        {` ${t('and')} `}
-
-                        <Text
-                          allowFontScaling={false}
-                          style={[
-                            Styles.teamsandConditionText,
-                            { textDecorationLine: 'underline' },
-                          ]}
-                          onPress={() =>
-                            navigation.navigate('PrivacyAndPolicy')
-                          }
-                        >
-                          {t('privacy_policy')}
-                        </Text>
-                      </Text>
-                    </View>
-                  </View>
-                </Animated.View>
-              )}
             </>
           )}
         </KeyboardAvoidingView>
+        {!keyboardVisible &&
+          ((currentScreen === 'login' && currentScreenIninner === 'login') ||
+            currentScreenIninner === 'signup') && (
+            <Animated.View
+              style={[
+                Styles.mainTemsAndConditions,
+                { bottom: Math.max(insets.bottom, 12) },
+                (currentScreenIninner === 'login' ||
+                  currentScreenIninner === 'signup') && {
+                  transform: [{ translateY: slideUp }],
+                },
+              ]}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <View
+                  style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  {currentScreenIninner === 'signup' && (
+                    <TouchableOpacity
+                      onPress={() => setIsChecked(!isChecked)}
+                      style={{ marginRight: 8, marginTop: 1 }}
+                    >
+                      {isChecked ? (
+                        <Image
+                          source={require('../../../assets/images/tickicon.png')}
+                          style={{ height: 20, width: 20 }}
+                          resizeMode="contain"
+                        />
+                      ) : (
+                        <View
+                          style={{
+                            height: 20,
+                            width: 20,
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            borderColor: '#fff',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: 'transparent',
+                          }}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  )}
+
+                  <Text
+                    allowFontScaling={false}
+                    style={[
+                      Styles.bycountuningAgreementText,
+                      { textAlign: 'center', flex: 1, flexShrink: 1 },
+                    ]}
+                  >
+                    {t('by_continuing_agree') + ' '}
+                    <Text
+                      allowFontScaling={false}
+                      style={[
+                        Styles.teamsandConditionText,
+                        { textDecorationLine: 'underline' },
+                      ]}
+                      onPress={() => navigation.navigate('TeamsAndCondition')}
+                    >
+                      {t('terms_and_conditions')}
+                    </Text>
+
+                    {` ${t('and')} `}
+
+                    <Text
+                      allowFontScaling={false}
+                      style={[
+                        Styles.teamsandConditionText,
+                        { textDecorationLine: 'underline' },
+                      ]}
+                      onPress={() => navigation.navigate('PrivacyAndPolicy')}
+                    >
+                      {t('privacy_policy')}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
+          )}
       </View>
       <PassToastContainer />
       <NewCustomToastContainer />
