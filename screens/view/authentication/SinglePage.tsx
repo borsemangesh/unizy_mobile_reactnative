@@ -2866,12 +2866,13 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={[
                                 Styles.personalEmailID_TextInput,
-                                // {
-                                //   paddingTop: Platform.OS === 'ios' ? 0 : 10,
-                                 
-                                //   flex: 1,
-                                //   width: undefined, // Adjust width to account for ActivityIndicator
-                                // },
+                                {
+                                  paddingTop: Platform.OS === 'ios' ? 0 : 10,
+                                 paddingLeft: 10,
+                                 paddingRight: 10,
+                                  flex: 1,
+                                  width: undefined, // Adjust width to account for ActivityIndicator
+                                },
                               ]}
                               placeholder={"UK "+ t('postal_code')+"*"}
                               cursorColor={'#FFFFFF'}
@@ -2915,7 +2916,7 @@ useEffect(() => {
                               <ActivityIndicator
                                 size="small"
                                 color="#FFFFFF"
-                                style={Styles.squadLoader}
+                                style={[Styles.squadLoader,{paddingRight: 12}]}
                               />
                             ) : (
                               <Text
