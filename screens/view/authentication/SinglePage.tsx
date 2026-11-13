@@ -63,6 +63,7 @@ import BACKGOUND_ANIMATION_ICON from '../../../assets/images/bganimationscreen.p
 
 import SEARCH_ICON from '../../../assets/images/searchicon.png';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { wp } from '../../utils/component/responsive';
 
 const SQUAD_CODE_SUFFIX = '❤UniZy';
 
@@ -935,7 +936,7 @@ useEffect(() => {
       console.log('SquadCodeValidationUrl: ', url);
 
       if (requestId !== squadRequestId.current) {
-        return;
+        return false;
       }
 
       setSquadLoading(false);
@@ -946,21 +947,20 @@ useEffect(() => {
         const lastNameValue = data?.data?.lastName ?? '';
         setReferrerName(`${firstNameValue} ${lastNameValue}`.trim());
         setSquadStatus('valid');
-        return;
+        return true;
       }
 
-      if (response.status === 404) {
-        setReferrerName('');
-        setSquadStatus('invalid');
-        return;
-      }
-
-      clearSquadFeedback();
+      setReferrerName('');
+      setSquadStatus('invalid');
+      return false;
     } catch {
       if (requestId !== squadRequestId.current) {
-        return;
+        return false;
       }
-      clearSquadFeedback();
+      setSquadLoading(false);
+      setReferrerName('');
+      setSquadStatus('invalid');
+      return false;
     }
   };
 
@@ -986,8 +986,12 @@ useEffect(() => {
     }
 
     setSquadLoading(true);
-    squadDebounceRef.current = setTimeout(() => {
-      validateSquadCode(text, requestId);
+    squadDebounceRef.current = setTimeout(async () => {
+      const isValid = await validateSquadCode(text, requestId);
+      if (requestId !== squadRequestId.current || isValid !== false) {
+        return;
+      }
+      // showToast(t('invalid_squad_code'), 'error'); // Instead of showing toast here, we just set the status to invalid
     }, 700);
   };
 
@@ -1047,13 +1051,26 @@ useEffect(() => {
       return;
     }
 
-    if (squadCode.trim() && squadStatus === 'idle') {
-      if (squadDebounceRef.current) {
-        clearTimeout(squadDebounceRef.current);
-        squadDebounceRef.current = null;
+    if (squadCode.trim()) {
+      if (squadStatus === 'invalid') {
+        showToast(t('invalid_squad_code'), 'error');
+        return;
       }
-      setSquadLoading(true);
-      validateSquadCode(squadCode, squadRequestId.current);
+      if (squadStatus !== 'valid') {
+        if (squadDebounceRef.current) {
+          clearTimeout(squadDebounceRef.current);
+          squadDebounceRef.current = null;
+        }
+        setSquadLoading(true);
+        const isValidSquad = await validateSquadCode(
+          squadCode,
+          squadRequestId.current,
+        );
+        if (!isValidSquad) {
+          showToast(t('invalid_squad_code'), 'error');
+          return;
+        }
+      }
     }
 
     try {
@@ -1896,6 +1913,8 @@ useEffect(() => {
   const isFocused = useIsFocused();
 
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
+  const [postalLoading, setPostalLoading] = useState(false);
+  const postalLookupIdRef = useRef(0);
   const [userMeta, setUserMeta] = useState<UserMeta>({
     city: '',
     postal_code: '',
@@ -1903,8 +1922,12 @@ useEffect(() => {
     longitude: 0,
   });
 
-  const ClickPostalCode = async (postalCode: any) => {
+  const ClickPostalCode = async (postalCode: any, lookupId: number) => {
     const location = await getCityFromPostalCode(postalCode);
+    if (lookupId !== postalLookupIdRef.current) {
+      return;
+    }
+    setPostalLoading(false);
     if (!location){
       setUserMeta(prev => ({
         ...prev,
@@ -2843,7 +2866,12 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={[
                                 Styles.personalEmailID_TextInput,
-                                { paddingTop: Platform.OS === 'ios' ? 0 : 10 },
+                                // {
+                                //   paddingTop: Platform.OS === 'ios' ? 0 : 10,
+                                 
+                                //   flex: 1,
+                                //   width: undefined, // Adjust width to account for ActivityIndicator
+                                // },
                               ]}
                               placeholder={"UK "+ t('postal_code')+"*"}
                               cursorColor={'#FFFFFF'}
@@ -2859,32 +2887,48 @@ useEffect(() => {
                                   .replace(/[^a-zA-Z0-9]/g, '')
                                   .toUpperCase();
                                 if (filteredText.length > 7) return;
+                                const lookupId = ++postalLookupIdRef.current;
                                 setUserMeta(prev => ({
                                   ...prev,
                                   postal_code: filteredText,
+                                  city: '',
+                                  latitude: 0,
+                                  longitude: 0,
                                 }));
                                 setPostalCode(filteredText);
                                 if (typingTimeout) {
                                   clearTimeout(typingTimeout);
                                 }
+                                if (!filteredText) {
+                                  setPostalLoading(false);
+                                  return;
+                                }
+                                setPostalLoading(true);
                                 const timeout = setTimeout(() => {
-                                  if (filteredText.length > 0) {
-                                    ClickPostalCode(filteredText);
-                                  }
+                                  ClickPostalCode(filteredText, lookupId);
                                 }, 1000);
 
                                 setTypingTimeout(timeout);
                               }}
                             />
-                            <Text
-                              style={{
-                                position: 'absolute',
-                                right: 10,
-                                color: 'white',
-                              }}
-                            >
-                              {userMeta?.city}
-                            </Text>
+                            {postalLoading ? (
+                              <ActivityIndicator
+                                size="small"
+                                color="#FFFFFF"
+                                style={Styles.squadLoader}
+                              />
+                            ) : (
+                              <Text
+                                style={{
+                                  color: 'white',
+                                  marginRight: 10,
+                                  maxWidth: '40%',
+                                }}
+                                numberOfLines={1}
+                              >
+                                {userMeta?.city}
+                              </Text>
+                            )}
                           </View>
 
                           <View
@@ -3077,13 +3121,9 @@ useEffect(() => {
                                   style={Styles.squadLoader}
                                 />
                               ) : squadStatus === 'valid' ? (
-                                <>
-                                  <Image source={require('../../../assets/images/success_icon.png')} style={{height: 24,width: 24,marginLeft: 4}} />
-
-                                </>
+                                <Image source={require('../../../assets/images/success_icon.png')} style={{height: 24,width: 24,marginLeft: 4}} />
                               ) : squadStatus === 'invalid' ? (
                                 <Image source={require('../../../assets/images/close_icon.png')} style={{height: 24,width: 24,marginLeft: 4}} />
-                               
                               ) : null}
                             </View>
                           </View>
@@ -3116,13 +3156,19 @@ useEffect(() => {
                           )}
 
                           <TouchableOpacity
-                            disabled={loading}
+                            disabled={loading || squadLoading || postalLoading}
                             onPress={() => {
+                              if (squadLoading || postalLoading) {
+                                return;
+                              }
                               Keyboard.dismiss();
                               handleSendOTP();
                               setImageLoaded(true);
                             }}
-                            style={Styles.sendButton}
+                            style={[
+                              Styles.sendButton,
+                              (squadLoading || postalLoading) && { opacity: 0.5 },
+                            ]}
                           >
                             <Text
                               allowFontScaling={false}

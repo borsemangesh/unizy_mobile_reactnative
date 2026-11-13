@@ -18,7 +18,7 @@
   "confirm_password": "Confirm Password*",
   "create_password": "Create Password*",
   "send_otp": "Send OTP",
-  "referred_squad_code": "Referred by Squad (Optional)",
+  "referred_squad_code": "Squad Code (optional)",
   "referred_by": "Referred by",
   "invalid_squad_code": "Invalid squad code",
   "already_have_account": "Already have an account?",
