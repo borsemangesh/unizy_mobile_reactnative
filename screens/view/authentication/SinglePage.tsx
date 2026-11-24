@@ -66,19 +66,63 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 import { wp } from '../../utils/component/responsive';
 
 const SQUAD_CODE_SUFFIX = '❤UniZy';
+const EMOJI_PATTERN =
+  /[\u2600-\u27BF\uFE0E\uFE0F\u200D]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDC00-\uDFFF]/g;
+
+const normalizeSquadInput = (raw: string) => {
+  let value = raw
+    .replace(/[\u200B-\u200D\uFEFF\u2060\u00A0]/g, '')
+    .replace(/[\r\n\t]/g, '')
+    .replace(EMOJI_PATTERN, '')
+    .trim()
+    .replace(/^['"]+|['"]+$/g, '');
+
+  const unizyTail = value.match(/[\s\-_]*unizy$/i);
+  if (unizyTail && value.length > unizyTail[0].length) {
+    value = value.slice(0, value.length - unizyTail[0].length).trim();
+  }
+
+  return value.replace(/\s+/g, '').toUpperCase();
+};
 
 const buildSquadCode = (raw: string) => {
-  const trimmed = raw.trim();
-  if (!trimmed) {
+  const prefix = normalizeSquadInput(raw);
+  if (!prefix) {
     return '';
   }
-  if (
-    trimmed.endsWith(SQUAD_CODE_SUFFIX) ||
-    trimmed.endsWith('❤️UniZy')
-  ) {
-    return trimmed;
+  return `${prefix}${SQUAD_CODE_SUFFIX}`;
+};
+
+const resolveSecurePassword = (
+  previous: string,
+  incoming: string,
+  lastKey: string | null,
+) => {
+  const clip = (value: string) => value.slice(0, 20);
+  if (!previous) {
+    return clip(incoming);
   }
-  return `${trimmed}${SQUAD_CODE_SUFFIX}`;
+  if (incoming === previous || incoming.startsWith(previous)) {
+    return clip(incoming);
+  }
+  if (
+    lastKey === 'Backspace' &&
+    previous.startsWith(incoming) &&
+    previous.length - incoming.length === 1
+  ) {
+    return incoming;
+  }
+  // Secure fields report a wiped value when one character is edited.
+  if (lastKey === 'Backspace') {
+    return previous.slice(0, -1);
+  }
+  if (incoming.length === 1) {
+    return clip(previous + incoming);
+  }
+  if (incoming.length > previous.length) {
+    return clip(incoming);
+  }
+  return previous;
 };
 
 
@@ -130,6 +174,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [search, setSearch] = useState('');
 
   const [languages, setLanguages] = useState<any[]>([]);
+  const [languageLoading, setLanguageLoading] = useState(false);
+  const [languageSelecting, setLanguageSelecting] = useState(false);
   const [loading, setLoading] = useState(false);
   const route = useRoute<SinglePageRouteProp>();
   const [isLogout, setIsLogout] = useState(false);
@@ -211,18 +257,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       setcurrentScreenIninner('forgotpassword');
       // showToast(route.params?.logoutMessage,'success')
     }
-    if (route.params?.termandProlicy) {
-      loginOpacity.setValue(1);
-      loginTranslateY.setValue(0);
-      setCurrentScreen('login');
-      setcurrentScreenIninner('login');
-      // showToast(route.params?.logoutMessage,'success')
-    }
   }, [route.params]);
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      setLanguageLoading(true);
       try {
         const res = await getRequest('user/language');
         if (res?.data) {
@@ -232,7 +271,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       } catch (err) {
         // console.log('Error fetching languages', err);
       } finally {
-        setLoading(false);
+        setLanguageLoading(false);
       }
     })();
   }, []);
@@ -293,6 +332,10 @@ useEffect(() => {
 }, [normalizedSearch, filteredLanguages.length]);
 
   const handleLanguageSelect = async (item: Language) => {
+    if (languageSelecting) {
+      return;
+    }
+    setLanguageSelecting(true);
     try {
       loginTranslateY.setValue(0);
 
@@ -314,8 +357,10 @@ useEffect(() => {
         setcurrentScreenIninner('login');
         setPassword('');
         setUsername('');
+        setLanguageSelecting(false);
       });
     } catch (err) {
+      setLanguageSelecting(false);
       // console.log('Error saving selected language', err);
     }
   };
@@ -374,6 +419,8 @@ useEffect(() => {
   const [signUpusername, setsignUpUsername] = useState('');
   const [signUppassword, setsignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const signUpPasswordKeyRef = useRef<string | null>(null);
+  const confirmPasswordKeyRef = useRef<string | null>(null);
   const [squadCode, setSquadCode] = useState('');
   const [squadStatus, setSquadStatus] = useState<'idle' | 'valid' | 'invalid'>(
     'idle',
@@ -382,6 +429,8 @@ useEffect(() => {
   const [referrerName, setReferrerName] = useState('');
   const squadRequestId = useRef(0);
   const squadDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const squadCodeRef = useRef('');
+  const validatedSquadCodeRef = useRef('');
   const [signUperror, setsignUpError] = useState('');
   const [issignUpPasswordVisible, setsignUpIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
@@ -415,6 +464,12 @@ useEffect(() => {
   const closePopup = () => setShowPopup(false);
 
   const [showOtp, setShowOtp] = useState(false);
+  const [personalOtpTimer, setPersonalOtpTimer] = useState(0);
+  const [universityOtpTimer, setUniversityOtpTimer] = useState(0);
+  const [personalResendLoading, setPersonalResendLoading] = useState(false);
+  const [universityResendLoading, setUniversityResendLoading] = useState(false);
+  const [personalOtpInputKey, setPersonalOtpInputKey] = useState(0);
+  const [universityOtpInputKey, setUniversityOtpInputKey] = useState(0);
 
   const [photo, setPhoto] = useState<string | null>(null);
   const [showButton, setShowButton] = useState(false);
@@ -720,6 +775,38 @@ useEffect(() => {
     }
   }, [currentScreenIninner, showOtp, verifyimageLoaded]);
 
+  useEffect(() => {
+    if (currentScreenIninner === 'sendOTP') {
+      setPersonalOtpTimer(60);
+    }
+  }, [currentScreenIninner]);
+
+  useEffect(() => {
+    if (showOtp) {
+      setUniversityOtpTimer(60);
+    }
+  }, [showOtp]);
+
+  useEffect(() => {
+    if (personalOtpTimer <= 0 || currentScreenIninner !== 'sendOTP') {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setPersonalOtpTimer(value => (value > 0 ? value - 1 : 0));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [personalOtpTimer, currentScreenIninner]);
+
+  useEffect(() => {
+    if (universityOtpTimer <= 0 || !showOtp) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setUniversityOtpTimer(value => (value > 0 ? value - 1 : 0));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [universityOtpTimer, showOtp]);
+
   const stepIndex = (() => {
     switch (currentScreenIninner) {
       case 'signup':
@@ -911,6 +998,7 @@ useEffect(() => {
     setSquadStatus('idle');
     setReferrerName('');
     setSquadLoading(false);
+    validatedSquadCodeRef.current = '';
   };
 
   const validateSquadCode = async (raw: string, requestId: number) => {
@@ -945,11 +1033,13 @@ useEffect(() => {
         const data = await response.json();
         const firstNameValue = data?.data?.firstName ?? '';
         const lastNameValue = data?.data?.lastName ?? '';
+        validatedSquadCodeRef.current = code;
         setReferrerName(`${firstNameValue} ${lastNameValue}`.trim());
         setSquadStatus('valid');
         return true;
       }
 
+      validatedSquadCodeRef.current = '';
       setReferrerName('');
       setSquadStatus('invalid');
       return false;
@@ -958,6 +1048,7 @@ useEffect(() => {
         return false;
       }
       setSquadLoading(false);
+      validatedSquadCodeRef.current = '';
       setReferrerName('');
       setSquadStatus('invalid');
       return false;
@@ -965,7 +1056,14 @@ useEffect(() => {
   };
 
   const onSquadCodeChange = (text: string) => {
-    setSquadCode(text.toUpperCase().trim());
+    const normalized = normalizeSquadInput(text);
+    if (normalized === squadCodeRef.current) {
+      return;
+    }
+
+    squadCodeRef.current = normalized;
+    validatedSquadCodeRef.current = '';
+    setSquadCode(normalized);
     setSquadStatus('idle');
     setReferrerName('');
     squadRequestId.current += 1;
@@ -976,18 +1074,18 @@ useEffect(() => {
       squadDebounceRef.current = null;
     }
 
-    if (!text.trim()) {
+    if (!normalized) {
       setSquadLoading(false);
       return;
     }
-    if (text.trim().length < 3) {
+    if (normalized.length < 3) {
       setSquadLoading(false);
       return;
     }
 
     setSquadLoading(true);
     squadDebounceRef.current = setTimeout(async () => {
-      const isValid = await validateSquadCode(text, requestId);
+      const isValid = await validateSquadCode(normalized, requestId);
       if (requestId !== squadRequestId.current || isValid !== false) {
         return;
       }
@@ -1074,7 +1172,7 @@ useEffect(() => {
     }
 
     try {
-      const trimmedSquadCode = squadCode.trim();
+      const trimmedSquadCode = normalizeSquadInput(squadCode);
       const body = {
         firstname: firstName,
         lastname: lastName,
@@ -1085,7 +1183,9 @@ useEffect(() => {
         city: userMeta.city,
         latitude: userMeta.latitude,
         longitude: userMeta.longitude,
-        squad_code: trimmedSquadCode ? buildSquadCode(trimmedSquadCode) : null,
+        squad_code: trimmedSquadCode
+          ? validatedSquadCodeRef.current || buildSquadCode(trimmedSquadCode)
+          : null,
       };
 
       const url = MAIN_URL.baseUrl + 'user/user-signup';
@@ -1229,9 +1329,17 @@ useEffect(() => {
   };
 
   const handleresend = async () => {
-    setOtp(['', '', '', '']);
+    if (personalOtpTimer > 0 || personalResendLoading) {
+      return;
+    }
+    setPersonalResendLoading(true);
     try {
       const tempUserId = await AsyncStorage.getItem('tempUserId');
+      const personalEmail = await AsyncStorage.getItem('personal_mail_id');
+      if (!tempUserId) {
+        showToast(t(Constant.FAIL_TO_SEND_OTP), 'error');
+        return;
+      }
 
       const url1 = MAIN_URL.baseUrl + 'user/resend-otp';
 
@@ -1242,11 +1350,17 @@ useEffect(() => {
         },
         body: JSON.stringify({
           temp_user_id: Number(tempUserId),
+          email: personalEmail || signUpusername,
         }),
       });
 
       const data = await response.json();
-      if (response.ok && data?.statusCode === 200) {
+      const resent =
+        (response.ok || response.status === 201) &&
+        (Number(data?.statusCode) === 200 ||
+          Number(data?.statusCode) === 201 ||
+          !!data?.data?.otp_id);
+      if (resent && data?.data?.otp_id) {
         showToast(t(data.message), 'success');
 
         await AsyncStorage.setItem(
@@ -1255,14 +1369,24 @@ useEffect(() => {
         );
 
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+        setOtp(['', '', '', '']);
+        setPersonalOtpInputKey(value => value + 1);
+        setPersonalOtpTimer(60);
 
         setTimeout(() => {
           inputs.current[0]?.focus();
         }, 200);
       } else {
+        showToast(
+          t(data?.message) || t(Constant.FAIL_TO_SEND_OTP),
+          'error',
+        );
       }
     } catch (err) {
       console.error('Error resending OTP:', err);
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    } finally {
+      setPersonalResendLoading(false);
     }
   };
 
@@ -1464,9 +1588,12 @@ useEffect(() => {
   };
 
   const resubmitotp = async () => {
+    if (universityOtpTimer > 0 || universityResendLoading) {
+      return;
+    }
+    setUniversityResendLoading(true);
     try {
       Keyboard.dismiss();
-      setOtp1(['', '', '', '']);
       const url = MAIN_URL.baseUrl + 'user/student-email';
 
       const res = await fetch(url, {
@@ -1483,7 +1610,10 @@ useEffect(() => {
 
       const data = await res.json();
 
-      if (data?.statusCode === 200) {
+      if (
+        Number(data?.statusCode) === 200 ||
+        Number(data?.statusCode) === 201
+      ) {
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
@@ -1492,6 +1622,9 @@ useEffect(() => {
         // await AsyncStorage.setItem('signupUsername', username);
 
         showToast(t(data.message), 'success');
+        setOtp1(['', '', '', '']);
+        setUniversityOtpInputKey(value => value + 1);
+        setUniversityOtpTimer(60);
         setShowOtp(true);
         //startAnimation();
         setTimeout(() => {
@@ -1503,6 +1636,8 @@ useEffect(() => {
     } catch (err) {
       console.error('Error sending OTP:', err);
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    } finally {
+      setUniversityResendLoading(false);
     }
   };
   //profile
@@ -2214,6 +2349,18 @@ useEffect(() => {
                   </View>
 
                   <View style={selectlang_styles.listContainer}>
+                    {languageLoading && languages.length === 0 ? (
+                      <View
+                        style={{
+                          minHeight: 180,
+                          width: '100%',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <ActivityIndicator size="large" color="#FFFFFF" />
+                      </View>
+                    ) : (
                     <FlatList
                       contentContainerStyle={selectlang_styles.listContent}
                       style={selectlang_styles.flatListStyle}
@@ -2222,6 +2369,7 @@ useEffect(() => {
                       keyExtractor={item => item.id.toString()}
                       renderItem={({ item }) => (
                         <TouchableOpacity
+                          disabled={languageSelecting}
                           style={selectlang_styles.languageItem}
                           onPress={() => {
                             handleLanguageSelect(item);
@@ -2286,6 +2434,23 @@ useEffect(() => {
                         </TouchableOpacity>
                       )}
                     />
+                    )}
+                    {languageSelecting && (
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                          left: 0,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: 'rgba(0, 32, 80, 0.35)',
+                        }}
+                      >
+                        <ActivityIndicator size="large" color="#FFFFFF" />
+                      </View>
+                    )}
                   </View>
                 </Animated.View>
               </View>
@@ -3003,7 +3168,25 @@ useEffect(() => {
                               maxLength={20}
                               selectionColor="white"
                               cursorColor={'#F5F5F5'}
-                              onChangeText={setsignUpPassword}
+                              autoCapitalize="none"
+                              autoCorrect={false}
+                              spellCheck={false}
+                              clearTextOnFocus={false}
+                              textContentType="none"
+                              autoComplete="off"
+                              importantForAutofill="no"
+                              onKeyPress={({ nativeEvent }) => {
+                                signUpPasswordKeyRef.current = nativeEvent.key;
+                              }}
+                              onChangeText={text => {
+                                setsignUpPassword(previous =>
+                                  resolveSecurePassword(
+                                    previous,
+                                    text,
+                                    signUpPasswordKeyRef.current,
+                                  ),
+                                );
+                              }}
                               secureTextEntry={!issignUpPasswordVisible}
                             />
 
@@ -3048,7 +3231,25 @@ useEffect(() => {
                               maxLength={20}
                               cursorColor={'#F5F5F5'}
                               selectionColor="white"
-                              onChangeText={setConfirmPassword}
+                              autoCapitalize="none"
+                              autoCorrect={false}
+                              spellCheck={false}
+                              clearTextOnFocus={false}
+                              textContentType="none"
+                              autoComplete="off"
+                              importantForAutofill="no"
+                              onKeyPress={({ nativeEvent }) => {
+                                confirmPasswordKeyRef.current = nativeEvent.key;
+                              }}
+                              onChangeText={text => {
+                                setConfirmPassword(previous =>
+                                  resolveSecurePassword(
+                                    previous,
+                                    text,
+                                    confirmPasswordKeyRef.current,
+                                  ),
+                                );
+                              }}
                               secureTextEntry={!isConfirmPasswordVisible}
                             />
 
@@ -3217,6 +3418,7 @@ useEffect(() => {
                                   setsignUpUsername('');
                                   setsignUpPassword('');
                                   setSquadCode('');
+                                  squadCodeRef.current = '';
                                   clearSquadFeedback();
                                   squadRequestId.current += 1;
                                   if (squadDebounceRef.current) {
@@ -3270,12 +3472,24 @@ useEffect(() => {
                                     {signUpusername}
                                   </Text>
                                 </Text>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={[
+                                    Styles.termsText,
+                                    {
+                                      marginTop: 8,
+                                      color: 'rgba(255,255,255,0.72)',
+                                    },
+                                  ]}
+                                >
+                                  {t('otp_delivery_notice')}
+                                </Text>
                               </View>
 
                               <View style={Styles.sendOtpotpContainer}>
                                 {[0, 1, 2, 3].map((_, index) => (
                                   <TextInput
-                                    key={index}
+                                    key={`${personalOtpInputKey}-${index}`}
                                     ref={ref => {
                                       inputs.current[index] = ref;
                                     }}
@@ -3307,17 +3521,26 @@ useEffect(() => {
                               </View>
 
                               <TouchableOpacity
+                                disabled={!otp.every(digit => digit.length === 1)}
                                 style={[
                                   Styles.sendOtploginButton,
                                   {
                                     marginTop: Platform.OS === 'ios' ? 20 : 16,
+                                  },
+                                  !otp.every(digit => digit.length === 1) && {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
                                   },
                                 ]}
                                 onPress={otpverify}
                               >
                                 <Text
                                   allowFontScaling={false}
-                                  style={Styles.sendText}
+                                  style={[
+                                    Styles.sendText,
+                                    !otp.every(digit => digit.length === 1) && {
+                                      color: 'rgba(0, 0, 188, 0.35)',
+                                    },
+                                  ]}
                                 >
                                   {t('verify_and_continue')}
                                 </Text>
@@ -3336,16 +3559,35 @@ useEffect(() => {
                                 >
                                   {t('didnt_receive_code')}{' '}
                                 </Text>
-                                <TouchableOpacity onPress={handleresend}>
-                                  <Text
-                                    allowFontScaling={false}
-                                    style={[
-                                      Styles.sendOtpresendText1,
-                                      { color: 'rgba(140, 244, 255, 0.7)' },
-                                    ]}
-                                  >
-                                    {t('resend_code')}
-                                  </Text>
+                                <TouchableOpacity
+                                  disabled={
+                                    personalOtpTimer > 0 || personalResendLoading
+                                  }
+                                  onPress={handleresend}
+                                >
+                                  {personalResendLoading ? (
+                                    <ActivityIndicator
+                                      size="small"
+                                      color="rgba(140, 244, 255, 0.7)"
+                                    />
+                                  ) : (
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={[
+                                        Styles.sendOtpresendText1,
+                                        {
+                                          color:
+                                            personalOtpTimer > 0
+                                              ? 'rgba(255,255,255,0.35)'
+                                              : 'rgba(140, 244, 255, 0.7)',
+                                        },
+                                      ]}
+                                    >
+                                      {personalOtpTimer > 0
+                                        ? `${t('resend_code')} (${personalOtpTimer}s)`
+                                        : t('resend_code')}
+                                    </Text>
+                                  )}
                                 </TouchableOpacity>
                               </View>
 
@@ -3506,13 +3748,22 @@ useEffect(() => {
                                     {verifyusername}
                                   </Text>
                                 </Text>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={[
+                                    Styles.verifytermsText,
+                                    { marginTop: 8, color: 'rgba(255,255,255,0.72)' },
+                                  ]}
+                                >
+                                  {t('otp_delivery_notice')}
+                                </Text>
                               </View>
 
                               <View style={Styles.verifyotpContainer}>
                                 {[0, 1, 2, 3].map((_, index) => (
                                   <TextInput
                                     allowFontScaling={false}
-                                    key={index}
+                                    key={`${universityOtpInputKey}-${index}`}
                                     ref={ref => {
                                       verifyinputs.current[index] = ref;
                                     }}
@@ -3545,12 +3796,23 @@ useEffect(() => {
                               </View>
 
                               <TouchableOpacity
-                                style={Styles.verifyloginButton1}
+                                disabled={!otp1.every(digit => digit.length === 1)}
+                                style={[
+                                  Styles.verifyloginButton1,
+                                  !otp1.every(digit => digit.length === 1) && {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                                  },
+                                ]}
                                 onPress={submitotp}
                               >
                                 <Text
                                   allowFontScaling={false}
-                                  style={Styles.sendText}
+                                  style={[
+                                    Styles.sendText,
+                                    !otp1.every(digit => digit.length === 1) && {
+                                      color: 'rgba(0, 0, 188, 0.35)',
+                                    },
+                                  ]}
                                 >
                                   {t('verify_and_continue')}
                                 </Text>
@@ -3565,16 +3827,36 @@ useEffect(() => {
                                 >
                                   {t('didnt_receive_code')}{' '}
                                 </Text>
-                                <TouchableOpacity onPress={resubmitotp}>
-                                  <Text
-                                    allowFontScaling={false}
-                                    style={[
-                                      Styles.verifyresendText1,
-                                      { color: 'rgba(140, 244, 255, 0.7)' },
-                                    ]}
-                                  >
-                                    {t('resend_code')}
-                                  </Text>
+                                <TouchableOpacity
+                                  disabled={
+                                    universityOtpTimer > 0 ||
+                                    universityResendLoading
+                                  }
+                                  onPress={resubmitotp}
+                                >
+                                  {universityResendLoading ? (
+                                    <ActivityIndicator
+                                      size="small"
+                                      color="rgba(140, 244, 255, 0.7)"
+                                    />
+                                  ) : (
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={[
+                                        Styles.verifyresendText1,
+                                        {
+                                          color:
+                                            universityOtpTimer > 0
+                                              ? 'rgba(255,255,255,0.35)'
+                                              : 'rgba(140, 244, 255, 0.7)',
+                                        },
+                                      ]}
+                                    >
+                                      {universityOtpTimer > 0
+                                        ? `${t('resend_code')} (${universityOtpTimer}s)`
+                                        : t('resend_code')}
+                                    </Text>
+                                  )}
                                 </TouchableOpacity>
                               </View>
 

@@ -21,13 +21,13 @@ const TeamsAndCondition = ({ navigation }: TermsAndConditionProps) => {
           <View style={styles.header}>
             <View style={styles.headerRow}>
               <TouchableOpacity
-                onPress={() =>{
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'SinglePage', params: { termandProlicy: true, resetToLogin: false, currentScreen: 'login', currentScreenIninner: 'login' } }],
-                    });          
-                    }                     
-                }
+                onPress={() => {
+                  if (navigation.canGoBack()) {
+                    navigation.goBack();
+                    return;
+                  }
+                  navigation.navigate('SinglePage');
+                }}
               >
                 <View style={styles.backIconRow}>
                   <Image
