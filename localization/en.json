@@ -30,6 +30,7 @@
   "back_to_login": "Back to Login",
   "verify_personal_email": "Verify Personal Email ID",
   "we_sent_code_to": "We have sent a 4-digit code to",
+  "otp_delivery_notice": "Please allow up to 5 minutes to receive your OTP. Please also make sure to check your junk mail.",
   "verify_and_continue": "Verify & Continue",
   "didnt_receive_code": "Didn't receive a code?",
   "resend_code": "Resend Code",
@@ -838,7 +839,6 @@
   "unblock_info_user": "This chat is no longer restricted and you can now send and receive messages.",
   "unblock_msg_user": "Are you sure you want to unblock this user? They will be able to contact you again.",
   "unblock_msg_user_admin": "This chat is no longer restricted and you can now send and receive messages.",
-  "unblock": "Unblock",
-  "block" : "Block"
+  "unblock": "Unblock"
 
 }
