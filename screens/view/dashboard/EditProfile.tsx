@@ -980,29 +980,43 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
-  const handleChange = (text: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
+  const applyOtpDigits = (
+    current: string[],
+    text: string,
+    index: number,
+    refs: React.MutableRefObject<Array<TextInput | null>>,
+  ) => {
+    const digits = text.replace(/[^0-9]/g, '');
+    const next = [...current];
 
-    if (text && index < inputs.current.length - 1) {
-      inputs.current[index + 1]?.focus();
-    } else if (!text && index > 0) {
-      inputs.current[index - 1]?.focus();
+    if (digits.length > 1) {
+      digits
+        .slice(0, 4)
+        .split('')
+        .forEach((digit, i) => {
+          next[i] = digit;
+        });
+      refs.current[Math.min(digits.length, 4) - 1]?.focus();
+      return next;
     }
+
+    next[index] = digits;
+    if (digits && index < 3) {
+      refs.current[index + 1]?.focus();
+    }
+    return next;
+  };
+
+  const handleChange = (text: string, index: number) => {
+    setOtp(prev => applyOtpDigits(prev, text, index, inputs));
   };
 
   const handleChange1 = (text: string, index: number) => {
-    const newOtp = [...otp1];
-    newOtp[index] = text;
-    setOtp1(newOtp);
-
-    if (text && index < inputs1.current.length - 1) {
-      inputs1.current[index + 1]?.focus();
-    } else if (!text && index > 0) {
-      inputs1.current[index - 1]?.focus();
-    }
+    setOtp1(prev => applyOtpDigits(prev, text, index, inputs1));
   };
+
+  const isPersonalOtpComplete = otp.every(digit => /^\d$/.test(digit));
+  const isUniversityOtpComplete = otp1.every(digit => /^\d$/.test(digit));
 
   // const ClickPostalCode = async (postalCode: any) => {
   //   const cityName = await getCityFromPostalCode(postalCode);
@@ -1796,7 +1810,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         animationType="fade"
         onRequestClose={() => {}}
       >
-        <TouchableWithoutFeedback onPress={closePopup1}>
           <View style={styles.overlay}>
             {/* <BlurView
               style={{
@@ -1889,7 +1902,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
             {/* </BlurView> */}
           </View>
-        </TouchableWithoutFeedback>
       </Modal>
 
       <Modal
@@ -1898,7 +1910,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         animationType="fade"
         onRequestClose={() => {}}
       >
-        <TouchableWithoutFeedback onPress={closePopup2}>
           <View style={styles.overlay}>
             {/* <BlurView
               style={{
@@ -1970,6 +1981,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       const digit = text.replace(/[^0-9]/g, '');
                       handleChange(digit, index);
                     }}
+                    onKeyPress={({ nativeEvent }) => {
+                      if (nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
+                        inputs.current[index - 1]?.focus();
+                      }
+                    }}
                     returnKeyType="next"
                     textAlign="center"
                     secureTextEntry={true}
@@ -1977,7 +1993,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 ))}
               </View>
 
-              <TouchableOpacity style={styles.loginButton} onPress={otpverify}>
+              <TouchableOpacity
+                style={[
+                  styles.loginButton,
+                  !isPersonalOtpComplete && styles.disabledButton,
+                ]}
+                onPress={otpverify}
+                disabled={!isPersonalOtpComplete}
+                activeOpacity={isPersonalOtpComplete ? 0.7 : 1}
+              >
                 <Text allowFontScaling={false} style={styles.loginText}>
                   {t('verify')}
                 </Text>
@@ -2035,7 +2059,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
             {/* </BlurView> */}
           </View>
-        </TouchableWithoutFeedback>
       </Modal>
 
       <Modal
@@ -2044,7 +2067,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         animationType="fade"
         onRequestClose={() => {}}
       >
-        <TouchableWithoutFeedback onPress={closePopup3}>
           <View style={styles.overlay}>
             <BlurView
               style={[
@@ -2125,7 +2147,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
             {/* </BlurView> */}
           </View>
-        </TouchableWithoutFeedback>
       </Modal>
 
       <Modal
@@ -2134,7 +2155,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         animationType="fade"
         onRequestClose={() => {}}
       >
-        <TouchableWithoutFeedback onPress={closePopup4}>
           <View style={styles.overlay}>
             {/* <BlurView
               style={{
@@ -2206,6 +2226,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       const digit = text.replace(/[^0-9]/g, '');
                       handleChange1(digit, index);
                     }}
+                    onKeyPress={({ nativeEvent }) => {
+                      if (nativeEvent.key === 'Backspace' && !otp1[index] && index > 0) {
+                        inputs1.current[index - 1]?.focus();
+                      }
+                    }}
                     returnKeyType="next"
                     textAlign="center"
                     secureTextEntry={true}
@@ -2213,7 +2238,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 ))}
               </View>
 
-              <TouchableOpacity style={styles.loginButton} onPress={otpverify1}>
+              <TouchableOpacity
+                style={[
+                  styles.loginButton,
+                  !isUniversityOtpComplete && styles.disabledButton,
+                ]}
+                onPress={otpverify1}
+                disabled={!isUniversityOtpComplete}
+                activeOpacity={isUniversityOtpComplete ? 0.7 : 1}
+              >
                 <Text allowFontScaling={false} style={styles.loginText}>
                   {t('verify')}
                 </Text>
@@ -2271,7 +2304,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
             {/* </BlurView> */}
           </View>
-        </TouchableWithoutFeedback>
       </Modal>
 
       <Modal
@@ -2280,11 +2312,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         animationType="fade"
         onRequestClose={() => setShowDeleteModal(false)}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            navigation.replace('EditProfile');
-          }}
-        >
           <View style={styles.overlay}>
             {/* <BlurView
               style={{
@@ -2359,7 +2386,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
             {/* </BlurView> */}
           </View>
-        </TouchableWithoutFeedback>
       </Modal>
       {loading && (
         <View style={styles.loaderOverlay}>
@@ -2695,6 +2721,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
+  },
+  disabledButton: {
+    opacity: 0.45,
   },
 
   otpContainer: {
