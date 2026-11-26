@@ -1,14 +1,15 @@
 import { t } from 'i18next';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native';
 
 const OnboardingScreen3 = () => {
+  const { height } = useWindowDimensions();
+  const isSmall = height < 750;
   return (
     <View
       style={{
         flex: 1,
-        height: '100%',
         width: '100%',
-        paddingTop: 70,
+        paddingTop: isSmall ? 48 : 70,
         paddingHorizontal: 16,
       }}
     >
@@ -21,7 +22,7 @@ const OnboardingScreen3 = () => {
         textAlign: 'center',}}>
         {t('info_subtitle3')}
       </Text> */}
-      <View style={{ width: '100%', alignItems: 'center', gap: 72 ,marginTop: 64 }}>
+      <View style={{ width: '100%', alignItems: 'center', gap: isSmall ? 20 : 72, marginTop: isSmall ? 24 : 64 }}>
         <View style={{ width: '100%', alignItems: 'center' }}>
           
           <View style={{  }}>

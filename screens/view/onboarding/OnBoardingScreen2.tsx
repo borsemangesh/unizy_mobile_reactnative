@@ -1,14 +1,15 @@
 import { t } from 'i18next';
-import { View, Text, ImageBackground, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native';
 
 const OnboardingScreen2 = () => {
+  const { height } = useWindowDimensions();
+  const isSmall = height < 750;
   return (
     <View
       style={{
         flex: 1,
-        height: '100%',
         width: '100%',
-        paddingTop: 70,
+        paddingTop: isSmall ? 48 : 70,
         paddingHorizontal: 16,
       }}
     >
@@ -20,7 +21,7 @@ const OnboardingScreen2 = () => {
       </Text> */}
 
 
-      <View style={{ width: '100%', alignItems: 'center', gap: 72,marginTop: 64 }}>
+      <View style={{ width: '100%', alignItems: 'center', gap: isSmall ? 20 : 72, marginTop: isSmall ? 24 : 64 }}>
 
         <View style={{ width: '100%', alignItems: 'center' }}>
           

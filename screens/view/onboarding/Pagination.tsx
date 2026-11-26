@@ -37,14 +37,13 @@ const Pagination = ({ data, index }: any) => {
   const styles = StyleSheet.create({
 
      stepIndicatorContainer: {
-    position: 'absolute',
-    bottom: 97, // keep your carousel position
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
-    zIndex: 10,
+    marginBottom: 12,
+    marginTop: 4,
   },
 
   stepCircle: {

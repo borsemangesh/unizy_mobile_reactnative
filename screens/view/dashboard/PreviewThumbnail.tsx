@@ -84,7 +84,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const [initials, setInitials] = useState('');
   const [profile, setProfile] = useState('');
 
-  const { height } = Dimensions.get('window');
 
   const [slideUp1] = useState(new Animated.Value(0));
 
@@ -423,12 +422,9 @@ console.log('commissionPrice', commissionPrice);
             contentContainerStyle={{
               flexGrow: 1,
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
               paddingTop: Platform.OS === 'ios' ? 100 : 100,
-              paddingBottom:
-                Platform.OS === 'ios'
-                  ? Dimensions.get('window').scale - 60
-                  : Dimensions.get('window').scale - 60,
+              paddingBottom: 140 + Math.max(insets.bottom, 8),
             }}
             onScroll={scrollHandler}
           >
@@ -640,7 +636,7 @@ console.log('commissionPrice', commissionPrice);
               )} */}
 
               {categoryId !== 4 && (
-                <View style={[styles.textbg, { marginBottom: 100 }]}>
+                <View style={styles.textbg}>
                   <Image
                     source={require('../../../assets/images/info_icon.png')}
                     style={{
@@ -651,7 +647,7 @@ console.log('commissionPrice', commissionPrice);
                     }}
                   />
 
-                  <View style={{ flex: 1 }}>
+                  <View style={{ flex: 1, minWidth: 0 }}>
                     <Text
                       allowFontScaling={false}
                       style={styles.importantText1}
@@ -840,9 +836,9 @@ console.log('commissionPrice', commissionPrice);
           contentContainerStyle={{
             flexGrow: 1,
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             paddingTop: Platform.OS === 'ios' ? 100 : 100,
-            paddingBottom: 100,
+            paddingBottom: 140 + Math.max(insets.bottom, 8),
           }}
           onScroll={scrollHandler}
         >
@@ -980,81 +976,80 @@ console.log('commissionPrice', commissionPrice);
                 {t('loading')}
               </Text>
             )}
+
+            {categoryId !== 4 && (
+              <View style={styles.textbg}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{
+                    width: 16,
+                    height: 16,
+                    marginRight: 8,
+                    marginTop: 2,
+                    flexShrink: 0,
+                  }}
+                />
+
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.importantText1}
+                  >
+                    {t('important')}
+                  </Text>
+
+                  {categoryId === 3 ? (
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText}
+                    >
+                      {t('a')}
+                      <Text style={styles.importantText1}>
+                        {' '}
+                        {Math.trunc(commission)}%
+                      </Text>{' '}
+                      {t('commission_or_maximum')}
+                      <Text style={styles.importantText}> (</Text>
+                      <Text style={styles.importantText}>{t('capped')} </Text>
+                      <Text style={styles.importantText1}>
+                        £{Math.trunc(maxCapPound)}
+                      </Text>
+                      <Text style={styles.importantText}>)</Text>{' '}
+                      {t('whichever_lower_new')}{' '}
+                      <Text style={styles.importantText1}>
+                        {feePercentage}% + £{fixedFee.toFixed(2)}
+                      </Text>{' '}
+                      {t('whichever_lower_new_3')}
+                    </Text>
+                  ) : (
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText}
+                    >
+                      {t('a')}
+                      <Text style={styles.importantText1}>
+                        {' '}
+                        {Math.trunc(commission)}%
+                      </Text>{' '}
+                      {t('commission_or_maximum')}
+                      <Text style={styles.importantText}> (</Text>
+                      <Text style={styles.importantText}>{t('capped')} </Text>
+                      <Text style={styles.importantText1}>
+                        £{Math.trunc(maxCapPound)}
+                      </Text>
+                      <Text style={styles.importantText}>)</Text>{' '}
+                      {t('whichever_lower_new_other')}{' '}
+                      <Text style={styles.importantText1}>
+                        {feePercentage}% + £{fixedFee.toFixed(2)}
+                      </Text>{' '}
+                      {t('whichever_lower_new_1')}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            )}
           </View>
         </AnimatedReanimated.ScrollView>
-        {categoryId !== 4 && (
-  <View style={[styles.textbg, { marginBottom: 100 }]}>
-    <Image
-      source={require('../../../assets/images/info_icon.png')}
-      style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-    />
-
-    <View style={{ flex: 1 }}>
-      <Text
-        allowFontScaling={false}
-        style={styles.importantText1}
-      >
-        {t('important')}
-      </Text>
-
-      {categoryId === 3 ? (
-        <Text
-          allowFontScaling={false}
-          style={styles.importantText}
-        >
-          {t('a')}
-          <Text style={styles.importantText1}>
-            {' '}
-            {Math.trunc(commission)}%
-          </Text>{' '}
-          {t('commission_or_maximum')}
-          <Text style={styles.importantText}>
-            {' '}(
-          </Text>
-          <Text style={styles.importantText}>
-            {t('capped')}{' '}
-          </Text>
-          <Text style={styles.importantText1}>
-            £{Math.trunc(maxCapPound)}
-          </Text>
-          <Text style={styles.importantText}>
-            )
-          </Text>{' '}
-           {t('whichever_lower_new')} <Text style={styles.importantText1}>
-            {feePercentage}% + £{fixedFee.toFixed(2)}
-          </Text>{' '} {t('whichever_lower_new_3')}
-        </Text>
-      ) : (
-        <Text
-          allowFontScaling={false}
-          style={styles.importantText}
-        >
-          {t('a')}
-          <Text style={styles.importantText1}>
-            {' '}
-            {Math.trunc(commission)}%
-          </Text>{' '}
-          {t('commission_or_maximum')}
-          <Text style={styles.importantText}>
-            {' '}(
-          </Text>
-          <Text style={styles.importantText}>
-            {t('capped')}{' '}
-          </Text>
-          <Text style={styles.importantText1}>
-            £{Math.trunc(maxCapPound)}
-          </Text>
-          <Text style={styles.importantText}>
-            )
-          </Text>{' '}
-          {t('whichever_lower_new_other')} <Text style={styles.importantText1}>
-            {feePercentage}% + £{fixedFee.toFixed(2)}
-          </Text>{' '} {t('whichever_lower_new_1')}
-        </Text>
-      )}
-    </View>
-  </View>
-)}
 
         {/* {categoryId !== 4 && (
           <View style={[styles.textbg, { marginBottom: 100 }]}>
@@ -1092,7 +1087,7 @@ console.log('commissionPrice', commissionPrice);
         )} */}
 
 {/* lkjsdfkl */}
-        <View style={styles.bottomFixed}>
+        <View style={[styles.bottomFixed, { paddingBottom: insets.bottom }]}>
           <Button
             title={t('next')}
             onPress={() => navigation.navigate('PreviewDetailed')}
@@ -1213,36 +1208,28 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   textbg: {
-    overflow: 'hidden',
     alignContent: 'center',
     alignSelf: 'center',
     width: '90%',
+    maxWidth: '90%',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    padding: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    padding: 12,
     borderWidth: 0.5,
-    borderEndEndRadius: 12,
-    borderStartEndRadius: 12,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    borderBottomStartRadius: 12,
-    borderBlockStartColor: '#ffffff31',
-    borderBlockColor: '#ffffff31',
-    borderTopColor: '#ffffff31',
-    borderBottomColor: '#ffffff31',
-    borderLeftColor: '#ffffff31',
-    borderRightColor: '#ffffff31',
-    marginTop: 48,
+    borderRadius: 12,
+    borderColor: '#ffffff31',
+    marginTop: 24,
+    flexShrink: 0,
   },
   importantText: {
     color: '#ccc',
     fontSize: 12,
-    marginBottom: 6,
+    lineHeight: 18,
+    marginBottom: 0,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
+    flexShrink: 1,
   },
   importantText1: {
     color: '#fff',
@@ -1253,11 +1240,12 @@ const styles = StyleSheet.create({
 
   productCarddisplay: {
     display: 'flex',
-    height: '100%',
+    width: '100%',
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 24,
+    paddingHorizontal: 8,
   },
 });
 

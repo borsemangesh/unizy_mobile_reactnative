@@ -210,7 +210,7 @@ const MessagesIndividualScreen = ({
   const [messagesReady, setMessagesReady] = useState(false);
   const initialScrollDoneRef = useRef(false);
 
-  const { width, height } = Dimensions.get('window');
+  const { width } = Dimensions.get('window');
   const flatListRef = useRef<FlatList>(null);
   const textInputRef = useRef<TextInput>(null);
   const loadingFromScrollRef = useRef(false);
@@ -1858,48 +1858,42 @@ const MessagesIndividualScreen = ({
             />
             <View
               style={{
-                paddingHorizontal: 16,
+                paddingHorizontal: width < 360 ? 12 : 16,
                 paddingTop: Platform.OS === 'ios' ? 0 : 8,
-                paddingBottom: Platform.OS === 'ios'
-                  ? keyboardVisible
-                    ? 8
-                    : 30
-                  : keyboardVisible
-                    ? 8
-                    : 34,
+                paddingBottom: keyboardVisible
+                  ? 8
+                  : Math.max(insets.bottom, 8) + (width < 360 ? 6 : 8),
                 backgroundColor: 'transparent',
               }}
             >
               {chatUser?.blocked_you ? (
-                <View style={[styles.blockBanner,{
-                              paddingBottom:
-                                (Platform.OS === 'ios' ? height * 0 : height * 0) +
-                                (Platform.OS === 'android' ? insets.bottom : 0),
-                            }]}>
+                <View style={styles.blockBanner}>
                   <Image
                     source={require('../../../assets/images/block_triangle.png')}
                     style={styles.blockIcon}
                   />
-                  <Text style={styles.blockText}>{t('block_info_user')}</Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.blockText}
+                  >
+                    {t('block_info_user')}
+                  </Text>
                 </View>
               ) : chatUser?.isblocked ? (
-                <View style={[styles.blockBanner,{
-                              paddingBottom:
-                                (Platform.OS === 'ios' ? height * 0 : height * 0) +
-                                (Platform.OS === 'android' ? insets.bottom : 0),
-                            }]}>
+                <View style={styles.blockBanner}>
                   <Image
                     source={require('../../../assets/images/block_triangle.png')}
                     style={styles.blockIcon}
                   />
-                  <Text style={styles.blockText}>{t('block_info')}</Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.blockText}
+                  >
+                    {t('block_info')}
+                  </Text>
                 </View>
               ) : (
-                <View style={[styles.inputRow,{
-                              paddingBottom:
-                                (Platform.OS === 'ios' ? height * 0 : height * 0) +
-                                (Platform.OS === 'android' ? insets.bottom : 0),
-                            }]}>
+                <View style={styles.inputRow}>
                   <View style={styles.inputContainer}>
                     <BlurView
                       style={styles.inputBlur}
@@ -1944,13 +1938,6 @@ const MessagesIndividualScreen = ({
                   </TouchableOpacity>
                 </View>
               )}
-
-              <View
-                style={{
-                  height: Platform.OS === 'ios' ? 4 : 4,
-                  width: '100%',
-                }}
-              />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -1982,12 +1969,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
+    flexShrink: 0,
   },
 
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    minWidth: 0,
     borderRadius: 40,
     height: 48,
     paddingHorizontal: 16,
@@ -2007,9 +1996,11 @@ const styles = StyleSheet.create({
 
   textInput: {
     flex: 1,
+    minWidth: 0,
     color: '#fff',
     fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
+    fontSize: 16,
+    paddingVertical: 0,
     marginLeft: Platform.OS === 'ios' ? 5 : 0,
   },
 
@@ -2022,6 +2013,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    flexShrink: 0,
   },
 
   sendButtonBlur: {
@@ -2037,32 +2029,36 @@ const styles = StyleSheet.create({
   blockBanner: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'stretch',
     width: '100%',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    padding: 12,
+    maxWidth: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     borderWidth: 0.5,
     borderRadius: 12,
     borderColor: '#ffffff31',
-    justifyContent: 'center',
   },
 
   blockIcon: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     tintColor: '#fff',
     zIndex: 1,
-    marginLeft: 8,
+    marginRight: 8,
+    flexShrink: 0,
   },
 
   blockText: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
+    lineHeight: 20,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     opacity: 0.8,
-    paddingLeft: 8,
   },
 
   leftBubbleWrapper: {
