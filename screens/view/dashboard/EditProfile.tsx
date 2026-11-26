@@ -1962,6 +1962,18 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {username1}
                 </Text>
               </Text>
+              <Text
+                                  allowFontScaling={false}
+                                  style={[
+                                    styles.termsText,
+                                    {
+                                      marginTop: 8,
+                                      color: 'rgba(255,255,255,0.72)',
+                                    },
+                                  ]}
+                                >
+                                  {t('otp_delivery_notice')}
+                                </Text>
 
               <View style={styles.otpContainer}>
                 {[0, 1, 2, 3].map((_, index) => (
@@ -2206,8 +2218,20 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 >
                   {username2}
                 </Text>
+                
               </Text>
-
+<Text
+                                  allowFontScaling={false}
+                                  style={[
+                                    styles.termsText,
+                                    {
+                                      marginTop: 8,
+                                      color: 'rgba(255,255,255,0.72)',
+                                    },
+                                  ]}
+                                >
+                                  {t('otp_delivery_notice')}
+                                </Text>
               <View style={styles.otpContainer}>
                 {[0, 1, 2, 3].map((_, index) => (
                   <TextInput
@@ -2401,6 +2425,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
+   termsText: {
+    color: 'rgb(136, 219, 255)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 18,
+    paddingHorizontal: 10,
+  },
   newloginButton: {
     display: 'flex',
     width: '100%',
