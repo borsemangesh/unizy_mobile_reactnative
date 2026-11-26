@@ -1187,6 +1187,8 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
   const clicklisting = useCallback(() => {
     setIsNav(false);
     navigation.replace('MyListing', { animation: 'none' });
+    // navigation.replace('SellerInfo', { animation: 'none' });
+
   }, [navigation]);
 
   const clickbookmark = useCallback(() => {

@@ -3168,7 +3168,7 @@ useEffect(() => {
                               { marginTop: Platform.OS === 'ios' ? 12 : 12 },
                             ]}
                           >
-                            <TextInput
+                             <TextInput
                               allowFontScaling={false}
                               style={Styles.password_TextInput}
                               placeholder={t('create_password')}
@@ -3187,17 +3187,30 @@ useEffect(() => {
                               onKeyPress={({ nativeEvent }) => {
                                 signUpPasswordKeyRef.current = nativeEvent.key;
                               }}
-                              onChangeText={text => {
-                                setsignUpPassword(previous =>
-                                  resolveSecurePassword(
-                                    previous,
-                                    text,
-                                    signUpPasswordKeyRef.current,
-                                  ),
-                                );
-                              }}
+                              // onChangeText={text => {
+                              //   setsignUpPassword(previous =>
+                              //     resolveSecurePassword(
+                              //       previous,
+                              //       text,
+                              //       signUpPasswordKeyRef.current,
+                              //     ),
+                              //   );
+                              // }}
+                              onChangeText={setsignUpPassword}
                               secureTextEntry={!issignUpPasswordVisible}
-                            />
+                            /> 
+                           {/* <TextInput
+                              allowFontScaling={false}
+                              style={Styles.password_TextInput}
+                              placeholder={t('create_password')}
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={signUppassword}
+                              maxLength={20}
+                              selectionColor="white"
+                              cursorColor={'#F5F5F5'}
+                              onChangeText={setsignUpPassword}
+                              secureTextEntry={!issignUpPasswordVisible}
+                            />*/}
 
                             <TouchableOpacity
                               onPress={() =>
@@ -3250,15 +3263,16 @@ useEffect(() => {
                               onKeyPress={({ nativeEvent }) => {
                                 confirmPasswordKeyRef.current = nativeEvent.key;
                               }}
-                              onChangeText={text => {
-                                setConfirmPassword(previous =>
-                                  resolveSecurePassword(
-                                    previous,
-                                    text,
-                                    confirmPasswordKeyRef.current,
-                                  ),
-                                );
-                              }}
+                              // onChangeText={text => {
+                              //   setConfirmPassword(previous =>
+                              //     resolveSecurePassword(
+                              //       previous,
+                              //       text,
+                              //       confirmPasswordKeyRef.current,
+                              //     ),
+                              //   );
+                              // }}
+                              onChangeText={setConfirmPassword}
                               secureTextEntry={!isConfirmPasswordVisible}
                             />
 
