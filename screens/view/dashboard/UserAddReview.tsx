@@ -174,7 +174,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                 />
               </View>
             </TouchableOpacity>
-            <View style={{ width: 300 }}>
+            <View style={{ width: 270 }}>
               <Text
                 numberOfLines={2}
                 allowFontScaling={false}
