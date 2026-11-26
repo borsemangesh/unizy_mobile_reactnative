@@ -62,6 +62,16 @@ android {
        universalApk false
      }
    }
+
+   allprojects {
+    repositories {
+        maven {
+            url "$rootDir/../node_modules/@notifee/react-native/android/libs"
+        }
+        google()
+        mavenCentral()
+    }
+   }
 }
 
 dependencies {
