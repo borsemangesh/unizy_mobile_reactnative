@@ -1880,12 +1880,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   styles.scrollContainer,
                   {
                     paddingBottom:
-                      Platform.OS === 'ios' ? height * 0.11 : height * 0.11,
-                  }, // 0.05% of screen height
-                  {
-                    paddingBottom:
-                      Platform.OS === 'ios' ? height * 0.11 : height * 0.11,
-                  }, // 0.05% of screen height
+                      (Platform.OS === 'ios' ? height * 0.11 : height * 0.12) +
+                      (Platform.OS === 'android' ? insets.bottom : 0),
+                  },
                 ]}
               >
                 <View style={styles.userRow}>

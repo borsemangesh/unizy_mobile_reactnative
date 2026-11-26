@@ -25,6 +25,7 @@ import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 type SellerInfoProps = {
@@ -65,6 +66,7 @@ type ListItem = {
 };
 
 const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
+  const insets = useSafeAreaInsets();
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const [categoryDetails, setCategoryDetails] =
     useState<CategoryDetailsType | null>(null);
@@ -304,7 +306,11 @@ const SellerInfoHomeSearch = ({ navigation }: SellerInfoProps) => {
           scrollEventThrottle={16}
         />
 
-        <View style={styles.bottomFixed}>
+        <View style={[styles.bottomFixed,{
+                            paddingBottom:
+                              (Platform.OS === 'ios' ? height * 0.11 : height * 0.12) +
+                              (Platform.OS === 'android' ? insets.bottom : 0),
+                          }]}>
          
 
           <Button

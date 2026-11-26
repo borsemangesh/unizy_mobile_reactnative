@@ -34,6 +34,7 @@ import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
 
 import BACK_ICON from '../../../assets/images/backimg.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -72,6 +73,7 @@ interface UserMeta {
 }
 
 const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
+          const insets = useSafeAreaInsets();
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const [categoryDetails, setCategoryDetails] =
     useState<CategoryDetailsType | null>(null);
@@ -710,7 +712,7 @@ console.log('commissionPrice', commissionPrice);
             </View>
           </AnimatedReanimated.ScrollView>
 
-          <View style={styles.bottomFixed}>
+          <View style={[styles.bottomFixed, { paddingBottom: insets.bottom }]}>
             <Button
               title={t('next')}
               onPress={() => navigation.navigate('PreviewDetailed')}

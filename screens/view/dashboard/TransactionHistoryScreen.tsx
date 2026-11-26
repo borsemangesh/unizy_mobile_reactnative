@@ -162,7 +162,7 @@ const formatPurchaseSection = (section: any) => ({
   data: section.transactions.map((item: any) => ({
     featureId: item.feature_id,
     title: item.title,
-    price: `£${item.amount}`,
+    price: `${item.amount}`,
     status: item.order_status,
     code: item.status,
     seller: item.purchased_from,
@@ -1035,12 +1035,6 @@ export default function TransactionHistoryScreen({
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             />
-            {/* <BlurView
-              style={styles.blureView_style}
-              blurType="light"
-              blurAmount={2}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            > */}
             <View
               style={[
                 StyleSheet.absoluteFill,

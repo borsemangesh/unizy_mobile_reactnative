@@ -1044,7 +1044,14 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
   // ── renderHomeContent (memoized) ──
   const homeContent = useMemo(
     () => (
-      <View style={styles.homeContent}>
+      <View
+        style={[
+          styles.homeContent,
+          Platform.OS === 'android' && {
+            paddingBottom: hp(10.2) + insets.bottom,
+          },
+        ]}
+      >
         <View style={styles.productsWrapper}>{renderProducts()}</View>
 
         <Animated.View
@@ -1172,6 +1179,7 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
       handleBookmarkPress,
       navigation,
       featuredListHeight,
+      insets.bottom,
     ],
   );
 
@@ -1379,7 +1387,10 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
               styles.textbg,
               {
                 position: 'absolute',
-                bottom: height * 0.1 + height * 0.01,
+                bottom:
+                  height * 0.1 +
+                  height * 0.01 +
+                  (Platform.OS === 'android' ? insets.bottom : 0),
                 left: '4%',
                 right: '4%',
                 zIndex: 999,
@@ -1462,7 +1473,14 @@ const DashBoardScreen = ({ navigation }: { navigation: any }) => {
         <Animated.View
           style={[
             styles.bottomTabContainer,
-            { position: 'absolute', bottom: 0 },
+            {
+              position: 'absolute',
+              bottom: 0,
+              marginBottom:
+                Platform.OS === 'android'
+                  ? Math.max(insets.bottom, 12) + 8
+                  : hp(4),
+            },
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >

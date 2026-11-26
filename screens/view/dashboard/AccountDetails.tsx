@@ -1125,7 +1125,11 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             )}
           </View>
         </Animated.ScrollView>
-        <View style={styles.bottomButtonContainer}>
+        <View style={[styles.bottomButtonContainer,{
+                            paddingBottom:
+                              (Platform.OS === 'ios' ? height * 0.11 : height * 0.12) +
+                              (Platform.OS === 'android' ? insets.bottom : 0),
+                          }]}>
           {selectedTab === 'Bank' ? (
             <Button
               title={

@@ -1004,7 +1004,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           data?.list?.remaining_quantity > 0 &&
           data?.list?.isactive &&
           data?.list?.ispurchased === true ? (
-          <View style={[styles.bottomview, { justifyContent: 'center' }]}>
+          <View style={[styles.bottomview,{
+                              paddingBottom:
+                                (Platform.OS === 'ios' ? height * 0 : height * 0) +
+                                (Platform.OS === 'android' ? insets.bottom : 0),
+                            }, { justifyContent: 'center' }]}>
             <ButtonNew
               title={t('Deactivate')}
               textStyle={[styles.cancelText, { width: '100%' }]}
@@ -1030,7 +1034,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             data?.list?.isactive ||
             data?.list?.category_id === 2 ||
             data?.list?.category_id === 5) && (
-            <View style={styles.bottomview}>
+            <View style={[styles.bottomview ,{
+                              paddingBottom:
+                                (Platform.OS === 'ios' ? height * 0 : height * 0) +
+                                (Platform.OS === 'android' ? insets.bottom : 0),
+                            }]}>
               <ButtonNew
                 title={data?.list?.isactive ? t('Deactivate') : t('Activate')}
                 textStyle={[styles.cancelText, { width: '100%' }]}

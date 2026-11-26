@@ -60,6 +60,7 @@
 import React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type SaveButtonProps = {
   onPress: () => void;
@@ -72,6 +73,12 @@ const SaveButton = ({
   title = 'Click',
   disabled = false,
 }: SaveButtonProps) => {
+   const insets = useSafeAreaInsets();
+    const bottom =
+      Platform.OS === 'android'
+        ? Math.max(insets.bottom, 12) + 10
+        : Math.max(insets.bottom, 16) + 8;
+  
   return (
     <TouchableOpacity
       onPress={disabled ? undefined : onPress}
@@ -79,7 +86,7 @@ const SaveButton = ({
       disabled={disabled}
       style={[
         styles.buttonContainer,
-        disabled && styles.disabledButton,
+        disabled && styles.disabledButton, { bottom }
       ]}
     >
       <BlurView

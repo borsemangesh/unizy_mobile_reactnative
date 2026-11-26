@@ -10,6 +10,7 @@ import {
   StyleSheet,
   PermissionsAndroid,
   Alert,
+  ActivityIndicator,
   Modal,
   TouchableWithoutFeedback,
   Keyboard,
@@ -58,7 +59,6 @@ import COMMONSTYLE from '../../utils/CommonStyle';
 import BACK_ICON from '../../../assets/images/backimg.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-
 type EditProfileProps = {
   navigation: any;
 };
@@ -77,8 +77,8 @@ interface UserMeta {
 }
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
-     const { width, height } = useWindowDimensions();
-      const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
   const [username1, setUsername1] = useState<string>('');
@@ -92,14 +92,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     student_email: '',
     city: '',
     postal_code: '',
-      latitude: 0 ,
+    latitude: 0,
     longitude: 0,
     university_name: '',
     // profile:''
   });
 
-  const [intialfirstname,setintialfirstname]=useState('');
-  const [intiallastname,setinitiallastname]=useState('');
+  const [intialfirstname, setintialfirstname] = useState('');
+  const [intiallastname, setinitiallastname] = useState('');
 
   const [initialProfile, setInitialProfile] = useState<UserMeta | null>(null);
 
@@ -107,15 +107,53 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const closePopup1 = () => setShowPopup1(false);
 
   const [showPopup2, setShowPopup2] = useState(false);
+  const [personalOtpTimer, setPersonalOtpTimer] = useState(0);
+  const [personalResendLoading, setPersonalResendLoading] = useState(false);
   const closePopup2 = () => setShowPopup2(false);
-
 
   const [showPopup3, setShowPopup3] = useState(false);
   const closePopup3 = () => setShowPopup3(false);
 
   const [showPopup4, setShowPopup4] = useState(false);
+  const [universityOtpTimer, setUniversityOtpTimer] = useState(0);
+  const [universityResendLoading, setUniversityResendLoading] = useState(false);
   const closePopup4 = () => setShowPopup4(false);
 
+  useEffect(() => {
+    if (showPopup2) {
+      setPersonalOtpTimer(60);
+      return;
+    }
+    setPersonalOtpTimer(0);
+  }, [showPopup2]);
+
+  useEffect(() => {
+    if (showPopup4) {
+      setUniversityOtpTimer(60);
+      return;
+    }
+    setUniversityOtpTimer(0);
+  }, [showPopup4]);
+
+  useEffect(() => {
+    if (!showPopup2 || personalOtpTimer <= 0) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setPersonalOtpTimer(value => (value > 0 ? value - 1 : 0));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [showPopup2, personalOtpTimer]);
+
+  useEffect(() => {
+    if (!showPopup4 || universityOtpTimer <= 0) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setUniversityOtpTimer(value => (value > 0 ? value - 1 : 0));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [showPopup4, universityOtpTimer]);
 
   const [emailName, setEmailName] = useState('');
   const inputs = useRef<Array<TextInput | null>>([]);
@@ -137,7 +175,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [initialEmail, setInitialEmail] = useState(''); // store original email
   const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
 
-  
   const [slideUp1] = useState(new Animated.Value(0));
 
   const scrollY = useSharedValue(0);
@@ -187,11 +224,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
@@ -200,9 +236,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           return;
         }
 
-
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
-
 
         const response = await fetch(url, {
           method: 'GET',
@@ -215,19 +249,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         const data = await response.json();
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
-          setLoading(false)
+          setLoading(false);
           return;
         }
 
         if (data.statusCode === 401 || data.statusCode === 403) {
           handleForceLogout();
-          setLoading(false)
+          setLoading(false);
           return;
         }
 
         if (response.ok) {
           const user = data.data;
-          console.log("user", user);
+          console.log('user', user);
 
           setintialfirstname(user.firstname ?? '');
           setinitiallastname(user.lastname ?? '');
@@ -239,9 +273,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             student_email: user.student_email ?? null,
             city: user.city ?? null,
             postal_code: user.postal_code ?? null,
-           latitude: userMeta.latitude??null ,
+            latitude: userMeta.latitude ?? null,
             longitude: userMeta.longitude,
-           university_name: userMeta.university_name,
+            university_name: userMeta.university_name,
           });
 
           const profileSnapshot: UserMeta = {
@@ -251,13 +285,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             student_email: user.student_email ?? '',
             city: user.city ?? '',
             postal_code: user.postal_code ?? '',
-            latitude: userMeta.latitude??null ,
+            latitude: userMeta.latitude ?? null,
             longitude: userMeta.longitude,
-           university_name: user.university_name??'',
+            university_name: user.university_name ?? '',
           };
           setUserMeta(profileSnapshot);
           setInitialProfile(profileSnapshot);
-
 
           setPhoto(user.profile);
           setOriginalPhoto(user.profile);
@@ -271,13 +304,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
-      }
-      finally {
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
     const handleForceLogout = async () => {
-
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -310,7 +341,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     fetchUniversities();
   }, []);
 
-
   useEffect(() => {
     if (showPopup2) {
       const timer = setTimeout(() => {
@@ -321,7 +351,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   }, [showPopup2]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (showPopup4) {
       const timer = setTimeout(() => {
         inputs1.current[0]?.focus();
@@ -406,8 +436,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
   const isValidEmail = (email: string) => {
-   // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-   const emailRegex =
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     return emailRegex.test(email.trim());
   };
@@ -444,17 +474,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     //   errors.push(t('student_req'));
     // }
 
-
     if (!userMeta.email?.trim()) {
       errors.push(t('personal_req'));
     } else if (
       !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        userMeta.email.trim()
+        userMeta.email.trim(),
       )
     ) {
       errors.push(t('invalid_email'));
     }
-
 
     // if (!userMeta.city || userMeta.city.trim() === '') {
     //   errors.push(t('city_req'));
@@ -463,15 +491,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       errors.push(t('postal_code_req'));
     }
     if (!userMeta.city || userMeta.city.trim() === '') {
-        errors.push(t('valid_city'));
-      }
+      errors.push(t('valid_city'));
+    }
     return errors;
   };
 
   // ---------------------  Update data method call -----------------//
 
   const handleSaveProfile = async () => {
-     Keyboard.dismiss()
+    Keyboard.dismiss();
     if (!isProfileChanged()) {
       showToast(t('no_changes_detected'), 'info');
       return;
@@ -490,7 +518,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     // }
 
     try {
-      setLoading(true)
+      setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
 
@@ -513,11 +541,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       else if (photo === null && originalPhoto !== null) {
         await handleDeleteImage();
       }
-     
-            
 
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
-
 
       const body = {
         firstname: userMeta.firstname?.trim(),
@@ -530,7 +555,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         longitude: userMeta.longitude,
       };
 
-
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -540,26 +564,28 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         body: JSON.stringify(body),
       });
 
-      console.log("PROFILEURL: ", url,JSON.stringify(body));
+      console.log('PROFILEURL: ', url, JSON.stringify(body));
       const data = await response.json();
 
-      
-
       if (data.statusCode === 200) {
-        showToast(t(data?.message) || 'Profile updated successfully', 'success');
+        showToast(
+          t(data?.message) || 'Profile updated successfully',
+          'success',
+        );
         setTimeout(() => {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'Dashboard',
-                params: {
-                  AddScreenBackactiveTab: 'Profile',
-                  isNavigate: false,
-                },
-              },
-            ],
-          });
+          setIsPostalCodeValid(false);
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [
+          //     {
+          //       name: 'Dashboard',
+          //       params: {
+          //         AddScreenBackactiveTab: 'Profile',
+          //         isNavigate: false,
+          //       },
+          //     },
+          //   ],
+          // });
         }, 2500);
       } else {
         showToast(
@@ -570,17 +596,16 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Error during profile update:', error);
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
-    }
-    finally {
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
-
 
   const handleUploadImage = async (imageUri: string | null) => {
     try {
       if (!imageUri) return true; // No new image, treat as success
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
@@ -604,7 +629,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: formData,
       });
@@ -622,14 +647,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     } catch (error) {
       console.error('Upload error:', error);
-      showToast(
-        t(Constant.SOMTHING_WENT_WRONG),
-        'error',
-      );
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
       return false;
     }
   };
-
 
   // const handleSelectImage = async () => {
 
@@ -685,7 +706,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   //   );
   // };
 
-
   const handleDeleteImage = async () => {
     try {
       if (newphoto) return true; // No new image, treat as success
@@ -693,7 +713,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
-      photo
+      photo;
       if (!token || !userId) {
         showToast(t(Constant.USER_NOT_AUTH), 'error');
         return false;
@@ -722,10 +742,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     } catch (error) {
       console.error('Upload error:', error);
-      showToast(
-        t(Constant.SOMTHING_WENT_WRONG),
-        'error',
-      );
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
       return false;
     }
   };
@@ -739,6 +756,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [save_otp1, setSaveOtp1] = useState(0);
 
   const sendOtp = async (email?: string) => {
+    if (personalResendLoading) {
+      return;
+    }
+    setPersonalResendLoading(true);
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
@@ -747,7 +768,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       if (!finalEmail || !isValidEmail(finalEmail)) {
         showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
-        setShowPopup1(false)
+        setShowPopup1(false);
         return;
       }
 
@@ -767,10 +788,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         body: JSON.stringify(createPayload),
       });
 
+      console.log('sendOtp url:', url);
+      console.log('sendOtp payload:', createPayload);
+      console.log('sendOtp response:', res);
       const data = await res.json();
 
       if (data?.statusCode === 200) {
         setSaveOtp(data.data.otp_id);
+        setOtp(['', '', '', '']);
+        setPersonalOtpTimer(60);
         setShowPopup1(false);
         setShowPopup2(true);
       } else {
@@ -779,10 +805,17 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     } catch (err) {
       console.error('sendOtp error:', err);
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    } finally {
+      setPersonalResendLoading(false);
     }
   };
 
   const sendOtp1 = async (email?: string) => {
+    if (universityResendLoading) {
+      return;
+    }
+    setUniversityResendLoading(true);
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
@@ -791,7 +824,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       if (!finalEmail || !validateStudentEmail(finalEmail)) {
         showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
-        setShowPopup3(false)
+        setShowPopup3(false);
         return;
       }
 
@@ -811,10 +844,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         body: JSON.stringify(createPayload),
       });
 
+      console.log('sendOtp1 url:', url);
+      console.log('sendOtp1 payload:', createPayload);
+      console.log('sendOtp1 response:', res);
       const data = await res.json();
 
       if (data?.statusCode === 200) {
         setSaveOtp1(data.data.otp_id);
+        setOtp1(['', '', '', '']);
+        setUniversityOtpTimer(60);
         setShowPopup3(false);
         setShowPopup4(true);
       } else {
@@ -823,10 +861,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     } catch (err) {
       console.error('sendOtp error:', err);
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    } finally {
+      setUniversityResendLoading(false);
     }
   };
-
-
 
   const otpverify = async () => {
     Keyboard.dismiss();
@@ -834,7 +873,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-
         return;
       }
       const otpValue = otp.join('');
@@ -857,10 +895,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       console.log('data', data);
       if (data?.statusCode === 200) {
-        
         showToast(t(data?.message), 'success');
-         setUserMeta(prev => ({ ...prev, email: username1 }))
-        
+        setUserMeta(prev => ({ ...prev, email: username1 }));
+
         setShowPopup2(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
@@ -878,17 +915,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             ],
           });
         }, 3000);
-
       } else {
         setShowPopup2(false);
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);
-
     }
   };
-
 
   const otpverify1 = async () => {
     Keyboard.dismiss();
@@ -896,7 +930,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-
         return;
       }
       const otpValue = otp1.join('');
@@ -920,7 +953,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       console.log('data', data);
       if (data?.statusCode === 200) {
         showToast(t(data?.message), 'success');
-        setUserMeta(prev => ({ ...prev, student_email: username2 }))
+        setUserMeta(prev => ({ ...prev, student_email: username2 }));
         setShowPopup4(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
@@ -938,17 +971,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             ],
           });
         }, 3000);
-
       } else {
         setShowPopup4(false);
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);
-
     }
   };
-
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -962,7 +992,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
-    const handleChange1 = (text: string, index: number) => {
+  const handleChange1 = (text: string, index: number) => {
     const newOtp = [...otp1];
     newOtp[index] = text;
     setOtp1(newOtp);
@@ -973,11 +1003,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       inputs1.current[index - 1]?.focus();
     }
   };
-
-
-
-  
-
 
   // const ClickPostalCode = async (postalCode: any) => {
   //   const cityName = await getCityFromPostalCode(postalCode);
@@ -1031,119 +1056,118 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   //   }));
   // };
 
+  //   const getCityFromPostalCode = async (postalCode: string) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+  //       {
+  //         headers: {
+  //           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+  //           "Accept-Language": "en-US",
+  //         },
+  //       }
+  //     );
 
-//   const getCityFromPostalCode = async (postalCode: string) => {
-//   try {
-//     const response = await fetch(
-//       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-//       {
-//         headers: {
-//           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-//           "Accept-Language": "en-US",
-//         },
-//       }
-//     );
+  //     const data = await response.json();
+  //     console.log("location data:", data);
 
-//     const data = await response.json();
-//     console.log("location data:", data);
+  //     if (!data || data.length === 0) return null;
 
-//     if (!data || data.length === 0) return null;
+  //     const address = data[0].address;
 
-//     const address = data[0].address;
-
-//     return (
-//       address.city ||            // US, some countries
-//       address.town ||            // smaller towns
-//       address.village ||         // villages
-//       address.county ||          // India, UK (like Pune City)
-//       address.state_district ||  // fallback
-//       null
-//     );
-//   } catch (error) {
-//     console.error(error);
-//     return null;
-//   }
+  //     return (
+  //       address.city ||            // US, some countries
+  //       address.town ||            // smaller towns
+  //       address.village ||         // villages
+  //       address.county ||          // India, UK (like Pune City)
+  //       address.state_district ||  // fallback
+  //       null
+  //     );
+  //   } catch (error) {
+  //     console.error(error);
+  //     return null;
+  //   }
   // };
-  
 
   const ClickPostalCode = async (postalCode: any) => {
-  const lookupId = ++postalLookupIdRef.current;
-  const location = await getCityFromPostalCode(postalCode);
+    const lookupId = ++postalLookupIdRef.current;
+    const location = await getCityFromPostalCode(postalCode);
 
-  // Ignore stale responses from an older postal-code lookup
-  if (lookupId !== postalLookupIdRef.current) {
-    return;
-  }
+    // Ignore stale responses from an older postal-code lookup
+    if (lookupId !== postalLookupIdRef.current) {
+      return;
+    }
 
-  if (!location || !location.city) {
-    setIsPostalCodeValid(false);
+    if (!location || !location.city) {
+      setIsPostalCodeValid(false);
+      setUserMeta(prev => ({
+        ...prev,
+        city: '',
+        latitude: 0,
+        longitude: 0,
+      }));
+      return;
+    }
+
+    setIsPostalCodeValid(true);
     setUserMeta(prev => ({
       ...prev,
-      city: '',
-      latitude: 0,
-      longitude: 0,
+      city: location.city || '',
+      latitude: location.lat,
+      longitude: location.lon,
     }));
-    return;
-  }
+  };
 
-  setIsPostalCodeValid(true);
-  setUserMeta(prev => ({
-    ...prev,
-    city: location.city || '',
-    latitude: location.lat,
-    longitude: location.lon,
-  }));
-};
-
-const getCityFromPostalCode = async (postalCode: string) => {
-  try {
-    postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
-    postalCode = postalCode.slice(0, -3) + ' ' + postalCode.slice(-3)
-    console.log("postalCode:", postalCode);
-    console.log("URL: ", `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,);
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-      {
-        headers: {
-          "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-          "Accept-Language": "en-US",
+  const getCityFromPostalCode = async (postalCode: string) => {
+    try {
+      postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
+      postalCode = postalCode.slice(0, -3) + ' ' + postalCode.slice(-3);
+      console.log('postalCode:', postalCode);
+      console.log(
+        'URL: ',
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+      );
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'MyAndroidApp/1.0 (contact@myapp.com)',
+            'Accept-Language': 'en-US',
+          },
         },
-      }
-    );
+      );
 
-    const data = await response.json();
-    console.log("location data:", data);
+      const data = await response.json();
+      console.log('location data:', data);
 
-    if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) return null;
 
-    const result = data[0];
-    const address = result.address;
+      const result = data[0];
+      const address = result.address;
 
-    const city =
-      address.city ||
-      address.town ||
-      address.village ||
-      address.county ||
-      address.state_district ||
-      null;
+      const city =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.county ||
+        address.state_district ||
+        null;
 
-    return {
-      city,
-      lat: parseFloat(result.lat),   // ✅ FIX
-      lon: parseFloat(result.lon),   // ✅ FIX
-    };
+      return {
+        city,
+        lat: parseFloat(result.lat), // ✅ FIX
+        lon: parseFloat(result.lon), // ✅ FIX
+      };
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-  
   const extractAddress = (components: any[]) => {
     const get = (type: string) =>
       components.find(c => c.types.includes(type))?.long_name || null;
-  
+
     return {
       city:
         get('locality') ||
@@ -1154,23 +1178,19 @@ const getCityFromPostalCode = async (postalCode: string) => {
       postalCode: get('postal_code'),
     };
   };
-  
-
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
     const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-    return (f + l) || '?';
+    return f + l || '?';
   };
-
 
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
 
-  const handleSelectImage = async() => {
-      const hasPermission = await requestCameraPermission();
+  const handleSelectImage = async () => {
+    const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
-   
     Alert.alert(
       'Select Option',
       'Choose a source',
@@ -1200,7 +1220,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
       cropperCircleOverlay: true,
       compressImageQuality: 0.8,
       mediaType: 'photo',
-      useFrontCamera: true
+      useFrontCamera: true,
     })
       .then(image => {
         console.log('CROPPED IMAGE:', image);
@@ -1227,12 +1247,12 @@ const getCityFromPostalCode = async (postalCode: string) => {
       cropperCircleOverlay: true,
       compressImageQuality: 0.8,
       compressImageMaxWidth: 1000,
-  compressImageMaxHeight: 1000,
+      compressImageMaxHeight: 1000,
       mediaType: 'photo',
-                // 🔥 IMPORTANT
+      // 🔥 IMPORTANT
       includeExif: false,
       includeBase64: false,
-       forceJpg: true,
+      forceJpg: true,
     })
       .then(image => {
         console.log('CROPPED IMAGE:', image);
@@ -1251,16 +1271,13 @@ const getCityFromPostalCode = async (postalCode: string) => {
       });
   };
 
-
   return (
-   
     // <BackgroundWrapper>
     <ImageBackground
-                  source={BACK_ICON}
-                  style={{ flex: 1,width: '100%',
-                height: '100%', }}
-                  resizeMode="cover"
-                >
+      source={BACK_ICON}
+      style={{ flex: 1, width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -1304,10 +1321,15 @@ const getCityFromPostalCode = async (postalCode: string) => {
         </AnimatedReanimated.View>
 
         {/* Header Content */}
-        <View style={[COMMONSTYLE.headerContent,{
-
-                paddingTop: insets.top+ height * 0.01 ,
-              },]} pointerEvents="box-none">
+        <View
+          style={[
+            COMMONSTYLE.headerContent,
+            {
+              paddingTop: insets.top + height * 0.01,
+            },
+          ]}
+          pointerEvents="box-none"
+        >
           <TouchableOpacity
             onPress={() => {
               navigation.reset({
@@ -1390,16 +1412,13 @@ const getCityFromPostalCode = async (postalCode: string) => {
               styles.scrollContainer,
               {
                 paddingBottom:
-                  Platform.OS === 'ios'
-                    ? height * 0.12
-                    : height * 0.1,
+                  Platform.OS === 'ios' ? height * 0.12 : height * 0.1,
               },
             ]}
           >
             <View style={styles.profileavatarContainer}>
               <View style={styles.profilebigCircle}>
                 <TouchableOpacity>
-
                   {photo && (
                     <TouchableOpacity
                       style={styles.profiledeleteButton}
@@ -1421,7 +1440,10 @@ const getCityFromPostalCode = async (postalCode: string) => {
                     <Image source={{ uri: photo }} style={styles.profilelogo} />
                   ) : (
                     <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
                         {getInitials(
                           intialfirstname ?? 'A',
                           intiallastname ?? 'A',
@@ -1437,7 +1459,6 @@ const getCityFromPostalCode = async (postalCode: string) => {
                     handleSelectImage();
                   }}
                 >
-
                   <Image
                     source={require('../../../assets/images/camera_icon.png')}
                     style={styles.profilecameraIcon}
@@ -1453,8 +1474,8 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   {t('first_name')}
                 </Text>
                 <TextInput
-                  selectionColor='#F5F5F5'
-                  cursorColor='#F5F5F5'
+                  selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
                   value={userMeta.firstname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -1471,9 +1492,8 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   {t('last_name')}
                 </Text>
                 <TextInput
-                  selectionColor='#F5F5F5'
-                  cursorColor='#F5F5F5'
-                  
+                  selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
                   value={userMeta.lastname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, lastname: text }))
@@ -1519,14 +1539,10 @@ const getCityFromPostalCode = async (postalCode: string) => {
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, email: text.trim() }));
                       if (text.trim() === initialPersonalEmail) {
-
                         setIsUpdateDisabled_personal(true);
                       } else {
-
                         setIsUpdateDisabled_personal(false);
                       }
-
-
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_personal_email_id')}
@@ -1537,15 +1553,15 @@ const getCityFromPostalCode = async (postalCode: string) => {
                       width: 32,
                       height: 32,
                       backgroundColor: 'rgba(255,255,255,0.08)',
-                      boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                      boxShadow:
+                        'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
                       borderColor: '',
                       borderRadius: 10,
                       justifyContent: 'center',
                       alignItems: 'center',
                       marginEnd: 8,
-                      // opacity: 0.5 
+                      // opacity: 0.5
                     }}
-
                     onPress={() => {
                       const email = userMeta.email || '';
 
@@ -1554,7 +1570,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                         return;
                       }
                       setShowPopup1(true);
-                      setUsername1('')
+                      setUsername1('');
                       //sendOtp('personalEmail');
                       setEmailName('personalEmail');
                     }}
@@ -1598,19 +1614,14 @@ const getCityFromPostalCode = async (postalCode: string) => {
                       fontWeight: 400,
                     }}
                     allowFontScaling={false}
-
                     value={userMeta.student_email || ''}
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, email: text.trim() }));
                       if (text.trim() === initialEmail) {
-
                         setIsUpdateDisabled_student(true);
                       } else {
-
                         setIsUpdateDisabled_student(false);
                       }
-
-
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_student_email_id')}
@@ -1621,24 +1632,27 @@ const getCityFromPostalCode = async (postalCode: string) => {
                       width: 32,
                       height: 32,
                       backgroundColor: 'rgba(255,255,255,0.08)',
-                      boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                      boxShadow:
+                        'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
                       borderColor: '',
                       borderRadius: 10,
                       justifyContent: 'center',
                       alignItems: 'center',
                       marginEnd: 8,
-                      // opacity: 0.5 
+                      // opacity: 0.5
                     }}
-
                     onPress={() => {
                       const email = userMeta.student_email || '';
 
                       if (!validateStudentEmail(email.trim())) {
-                        showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
+                        showToast(
+                          t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS),
+                          'error',
+                        );
                         return;
                       }
                       setShowPopup3(true);
-                      setUsername2('')
+                      setUsername2('');
                       //sendOtp('personalEmail');
                       setEmailName('personalEmail');
                     }}
@@ -1661,7 +1675,9 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   cursorColor="#F5F5F5"
                   value={userMeta.postal_code || ''}
                   onChangeText={text => {
-                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    const filteredText = text
+                      .replace(/[^a-zA-Z0-9]/g, '')
+                      .toUpperCase();
                     if (filteredText.length > 7) return;
 
                     const initialPostal = (initialProfile?.postal_code || '')
@@ -1717,6 +1733,9 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   keyboardType="default"
                   placeholder={t('enter_postal_code')}
                   placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                  autoCorrect={false}
+                  spellCheck={false}
+                  autoCapitalize="characters"
                 />
               </View>
 
@@ -1737,7 +1756,6 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' }]}
                   // placeholder={t('city')}
                   placeholderTextColor="#ccc"
-
                 />
               </View>
               <View style={styles.inputGroup}>
@@ -1748,8 +1766,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   selectionColor="#F5F5F5"
                   cursorColor="#F5F5F5"
                   allowFontScaling={false}
-                  value={userMeta.university_name|| ''}
-                 
+                  value={userMeta.university_name || ''}
                   selectTextOnFocus={false}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, city: text }))
@@ -1760,15 +1777,11 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   multiline={true}
                   editable={false}
                   numberOfLines={2}
-
                 />
               </View>
             </View>
-
-           
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
-
 
         <SaveButton
           title={t('save_details')}
@@ -1781,7 +1794,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
         visible={showPopup1}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback onPress={closePopup1}>
           <View style={styles.overlay}>
@@ -1797,104 +1810,93 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             > */}
-             <BlurView
-               style={[
-                                              StyleSheet.absoluteFill,
-                                             {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                            ]}
-                                          blurType="light"
-                                          blurAmount={10}
-                                          reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                        />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                ]}
-              />
+            <BlurView
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+              ]}
+            />
 
-              <View style={styles.popupContainer}>
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('update_personal_email')}
-                </Text>
+            <View style={styles.popupContainer}>
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('update_personal_email')}
+              </Text>
 
-                <Text allowFontScaling={false} style={styles.notheader}>
-                  {t('update_email_info')}
-                </Text>
+              <Text allowFontScaling={false} style={styles.notheader}>
+                {t('update_email_info')}
+              </Text>
 
-                <View style={[styles.login_container]}>
-                  <TextInput
-                    allowFontScaling={false}
-                    style={[
-                      styles.personalEmailID_TextInput,
-                      { color: '#fff' },
-                    ]}
-                    placeholder={t('personal_email_id')}
-                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                    value={username1}
-                    maxLength={50}
-                    selectionColor="#F5F5F5"
-                    cursorColor={'#F5F5F5'}
-                    keyboardType={
-                      Platform.OS === 'ios'
-                        ? 'default'
-                        : 'email-address'
-                    }
-                    autoCapitalize="none"
-                    autoComplete={
-                      Platform.OS === 'ios' ? 'email' : 'username'
-                    }
-                    textContentType={
-                      Platform.OS === 'ios'
-                        ? 'emailAddress'
-                        : 'username'
-                    }
-                    importantForAutofill="yes"
-                    autoCorrect={false}
-                    onChangeText={usernameText =>
-                      setUsername1(usernameText)
-                    }
-                  />
-                </View>
-
-
-                <TouchableOpacity
-                  style={styles.newloginButton}
-                  onPress={() => {
-                    //setShowPopup2(true)
-                    sendOtp(username1)
+              <View style={[styles.login_container]}>
+                <TextInput
+                  allowFontScaling={false}
+                  style={[styles.personalEmailID_TextInput, { color: '#fff' }]}
+                  placeholder={t('personal_email_id')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                  value={username1}
+                  maxLength={50}
+                  selectionColor="#F5F5F5"
+                  cursorColor={'#F5F5F5'}
+                  keyboardType={
+                    Platform.OS === 'ios' ? 'default' : 'email-address'
                   }
+                  autoCapitalize="none"
+                  autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
+                  textContentType={
+                    Platform.OS === 'ios' ? 'emailAddress' : 'username'
                   }
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('send_otp')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.newloginButton1}
-                  onPress={() => {
-                    setShowPopup1(false)
-                  }
-                  }
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-
+                  importantForAutofill="yes"
+                  autoCorrect={false}
+                  onChangeText={usernameText => setUsername1(usernameText)}
+                />
               </View>
+
+              <TouchableOpacity
+                style={styles.newloginButton}
+                onPress={() => {
+                  //setShowPopup2(true)
+                  sendOtp(username1);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('send_otp')}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.newloginButton1}
+                onPress={() => {
+                  setShowPopup1(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
             {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
 
-
       <Modal
         visible={showPopup2}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback onPress={closePopup2}>
           <View style={styles.overlay}>
@@ -1910,231 +1912,227 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             > */}
-             <BlurView
-                           style={[
-                                                          StyleSheet.absoluteFill,
-                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                                        ]}
-                                                      blurType="light"
-                                                      blurAmount={10}
-                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                                    />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                ]}
-              />
+            <BlurView
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+              ]}
+            />
 
-              <View style={styles.popupContainer}>
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('verify_personal_email')}
+            <View style={styles.popupContainer}>
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('verify_personal_email')}
+              </Text>
+
+              <Text allowFontScaling={false} style={styles.notheader}>
+                {t('we_sent_code_to')}{' '}
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: '#fff',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontWeight: '400',
+                  }}
+                >
+                  {username1}
                 </Text>
+              </Text>
 
-                <Text allowFontScaling={false} style={styles.notheader}>
-                  {t('we_sent_code_to')}{' '}
+              <View style={styles.otpContainer}>
+                {[0, 1, 2, 3].map((_, index) => (
+                  <TextInput
+                    selectionColor="#F5F5F5"
+                    cursorColor="#F5F5F5"
+                    allowFontScaling={false}
+                    key={index}
+                    ref={ref => {
+                      inputs.current[index] = ref;
+                    }}
+                    style={styles.otpBox}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    value={otp[index]}
+                    onChangeText={text => {
+                      const digit = text.replace(/[^0-9]/g, '');
+                      handleChange(digit, index);
+                    }}
+                    returnKeyType="next"
+                    textAlign="center"
+                    secureTextEntry={true}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity style={styles.loginButton} onPress={otpverify}>
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('verify')}
+                </Text>
+              </TouchableOpacity>
+
+              <Text
+                allowFontScaling={false}
+                style={[styles.notheader, { marginBottom: 6 }]}
+              >
+                {t('didnt_receive_code')}{' '}
+                {personalResendLoading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="rgba(140, 244, 255, 0.7)"
+                  />
+                ) : (
                   <Text
                     allowFontScaling={false}
-                    style={{
-                      color: '#fff',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontWeight: '400',
+                    style={[
+                      styles.notheader1,
+                      personalOtpTimer > 0 && {
+                        color: 'rgba(255,255,255,0.35)',
+                      },
+                    ]}
+                    onPress={() => {
+                      if (personalOtpTimer > 0 || personalResendLoading) {
+                        return;
+                      }
+                      sendOtp(username1);
                     }}
                   >
-                    {username1}
+                    {personalOtpTimer > 0
+                      ? `${t('resend_code')} (${personalOtpTimer}s)`
+                      : t('resend_code')}
                   </Text>
-                </Text>
+                )}
+              </Text>
 
-                <View style={styles.otpContainer}>
-                  {[0, 1, 2, 3].map((_, index) => (
-                    <TextInput
-                      selectionColor="#F5F5F5"
-                      cursorColor="#F5F5F5"
-                      allowFontScaling={false}
-                      key={index}
-                      ref={ref => {
-                        inputs.current[index] = ref;
-                      }}
-                      style={styles.otpBox}
-                      keyboardType="number-pad"
-                      maxLength={1}
-                      onChangeText={text => {
-                        const digit = text.replace(/[^0-9]/g, '');
-                        handleChange(digit, index);
-                      }}
-                      returnKeyType="next"
-                      textAlign="center"
-                      secureTextEntry={true}
-                    />
-                  ))}
-                </View>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={otpverify}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('verify')}
-                  </Text>
-                </TouchableOpacity>
-
-
+              <Text
+                allowFontScaling={false}
+                style={[styles.notheader, { marginBottom: 6 }]}
+              >
+                {t('entered_wrong_email')}{' '}
                 <Text
                   allowFontScaling={false}
-                  style={[styles.notheader, { marginBottom: 6 }]}
+                  style={styles.notheader1}
+                  onPress={() => {
+                    setShowPopup2(false);
+                    setShowPopup1(true);
+                  }}
                 >
-                  {t('didnt_receive_code')}{' '}
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.notheader1}
-                    onPress={() => sendOtp(username1)}
-                  >
-                    {t('resend_code')}
-                  </Text>
+                  {t('go_back')}
                 </Text>
-
-                <Text
-                  allowFontScaling={false}
-                  style={[styles.notheader, { marginBottom: 6 }]}
-                >
-                  {t('entered_wrong_email')}{' '}
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.notheader1}
-                    onPress={() => {
-                      setShowPopup2(false)
-                      setShowPopup1(true)
-                    }
-                    }
-                  >
-                    {t('go_back')}
-                  </Text>
-                </Text>
-              </View>
+              </Text>
+            </View>
             {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
 
       <Modal
         visible={showPopup3}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback onPress={closePopup3}>
           <View style={styles.overlay}>
-            {/* <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
+            <BlurView
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            > */}
-             <BlurView
-                           style={[
-                                                          StyleSheet.absoluteFill,
-                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                                        ]}
-                                                      blurType="light"
-                                                      blurAmount={10}
-                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                                    />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                ]}
-              />
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+              ]}
+            />
 
-              <View style={styles.popupContainer}>
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('update_university_email')}
-                </Text>
+            <View style={styles.popupContainer}>
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('update_university_email')}
+              </Text>
 
-                <Text allowFontScaling={false} style={styles.notheader}>
-                  {t('update_email_info1')}
-                </Text>
+              <Text allowFontScaling={false} style={styles.notheader}>
+                {t('update_email_info1')}
+              </Text>
 
-                <View style={[styles.login_container]}>
-                  <TextInput
-                    allowFontScaling={false}
-                    style={[
-                      styles.personalEmailID_TextInput,
-                      { color: '#fff' },
-                    ]}
-                    placeholder={t('university_email_id')}
-                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                    value={username2}
-                    maxLength={50}
-                    selectionColor="#F5F5F5"
-                    cursorColor={'#F5F5F5'}
-                    keyboardType={
-                      Platform.OS === 'ios'
-                        ? 'default'
-                        : 'email-address'
-                    }
-                    autoCapitalize="none"
-                    autoComplete={
-                      Platform.OS === 'ios' ? 'email' : 'username'
-                    }
-                    textContentType={
-                      Platform.OS === 'ios'
-                        ? 'emailAddress'
-                        : 'username'
-                    }
-                    importantForAutofill="yes"
-                    autoCorrect={false}
-                    onChangeText={usernameText =>
-                      setUsername2(usernameText)
-                    }
-                  />
-                </View>
-
-
-                <TouchableOpacity
-                  style={styles.newloginButton}
-                  onPress={() => {
-                    //setShowPopup2(true)
-                    sendOtp1(username2)
+              <View style={[styles.login_container]}>
+                <TextInput
+                  allowFontScaling={false}
+                  style={[styles.personalEmailID_TextInput, { color: '#fff' }]}
+                  placeholder={t('university_email_id')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                  value={username2}
+                  maxLength={50}
+                  selectionColor="#F5F5F5"
+                  cursorColor={'#F5F5F5'}
+                  keyboardType={
+                    Platform.OS === 'ios' ? 'default' : 'email-address'
                   }
+                  autoCapitalize="none"
+                  autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
+                  textContentType={
+                    Platform.OS === 'ios' ? 'emailAddress' : 'username'
                   }
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('send_otp')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.newloginButton1}
-                  onPress={() => {
-                    setShowPopup3(false)
-                  }
-                  }
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-
+                  importantForAutofill="yes"
+                  autoCorrect={false}
+                  onChangeText={usernameText => setUsername2(usernameText)}
+                />
               </View>
+
+              <TouchableOpacity
+                style={styles.newloginButton}
+                onPress={() => {
+                  //setShowPopup2(true)
+                  sendOtp1(username2);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('send_otp')}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.newloginButton1}
+                onPress={() => {
+                  setShowPopup3(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
             {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
 
-
       <Modal
         visible={showPopup4}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback onPress={closePopup4}>
           <View style={styles.overlay}>
@@ -2150,113 +2148,131 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             > */}
-             <BlurView
-                           style={[
-                                                          StyleSheet.absoluteFill,
-                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                                        ]}
-                                                      blurType="light"
-                                                      blurAmount={10}
-                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                                    />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                ]}
-              />
+            <BlurView
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+              ]}
+            />
 
-              <View style={styles.popupContainer}>
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('verify_university_email')}
+            <View style={styles.popupContainer}>
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('verify_university_email')}
+              </Text>
+
+              <Text allowFontScaling={false} style={styles.notheader}>
+                {t('we_sent_code_to')}{' '}
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: '#fff',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontWeight: '400',
+                  }}
+                >
+                  {username2}
                 </Text>
+              </Text>
 
-                <Text allowFontScaling={false} style={styles.notheader}>
-                  {t('we_sent_code_to')}{' '}
+              <View style={styles.otpContainer}>
+                {[0, 1, 2, 3].map((_, index) => (
+                  <TextInput
+                    selectionColor="#F5F5F5"
+                    cursorColor="#F5F5F5"
+                    allowFontScaling={false}
+                    key={index}
+                    ref={ref => {
+                      inputs1.current[index] = ref;
+                    }}
+                    style={styles.otpBox}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    value={otp1[index]}
+                    onChangeText={text => {
+                      const digit = text.replace(/[^0-9]/g, '');
+                      handleChange1(digit, index);
+                    }}
+                    returnKeyType="next"
+                    textAlign="center"
+                    secureTextEntry={true}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity style={styles.loginButton} onPress={otpverify1}>
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('verify')}
+                </Text>
+              </TouchableOpacity>
+
+              <Text
+                allowFontScaling={false}
+                style={[styles.notheader, { marginBottom: 6 }]}
+              >
+                {t('didnt_receive_code')}{' '}
+                {universityResendLoading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="rgba(140, 244, 255, 0.7)"
+                  />
+                ) : (
                   <Text
                     allowFontScaling={false}
-                    style={{
-                      color: '#fff',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontWeight: '400',
+                    style={[
+                      styles.notheader1,
+                      universityOtpTimer > 0 && {
+                        color: 'rgba(255,255,255,0.35)',
+                      },
+                    ]}
+                    onPress={() => {
+                      if (universityOtpTimer > 0 || universityResendLoading) {
+                        return;
+                      }
+                      sendOtp1(username2);
                     }}
                   >
-                    {username2}
+                    {universityOtpTimer > 0
+                      ? `${t('resend_code')} (${universityOtpTimer}s)`
+                      : t('resend_code')}
                   </Text>
-                </Text>
+                )}
+              </Text>
 
-                <View style={styles.otpContainer}>
-                  {[0, 1, 2, 3].map((_, index) => (
-                    <TextInput
-                      selectionColor="#F5F5F5"
-                      cursorColor="#F5F5F5"
-                      allowFontScaling={false}
-                      key={index}
-                      ref={ref => {
-                        inputs1.current[index] = ref;
-                      }}
-                      style={styles.otpBox}
-                      keyboardType="number-pad"
-                      maxLength={1}
-                      onChangeText={text => {
-                        const digit = text.replace(/[^0-9]/g, '');
-                        handleChange1(digit, index);
-                      }}
-                      returnKeyType="next"
-                      textAlign="center"
-                      secureTextEntry={true}
-                    />
-                  ))}
-                </View>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={otpverify1}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('verify')}
-                  </Text>
-                </TouchableOpacity>
-
-
+              <Text
+                allowFontScaling={false}
+                style={[styles.notheader, { marginBottom: 6 }]}
+              >
+                {t('entered_wrong_email')}{' '}
                 <Text
                   allowFontScaling={false}
-                  style={[styles.notheader, { marginBottom: 6 }]}
+                  style={styles.notheader1}
+                  onPress={() => {
+                    setShowPopup4(false);
+                    setShowPopup3(true);
+                  }}
                 >
-                  {t('didnt_receive_code')}{' '}
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.notheader1}
-                    onPress={() => sendOtp1(username2)}
-                  >
-                    {t('resend_code')}
-                  </Text>
+                  {t('go_back')}
                 </Text>
-
-                <Text
-                  allowFontScaling={false}
-                  style={[styles.notheader, { marginBottom: 6 }]}
-                >
-                  {t('entered_wrong_email')}{' '}
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.notheader1}
-                    onPress={() => {
-                      setShowPopup4(false)
-                      setShowPopup3(true)
-                    }
-                    }
-                  >
-                    {t('go_back')}
-                  </Text>
-                </Text>
-              </View>
+              </Text>
+            </View>
             {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
-
 
       <Modal
         visible={showDeleteModal}
@@ -2283,59 +2299,64 @@ const getCityFromPostalCode = async (postalCode: string) => {
               blurAmount={2}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             > */}
-             <BlurView
-                           style={[
-                                                          StyleSheet.absoluteFill,
-                                                         {alignSelf: 'center',alignItems: 'center',alignContent: 'center',justifyContent: 'center'}
-                                                        ]}
-                                                      blurType="light"
-                                                      blurAmount={10}
-                                                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                                                    />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
+            <BlurView
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            />
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+
+            <View style={[styles.popupContainer, { gap: 3 }]}>
+              <Image
+                source={require('../../../assets/images/profile_delete.png')}
+                style={styles.logo}
+                resizeMode="contain"
               />
+              <Text allowFontScaling={false} style={styles.mainheader1}>
+                {t('remove_profile')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.subheader2}>
+                {t('are_you_sure')}
+              </Text>
 
-              <View style={[styles.popupContainer, { gap: 3 }]}>
-                <Image
-                  source={require('../../../assets/images/profile_delete.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.mainheader1}>
-                  {t('remove_profile')}
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={async () => {
+                  setShowDeleteModal(false);
+                  setPhoto(null);
+                  setNewPhoto(null);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('yes_remove')}
                 </Text>
-                <Text allowFontScaling={false} style={styles.subheader2}>
-                  {t('are_you_sure')}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.newloginButton1, { marginTop: 8 }]}
+                onPress={() => {
+                  setShowDeleteModal(false);
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
                 </Text>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={async () => {
-                    setShowDeleteModal(false);
-                    setPhoto(null);
-                    setNewPhoto(null);
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('yes_remove')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.newloginButton1, { marginTop: 8 }]}
-                  onPress={() => {
-                    setShowDeleteModal(false);
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
+            </View>
             {/* </BlurView> */}
           </View>
         </TouchableWithoutFeedback>
@@ -2346,17 +2367,14 @@ const getCityFromPostalCode = async (postalCode: string) => {
         </View>
       )}
       <NewCustomToastContainer />
-    {/* // </BackgroundWrapper > */}
-       </ImageBackground>
+      {/* // </BackgroundWrapper > */}
+    </ImageBackground>
   );
 };
 
 export default EditProfile;
 
 const styles = StyleSheet.create({
-
-
-
   newloginButton: {
     display: 'flex',
     width: '100%',
@@ -2387,18 +2405,14 @@ const styles = StyleSheet.create({
     marginTop: 12,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-
-
   },
-
-
 
   login_container: {
     marginTop: 16,
     display: 'flex',
     width: '100%',
     height: 44,
-    gap: (Platform.OS === 'ios' ? 10 : 10),
+    gap: Platform.OS === 'ios' ? 10 : 10,
     alignSelf: 'stretch',
     borderRadius: 12,
     borderWidth: 0.6,
@@ -2419,8 +2433,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
-    color: "#fff",
-
+    color: '#fff',
   },
   loaderOverlay: {
     position: 'absolute',
@@ -2467,7 +2480,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
- 
+
   backButtonContainer: {
     // position: 'absolute',
     // left: 16,
@@ -2478,7 +2491,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -2490,7 +2503,7 @@ const styles = StyleSheet.create({
     height: 28,
     opacity: 1,
   },
-  
+
   blurCard: {
     marginTop: 16,
     borderRadius: 24,
@@ -2525,7 +2538,7 @@ const styles = StyleSheet.create({
 
     // width:329
   },
-  
+
   logo: {
     width: 64,
     height: 64,
@@ -2595,7 +2608,7 @@ const styles = StyleSheet.create({
   updateIcon: {
     width: 16,
     height: 16,
-    tintColor: '#fff'
+    tintColor: '#fff',
   },
 
   overlay: {
@@ -2603,7 +2616,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
-          position: 'absolute',
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
@@ -2692,7 +2705,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 20,
   },
-
 
   otpBox: {
     width: 48,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type ButtonProps = {
   onPress: () => void;
@@ -8,11 +9,17 @@ type ButtonProps = {
 };
 
 const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
+  const insets = useSafeAreaInsets();
+  const bottom =
+    Platform.OS === 'android'
+      ? Math.max(insets.bottom, 12) + 10
+      : Math.max(insets.bottom, 16) + 8;
+
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      style={styles.buttonContainer}
+      style={[styles.buttonContainer, { bottom }]}
     >
       <BlurView
         style={StyleSheet.absoluteFill}
@@ -41,7 +48,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: (Platform.OS === 'ios'? 35 : 20),
     },
 
   buttonText: {
