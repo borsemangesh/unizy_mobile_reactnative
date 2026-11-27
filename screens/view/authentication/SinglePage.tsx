@@ -761,7 +761,7 @@ useEffect(() => {
       }
     };
 
-    fetchUniversities();
+    // fetchUniversities();
   }, []);
 
   useEffect(() => {
@@ -1434,19 +1434,19 @@ useEffect(() => {
       return;
     }
 
-    const emailParts = verifyusername.split('@');
-    if (emailParts.length !== 2) {
-      showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
-      return;
-    }
+    // const emailParts = verifyusername.split('@');
+    // if (emailParts.length !== 2) {
+    //   showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
+    //   return;
+    // }
 
-    //const domain = '@' + emailParts[1].toLowerCase();
-    const domain = '@' + emailParts[1].trim().toLowerCase();
+    // //const domain = '@' + emailParts[1].toLowerCase();
+    // const domain = '@' + emailParts[1].trim().toLowerCase();
 
-    if (!universityDomains.includes(domain)) {
-      showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
-      return;
-    }
+    // if (!universityDomains.includes(domain)) {
+    //   showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
+    //   return;
+    // }
 
     try {
       const url = MAIN_URL.baseUrl + 'user/student-email';

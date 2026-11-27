@@ -328,6 +328,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         const res = await fetch(url4);
         const json = await res.json();
         if (json?.data) {
+          console.log('University Domains:', json.data);
+          console.log('University url:', url4);
           const domains = json.data.map((u: any) =>
             u.domain_name.toLowerCase(),
           );
@@ -338,7 +340,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     };
 
-    fetchUniversities();
+    // fetchUniversities();
   }, []);
 
   useEffect(() => {
@@ -443,13 +445,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
   const validateStudentEmail = (email: string) => {
-    if (!email) return false;
+    // if (!email) return false;
 
-    const emailParts = email.split('@');
-    if (emailParts.length !== 2) return false;
+    // const emailParts = email.split('@');
+    // if (emailParts.length !== 2) return false;
 
-    const domain = '@' + emailParts[1].trim().toLowerCase();
-    return universityDomains.includes(domain);
+    // const domain = '@' + emailParts[1].trim().toLowerCase();
+    // return universityDomains.includes(domain);
+    return email;
   };
   const validateForm = () => {
     const errors = [];
@@ -901,22 +904,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup2(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
+        setIsPostalCodeValid(false);
         setTimeout(() => {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'Dashboard',
-                params: {
-                  AddScreenBackactiveTab: 'Profile',
-                  isNavigate: false,
-                },
-              },
-            ],
-          });
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [
+          //     {
+          //       name: 'Dashboard',
+          //       params: {
+          //         AddScreenBackactiveTab: 'Profile',
+          //         isNavigate: false,
+          //       },
+          //     },
+          //   ],
+          // });
         }, 3000);
       } else {
-        setShowPopup2(false);
+        // setShowPopup2(false);
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
@@ -957,22 +961,24 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup4(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
+        setIsPostalCodeValid(false);
         setTimeout(() => {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'Dashboard',
-                params: {
-                  AddScreenBackactiveTab: 'Profile',
-                  isNavigate: false,
-                },
-              },
-            ],
-          });
+          
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [
+          //     {
+          //       name: 'Dashboard',
+          //       params: {
+          //         AddScreenBackactiveTab: 'Profile',
+          //         isNavigate: false,
+          //       },
+          //     },
+          //   ],
+          // });
         }, 3000);
       } else {
-        setShowPopup4(false);
+        // setShowPopup4(false);
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
