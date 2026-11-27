@@ -56,6 +56,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import ImagePicker from 'react-native-image-crop-picker';
 import { requestCameraPermission } from '../../utils/COMFUN';
+import Loader from '../../utils/component/Loader';
 
 const { height } = Dimensions.get('window');
 
@@ -260,21 +261,30 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   }, [route.params]);
 
   useEffect(() => {
+    if (currentScreen !== 'language') {
+      return;
+    }
+    let cancelled = false;
     (async () => {
       setLanguageLoading(true);
       try {
         const res = await getRequest('user/language');
-        if (res?.data) {
+        if (!cancelled && res?.data) {
           const sortedLanguages = [...res.data].sort((a, b) => a.id - b.id);
           setLanguages(sortedLanguages);
         }
       } catch (err) {
         // console.log('Error fetching languages', err);
       } finally {
-        setLanguageLoading(false);
+        if (!cancelled) {
+          setLanguageLoading(false);
+        }
       }
     })();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [currentScreen]);
 
   const noResultShown = useRef(false);
 
@@ -2270,6 +2280,7 @@ useEffect(() => {
                         useNativeDriver: true,
                       }),
                     ]).start(() => {});
+                    setLanguageLoading(true);
                     setCurrentScreen('language');
                   }}
                 >
@@ -2358,18 +2369,6 @@ useEffect(() => {
                   </View>
 
                   <View style={selectlang_styles.listContainer}>
-                    {languageLoading && languages.length === 0 ? (
-                      <View
-                        style={{
-                          minHeight: 180,
-                          width: '100%',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <ActivityIndicator size="large" color="#FFFFFF" />
-                      </View>
-                    ) : (
                     <FlatList
                       contentContainerStyle={selectlang_styles.listContent}
                       style={selectlang_styles.flatListStyle}
@@ -2443,23 +2442,6 @@ useEffect(() => {
                         </TouchableOpacity>
                       )}
                     />
-                    )}
-                    {languageSelecting && (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          bottom: 0,
-                          left: 0,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: 'rgba(0, 32, 80, 0.35)',
-                        }}
-                      >
-                        <ActivityIndicator size="large" color="#FFFFFF" />
-                      </View>
-                    )}
                   </View>
                 </Animated.View>
               </View>
@@ -2481,6 +2463,7 @@ useEffect(() => {
                       translateY.setValue(-100);
                       setSearch('');
                       setSelected(null);
+                      setLanguageLoading(true);
                       setCurrentScreen('language');
                     }}
                   >
@@ -4296,6 +4279,27 @@ useEffect(() => {
             </Animated.View>
           )}
       </View>
+      {(languageLoading || languageSelecting) && currentScreen === 'language' && (
+        <View
+          pointerEvents="auto"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.35)',
+            zIndex: 9999,
+            elevation: 9999,
+          }}
+        >
+          <Loader />
+        </View>
+      )}
       <PassToastContainer />
       <NewCustomToastContainer />
     </ImageBackground>
